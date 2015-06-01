@@ -9,14 +9,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.AccessToken;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import ar.com.klee.social.dialogs.DateTimeDialog;
+import ar.com.klee.social.services.FacebookService;
 import ar.com.klee.social.services.TwitterService;
 import ar.com.klee.social.services.WhatsAppService;
 import ar.com.klee.social.services.exceptions.WhatsAppException;
@@ -25,12 +19,14 @@ import ar.com.klee.social.services.exceptions.WhatsAppException;
 public class PublishActivity extends FragmentActivity {
 
     private WhatsAppService whatsAppService;
+    private FacebookService facebookService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.publish_layout);
         whatsAppService =  new WhatsAppService(this);
+        facebookService = new FacebookService(this);
     }
 
 
@@ -59,19 +55,7 @@ public class PublishActivity extends FragmentActivity {
     public void publishOnFacebook(View view) {
         final String textToPublish = getTextToPublish();
         if(!textToPublish.isEmpty()) {
-            JSONObject params = new JSONObject();
-            try {
-                params.put("message", textToPublish);
-            } catch (JSONException e) {
-                throw new RuntimeException("Error publishing", e);
-            }
-            GraphRequest.newPostRequest(AccessToken.getCurrentAccessToken(),
-                    "me/feed", params, new GraphRequest.Callback() {
-                        @Override
-                        public void onCompleted(GraphResponse graphResponse) {
-                            Toast.makeText(getApplicationContext(), "Tu texto se publicó en facebook", Toast.LENGTH_SHORT).show();
-                        }
-                    }).executeAsync();
+            facebookService.publishText(textToPublish);
         }
     }
 
