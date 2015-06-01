@@ -7,7 +7,10 @@ import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.models.Tweet;
 
 /**
- * Created by Salerno on 24/05/2015.
+ *
+ * Service class used to interact with Twitter
+ *
+ * @author msalerno
  */
 public class TwitterService {
 

@@ -8,6 +8,12 @@ import android.content.pm.PackageManager;
 
 import ar.com.klee.social.services.exceptions.WhatsAppException;
 
+/**
+ *
+ * Service class used to interact with WhatsApp
+ *
+ * @author msalerno
+ */
 public class WhatsAppService {
 
     private final Activity activity;

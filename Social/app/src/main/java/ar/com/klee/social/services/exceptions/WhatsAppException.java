@@ -1,7 +1,9 @@
 package ar.com.klee.social.services.exceptions;
 
 /**
- * Created by Salerno on 25/05/2015.
+ * Class that represents any exception thrown by the {@link ar.com.klee.social.services.WhatsAppService}
+ *
+ * @author msalerno
  */
 public class WhatsAppException extends RuntimeException {
 

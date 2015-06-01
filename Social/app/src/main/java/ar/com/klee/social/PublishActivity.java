@@ -1,15 +1,12 @@
 package ar.com.klee.social;
 
-import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.DatePicker;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -22,21 +19,18 @@ import org.json.JSONObject;
 import ar.com.klee.social.dialogs.DateTimeDialog;
 import ar.com.klee.social.services.TwitterService;
 import ar.com.klee.social.services.WhatsAppService;
-import ar.com.klee.social.services.exceptions.CalendarService;
 import ar.com.klee.social.services.exceptions.WhatsAppException;
 
 
 public class PublishActivity extends FragmentActivity {
 
     private WhatsAppService whatsAppService;
-    private CalendarService calendarService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.publish_layout);
         whatsAppService =  new WhatsAppService(this);
-        calendarService = new CalendarService(this);
     }
 
 
