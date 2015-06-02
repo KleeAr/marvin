@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/camera_preview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button_capture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Capture"
+        android:layout_gravity="center_horizontal"
+        android:layout_alignParentTop="false"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true" />
+
+    <Button
+        android:id="@+id/button_saveAndShare"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save and Share"
+        android:layout_alignParentTop="false"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentRight="true"
+        android:layout_margin="0dp"
+        android:onClick="saveAndShare" />
+
+    <Button
+        android:id="@+id/button_share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Share"
+        android:layout_alignParentTop="false"
+        android:layout_centerHorizontal="false"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentLeft="true"
+        android:layout_margin="0dp"
+        android:layout_alignParentRight="false"
+        android:layout_above="@+id/button_cancel"
+        android:onClick="share" />
+
+    <Button
+        android:id="@+id/button_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:layout_alignParentTop="false"
+        android:layout_centerHorizontal="false"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="0dp"
+        android:onClick="cancel" />
+
+    <Button
+        android:id="@+id/button_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:layout_alignParentTop="false"
+        android:layout_centerHorizontal="false"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentRight="true"
+        android:layout_margin="0dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_above="@+id/button_saveAndShare"
+        android:onClick="save" />
+
+</RelativeLayout>
