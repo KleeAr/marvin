@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
+
 import ar.com.klee.social.services.exceptions.WhatsAppException;
 
 /**
@@ -24,13 +25,15 @@ public class WhatsAppService {
 
     public void sendWhatsApp(String textToPublish) throws WhatsAppException {
         try {
-            Intent sendIntent = new Intent();
+            final Intent sendIntent = new Intent();
 
             sendIntent.setAction(Intent.ACTION_SEND);
             sendIntent.putExtra(Intent.EXTRA_TEXT, textToPublish);
             sendIntent.setType("text/plain");
             PackageInfo info = activity.getPackageManager().getPackageInfo("com.whatsapp", PackageManager.GET_META_DATA);
             sendIntent.setPackage(info.packageName);
+            activity.startActivity(sendIntent);
+
         }catch (PackageManager.NameNotFoundException e) {
             throw new WhatsAppException("WhatsApp message not send", e);
         }
