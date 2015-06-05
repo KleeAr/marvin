@@ -35,6 +35,13 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Send email"
+        android:onClick="sendEmail"
+        android:id="@+id/send_email" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Create Calendar Event"
         android:onClick="createGoogleCalendarEvent"
         android:id="@+id/create_event" />

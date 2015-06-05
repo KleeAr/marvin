@@ -29,6 +29,7 @@ import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 import java.security.MessageDigest;
 import java.util.Arrays;
 
+import ar.com.klee.social.dialogs.GetTokenAsyncTask;
 import io.fabric.sdk.android.Fabric;
 
 
@@ -116,5 +117,10 @@ public class MainActivity extends Activity {
     public void startPublishing(View view) {
         Intent intent = new Intent(this, PublishActivity.class);
         startActivity(intent);
+    }
+
+    public void googleLogin(View view) {
+        GetTokenAsyncTask getTokenAsyncTask = new GetTokenAsyncTask(this);
+        getTokenAsyncTask.execute();
     }
 }

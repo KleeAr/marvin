@@ -17,6 +17,10 @@ repositories {
 
 
 android {
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
     signingConfigs {
         config {
             keyAlias 'androiddebugkey'
@@ -33,6 +37,7 @@ android {
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -50,4 +55,9 @@ dependencies {
         transitive = true;
     }
     compile 'com.google.android.gms:play-services:7.0.0'
+    compile 'com.google.api-client:google-api-client:1.20.0'
+    compile 'com.google.api-client:google-api-client-android:1.20.0'
+    compile 'com.google.api-client:google-api-client-gson:1.20.0'
+    compile 'com.google.apis:google-api-services-gmail:v1-rev30-1.20.0'
+    compile 'javax.mail:mail:1.4'
 }
