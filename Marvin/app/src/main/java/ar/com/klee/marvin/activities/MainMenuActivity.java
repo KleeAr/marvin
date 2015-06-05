@@ -1,4 +1,4 @@
-package ar.com.klee.activities;
+package ar.com.klee.marvin.activities;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,8 +12,8 @@ import android.view.MenuItem;
 import android.view.View;
 import java.util.StringTokenizer;
 
-import ar.com.klee.R;
-import ar.com.klee.voiceControl.STTService;
+import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.voiceControl.STTService;
 
 
 public class MainMenuActivity extends ActionBarActivity {

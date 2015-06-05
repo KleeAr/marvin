@@ -1,4 +1,4 @@
-package ar.com.klee.camera;
+package ar.com.klee.marvin.camera;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -8,7 +8,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.Toast;
 
-import ar.com.klee.R;
+import ar.com.klee.marvin.R;
 
 public class CameraDialog extends Dialog implements
         android.view.View.OnClickListener  {

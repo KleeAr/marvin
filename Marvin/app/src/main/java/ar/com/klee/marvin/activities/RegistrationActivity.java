@@ -1,11 +1,11 @@
-package ar.com.klee.activities;
+package ar.com.klee.marvin.activities;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import ar.com.klee.R;
+import ar.com.klee.marvin.R;
 
 
 public class RegistrationActivity extends ActionBarActivity {

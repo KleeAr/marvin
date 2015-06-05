@@ -1,4 +1,4 @@
-package ar.com.klee.camera;
+package ar.com.klee.marvin.camera;
 
 import java.io.IOException;
 import android.app.Activity;

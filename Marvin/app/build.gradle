@@ -1,11 +1,33 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
+
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+            storeFile file('C:/Users/Fedde/.android/debug.keystore')
+            storePassword 'android'
+        }
+    }
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
-
     defaultConfig {
-        applicationId "klee_ar.marvin"
+        applicationId "ar.com.klee.marvin"
         minSdkVersion 16
         targetSdkVersion 21
         versionCode 1
@@ -20,6 +42,11 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:22.0.0'
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.android.support:appcompat-v7:22.1.0'
+    compile 'com.facebook.android:facebook-android-sdk:4.0.0'
+    compile('com.twitter.sdk.android:twitter:1.5.1@aar') {
+        transitive = true;
+    }
+    compile 'com.google.android.gms:play-services:7.0.0'
 }

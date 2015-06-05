@@ -1,4 +1,4 @@
-package ar.com.klee.activities;
+package ar.com.klee.marvin.activities;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -27,9 +27,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import ar.com.klee.R;
-import ar.com.klee.camera.CameraDialog;
-import ar.com.klee.camera.CameraPreview;
+import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.camera.CameraDialog;
+import ar.com.klee.marvin.camera.CameraPreview;
 
 public class CameraActivity extends ActionBarActivity {
 
