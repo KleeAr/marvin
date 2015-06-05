@@ -1,11 +1,22 @@
 package ar.com.klee.expressions;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
 
 import org.junit.Test;
 
+import ar.com.klee.expressions.exceptions.ExpressionMatcherException;
+
+/**
+ * 
+ * Test class for the class ExpressionMatcherTest
+ * 
+ * @author msalerno
+ *
+ */
 public class ExpressionMatcherTest {
 
 	private static final String TEMPLATE = "my name is {username} and i am {userage} years old";
@@ -28,6 +39,12 @@ public class ExpressionMatcherTest {
         
         assertEquals("Federico", variables.get("username"));
         assertEquals("23", variables.get("userage"));
+     }
+    
+    @Test(expected = ExpressionMatcherException.class)
+    public void testGetValuesFromExpressionWhenDoesntMatch() {
+    	// Will throw exception because it doesn't match
+    	expressionMatcher.getValuesFromExpression("My name is Barry Allen, and I'm the fastest man alive");
      }
     
     @Test
