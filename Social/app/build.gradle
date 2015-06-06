@@ -59,5 +59,4 @@ dependencies {
     compile 'com.google.api-client:google-api-client-android:1.20.0'
     compile 'com.google.api-client:google-api-client-gson:1.20.0'
     compile 'com.google.apis:google-api-services-gmail:v1-rev30-1.20.0'
-    compile 'javax.mail:mail:1.4'
 }
