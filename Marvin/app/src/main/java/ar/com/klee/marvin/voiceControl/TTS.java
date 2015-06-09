@@ -43,16 +43,19 @@ public class TTS {
     */
     public void speakText(String textToSpeak) {
 
+        int delayTime = textToSpeak.length()/15 + 1;
+        delayTime = delayTime * 2000;
+
         // Reproduce el texto
         ttsObject.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH, null);
 
-        // Execute some code after 2 seconds have passed
+        // Execute some code after delayTime seconds have passed
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
                 mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
             }
-        }, 2000);
+        }, delayTime);
 
     }
 

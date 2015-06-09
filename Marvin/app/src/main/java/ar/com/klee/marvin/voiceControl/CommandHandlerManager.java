@@ -12,13 +12,34 @@ import ar.com.klee.marvin.social.FacebookService;
 import ar.com.klee.marvin.social.TwitterService;
 import ar.com.klee.marvin.social.WhatsAppService;
 import ar.com.klee.marvin.voiceControl.handlers.AbrirAplicacionHandler;
+import ar.com.klee.marvin.voiceControl.handlers.ActivarHotspotHandler;
+import ar.com.klee.marvin.voiceControl.handlers.AgregarEventoHandler;
+import ar.com.klee.marvin.voiceControl.handlers.AnteriorCancionHandler;
+import ar.com.klee.marvin.voiceControl.handlers.BarrioHandler;
+import ar.com.klee.marvin.voiceControl.handlers.CalleActualHandler;
+import ar.com.klee.marvin.voiceControl.handlers.CalleAnteriorHandler;
+import ar.com.klee.marvin.voiceControl.handlers.CalleSiguienteHandler;
+import ar.com.klee.marvin.voiceControl.handlers.CancelarFotoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CerrarCamaraHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CerrarSesionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
+import ar.com.klee.marvin.voiceControl.handlers.CompartirFotoHandler;
+import ar.com.klee.marvin.voiceControl.handlers.DesactivarHotspotHandler;
+import ar.com.klee.marvin.voiceControl.handlers.DetenerReproduccionHandler;
+import ar.com.klee.marvin.voiceControl.handlers.EnviarMailAContactoHandler;
+import ar.com.klee.marvin.voiceControl.handlers.EnviarSMSAContactoHandler;
+import ar.com.klee.marvin.voiceControl.handlers.EnviarSMSANumeroHandler;
+import ar.com.klee.marvin.voiceControl.handlers.EnviarWhatsAppHandler;
 import ar.com.klee.marvin.voiceControl.handlers.GuardarFotoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.GuardarYCompartirFotoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.PublicarEnFacebookHandler;
+import ar.com.klee.marvin.voiceControl.handlers.ReproducirArtistaHandler;
+import ar.com.klee.marvin.voiceControl.handlers.ReproducirCancionHandler;
+import ar.com.klee.marvin.voiceControl.handlers.ReproducirMusicaHandler;
+import ar.com.klee.marvin.voiceControl.handlers.SMSDeEmergenciaHandler;
 import ar.com.klee.marvin.voiceControl.handlers.SacarFotoHandler;
+import ar.com.klee.marvin.voiceControl.handlers.SiguienteCancionHandler;
+import ar.com.klee.marvin.voiceControl.handlers.TwittearHandler;
 
 public class CommandHandlerManager {
 
@@ -26,17 +47,11 @@ public class CommandHandlerManager {
     private int errorCounter = 0;
     private CommandHandler commandHandler;
 
-    private WhatsAppService whatsAppService;
-    private CalendarService calendarService;
-
     private TTS textToSpeech;
 
     private Activity activity;
 
     CommandHandlerManager(Activity activity, SpeechRecognizer mSpeechRecognizer, Intent mSpeechRecognizerIntent){
-
-        whatsAppService =  new WhatsAppService(activity);
-        this.calendarService = new CalendarService(activity);
 
         textToSpeech = new TTS(activity, mSpeechRecognizer, mSpeechRecognizerIntent);
 
@@ -162,80 +177,216 @@ public class CommandHandlerManager {
                     } else
                         wrongCommand("guardar foto");
                     break;
-/*
+
                 case "cancelar":
-                    actualCommand = COMMAND_CANCELAR_FOTO;
-                    cancelarFotoHandler();
+                    commandHandler = new CancelarFotoHandler(command, textToSpeech);
+                    if (commandHandler.validateCommand()) {
+                        errorCounter = 0;
+                        actualStep = commandHandler.drive(1, command);
+                    } else
+                        wrongCommand("cancelar foto");
                     break;
 
                 case "compartir":
                     if (stringTokenizer.hasMoreTokens()) {
                         secondWord = stringTokenizer.nextToken();
                         if (secondWord.equals("foto")) {
-                            actualCommand = COMMAND_COMPARTIR_FOTO;
-                            compartirFotoHandler();
+                            commandHandler = new CompartirFotoHandler(command, textToSpeech, this, activity);
+                            if (commandHandler.validateCommand()) {
+                                errorCounter = 0;
+                                actualStep = commandHandler.drive(1, command);
+                            } else
+                                wrongCommand("compartir foto");
                         } else
-                            wrongCommand();
+                            wrongCommand("compartir foto");
                     } else
-                        wrongCommand();
+                        wrongCommand("compartir foto");
                     break;
 
                 case "twittear":
-                    actualCommand = COMMAND_TWITTEAR;
-                    twittearHandler();
+                    commandHandler = new TwittearHandler(command, textToSpeech);
+                    if (commandHandler.validateCommand()) {
+                        errorCounter = 0;
+                        actualStep = commandHandler.drive(1, command);
+                    } else
+                        wrongCommand("twittear mensaje");
                     break;
 
                 case "enviar":
                     if (stringTokenizer.hasMoreTokens()) {
                         secondWord = stringTokenizer.nextToken();
                         if (secondWord.equals("whatsapp")) {
-                            actualCommand = COMMAND_ENVIAR_WHATSAPP;
-                            enviarWhatsAppHandler();
+                            commandHandler = new EnviarWhatsAppHandler(command, textToSpeech, activity);
+                            if (commandHandler.validateCommand()) {
+                                errorCounter = 0;
+                                actualStep = commandHandler.drive(1, command);
+                            } else
+                                wrongCommand("enviar whatsapp mensaje");
                         } else if (secondWord.equals("mail")) {
-                            actualCommand = COMMAND_ENVIAR_MAIL_A_CONTACTO;
-                            enviarMailAContactoHandler();
+                            commandHandler = new EnviarMailAContactoHandler(command, textToSpeech);
+                            if (commandHandler.validateCommand()) {
+                                errorCounter = 0;
+                                actualStep = commandHandler.drive(1, command);
+                            } else
+                                wrongCommand("enviar mail a contacto");
                         } else if (secondWord.equals("sms")) {
                             if (stringTokenizer.hasMoreTokens()) {
                                 thirdWord = stringTokenizer.nextToken();
                                 if (thirdWord.equals("a")) {
-                                    actualCommand = COMMAND_ENVIAR_SMS_A_CONTACTO;
-                                    enviarSMSAContactoHandler();
+                                    commandHandler = new EnviarSMSAContactoHandler(command, textToSpeech);
+                                    if (commandHandler.validateCommand()) {
+                                        errorCounter = 0;
+                                        actualStep = commandHandler.drive(1, command);
+                                    } else
+                                        wrongCommand("enviar sms a contacto");
                                 } else if (thirdWord.equals("al")) {
-                                    actualCommand = COMMAND_ENVIAR_SMS_A_NUMERO;
-                                    enviarSMSANumeroHandler();
+                                    commandHandler = new EnviarSMSANumeroHandler(command, textToSpeech);
+                                    if (commandHandler.validateCommand()) {
+                                        errorCounter = 0;
+                                        actualStep = commandHandler.drive(1, command);
+                                    } else
+                                        wrongCommand("enviar sms al número");
                                 } else
-                                    wrongCommand();
+                                    wrongCommand("enviar sms a contacto");
                             } else
-                                wrongCommand();
+                                wrongCommand("enviar sms a contacto");
                         } else
-                            wrongCommand();
+                            wrongCommand("");
                     } else
-                        wrongCommand();
+                        wrongCommand("");
                     break;
 
                 case "sms":
-                    actualCommand = COMMAND_ENVIAR_SMS_DE_EMERGENCIA;
-                    enviarSMSDeEmergenciaHandler();
+                    commandHandler = new SMSDeEmergenciaHandler(command, textToSpeech);
+                    if (commandHandler.validateCommand()) {
+                        errorCounter = 0;
+                        actualStep = commandHandler.drive(1, command);
+                    } else
+                        wrongCommand("sms de emergencia");
                     break;
 
                 case "reproducir":
                     if (stringTokenizer.hasMoreTokens()) {
                         secondWord = stringTokenizer.nextToken();
                         if (secondWord.equals("musica")) {
-                            actualCommand = COMMAND_REPRODUCIR_MUSICA;
-                            reproducirMusicaHandler();
+                            commandHandler = new ReproducirMusicaHandler(command, textToSpeech);
+                            if (commandHandler.validateCommand()) {
+                                errorCounter = 0;
+                                actualStep = commandHandler.drive(1, command);
+                            } else
+                                wrongCommand("reproducir música");
                         } else if (secondWord.equals("cancion")) {
-                            actualCommand = COMMAND_REPRODUCIR_CANCION;
-                            reproducirCancionHandler();
+                            commandHandler = new ReproducirCancionHandler(command, textToSpeech);
+                            if (commandHandler.validateCommand()) {
+                                errorCounter = 0;
+                                actualStep = commandHandler.drive(1, command);
+                            } else
+                                wrongCommand("reproducir canción");
                         } else if (secondWord.equals("artista")) {
-                            actualCommand = COMMAND_REPRODUCIR_ARTISTA;
-                            reproducirArtistanHandler();
+                            commandHandler = new ReproducirArtistaHandler(command, textToSpeech);
+                            if (commandHandler.validateCommand()) {
+                                errorCounter = 0;
+                                actualStep = commandHandler.drive(1, command);
+                            } else
+                                wrongCommand("reproducir artista");
                         } else
-                            wrongCommand();
+                            wrongCommand("reproducir música");
                     } else
-                        wrongCommand();
+                        wrongCommand("reproducir música");
                     break;
-*/
+
+                case "detener":
+                    commandHandler = new DetenerReproduccionHandler(command, textToSpeech);
+                    if (commandHandler.validateCommand()) {
+                        errorCounter = 0;
+                        actualStep = commandHandler.drive(1, command);
+                    } else
+                        wrongCommand("detener reproducción");
+                    break;
+
+                case "siguiente":
+                    commandHandler = new SiguienteCancionHandler(command, textToSpeech);
+                    if (commandHandler.validateCommand()) {
+                        errorCounter = 0;
+                        actualStep = commandHandler.drive(1, command);
+                    } else
+                        wrongCommand("siguiente canción");
+                    break;
+
+                case "anterior":
+                    commandHandler = new AnteriorCancionHandler(command, textToSpeech);
+                    if (commandHandler.validateCommand()) {
+                        errorCounter = 0;
+                        actualStep = commandHandler.drive(1, command);
+                    } else
+                        wrongCommand("anterior canción");
+                    break;
+
+                case "calle":
+                    if (stringTokenizer.hasMoreTokens()) {
+                        secondWord = stringTokenizer.nextToken();
+                        if (secondWord.equals("actual")) {
+                            commandHandler = new CalleActualHandler(command, textToSpeech);
+                            if (commandHandler.validateCommand()) {
+                                errorCounter = 0;
+                                actualStep = commandHandler.drive(1, command);
+                            } else
+                                wrongCommand("calle actual");
+                        } else if (secondWord.equals("siguiente")) {
+                            commandHandler = new CalleSiguienteHandler(command, textToSpeech);
+                            if (commandHandler.validateCommand()) {
+                                errorCounter = 0;
+                                actualStep = commandHandler.drive(1, command);
+                            } else
+                                wrongCommand("calle siguiente");
+                        } else if (secondWord.equals("anterior")) {
+                            commandHandler = new CalleAnteriorHandler(command, textToSpeech);
+                            if (commandHandler.validateCommand()) {
+                                errorCounter = 0;
+                                actualStep = commandHandler.drive(1, command);
+                            } else
+                                wrongCommand("calle anterior");
+                        } else
+                            wrongCommand("calle actual");
+                    } else
+                        wrongCommand("calle actual");
+                    break;
+
+                case "barrio":
+                    commandHandler = new BarrioHandler(command, textToSpeech);
+                    if (commandHandler.validateCommand()) {
+                        errorCounter = 0;
+                        actualStep = commandHandler.drive(1, command);
+                    } else
+                        wrongCommand("barrio");
+                    break;
+
+                case "agregar":
+                    commandHandler = new AgregarEventoHandler(command, textToSpeech, activity);
+                    if (commandHandler.validateCommand()) {
+                        errorCounter = 0;
+                        actualStep = commandHandler.drive(1, command);
+                    } else
+                        wrongCommand("agregar evento");
+                    break;
+
+                case "activar":
+                    commandHandler = new ActivarHotspotHandler(command, textToSpeech);
+                    if (commandHandler.validateCommand()) {
+                        errorCounter = 0;
+                        actualStep = commandHandler.drive(1, command);
+                    } else
+                        wrongCommand("activar hotspot");
+                    break;
+
+                case "desactivar":
+                    commandHandler = new DesactivarHotspotHandler(command, textToSpeech);
+                    if (commandHandler.validateCommand()) {
+                        errorCounter = 0;
+                        actualStep = commandHandler.drive(1, command);
+                    } else
+                        wrongCommand("desactivar hotspot");
+                    break;
 
                 default:
                     wrongCommand("");
@@ -267,30 +418,6 @@ public class CommandHandlerManager {
     public void setCommandHandler(CommandHandler commandHandler){
 
         this.commandHandler = commandHandler;
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public void sendWhatsApp(String textToPublish) {
-
-        whatsAppService.sendWhatsApp(textToPublish);
-
-    }
-
-    public void createGoogleCalendarEvent(int year, int month, int day){
-
-        calendarService.createEvent(year, month, day);
 
     }
 
