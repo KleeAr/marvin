@@ -1,6 +1,7 @@
 package ar.com.klee.marvin.social;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -15,10 +16,10 @@ import ar.com.klee.marvin.social.exceptions.WhatsAppException;
  */
 public class WhatsAppService {
 
-    private final Activity activity;
+    private final Context context;
 
-    public WhatsAppService(Activity activity) {
-        this.activity = activity;
+    public WhatsAppService(Context context) {
+        this.context = context;
     }
 
     public void sendWhatsApp(String textToPublish) throws WhatsAppException {
@@ -28,9 +29,9 @@ public class WhatsAppService {
             sendIntent.setAction(Intent.ACTION_SEND);
             sendIntent.putExtra(Intent.EXTRA_TEXT, textToPublish);
             sendIntent.setType("text/plain");
-            PackageInfo info = activity.getPackageManager().getPackageInfo("com.whatsapp", PackageManager.GET_META_DATA);
+            PackageInfo info = context.getPackageManager().getPackageInfo("com.whatsapp", PackageManager.GET_META_DATA);
             sendIntent.setPackage(info.packageName);
-            activity.startActivity(sendIntent);
+            context.startActivity(sendIntent);
 
         }catch (PackageManager.NameNotFoundException e) {
             throw new WhatsAppException("WhatsApp message not send", e);

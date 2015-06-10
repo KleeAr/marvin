@@ -11,7 +11,7 @@ public class SiguienteCancionHandler extends CommandHandler{
 
     public SiguienteCancionHandler(String command, TTS textToSpeech){
 
-        expressionMatcher = new ExpressionMatcher("siguiente cancion");
+        expressionMatcher = new ExpressionMatcher("siguiente canción");
 
         this.command = command;
 

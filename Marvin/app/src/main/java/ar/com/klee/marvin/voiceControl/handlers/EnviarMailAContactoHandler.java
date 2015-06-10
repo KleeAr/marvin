@@ -71,7 +71,7 @@ public class EnviarMailAContactoHandler extends CommandHandler{
     //CONFIRMA CONTACTO
     public int stepThree(String input){
 
-        if(input.equals("sí")) {
+        if(input.equals("si")) {
             textToSpeech.speakText("¿Qué mensaje le querés mandar por mail?");
             return 5;
         }
@@ -105,7 +105,7 @@ public class EnviarMailAContactoHandler extends CommandHandler{
     //CONFIRMACION DE MENSAJE
     public int stepSeven(String input){
 
-        if(input.equals("sí")) {
+        if(input.equals("si")) {
             textToSpeech.speakText("Enviando mail");
             return 0;
         }

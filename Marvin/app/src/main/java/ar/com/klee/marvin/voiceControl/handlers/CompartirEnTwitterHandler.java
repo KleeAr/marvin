@@ -71,7 +71,7 @@ public class CompartirEnTwitterHandler extends CommandHandler{
     //CONFIRMA MENSAJE
     public int stepThree(String input){
 
-        if(input.equals("sí")) {
+        if(input.equals("si")) {
             textToSpeech.speakText("¿Querés agregar un hashtag junto a la foto?");
             return 5;
         }
@@ -95,7 +95,7 @@ public class CompartirEnTwitterHandler extends CommandHandler{
     //INDICA SI SE QUIERE AGREGAR UN HASHTAG
     public int stepFive(String input){
 
-        if(input.equals("sí")) {
+        if(input.equals("si")) {
             textToSpeech.speakText("¿Qué hashtag querés agregar?");
             return 7;
         }
@@ -131,7 +131,7 @@ public class CompartirEnTwitterHandler extends CommandHandler{
     //CONFIRMA HASHTAG
     public int stepNine(String input){
 
-        if(input.equals("sí")) {
+        if(input.equals("si")) {
             textToSpeech.speakText("¿Querés agregar otro hashtag?");
             return 11;
         }
@@ -156,7 +156,7 @@ public class CompartirEnTwitterHandler extends CommandHandler{
     //INDICA SI SE QUIERE AGREGAR OTRO HASHTAG
     public int stepEleven(String input){
 
-        if(input.equals("sí")) {
+        if(input.equals("si")) {
             textToSpeech.speakText("¿Qué hashtag querés agregar?");
             return 7;
         }

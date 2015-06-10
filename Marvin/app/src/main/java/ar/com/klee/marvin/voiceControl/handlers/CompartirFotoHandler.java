@@ -1,6 +1,7 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
 import android.app.Activity;
+import android.content.Context;
 
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
@@ -12,9 +13,9 @@ public class CompartirFotoHandler extends CommandHandler{
     private String command;
     private TTS textToSpeech;
     private CommandHandlerManager commandHandlerManager;
-    private Activity activity;
+    private Context context;
 
-    public CompartirFotoHandler(String command, TTS textToSpeech, CommandHandlerManager commandHandlerManager, Activity activity){
+    public CompartirFotoHandler(String command, TTS textToSpeech, CommandHandlerManager commandHandlerManager, Context context){
 
         expressionMatcher = new ExpressionMatcher("compartir foto");
 
@@ -24,7 +25,7 @@ public class CompartirFotoHandler extends CommandHandler{
 
         this.commandHandlerManager = commandHandlerManager;
 
-        this.activity = activity;
+        this.context = context;
 
     }
 
@@ -84,8 +85,8 @@ public class CompartirFotoHandler extends CommandHandler{
 
     public int facebook(String input){
 
-        if(input.equals("sí")) {
-            commandHandlerManager.setCommandHandler(new CompartirEnFacebookHandler("compartir en facebook", textToSpeech, activity));
+        if(input.equals("si")) {
+            commandHandlerManager.setCommandHandler(new CompartirEnFacebookHandler("compartir en facebook", textToSpeech, context));
             textToSpeech.speakText("¿Qué mensaje querés agregar?");
             return 1;
         }
@@ -96,7 +97,7 @@ public class CompartirFotoHandler extends CommandHandler{
         }
 
         if(input.equals("no")){
-            commandHandlerManager.setCommandHandler(new CompartirEnFacebookHandler("compartir en facebook", textToSpeech, activity));
+            commandHandlerManager.setCommandHandler(new CompartirEnFacebookHandler("compartir en facebook", textToSpeech, context));
             textToSpeech.speakText("¿Querés etiquetar a alguien?");
             return 5;
         }
@@ -109,7 +110,7 @@ public class CompartirFotoHandler extends CommandHandler{
 
     public int twitter(String input){
 
-        if(input.equals("sí")) {
+        if(input.equals("si")) {
             commandHandlerManager.setCommandHandler(new CompartirEnTwitterHandler("compartir en twitter", textToSpeech));
             textToSpeech.speakText("¿Qué mensaje querés agregar?");
             return 1;
@@ -134,7 +135,7 @@ public class CompartirFotoHandler extends CommandHandler{
 
     public int instagram(String input){
 
-        if(input.equals("sí")) {
+        if(input.equals("si")) {
             commandHandlerManager.setCommandHandler(new CompartirEnInstagramHandler("compartir en instagram", textToSpeech));
             textToSpeech.speakText("¿Qué mensaje querés agregar?");
             return 1;

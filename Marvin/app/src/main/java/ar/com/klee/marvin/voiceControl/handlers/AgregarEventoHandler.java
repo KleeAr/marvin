@@ -1,6 +1,7 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
 import android.app.Activity;
+import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -22,12 +23,12 @@ public class AgregarEventoHandler extends CommandHandler{
 
     private CalendarService calendarService;
 
-    public AgregarEventoHandler(String command, TTS textToSpeech, Activity activity){
+    public AgregarEventoHandler(String command, TTS textToSpeech, Context context){
 
         expressionMatcher = new ExpressionMatcher("agregar evento {evento}");
 
         this.command = command;
-        this.calendarService = new CalendarService(activity);
+        this.calendarService = new CalendarService(context);
         this.textToSpeech = textToSpeech;
 
     }
@@ -82,7 +83,7 @@ public class AgregarEventoHandler extends CommandHandler{
     //CONFIRMA EVENTO
     public int stepThree(String input){
 
-        if(input.equals("sí")) {
+        if(input.equals("si")) {
             textToSpeech.speakText("¿En qué fecha es el evento?");
             return 5;
         }
@@ -121,7 +122,7 @@ public class AgregarEventoHandler extends CommandHandler{
     //CONFIRMA FECHA
     public int stepSeven(String input){
 
-        if(input.equals("sí")) {
+        if(input.equals("si")) {
             textToSpeech.speakText("¿A qué hora es el evento?");
             return 9;
         }
@@ -156,7 +157,7 @@ public class AgregarEventoHandler extends CommandHandler{
     //CONFIRMA HORA
     public int stepEleven(String input){
 
-        if(input.equals("sí")) {
+        if(input.equals("si")) {
             textToSpeech.speakText("Agregando evento en el calendario");
             return 0;
         }

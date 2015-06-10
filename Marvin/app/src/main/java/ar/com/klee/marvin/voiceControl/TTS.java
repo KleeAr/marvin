@@ -43,8 +43,8 @@ public class TTS {
     */
     public void speakText(String textToSpeak) {
 
-        int delayTime = textToSpeak.length()/15 + 1;
-        delayTime = delayTime * 2000;
+        int delayTime = textToSpeak.length()/5 + 1;
+        delayTime = delayTime * 1000;
 
         // Reproduce el texto
         ttsObject.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH, null);

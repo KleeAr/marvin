@@ -1,6 +1,7 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
 import android.app.Activity;
+import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -20,12 +21,12 @@ public class CompartirEnFacebookHandler extends CommandHandler{
 
     private FacebookService facebookService;
 
-    public CompartirEnFacebookHandler(String command, TTS textToSpeech, Activity activity){
+    public CompartirEnFacebookHandler(String command, TTS textToSpeech, Context context){
 
         expressionMatcher = new ExpressionMatcher("compartir en facebook");
 
         this.command = command;
-        facebookService = new FacebookService(activity);
+        facebookService = new FacebookService(context);
         this.textToSpeech = textToSpeech;
 
         etiquetados = new ArrayList<String>();
@@ -84,7 +85,7 @@ public class CompartirEnFacebookHandler extends CommandHandler{
     //CONFIRMA MENSAJE
     public int stepThree(String input){
 
-        if(input.equals("sí")) {
+        if(input.equals("si")) {
             textToSpeech.speakText("¿Querés etiquetar a alguien?");
             return 5;
         }
@@ -108,7 +109,7 @@ public class CompartirEnFacebookHandler extends CommandHandler{
     //INDICA SI QUIERE ETIQUETAR CONTACTOS
     public int stepFive(String input){
 
-        if(input.equals("sí")) {
+        if(input.equals("si")) {
             textToSpeech.speakText("Indicá a qué contacto querés etiquetar");
             return 7;
         }
@@ -146,7 +147,7 @@ public class CompartirEnFacebookHandler extends CommandHandler{
     //CONFIRMA ETIQUETACIÓN
     public int stepNine(String input){
 
-        if(input.equals("sí")) {
+        if(input.equals("si")) {
             textToSpeech.speakText("¿Querés etiquetar a alguien más?");
             return 11;
         }
@@ -171,7 +172,7 @@ public class CompartirEnFacebookHandler extends CommandHandler{
     //INDICA SI SE QUIERE ETIQUETAR A ALGUIEN MÁS
     public int stepEleven(String input){
 
-        if(input.equals("sí")) {
+        if(input.equals("si")) {
             textToSpeech.speakText("Indicá a qué contacto querés etiquetar");
             return 7;
         }
@@ -195,7 +196,7 @@ public class CompartirEnFacebookHandler extends CommandHandler{
     //INDICA SI SE QUIERE AGREGAR UN HASHTAG
     public int stepThirteen(String input){
 
-        if(input.equals("sí")) {
+        if(input.equals("si")) {
             textToSpeech.speakText("¿Qué hashtag querés agregar?");
             return 15;
         }
@@ -231,7 +232,7 @@ public class CompartirEnFacebookHandler extends CommandHandler{
     //CONFIRMA HASHTAG
     public int stepSeventeen(String input){
 
-        if(input.equals("sí")) {
+        if(input.equals("si")) {
             textToSpeech.speakText("¿Querés agregar otro hashtag?");
             return 19;
         }
@@ -256,7 +257,7 @@ public class CompartirEnFacebookHandler extends CommandHandler{
     //INDICA SI SE QUIERE AGREGAR OTRO HASHTAG
     public int stepNineteen(String input){
 
-        if(input.equals("sí")) {
+        if(input.equals("si")) {
             textToSpeech.speakText("¿Qué hashtag querés agregar?");
             return 15;
         }

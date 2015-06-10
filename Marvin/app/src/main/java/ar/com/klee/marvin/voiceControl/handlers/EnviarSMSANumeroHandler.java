@@ -68,7 +68,7 @@ public class EnviarSMSANumeroHandler extends CommandHandler{
     //CONFIRMA NUMERO
     public int stepThree(String input){
 
-        if(input.equals("sí")) {
+        if(input.equals("si")) {
             textToSpeech.speakText("¿Qué mensaje le querés mandar por sms?");
             return 5;
         }
@@ -102,7 +102,7 @@ public class EnviarSMSANumeroHandler extends CommandHandler{
     //CONFIRMACION DE MENSAJE
     public int stepSeven(String input){
 
-        if(input.equals("sí")) {
+        if(input.equals("si")) {
             textToSpeech.speakText("Enviando sms");
             return 0;
         }

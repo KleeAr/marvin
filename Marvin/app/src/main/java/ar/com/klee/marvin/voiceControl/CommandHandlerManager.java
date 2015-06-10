@@ -2,8 +2,10 @@ package ar.com.klee.marvin.voiceControl;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.speech.SpeechRecognizer;
+import android.util.Log;
 
 import java.util.StringTokenizer;
 
@@ -49,11 +51,13 @@ public class CommandHandlerManager {
 
     private TTS textToSpeech;
 
-    private Activity activity;
+    private Context context;
 
-    CommandHandlerManager(Activity activity, SpeechRecognizer mSpeechRecognizer, Intent mSpeechRecognizerIntent){
+    private boolean isError;
 
-        textToSpeech = new TTS(activity, mSpeechRecognizer, mSpeechRecognizerIntent);
+    CommandHandlerManager(Context context, SpeechRecognizer mSpeechRecognizer, Intent mSpeechRecognizerIntent){
+
+        textToSpeech = new TTS(context, mSpeechRecognizer, mSpeechRecognizerIntent);
 
     }
 
@@ -67,6 +71,8 @@ public class CommandHandlerManager {
 
         firstWord = stringTokenizer.nextToken();
 
+        isError = false;
+
         if(!isListening){
 
             if(firstWord.equals("marvin")){
@@ -78,6 +84,8 @@ public class CommandHandlerManager {
                 return true;
 
             }
+
+            textToSpeech.speakText(" ");
 
             return false;
 
@@ -94,13 +102,15 @@ public class CommandHandlerManager {
 
         }else {
 
+            boolean isDefault = false;
+
             switch (firstWord) {
 
                 case "abrir":
                     commandHandler = new AbrirAplicacionHandler(command, textToSpeech);
                     if (commandHandler.validateCommand()) {
                         errorCounter = 0;
-                        commandHandler.drive(1, command);
+                        actualStep = commandHandler.drive(1, command);
                     } else
                         wrongCommand("abrir aplicacion");
                     break;
@@ -117,28 +127,29 @@ public class CommandHandlerManager {
                 case "cerrar":
                     if (stringTokenizer.hasMoreTokens()) {
                         secondWord = stringTokenizer.nextToken();
+
                         if (secondWord.equals("sesión")) {
                             commandHandler = new CerrarSesionHandler(command, textToSpeech);
                             if (commandHandler.validateCommand()) {
                                 errorCounter = 0;
-                                commandHandler.drive(1, command);
+                                actualStep = commandHandler.drive(1, command);
                             } else
-                                wrongCommand("cerrar sesion");
+                                wrongCommand("cerrar sesión");
                         } else if (secondWord.equals("cámara")) {
                             commandHandler = new CerrarCamaraHandler(command, textToSpeech);
                             if (commandHandler.validateCommand()) {
                                 errorCounter = 0;
-                                commandHandler.drive(1, command);
+                                actualStep = commandHandler.drive(1, command);
                             } else
-                                wrongCommand("cerrar camara");
+                                wrongCommand("cerrar cámara");
                         } else
-                            wrongCommand("cerrar sesion");
+                            wrongCommand("cerrar sesión");
                     } else
-                        wrongCommand("cerrar sesion");
+                        wrongCommand("cerrar sesión");
                     break;
 
                 case "publicar":
-                    commandHandler = new PublicarEnFacebookHandler(command, textToSpeech, activity);
+                    commandHandler = new PublicarEnFacebookHandler(command, textToSpeech, context);
                     if (commandHandler.validateCommand()) {
                         errorCounter = 0;
                         actualStep = commandHandler.drive(1, command);
@@ -166,7 +177,7 @@ public class CommandHandlerManager {
                             } else
                                 wrongCommand("guardar foto");
                         } else if (secondWord.equals("y")) {
-                            commandHandler = new GuardarYCompartirFotoHandler(command, textToSpeech, this, activity);
+                            commandHandler = new GuardarYCompartirFotoHandler(command, textToSpeech, this, context);
                             if (commandHandler.validateCommand()) {
                                 errorCounter = 0;
                                 actualStep = commandHandler.drive(1, command);
@@ -191,7 +202,7 @@ public class CommandHandlerManager {
                     if (stringTokenizer.hasMoreTokens()) {
                         secondWord = stringTokenizer.nextToken();
                         if (secondWord.equals("foto")) {
-                            commandHandler = new CompartirFotoHandler(command, textToSpeech, this, activity);
+                            commandHandler = new CompartirFotoHandler(command, textToSpeech, this, context);
                             if (commandHandler.validateCommand()) {
                                 errorCounter = 0;
                                 actualStep = commandHandler.drive(1, command);
@@ -216,7 +227,7 @@ public class CommandHandlerManager {
                     if (stringTokenizer.hasMoreTokens()) {
                         secondWord = stringTokenizer.nextToken();
                         if (secondWord.equals("whatsapp")) {
-                            commandHandler = new EnviarWhatsAppHandler(command, textToSpeech, activity);
+                            commandHandler = new EnviarWhatsAppHandler(command, textToSpeech, context);
                             if (commandHandler.validateCommand()) {
                                 errorCounter = 0;
                                 actualStep = commandHandler.drive(1, command);
@@ -268,14 +279,14 @@ public class CommandHandlerManager {
                 case "reproducir":
                     if (stringTokenizer.hasMoreTokens()) {
                         secondWord = stringTokenizer.nextToken();
-                        if (secondWord.equals("musica")) {
+                        if (secondWord.equals("música")) {
                             commandHandler = new ReproducirMusicaHandler(command, textToSpeech);
                             if (commandHandler.validateCommand()) {
                                 errorCounter = 0;
                                 actualStep = commandHandler.drive(1, command);
                             } else
                                 wrongCommand("reproducir música");
-                        } else if (secondWord.equals("cancion")) {
+                        } else if (secondWord.equals("canción")) {
                             commandHandler = new ReproducirCancionHandler(command, textToSpeech);
                             if (commandHandler.validateCommand()) {
                                 errorCounter = 0;
@@ -362,7 +373,7 @@ public class CommandHandlerManager {
                     break;
 
                 case "agregar":
-                    commandHandler = new AgregarEventoHandler(command, textToSpeech, activity);
+                    commandHandler = new AgregarEventoHandler(command, textToSpeech, context);
                     if (commandHandler.validateCommand()) {
                         errorCounter = 0;
                         actualStep = commandHandler.drive(1, command);
@@ -389,29 +400,32 @@ public class CommandHandlerManager {
                     break;
 
                 default:
+                    isDefault = true;
                     wrongCommand("");
                     break;
 
             }
 
-            if (errorCounter >= 3)
+            if (errorCounter >= 3 || (!isError && !isDefault && actualStep == 0))
                 return false;
             else
                 return true;
 
         }
+
     }
 
     public void wrongCommand(String suggestion){
 
-        if(errorCounter == 0 || suggestion == "")
+        if(errorCounter == 0 || (errorCounter == 1 && suggestion.equals("")))
             textToSpeech.speakText("No pude entender el comando ingresado. Repetilo");
         else if(errorCounter == 1)
             textToSpeech.speakText("No pude entender el comando ingresado. Quizás quisiste decir "+suggestion);
         else
-            textToSpeech.speakText("No pude entender el comando ingresado. Consulta la lista de comandos del menú ayuda");
+            textToSpeech.speakText("No pude entender el comando ingresado. Consultá la lista de comandos del menú ayuda y volvé a llamarme por mi nombre");
 
         errorCounter++;
+        isError = true;
 
     }
 

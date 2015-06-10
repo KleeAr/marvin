@@ -91,7 +91,7 @@ public class LoginActivity extends ActionBarActivity {
     }
 
     private void initializeFacebookSdk() {
-        FacebookSdk.sdkInitialize(getApplicationContext());
+/*        FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_login);
         showHashKey(getApplicationContext());
         LoginManager.getInstance().registerCallback(callbackManager,
@@ -111,7 +111,7 @@ public class LoginActivity extends ActionBarActivity {
                     }
                 });
         LoginManager.getInstance().logInWithPublishPermissions(this, Arrays.asList("publish_actions"));
-    }
+*/    }
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {

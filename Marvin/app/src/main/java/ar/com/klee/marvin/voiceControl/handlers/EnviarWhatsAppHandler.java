@@ -1,6 +1,7 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
 import android.app.Activity;
+import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -20,9 +21,9 @@ public class EnviarWhatsAppHandler extends CommandHandler{
     private TTS textToSpeech;
     private WhatsAppService whatsAppService;
 
-    public EnviarWhatsAppHandler(String command, TTS textToSpeech, Activity activity){
+    public EnviarWhatsAppHandler(String command, TTS textToSpeech, Context context){
 
-        whatsAppService =  new WhatsAppService(activity);
+        whatsAppService =  new WhatsAppService(context);
 
         expressionMatcher = new ExpressionMatcher("enviar whatsapp {mensaje}");
 
@@ -73,7 +74,7 @@ public class EnviarWhatsAppHandler extends CommandHandler{
     //CONFIRMA MENSAJE
     public int stepThree(String input){
 
-        if(input.equals("sí")) {
+        if(input.equals("si")) {
             sendWhatsApp(message);
             return 5;
         }

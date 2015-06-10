@@ -13,7 +13,7 @@ public class CerrarSesionHandler extends CommandHandler{
 
     public CerrarSesionHandler(String command, TTS textToSpeech){
 
-        expressionMatcher = new ExpressionMatcher("cerrar sesion");
+        expressionMatcher = new ExpressionMatcher("cerrar sesión");
 
         this.command = command;
 
@@ -27,7 +27,7 @@ public class CerrarSesionHandler extends CommandHandler{
 
     public int drive(int step, String input){
 
-        textToSpeech.speakText("Cerrando sesion. Adios");
+        textToSpeech.speakText("Cerrando sesión. Adios");
 
         //CODIGO PARA CERRAR SESION
 
