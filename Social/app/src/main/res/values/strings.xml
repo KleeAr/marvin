@@ -5,4 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="facebook_app_id">1391887564472051</string>
     <string name="title_activity_publish">PublishActivity</string>
+    <string name="city_name_default">San Justo, BA</string>
+    <string name="day_default_text">viernes</string>
+    <string name="date_default_text">14 de mayo</string>
 </resources>
