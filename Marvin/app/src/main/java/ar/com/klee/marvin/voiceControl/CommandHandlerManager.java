@@ -4,11 +4,14 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.speech.SpeechRecognizer;
 import android.util.Log;
 
 import java.util.StringTokenizer;
 
+import ar.com.klee.marvin.activities.CameraActivity;
 import ar.com.klee.marvin.social.CalendarService;
 import ar.com.klee.marvin.social.FacebookService;
 import ar.com.klee.marvin.social.TwitterService;
@@ -43,8 +46,12 @@ import ar.com.klee.marvin.voiceControl.handlers.SacarFotoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.SiguienteCancionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.TwittearHandler;
 
-public class CommandHandlerManager {
+public class CommandHandlerManager implements Parcelable {
 
+    private final int ACTIVITY_MAIN = 0;
+    private final int ACTIVITY_CAMERA = 1;
+
+    private int actualActivity;
     private int actualStep = 0;
     private int errorCounter = 0;
     private CommandHandler commandHandler;
@@ -52,12 +59,16 @@ public class CommandHandlerManager {
     private TTS textToSpeech;
 
     private Context context;
+    private Activity activity;
 
     private boolean isError;
+    private boolean isPhotoTaken;
 
     CommandHandlerManager(Context context, SpeechRecognizer mSpeechRecognizer, Intent mSpeechRecognizerIntent){
 
         textToSpeech = new TTS(context, mSpeechRecognizer, mSpeechRecognizerIntent);
+
+        actualActivity = ACTIVITY_MAIN;
 
     }
 
@@ -100,14 +111,16 @@ public class CommandHandlerManager {
 
             return true;
 
-        }else {
+        }
+
+        if(actualActivity == ACTIVITY_MAIN) {
 
             boolean isDefault = false;
 
             switch (firstWord) {
 
                 case "abrir":
-                    commandHandler = new AbrirAplicacionHandler(command, textToSpeech);
+                    commandHandler = new AbrirAplicacionHandler(command, textToSpeech, context, this);
                     if (commandHandler.validateCommand()) {
                         errorCounter = 0;
                         actualStep = commandHandler.drive(1, command);
@@ -125,25 +138,10 @@ public class CommandHandlerManager {
                     break;
 
                 case "cerrar":
-                    if (stringTokenizer.hasMoreTokens()) {
-                        secondWord = stringTokenizer.nextToken();
-
-                        if (secondWord.equals("sesión")) {
-                            commandHandler = new CerrarSesionHandler(command, textToSpeech);
-                            if (commandHandler.validateCommand()) {
-                                errorCounter = 0;
-                                actualStep = commandHandler.drive(1, command);
-                            } else
-                                wrongCommand("cerrar sesión");
-                        } else if (secondWord.equals("cámara")) {
-                            commandHandler = new CerrarCamaraHandler(command, textToSpeech);
-                            if (commandHandler.validateCommand()) {
-                                errorCounter = 0;
-                                actualStep = commandHandler.drive(1, command);
-                            } else
-                                wrongCommand("cerrar cámara");
-                        } else
-                            wrongCommand("cerrar sesión");
+                    commandHandler = new CerrarSesionHandler(command, textToSpeech);
+                    if (commandHandler.validateCommand()) {
+                        errorCounter = 0;
+                        actualStep = commandHandler.drive(1, command);
                     } else
                         wrongCommand("cerrar sesión");
                     break;
@@ -155,63 +153,6 @@ public class CommandHandlerManager {
                         actualStep = commandHandler.drive(1, command);
                     } else
                         wrongCommand("publicar en facebook mensaje");
-                    break;
-
-                case "sacar":
-                    commandHandler = new SacarFotoHandler(command, textToSpeech);
-                    if (commandHandler.validateCommand()) {
-                        errorCounter = 0;
-                        actualStep = commandHandler.drive(1, command);
-                    } else
-                        wrongCommand("sacar foto");
-                    break;
-
-                case "guardar":
-                    if (stringTokenizer.hasMoreTokens()) {
-                        secondWord = stringTokenizer.nextToken();
-                        if (secondWord.equals("foto")) {
-                            commandHandler = new GuardarFotoHandler(command, textToSpeech);
-                            if (commandHandler.validateCommand()) {
-                                errorCounter = 0;
-                                actualStep = commandHandler.drive(1, command);
-                            } else
-                                wrongCommand("guardar foto");
-                        } else if (secondWord.equals("y")) {
-                            commandHandler = new GuardarYCompartirFotoHandler(command, textToSpeech, this, context);
-                            if (commandHandler.validateCommand()) {
-                                errorCounter = 0;
-                                actualStep = commandHandler.drive(1, command);
-                            } else
-                                wrongCommand("guardar foto");
-                        } else
-                            wrongCommand("guardar foto");
-                    } else
-                        wrongCommand("guardar foto");
-                    break;
-
-                case "cancelar":
-                    commandHandler = new CancelarFotoHandler(command, textToSpeech);
-                    if (commandHandler.validateCommand()) {
-                        errorCounter = 0;
-                        actualStep = commandHandler.drive(1, command);
-                    } else
-                        wrongCommand("cancelar foto");
-                    break;
-
-                case "compartir":
-                    if (stringTokenizer.hasMoreTokens()) {
-                        secondWord = stringTokenizer.nextToken();
-                        if (secondWord.equals("foto")) {
-                            commandHandler = new CompartirFotoHandler(command, textToSpeech, this, context);
-                            if (commandHandler.validateCommand()) {
-                                errorCounter = 0;
-                                actualStep = commandHandler.drive(1, command);
-                            } else
-                                wrongCommand("compartir foto");
-                        } else
-                            wrongCommand("compartir foto");
-                    } else
-                        wrongCommand("compartir foto");
                     break;
 
                 case "twittear":
@@ -411,7 +352,94 @@ public class CommandHandlerManager {
             else
                 return true;
 
+        } else if(actualActivity == ACTIVITY_CAMERA){
+
+            boolean isDefault = false;
+
+            switch (firstWord) {
+
+                case "cerrar":
+                    commandHandler = new CerrarCamaraHandler(command, textToSpeech);
+                    if (commandHandler.validateCommand()) {
+                        errorCounter = 0;
+                        actualStep = commandHandler.drive(1, command);
+                    } else
+                        wrongCommand("cerrar cámara");
+                    break;
+
+                case "sacar":
+                    commandHandler = new SacarFotoHandler(command, textToSpeech, (CameraActivity) activity);
+                    if (commandHandler.validateCommand()) {
+                        errorCounter = 0;
+                        actualStep = commandHandler.drive(1, command);
+                    } else
+                        wrongCommand("sacar foto");
+                    break;
+
+                case "guardar":
+                    if (stringTokenizer.hasMoreTokens()) {
+                        secondWord = stringTokenizer.nextToken();
+                        if (secondWord.equals("foto")) {
+                            commandHandler = new GuardarFotoHandler(command, textToSpeech);
+                            if (commandHandler.validateCommand()) {
+                                errorCounter = 0;
+                                actualStep = commandHandler.drive(1, command);
+                            } else
+                                wrongCommand("guardar foto");
+                        } else if (secondWord.equals("y")) {
+                            commandHandler = new GuardarYCompartirFotoHandler(command, textToSpeech, this, context);
+                            if (commandHandler.validateCommand()) {
+                                errorCounter = 0;
+                                actualStep = commandHandler.drive(1, command);
+                            } else
+                                wrongCommand("guardar foto");
+                        } else
+                            wrongCommand("guardar foto");
+                    } else
+                        wrongCommand("guardar foto");
+                    break;
+
+                case "cancelar":
+                    commandHandler = new CancelarFotoHandler(command, textToSpeech);
+                    if (commandHandler.validateCommand()) {
+                        errorCounter = 0;
+                        actualStep = commandHandler.drive(1, command);
+                    } else
+                        wrongCommand("cancelar foto");
+                    break;
+
+                case "compartir":
+                    commandHandler = new CompartirFotoHandler(command, textToSpeech, this, context);
+                    if (commandHandler.validateCommand()) {
+                        errorCounter = 0;
+                        actualStep = commandHandler.drive(1, command);
+                    } else
+                        wrongCommand("compartir foto");
+                    break;
+
+                case "sms":
+                    commandHandler = new SMSDeEmergenciaHandler(command, textToSpeech);
+                    if (commandHandler.validateCommand()) {
+                        errorCounter = 0;
+                        actualStep = commandHandler.drive(1, command);
+                    } else
+                        wrongCommand("sms de emergencia");
+                    break;
+
+                default:
+                    isDefault = true;
+                    wrongCommand("");
+                    break;
+
+            }
+
+            if (errorCounter >= 3 || (!isError && !isDefault && actualStep == 0))
+                return false;
+            else
+                return true;
         }
+
+        return false;
 
     }
 
@@ -433,6 +461,48 @@ public class CommandHandlerManager {
 
         this.commandHandler = commandHandler;
 
+    }
+
+    public void defineActivity(int activityType, Activity activity){
+
+        actualActivity = activityType;
+
+        this.activity = activity;
+
+        if(actualActivity == ACTIVITY_CAMERA)
+            isPhotoTaken = false;
+
+
+    }
+
+    private int mData;
+
+    /* everything below here is for implementing Parcelable */
+
+    // 99.9% of the time you can just ignore this
+    public int describeContents() {
+        return 0;
+    }
+
+    // write your object's data to the passed-in Parcel
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeInt(mData);
+    }
+
+    // this is used to regenerate your object. All Parcelables must have a CREATOR that implements these two methods
+    public static final Parcelable.Creator<CommandHandlerManager> CREATOR = new Parcelable.Creator<CommandHandlerManager>() {
+        public CommandHandlerManager createFromParcel(Parcel in) {
+            return new CommandHandlerManager(in);
+        }
+
+        public CommandHandlerManager[] newArray(int size) {
+            return new CommandHandlerManager[size];
+        }
+    };
+
+    // example constructor that takes a Parcel and gives you an object populated with it's values
+    private CommandHandlerManager(Parcel in) {
+        mData = in.readInt();
     }
 
 }

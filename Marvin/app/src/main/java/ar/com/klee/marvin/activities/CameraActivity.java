@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -30,6 +31,7 @@ import android.widget.Toast;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.camera.CameraDialog;
 import ar.com.klee.marvin.camera.CameraPreview;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 
 public class CameraActivity extends ActionBarActivity {
 
@@ -42,6 +44,8 @@ public class CameraActivity extends ActionBarActivity {
     private boolean cameraFront = false;
     private byte[] datos;
     private File pictureFile;
+
+    private CommandHandlerManager commandHandlerManager;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +63,11 @@ public class CameraActivity extends ActionBarActivity {
         share.setVisibility(View.INVISIBLE);
         saveAndShare.setVisibility(View.INVISIBLE);
         cancel.setVisibility(View.INVISIBLE);
+
+        Intent intent = getIntent();
+        commandHandlerManager = (CommandHandlerManager) intent.getParcelableExtra("CommandHandlerManager");
+
+        commandHandlerManager.defineActivity(1,this);
 
         initialize();
     }
@@ -306,6 +315,12 @@ public class CameraActivity extends ActionBarActivity {
         }
     };
 
+    public void takePicture(){
+
+        mCamera.takePicture(null, null, mPicture);
+
+    }
+
     //make picture and save to a folder
     private static File getOutputMediaFile() {
         //make a new file directory inside the "sdcard" folder
@@ -323,7 +338,7 @@ public class CameraActivity extends ActionBarActivity {
         String timeStamp = new SimpleDateFormat("yyMMdd_HHmmss").format(new Date());
         File mediaFile;
         //and make a media file:
-        mediaFile = new File(mediaStorageDir.getPath() + File.separator + "MARVIN_" + timeStamp + ".jpg");
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator + "MV_" + timeStamp + ".jpg");
 
         return mediaFile;
     }
