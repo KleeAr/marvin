@@ -2,6 +2,7 @@ package ar.com.klee.marvin.camera;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -15,11 +16,17 @@ public class CameraDialog extends Dialog implements
 
     public Activity activity;
     public Button fcb, twt, ins;
+    private Camera camera;
+    private CameraPreview cameraPreview;
 
-    public CameraDialog(Activity activity) {
+    public CameraDialog(Activity activity, CameraPreview mPreview, Camera mCamera) {
         super(activity);
         // TODO Auto-generated constructor stub
         this.activity = activity;
+
+        camera = mCamera;
+        cameraPreview = mPreview;
+
     }
 
     @Override
@@ -43,18 +50,51 @@ public class CameraDialog extends Dialog implements
 
         switch (v.getId()) {
             case R.id.btn_fcb:
-                showToast("Imagen compartida en Facebook");
+                facebook();
                 break;
             case R.id.btn_twt:
-                showToast("Imagen compartida en Twitter");
+                twitter();
                 break;
             case R.id.btn_ins:
-                showToast("Imagen compartida en Instagram");
+                instagram();
                 break;
             default:
                 break;
         }
+
+    }
+
+    public void facebook(){
+
+        showToast("Imagen compartida en Facebook");
+
+        //refresh camera to continue preview
+        cameraPreview.refreshCamera(camera);
+
         dismiss();
+
+    }
+
+    public void twitter(){
+
+        showToast("Imagen compartida en Twitter");
+
+        //refresh camera to continue preview
+        cameraPreview.refreshCamera(camera);
+
+        dismiss();
+
+    }
+
+    public void instagram(){
+
+        showToast("Imagen compartida en Instagram");
+
+        //refresh camera to continue preview
+        cameraPreview.refreshCamera(camera);
+
+        dismiss();
+
     }
 
     public void showToast(String msj){

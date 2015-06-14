@@ -32,6 +32,7 @@ import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.camera.CameraDialog;
 import ar.com.klee.marvin.camera.CameraPreview;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
+import ar.com.klee.marvin.voiceControl.Helper;
 
 public class CameraActivity extends ActionBarActivity {
 
@@ -46,6 +47,7 @@ public class CameraActivity extends ActionBarActivity {
     private File pictureFile;
 
     private CommandHandlerManager commandHandlerManager;
+    private CameraDialog cameraDialog;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,12 +66,12 @@ public class CameraActivity extends ActionBarActivity {
         saveAndShare.setVisibility(View.INVISIBLE);
         cancel.setVisibility(View.INVISIBLE);
 
-        Intent intent = getIntent();
-        commandHandlerManager = (CommandHandlerManager) intent.getParcelableExtra("CommandHandlerManager");
+        commandHandlerManager = Helper.commandHandlerManager;
 
-        commandHandlerManager.defineActivity(1,this);
+        commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_CAMERA,this);
 
         initialize();
+
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -279,14 +281,24 @@ public class CameraActivity extends ActionBarActivity {
         cancel.setVisibility(View.INVISIBLE);
         capture.setVisibility(View.VISIBLE);
 
+        commandHandlerManager.setIsPhotoTaken(false);
+
     }
 
-    public void share(View v){
+    public void save(){
 
-        CameraDialog cameraDialog = new CameraDialog(this);
-        cameraDialog.show();
+        try {
+            //write the file
+            FileOutputStream fos = new FileOutputStream(pictureFile);
+            fos.write(datos);
+            fos.close();
+            Toast toast = Toast.makeText(myContext, "Imagen guardada: " + pictureFile.getName(), Toast.LENGTH_LONG);
+            toast.show();
 
-        //refresh camera to continue preview
+        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
+        }
+
         mPreview.refreshCamera(mCamera);
 
         save.setVisibility(View.INVISIBLE);
@@ -294,6 +306,51 @@ public class CameraActivity extends ActionBarActivity {
         share.setVisibility(View.INVISIBLE);
         cancel.setVisibility(View.INVISIBLE);
         capture.setVisibility(View.VISIBLE);
+
+    }
+
+    public void share(View v){
+
+        cameraDialog = new CameraDialog(this, mPreview, mCamera);
+        cameraDialog.show();
+
+        save.setVisibility(View.INVISIBLE);
+        saveAndShare.setVisibility(View.INVISIBLE);
+        share.setVisibility(View.INVISIBLE);
+        cancel.setVisibility(View.INVISIBLE);
+        capture.setVisibility(View.VISIBLE);
+
+        commandHandlerManager.setIsPhotoTaken(false);
+
+    }
+    public void share(){
+
+        cameraDialog = new CameraDialog(this, mPreview, mCamera);
+        cameraDialog.show();
+
+        save.setVisibility(View.INVISIBLE);
+        saveAndShare.setVisibility(View.INVISIBLE);
+        share.setVisibility(View.INVISIBLE);
+        cancel.setVisibility(View.INVISIBLE);
+        capture.setVisibility(View.VISIBLE);
+
+    }
+
+    public void shareInFacebook(){
+
+        cameraDialog.facebook();
+
+    }
+
+    public void shareInTwitter(){
+
+        cameraDialog.twitter();
+
+    }
+
+    public void shareInInstagram(){
+
+        cameraDialog.instagram();
 
     }
 
@@ -307,10 +364,26 @@ public class CameraActivity extends ActionBarActivity {
         cancel.setVisibility(View.INVISIBLE);
         capture.setVisibility(View.VISIBLE);
 
+        commandHandlerManager.setIsPhotoTaken(false);
+
+    }
+    public void cancel(){
+
+        mPreview.refreshCamera(mCamera);
+
+        save.setVisibility(View.INVISIBLE);
+        saveAndShare.setVisibility(View.INVISIBLE);
+        share.setVisibility(View.INVISIBLE);
+        cancel.setVisibility(View.INVISIBLE);
+        capture.setVisibility(View.VISIBLE);
+
     }
 
     OnClickListener captrureListener = new OnClickListener() {
         public void onClick(View v) {
+
+            commandHandlerManager.setIsPhotoTaken(true);
+
             mCamera.takePicture(null, null, mPicture);
         }
     };

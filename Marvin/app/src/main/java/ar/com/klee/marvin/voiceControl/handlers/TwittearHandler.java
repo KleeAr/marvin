@@ -114,7 +114,6 @@ public class TwittearHandler extends CommandHandler{
         }
 
         if(input.equals("no")){
-            textToSpeech.speakText("Publicando mensaje en Twitter");
             postTweet(message);
             return 0;
         }
@@ -175,7 +174,6 @@ public class TwittearHandler extends CommandHandler{
         }
 
         if(input.equals("no")){
-            textToSpeech.speakText("Publicando el mensaje en Twitter");
             postTweet(message);
             return 0;
         }
@@ -218,7 +216,17 @@ public class TwittearHandler extends CommandHandler{
 
         }
 
-        TwitterService.getInstance().postTweet(textToPublish);
+        try {
+
+            TwitterService.getInstance().postTweet(textToPublish);
+
+            textToSpeech.speakText("El mensaje fue publicado");
+
+        }catch(IllegalStateException e){
+
+            textToSpeech.speakText("No agregaste una cuenta de Twitter en tu perfil");
+
+        }
 
     }
 }

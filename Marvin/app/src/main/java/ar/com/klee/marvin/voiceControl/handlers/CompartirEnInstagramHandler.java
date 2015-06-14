@@ -2,6 +2,7 @@ package ar.com.klee.marvin.voiceControl.handlers;
 
 import java.util.ArrayList;
 
+import ar.com.klee.marvin.activities.CameraActivity;
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.social.TwitterService;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -13,8 +14,9 @@ public class CompartirEnInstagramHandler extends CommandHandler{
     private String message;
     private ArrayList<String> hashtags;
     private TTS textToSpeech;
+    private CameraActivity activity;
 
-    public CompartirEnInstagramHandler(String command, TTS textToSpeech){
+    public CompartirEnInstagramHandler(String command, TTS textToSpeech, CameraActivity activity){
 
         expressionMatcher = new ExpressionMatcher("compartir en instagram");
 
@@ -22,6 +24,8 @@ public class CompartirEnInstagramHandler extends CommandHandler{
         this.textToSpeech = textToSpeech;
 
         hashtags = new ArrayList<String>();
+
+        this.activity = activity;
 
     }
 
@@ -105,6 +109,8 @@ public class CompartirEnInstagramHandler extends CommandHandler{
         if(input.equals("no")){
             textToSpeech.speakText("Publicando la foto en Instagram");
 
+            activity.shareInInstagram();
+
             return 0;
         }
 
@@ -166,6 +172,7 @@ public class CompartirEnInstagramHandler extends CommandHandler{
         if(input.equals("no")){
             textToSpeech.speakText("Publicando la foto en Instagram");
 
+            activity.shareInInstagram();
 
             return 0;
         }

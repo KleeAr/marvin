@@ -1,5 +1,6 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
+import ar.com.klee.marvin.activities.CameraActivity;
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.TTS;
 
@@ -8,14 +9,17 @@ public class GuardarFotoHandler extends CommandHandler{
     private ExpressionMatcher expressionMatcher;
     private String command;
     private TTS textToSpeech;
+    private CameraActivity cameraActivity;
 
-    public GuardarFotoHandler(String command, TTS textToSpeech){
+    public GuardarFotoHandler(String command, TTS textToSpeech, CameraActivity cameraActivity){
 
         expressionMatcher = new ExpressionMatcher("guardar foto");
 
         this.command = command;
 
         this.textToSpeech = textToSpeech;
+
+        this.cameraActivity = cameraActivity;
 
     }
 
@@ -27,7 +31,7 @@ public class GuardarFotoHandler extends CommandHandler{
 
         textToSpeech.speakText("Guardando foto");
 
-        //CODIGO PARA GUARDAR FOTO
+        cameraActivity.save();
 
         return 0;
 

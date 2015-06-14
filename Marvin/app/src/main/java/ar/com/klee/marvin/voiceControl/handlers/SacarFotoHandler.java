@@ -31,7 +31,6 @@ public class SacarFotoHandler extends CommandHandler{
 
         textToSpeech.speakText("Sacando foto");
 
-        //CODIGO PARA SACAR FOTO
         cameraActivity.takePicture();
 
         return 0;

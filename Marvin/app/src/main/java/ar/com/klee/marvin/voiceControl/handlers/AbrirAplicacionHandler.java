@@ -8,6 +8,7 @@ import java.util.Map;
 import ar.com.klee.marvin.activities.CameraActivity;
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
+import ar.com.klee.marvin.voiceControl.Helper;
 import ar.com.klee.marvin.voiceControl.TTS;
 
 public class AbrirAplicacionHandler extends CommandHandler{
@@ -49,7 +50,7 @@ public class AbrirAplicacionHandler extends CommandHandler{
 
         if(app.equals("cámara")) {
             Intent intent = new Intent(context, CameraActivity.class);
-            intent.putExtra("commandHandlerManager",commandHandlerManager);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
         }
 

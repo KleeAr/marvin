@@ -5,6 +5,7 @@ import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.social.FacebookService;
@@ -16,7 +17,6 @@ public class PublicarEnFacebookHandler extends CommandHandler{
     private String command;
     private String message;
     private boolean setMessage = false;
-    private ArrayList<String> etiquetados;
     private ArrayList<String> hashtags;
     private TTS textToSpeech;
 
@@ -30,7 +30,6 @@ public class PublicarEnFacebookHandler extends CommandHandler{
         facebookService = new FacebookService(context);
         this.textToSpeech = textToSpeech;
 
-        etiquetados = new ArrayList<String>();
         hashtags = new ArrayList<String>();
 
     }
@@ -64,15 +63,6 @@ public class PublicarEnFacebookHandler extends CommandHandler{
                 return stepNine(input);
             case 11:
                 return stepEleven(input);
-            case 13:
-                return stepThirteen(input);
-            case 15:
-                return stepFifteen(input);
-            case 17:
-                return stepSeventeen(input);
-            case 19:
-                return stepNineteen(input);
-
         }
 
         return 0;
@@ -94,7 +84,7 @@ public class PublicarEnFacebookHandler extends CommandHandler{
     public int stepThree(String input){
 
         if(input.equals("si")) {
-            textToSpeech.speakText("¿Querés etiquetar a alguien?");
+            textToSpeech.speakText("¿Querés agregar un hashtag?");
             return 5;
         }
 
@@ -115,99 +105,12 @@ public class PublicarEnFacebookHandler extends CommandHandler{
 
     }
 
-    //INDICA SI QUIERE ETIQUETAR CONTACTOS
+    //INDICA SI SE QUIERE AGREGAR UN HASHTAG
     public int stepFive(String input){
 
         if(input.equals("si")) {
-            textToSpeech.speakText("Indicá a qué contacto querés etiquetar");
-            return 7;
-        }
-
-        if(input.equals("cancelar")) {
-            textToSpeech.speakText("Cancelando publicación");
-            return 0;
-        }
-
-        if(input.equals("no")){
-            textToSpeech.speakText("¿Querés agregar un hashtag?");
-            return 13;
-        }
-
-        textToSpeech.speakText("Debe indicar sí, no o cancelar");
-
-        return 5;
-
-    }
-
-    //INDICA CONTACTO A ETIQUETAR
-    public int stepSeven(String input){
-
-        /*
-        VALIDAR CONTACTO INGRESADO
-         */
-
-        textToSpeech.speakText("¿Querés etiquetar a "+input+"?");
-
-        etiquetados.add(input);
-
-        return 9;
-    }
-
-    //CONFIRMA ETIQUETACIÓN
-    public int stepNine(String input){
-
-        if(input.equals("si")) {
-            textToSpeech.speakText("¿Querés etiquetar a alguien más?");
-            return 11;
-        }
-
-        if(input.equals("cancelar")) {
-            textToSpeech.speakText("Cancelando publicación");
-            return 0;
-        }
-
-        if(input.equals("no")){
-            textToSpeech.speakText("Indicá a qué contacto querés etiquetar");
-            etiquetados.remove(etiquetados.size()-1);
-            return 7;
-        }
-
-        textToSpeech.speakText("Debe indicar sí, no o cancelar");
-
-        return 9;
-
-    }
-
-    //INDICA SI SE QUIERE ETIQUETAR A ALGUIEN MÁS
-    public int stepEleven(String input){
-
-        if(input.equals("si")) {
-            textToSpeech.speakText("Indicá a qué contacto querés etiquetar");
-            return 7;
-        }
-
-        if(input.equals("cancelar")) {
-            textToSpeech.speakText("Cancelando publicación");
-            return 0;
-        }
-
-        if(input.equals("no")){
-            textToSpeech.speakText("¿Querés agregar un hashtag?");
-            return 13;
-        }
-
-        textToSpeech.speakText("Debe indicar sí, no o cancelar");
-
-        return 11;
-
-    }
-
-    //INDICA SI SE QUIERE AGREGAR UN HASHTAG
-    public int stepThirteen(String input){
-
-        if(input.equals("si")) {
             textToSpeech.speakText("¿Qué hashtag querés agregar?");
-            return 15;
+            return 7;
         }
 
         if(input.equals("cancelar")) {
@@ -223,27 +126,27 @@ public class PublicarEnFacebookHandler extends CommandHandler{
 
         textToSpeech.speakText("Debe indicar sí, no o cancelar");
 
-        return 11;
+        return 5;
 
     }
 
     //INGRESA HASHTAG
-    public int stepFifteen(String input){
+    public int stepSeven(String input){
 
         textToSpeech.speakText("¿Querés agregar el hashtag "+input+"?");
 
         hashtags.add(input);
 
-        return 17;
+        return 9;
 
     }
 
     //CONFIRMA HASHTAG
-    public int stepSeventeen(String input){
+    public int stepNine(String input){
 
         if(input.equals("si")) {
             textToSpeech.speakText("¿Querés agregar otro hashtag?");
-            return 19;
+            return 11;
         }
 
         if(input.equals("cancelar")) {
@@ -254,21 +157,21 @@ public class PublicarEnFacebookHandler extends CommandHandler{
         if(input.equals("no")){
             textToSpeech.speakText("¿Qué hashtag querés agregar?");
             hashtags.remove(hashtags.size()-1);
-            return 15;
+            return 7;
         }
 
         textToSpeech.speakText("Debe indicar sí, no o cancelar");
 
-        return 17;
+        return 9;
 
     }
 
     //INDICA SI SE QUIERE AGREGAR OTRO HASHTAG
-    public int stepNineteen(String input){
+    public int stepEleven(String input){
 
         if(input.equals("si")) {
             textToSpeech.speakText("¿Qué hashtag querés agregar?");
-            return 15;
+            return 7;
         }
 
         if(input.equals("cancelar")) {
@@ -289,6 +192,35 @@ public class PublicarEnFacebookHandler extends CommandHandler{
     }
 
     public void publishOnFacebook(String textToPublish) {
+
+        int i=0;
+
+        while(i != hashtags.size()){
+
+            textToPublish = textToPublish + " #";
+
+            String hashtag = hashtags.get(i).toLowerCase();
+
+            String word;
+            Character firstCharacter, newFirstCharacter;
+
+            StringTokenizer stringTokenizer = new StringTokenizer(hashtag);
+
+            while(stringTokenizer.hasMoreTokens()){
+
+                word = stringTokenizer.nextToken();
+
+                firstCharacter = word.charAt(0);
+                newFirstCharacter = Character.toUpperCase(firstCharacter);
+                word = word.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
+
+                textToPublish = textToPublish + word;
+
+            }
+
+            i++;
+
+        }
 
         facebookService.publishText(textToPublish);
 

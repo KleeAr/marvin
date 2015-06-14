@@ -4,6 +4,7 @@ import android.app.Activity;
 
 import java.util.ArrayList;
 
+import ar.com.klee.marvin.activities.CameraActivity;
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.social.FacebookService;
 import ar.com.klee.marvin.social.TwitterService;
@@ -16,8 +17,9 @@ public class CompartirEnTwitterHandler extends CommandHandler{
     private String message;
     private ArrayList<String> hashtags;
     private TTS textToSpeech;
+    private CameraActivity activity;
 
-    public CompartirEnTwitterHandler(String command, TTS textToSpeech){
+    public CompartirEnTwitterHandler(String command, TTS textToSpeech, CameraActivity activity){
 
         expressionMatcher = new ExpressionMatcher("compartir en twitter");
 
@@ -25,6 +27,8 @@ public class CompartirEnTwitterHandler extends CommandHandler{
         this.textToSpeech = textToSpeech;
 
         hashtags = new ArrayList<String>();
+
+        this.activity = activity;
 
     }
 
@@ -107,7 +111,9 @@ public class CompartirEnTwitterHandler extends CommandHandler{
 
         if(input.equals("no")){
             textToSpeech.speakText("Publicando la foto en Twitter");
-            postTweet(message);
+
+            activity.shareInTwitter();
+
             return 0;
         }
 
@@ -168,7 +174,9 @@ public class CompartirEnTwitterHandler extends CommandHandler{
 
         if(input.equals("no")){
             textToSpeech.speakText("Publicando la foto en Twitter");
-            postTweet(message);
+
+            activity.shareInTwitter();
+
             return 0;
         }
 
@@ -178,11 +186,5 @@ public class CompartirEnTwitterHandler extends CommandHandler{
 
     }
 
-
-    public void postTweet(String textToPublish) {
-
-        TwitterService.getInstance().postTweet(textToPublish);
-
-    }
 }
 
