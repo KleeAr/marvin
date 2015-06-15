@@ -72,7 +72,7 @@ public class PublicarEnFacebookHandler extends CommandHandler{
     //PRONUNCIA COMANDO
     public int stepOne(){
 
-        textToSpeech.speakText("¿Querés publicar " + message + " en el muro?");
+        textToSpeech.speakText("¿Querés publicar en el muro " + message + " ?");
 
         setMessage = false;
 
@@ -193,6 +193,12 @@ public class PublicarEnFacebookHandler extends CommandHandler{
 
     public void publishOnFacebook(String textToPublish) {
 
+        Character firstCharacter, newFirstCharacter;
+
+        firstCharacter = textToPublish.charAt(0);
+        newFirstCharacter = Character.toUpperCase(firstCharacter);
+        textToPublish = textToPublish.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
+
         int i=0;
 
         while(i != hashtags.size()){
@@ -202,7 +208,6 @@ public class PublicarEnFacebookHandler extends CommandHandler{
             String hashtag = hashtags.get(i).toLowerCase();
 
             String word;
-            Character firstCharacter, newFirstCharacter;
 
             StringTokenizer stringTokenizer = new StringTokenizer(hashtag);
 

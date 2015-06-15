@@ -67,7 +67,7 @@ public class TwittearHandler extends CommandHandler{
     //PRONUNCIA MENSAJE
     public int stepOne(){
 
-        textToSpeech.speakText("¿Querés publicar el mensaje " + message + " en Twitter?");
+        textToSpeech.speakText("¿Querés publicar en Twitter el mensaje " + message + " ?");
 
         setMessage = false;
 
@@ -89,7 +89,7 @@ public class TwittearHandler extends CommandHandler{
         }
 
         if(input.equals("no")){
-            textToSpeech.speakText("¿Qué mensaje deseás publicar junto al mensaje?");
+            textToSpeech.speakText("¿Qué mensaje deseás publicar?");
             setMessage = true;
             return 1;
         }
@@ -187,6 +187,12 @@ public class TwittearHandler extends CommandHandler{
 
     public void postTweet(String textToPublish) {
 
+        Character firstCharacter, newFirstCharacter;
+
+        firstCharacter = textToPublish.charAt(0);
+        newFirstCharacter = Character.toUpperCase(firstCharacter);
+        textToPublish = textToPublish.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
+
         int i=0;
 
         while(i != hashtags.size()){
@@ -196,7 +202,6 @@ public class TwittearHandler extends CommandHandler{
             String hashtag = hashtags.get(i).toLowerCase();
 
             String word;
-            Character firstCharacter, newFirstCharacter;
 
             StringTokenizer stringTokenizer = new StringTokenizer(hashtag);
 

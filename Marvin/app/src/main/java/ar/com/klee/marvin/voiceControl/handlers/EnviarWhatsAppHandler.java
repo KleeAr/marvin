@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
+import ar.com.klee.marvin.expressions.exceptions.ExpressionMatcherException;
 import ar.com.klee.marvin.social.TwitterService;
 import ar.com.klee.marvin.social.WhatsAppService;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -34,9 +35,12 @@ public class EnviarWhatsAppHandler extends CommandHandler{
 
     public boolean validateCommand(){
 
-        Map<String, String> values = expressionMatcher.getValuesFromExpression(command);
-
-        message = values.get("mensaje");
+        try {
+            Map<String, String> values = expressionMatcher.getValuesFromExpression(command);
+            message = values.get("mensaje");
+        }catch(ExpressionMatcherException e){
+            return false;
+        }
 
         return expressionMatcher.matches(command);
 
@@ -76,7 +80,7 @@ public class EnviarWhatsAppHandler extends CommandHandler{
 
         if(input.equals("si")) {
             sendWhatsApp(message);
-            return 5;
+            return 0;
         }
 
         if(input.equals("cancelar")) {
@@ -85,7 +89,7 @@ public class EnviarWhatsAppHandler extends CommandHandler{
         }
 
         if(input.equals("no")){
-            textToSpeech.speakText("¿Qué mensaje deseás publicar junto al mensaje?");
+            textToSpeech.speakText("¿Qué mensaje deseás enviar?");
             setMessage = true;
             return 1;
         }
@@ -98,7 +102,13 @@ public class EnviarWhatsAppHandler extends CommandHandler{
 
     public void sendWhatsApp(String textToPublish) {
 
-        textToSpeech.speakText("Mensaje configurado. Seleccioná el contacto al que querés enviarlo");
+        Character firstCharacter, newFirstCharacter;
+
+        firstCharacter = textToPublish.charAt(0);
+        newFirstCharacter = Character.toUpperCase(firstCharacter);
+        textToPublish = textToPublish.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
+
+        textToSpeech.speakText("Seleccioná el contacto y presioná dos veces atrás para volver a la aplicación");
 
         whatsAppService.sendWhatsApp(textToPublish);
 

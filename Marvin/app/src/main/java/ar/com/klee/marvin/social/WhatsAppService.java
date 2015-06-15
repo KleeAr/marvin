@@ -31,6 +31,7 @@ public class WhatsAppService {
             sendIntent.setType("text/plain");
             PackageInfo info = context.getPackageManager().getPackageInfo("com.whatsapp", PackageManager.GET_META_DATA);
             sendIntent.setPackage(info.packageName);
+            sendIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(sendIntent);
 
         }catch (PackageManager.NameNotFoundException e) {
