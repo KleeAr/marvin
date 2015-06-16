@@ -4,7 +4,6 @@ import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.StringTokenizer;
 
 import ar.com.klee.marvin.social.FacebookService;
@@ -15,6 +14,7 @@ import ar.com.klee.marvin.voiceControl.TTS;
 public class PublicarEnFacebookHandler extends CommandHandler{
 
     private static final String FACEBOOK_HASHTAGS = "FACEBOOK_HASHTAGS";
+    public static final String MENSAJE = "mensaje";
 
     private FacebookService facebookService;
 
@@ -27,13 +27,9 @@ public class PublicarEnFacebookHandler extends CommandHandler{
     @Override
     public CommandHandlerContext drive(CommandHandlerContext currentContext){
 
-        Map<String, String> values = getExpressionMatcher().getValuesFromExpression(currentContext.get(COMMAND, String.class));
-
-        currentContext.put(MESSAGE, values.get("mensaje"));
-
         Boolean setMessage = currentContext.get(SET_MESSAGE, Boolean.class);
-        String input = currentContext.get(INPUT, String.class);
-        if(setMessage != null && setMessage) {
+        String input = currentContext.get(COMMAND, String.class);
+        if(setMessage) {
             currentContext.put(MESSAGE, input);
         }
 
@@ -60,21 +56,25 @@ public class PublicarEnFacebookHandler extends CommandHandler{
 
     }
 
+    @Override
+    protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
+        commandHandlerContext.put(SET_MESSAGE, false);
+        commandHandlerContext.put(MESSAGE, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.get(COMMAND, String.class)).get(MENSAJE));
+    }
+
     //PRONUNCIA COMANDO
     public CommandHandlerContext stepOne(CommandHandlerContext currentContext){
-
-        getTextToSpeech().speakText("¿Querés publicar en el muro " + currentContext.get(INPUT, String.class) + " ?");
-
+        getTextToSpeech().speakText("¿Querés publicar en el muro " + currentContext.get(COMMAND, String.class) + " ?");
         currentContext.put(SET_MESSAGE, false);
         currentContext.put(STEP, 3);
+        currentContext.put(FACEBOOK_HASHTAGS, new ArrayList<String>());
         return currentContext;
-
     }
 
     //CONFIRMA MENSAJE
     public CommandHandlerContext stepThree(CommandHandlerContext currentContext){
 
-        String input = currentContext.get(INPUT, String.class);
+        String input = currentContext.get(COMMAND, String.class);
 
         if(input.equals("si")) {
             getTextToSpeech().speakText("¿Querés agregar un hashtag?");
@@ -104,7 +104,7 @@ public class PublicarEnFacebookHandler extends CommandHandler{
     //INDICA SI SE QUIERE AGREGAR UN HASHTAG
     public CommandHandlerContext stepFive(CommandHandlerContext currentContext){
 
-        String input = currentContext.get(INPUT, String.class);
+        String input = currentContext.get(COMMAND, String.class);
         if(input.equals("si")) {
             getTextToSpeech().speakText("¿Qué hashtag querés agregar?");
             currentContext.put(STEP, 7);
@@ -131,13 +131,9 @@ public class PublicarEnFacebookHandler extends CommandHandler{
 
     //INGRESA HASHTAG
     public CommandHandlerContext stepSeven(CommandHandlerContext currentContext){
-        String input = currentContext.get(INPUT, String.class);
+        String input = currentContext.get(COMMAND, String.class);
         getTextToSpeech().speakText("¿Querés agregar el hashtag " + input + "?");
 
-        if(!currentContext.containsKey(FACEBOOK_HASHTAGS)) {
-            List<String> hashtags = new ArrayList<>();
-            currentContext.put(FACEBOOK_HASHTAGS, hashtags);
-        }
         List<String> hashtags = currentContext.get(FACEBOOK_HASHTAGS, List.class);
         hashtags.add(input);
 
@@ -148,7 +144,7 @@ public class PublicarEnFacebookHandler extends CommandHandler{
     //CONFIRMA HASHTAG
     public CommandHandlerContext stepNine(CommandHandlerContext currentContext){
 
-        String input = currentContext.get(INPUT, String.class);
+        String input = currentContext.get(COMMAND, String.class);
         if(input.equals("si")) {
             getTextToSpeech().speakText("¿Querés agregar otro hashtag?");
             currentContext.put(STEP, 11);
@@ -180,7 +176,7 @@ public class PublicarEnFacebookHandler extends CommandHandler{
     //INDICA SI SE QUIERE AGREGAR OTRO HASHTAG
     public CommandHandlerContext stepEleven(CommandHandlerContext currentContext){
 
-        String input = currentContext.get(INPUT, String.class);
+        String input = currentContext.get(COMMAND, String.class);
         if(input.equals("si")) {
             getTextToSpeech().speakText("¿Qué hashtag querés agregar?");
             currentContext.put(STEP, 7);
@@ -211,7 +207,7 @@ public class PublicarEnFacebookHandler extends CommandHandler{
 
         Character firstCharacter, newFirstCharacter;
 
-        String textToPublish = currentContext.get(FACEBOOK_HASHTAGS, String.class);
+        String textToPublish = currentContext.get(MESSAGE, String.class);
         List<String> hashtags = currentContext.get(FACEBOOK_HASHTAGS, List.class);
 
         firstCharacter = textToPublish.charAt(0);

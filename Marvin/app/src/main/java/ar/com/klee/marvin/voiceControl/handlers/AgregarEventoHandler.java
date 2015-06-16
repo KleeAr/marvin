@@ -2,9 +2,6 @@ package ar.com.klee.marvin.voiceControl.handlers;
 
 import android.content.Context;
 
-import java.util.Map;
-
-import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.social.CalendarService;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -20,15 +17,13 @@ public class AgregarEventoHandler extends CommandHandler{
 
     public AgregarEventoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
         super("agregar evento {evento}", textToSpeech, context, commandHandlerManager);
+        calendarService = new CalendarService(context);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){
 
-        if(!context.containsKey(SET_EVENT)) {
-            context.put(SET_EVENT, false);
-        }
         Boolean setEvent = context.get(SET_EVENT, Boolean.class);
-        String input = context.get(INPUT, String.class);
+        String input = context.get(COMMAND, String.class);
         Integer step = context.get(STEP, Integer.class);
 
         if(setEvent) {
@@ -57,6 +52,12 @@ public class AgregarEventoHandler extends CommandHandler{
 
     }
 
+    @Override
+    protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
+        commandHandlerContext.put(EVENT, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.get(COMMAND, String.class)).get("evento"));
+        commandHandlerContext.put(SET_EVENT, false);
+    }
+
     //PRONUNCIA EVENTO
     public CommandHandlerContext stepOne(CommandHandlerContext context){
 
@@ -71,7 +72,7 @@ public class AgregarEventoHandler extends CommandHandler{
     //CONFIRMA EVENTO
     public CommandHandlerContext stepThree(CommandHandlerContext context){
 
-        String input = context.get(INPUT, String.class);
+        String input = context.get(COMMAND, String.class);
         if(input.equals("si")) {
             getTextToSpeech().speakText("¿En qué fecha es el evento?");
             return context;
@@ -101,7 +102,7 @@ public class AgregarEventoHandler extends CommandHandler{
         /*
         VALIDAR FECHA
          */
-        String input = context.get(INPUT, String.class);
+        String input = context.get(COMMAND, String.class);
         getTextToSpeech().speakText("¿El evento es el " + input + "?");
 
         context.put(DAY,input);
@@ -111,7 +112,7 @@ public class AgregarEventoHandler extends CommandHandler{
 
     //CONFIRMA FECHA
     public CommandHandlerContext stepSeven(CommandHandlerContext context) {
-        String input = context.get(INPUT, String.class);
+        String input = context.get(COMMAND, String.class);
         if(input.equals("si")) {
             getTextToSpeech().speakText("¿A qué hora es el evento?");
             context.put(STEP, 9);
@@ -138,7 +139,7 @@ public class AgregarEventoHandler extends CommandHandler{
 
     //INGRESA HORA
     public CommandHandlerContext stepNine(CommandHandlerContext context) {
-        String input = context.get(INPUT, String.class);
+        String input = context.get(COMMAND, String.class);
         getTextToSpeech().speakText("¿El evento es las " + input + "?");
         context.put(HOUR,input);
         context.put(STEP, 11);
@@ -148,7 +149,7 @@ public class AgregarEventoHandler extends CommandHandler{
 
     //CONFIRMA HORA
     public CommandHandlerContext stepEleven(CommandHandlerContext context){
-        String input = context.get(INPUT, String.class);
+        String input = context.get(COMMAND, String.class);
         if(input.equals("si")) {
             getTextToSpeech().speakText("Agregando evento en el calendario");
             context.put(STEP, 0);

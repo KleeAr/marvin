@@ -2,13 +2,12 @@ package ar.com.klee.marvin.voiceControl.handlers;
 
 import android.content.Context;
 
-import java.util.Map;
-
-import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
 public class EnviarMailAContactoHandler extends CommandHandler{
+
+    public static final String CONTACTO = "contacto";
 
     public EnviarMailAContactoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
         super("enviar mail a {contacto}", textToSpeech, context, commandHandlerManager);
@@ -16,13 +15,10 @@ public class EnviarMailAContactoHandler extends CommandHandler{
 
     public CommandHandlerContext drive(CommandHandlerContext context){
 
-        if(!context.containsKey(SET_CONTACT)) {
-            context.put(SET_CONTACT, false);
-        }
         Boolean setContact = context.get(SET_CONTACT, Boolean.class);
 
         if(setContact) {
-            context.put(CONTACT, context.get(INPUT, String.class));
+            context.put(CONTACT, context.get(COMMAND, String.class));
         }
 
         Integer step = context.get(STEP, Integer.class);
@@ -44,6 +40,12 @@ public class EnviarMailAContactoHandler extends CommandHandler{
 
     }
 
+    @Override
+    protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
+        commandHandlerContext.put(CONTACT, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.get(COMMAND, String.class)).get(CONTACTO));
+        commandHandlerContext.put(SET_CONTACT, false);
+    }
+
     //PRONUNCIA CONTACTO
     public CommandHandlerContext stepOne(CommandHandlerContext context){
         String contact = context.get(CONTACT, String.class);
@@ -58,7 +60,7 @@ public class EnviarMailAContactoHandler extends CommandHandler{
 
     //CONFIRMA CONTACTO
     public CommandHandlerContext stepThree(CommandHandlerContext context){
-        String input = context.get(INPUT, String.class);
+        String input = context.get(COMMAND, String.class);
         if(input.equals("si")) {
             getTextToSpeech().speakText("¿Qué mensaje le querés mandar por mail?");
             context.put(STEP, 5);
@@ -86,7 +88,7 @@ public class EnviarMailAContactoHandler extends CommandHandler{
 
     //INGRESO MENSAJE
     public CommandHandlerContext stepFive(CommandHandlerContext context){
-        String input = context.get(INPUT, String.class);
+        String input = context.get(COMMAND, String.class);
         getTextToSpeech().speakText("¿Querés enviar por mail el mensaje " + input + "?");
 
         context.put(STEP, 7);
@@ -96,7 +98,7 @@ public class EnviarMailAContactoHandler extends CommandHandler{
 
     //CONFIRMACION DE MENSAJE
     public CommandHandlerContext stepSeven(CommandHandlerContext context){
-        String input = context.get(INPUT, String.class);
+        String input = context.get(COMMAND, String.class);
         if(input.equals("si")) {
             getTextToSpeech().speakText("Enviando mail");
             context.put(STEP, 0);

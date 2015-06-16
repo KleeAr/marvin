@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ar.com.klee.marvin.activities.CameraActivity;
-import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
@@ -43,7 +42,7 @@ public class CompartirEnTwitterHandler extends CommandHandler{
 
     //PRONUNCIA MENSAJE
     public CommandHandlerContext stepOne(CommandHandlerContext context){
-        String message = context.get(INPUT, String.class);
+        String message = context.get(COMMAND, String.class);
 
         getTextToSpeech().speakText("¿Querés publicar el mensaje " + message + " junto a la foto?");
         context.put(STEP, 3);
@@ -52,7 +51,7 @@ public class CompartirEnTwitterHandler extends CommandHandler{
 
     //CONFIRMA MENSAJE
     public CommandHandlerContext stepThree(CommandHandlerContext context){
-        String input = context.get(INPUT, String.class);
+        String input = context.get(COMMAND, String.class);
         if(input.equals("si")) {
             getTextToSpeech().speakText("¿Querés agregar un hashtag junto a la foto?");
             context.put(STEP, 5);
@@ -80,7 +79,7 @@ public class CompartirEnTwitterHandler extends CommandHandler{
 
     //INDICA SI SE QUIERE AGREGAR UN HASHTAG
     public CommandHandlerContext stepFive(CommandHandlerContext context){
-        String input = context.get(INPUT, String.class);
+        String input = context.get(COMMAND, String.class);
         if(input.equals("si")) {
             getTextToSpeech().speakText("¿Qué hashtag querés agregar?");
             context.put(STEP, 7);
@@ -95,7 +94,7 @@ public class CompartirEnTwitterHandler extends CommandHandler{
 
         if(input.equals("no")){
             getTextToSpeech().speakText("Publicando la foto en Twitter");
-            CameraActivity cameraActivity = context.get(CAMERA_ACTIVITY, CameraActivity.class);
+            CameraActivity cameraActivity = context.get(ACTIVITY, CameraActivity.class);
             cameraActivity.shareInTwitter();
             context.put(STEP, 0);
             return context;
@@ -110,7 +109,7 @@ public class CompartirEnTwitterHandler extends CommandHandler{
 
     //INGRESA HASHTAG
     public CommandHandlerContext stepSeven(CommandHandlerContext context){
-        String input = context.get(INPUT, String.class);
+        String input = context.get(COMMAND, String.class);
         getTextToSpeech().speakText("¿Querés agregar el hashtag "+input+" junto a la foto?");
         if(!context.containsKey(TWITTER_HASHTAG)) {
             List<String> hashtags = new ArrayList<>();
@@ -124,7 +123,7 @@ public class CompartirEnTwitterHandler extends CommandHandler{
 
     //CONFIRMA HASHTAG
     public CommandHandlerContext stepNine(CommandHandlerContext context){
-        String input = context.get(INPUT, String.class);
+        String input = context.get(COMMAND, String.class);
         if(input.equals("si")) {
             getTextToSpeech().speakText("¿Querés agregar otro hashtag?");
             context.put(STEP, 11);
@@ -153,7 +152,7 @@ public class CompartirEnTwitterHandler extends CommandHandler{
 
     //INDICA SI SE QUIERE AGREGAR OTRO HASHTAG
     public CommandHandlerContext stepEleven(CommandHandlerContext context){
-        String input = context.get(INPUT, String.class);
+        String input = context.get(COMMAND, String.class);
         if(input.equals("si")) {
             getTextToSpeech().speakText("¿Qué hashtag querés agregar?");
             context.put(STEP, 7);
@@ -169,7 +168,7 @@ public class CompartirEnTwitterHandler extends CommandHandler{
         if(input.equals("no")){
             getTextToSpeech().speakText("Publicando la foto en Twitter");
 
-            CameraActivity cameraActivity = context.get(CAMERA_ACTIVITY, CameraActivity.class);
+            CameraActivity cameraActivity = context.get(ACTIVITY, CameraActivity.class);
             cameraActivity.shareInTwitter();
 
             context.put(STEP, 0);

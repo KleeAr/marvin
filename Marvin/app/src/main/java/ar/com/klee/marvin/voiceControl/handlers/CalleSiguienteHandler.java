@@ -19,4 +19,9 @@ public class CalleSiguienteHandler extends CommandHandler{
         context.put(STEP, 0);
         return context;
     }
+
+    @Override
+    protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
+        // TODO
+    }
 }

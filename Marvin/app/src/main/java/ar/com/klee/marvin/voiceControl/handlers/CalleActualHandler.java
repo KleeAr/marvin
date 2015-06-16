@@ -20,4 +20,9 @@ public class CalleActualHandler extends CommandHandler{
         currentContext.put(STEP, 0);
         return currentContext;
     }
+
+    @Override
+    protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
+        // TODO
+    }
 }

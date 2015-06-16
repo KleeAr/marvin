@@ -1,164 +1,165 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
+import android.content.Context;
+
 import ar.com.klee.marvin.activities.CameraActivity;
-import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
 public class GuardarYCompartirFotoHandler extends CommandHandler{
 
-    private ExpressionMatcher expressionMatcher;
-    private String command;
-    private TTS textToSpeech;
-    private CommandHandlerManager commandHandlerManager;
-    private CameraActivity activity;
-
-    public GuardarYCompartirFotoHandler(String command, TTS textToSpeech, CommandHandlerManager commandHandlerManager, CameraActivity activity){
-
-        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
-        expressionMatcher = new ExpressionMatcher("guardar y compartir foto");
-
-        this.command = command;
-
-        this.textToSpeech = textToSpeech;
-
-        this.commandHandlerManager = commandHandlerManager;
-
-        this.activity = activity;
-
+    public GuardarYCompartirFotoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
+        super("guardar y compartir foto", textToSpeech, context, commandHandlerManager);
     }
 
-    public boolean validateCommand(){
-        return expressionMatcher.matches(command);
-    }
+    public CommandHandlerContext drive(CommandHandlerContext context){
 
-    public int drive(int step, String input){
-
+        Integer step = context.get(STEP, Integer.class);
         switch(step){
 
             case 1:
-                return stepOne();
+                return stepOne(context);
             case 3:
-                return stepThree(input);
+                return stepThree(context);
             case 4:
-                return facebook(input);
+                return facebook(context);
             case 5:
-                return twitter(input);
+                return twitter(context);
             case 6:
-                return instagram(input);
+                return instagram(context);
 
         }
-
-        return 0;
+        context.put(STEP, 0);
+        return context;
 
     }
 
-    public int stepOne(){
+    @Override
+    protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
+        // TODO
+        RETURN;
+    }
 
-        textToSpeech.speakText("");
+    public CommandHandlerContext stepOne(CommandHandlerContext context){
+
+        getTextToSpeech().speakText("");
+        CameraActivity activity = context.get(ACTIVITY, CameraActivity.class);
 
         activity.save();
 
-        textToSpeech.speakText("Guardando foto. ¿En qué red social deseás compartirla?");
+        getTextToSpeech().speakText("Guardando foto. ¿En qué red social deseás compartirla?");
 
         activity.share();
 
-        return 3;
+        context.put(STEP, 3);
+        return context;
 
     }
 
-    public int stepThree(String input){
-
+    public CommandHandlerContext stepThree(CommandHandlerContext context){
+        String input = context.get(COMMAND, String.class);
         if(input.equals("facebook")) {
-            textToSpeech.speakText("Compartiendo foto en Facebook. ¿Querés agregar un mensaje?");
-            return 4;
+            getTextToSpeech().speakText("Compartiendo foto en Facebook. ¿Querés agregar un mensaje?");
+            context.put(STEP, 4);
+            return context;
         }else if(input.equals("twitter")) {
-            textToSpeech.speakText("Compartiendo foto en Twitter. ¿Querés agregar un mensaje?");
-            return 5;
+            getTextToSpeech().speakText("Compartiendo foto en Twitter. ¿Querés agregar un mensaje?");
+            context.put(STEP, 5);
+            return context;
         }else if(input.equals("instagram")) {
-            textToSpeech.speakText("Compartiendo foto en Instagram. ¿Querés agregar un mensaje?");
-            return 6;
+            getTextToSpeech().speakText("Compartiendo foto en Instagram. ¿Querés agregar un mensaje?");
+            context.put(STEP, 6);
+            return context;
         }
 
-        textToSpeech.speakText("Debe indicar facebook, twitter o instagram");
-
-        return 3;
+        getTextToSpeech().speakText("Debe indicar facebook, twitter o instagram");
+        context.put(STEP, 3);
+        return context;
 
     }
 
-    public int facebook(String input){
-
+    public CommandHandlerContext facebook(CommandHandlerContext context){
+        String input = context.get(COMMAND, String.class);
         if(input.equals("si")) {
-            commandHandlerManager.setCommandHandler(new CompartirEnFacebookHandler("compartir en facebook", textToSpeech, activity));
-            textToSpeech.speakText("¿Qué mensaje querés agregar?");
-            return 1;
+            getCommandHandlerManager().setCommandHandler(new CompartirEnFacebookHandler("compartir en facebook", getTextToSpeech(), activity));
+            getTextToSpeech().speakText("¿Qué mensaje querés agregar?");
+            context.put(STEP, 1);
+            return context;
         }
 
         if(input.equals("cancelar")) {
-            textToSpeech.speakText("Cancelando publicación");
-            return 0;
+            getTextToSpeech().speakText("Cancelando publicación");
+            context.put(STEP, 0);
+            return context;
         }
 
         if(input.equals("no")){
-            commandHandlerManager.setCommandHandler(new CompartirEnFacebookHandler("compartir en facebook", textToSpeech, activity));
-            textToSpeech.speakText("¿Querés agregar un hashtag?");
-            return 5;
+            getCommandHandlerManager().setCommandHandler(new CompartirEnFacebookHandler("compartir en facebook", getTextToSpeech(), activity));
+            getTextToSpeech().speakText("¿Querés agregar un hashtag?");
+            context.put(STEP, 5);
+            return context;
         }
 
-        textToSpeech.speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
 
-        return 4;
+        context.put(STEP, 4);
+        return context;
+    }
+
+    public CommandHandlerContext twitter(CommandHandlerContext context){
+        String input = context.get(COMMAND, String.class);
+        if(input.equals("si")) {
+            getCommandHandlerManager().setCommandHandler(new CompartirEnTwitterHandler("compartir en twitter", getTextToSpeech(), activity));
+            getTextToSpeech().speakText("¿Qué mensaje querés agregar?");
+            context.put(STEP, 1);
+            return context;
+        }
+
+        if(input.equals("cancelar")) {
+            getTextToSpeech().speakText("Cancelando publicación");
+            context.put(STEP, 0);
+            return context;
+        }
+
+        if(input.equals("no")){
+            getCommandHandlerManager().setCommandHandler(new CompartirEnTwitterHandler("compartir en twitter", getTextToSpeech(), activity));
+            getTextToSpeech().speakText("¿Querés agregar un hashtag?");
+            context.put(STEP, 5);
+            return context;
+        }
+
+        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+
+        context.put(STEP, 5);
+        return context;
 
     }
 
-    public int twitter(String input){
-
+    public CommandHandlerContext instagram(CommandHandlerContext context){
+        String input = context.get(COMMAND, String.class);
         if(input.equals("si")) {
-            commandHandlerManager.setCommandHandler(new CompartirEnTwitterHandler("compartir en twitter", textToSpeech, activity));
-            textToSpeech.speakText("¿Qué mensaje querés agregar?");
-            return 1;
+            getCommandHandlerManager().setCommandHandler(new CompartirEnInstagramHandler("compartir en instagram", textToSpeech, activity));
+            getTextToSpeech().speakText("¿Qué mensaje querés agregar?");
+            context.put(STEP, 1);
+            return context;
         }
 
         if(input.equals("cancelar")) {
-            textToSpeech.speakText("Cancelando publicación");
-            return 0;
+            getTextToSpeech().speakText("Cancelando publicación");
+            context.put(STEP, 0);
+            return context;
         }
 
         if(input.equals("no")){
-            commandHandlerManager.setCommandHandler(new CompartirEnTwitterHandler("compartir en twitter", textToSpeech, activity));
-            textToSpeech.speakText("¿Querés agregar un hashtag?");
-            return 5;
+            getCommandHandlerManager().setCommandHandler(new CompartirEnInstagramHandler("compartir en instagram", textToSpeech, activity));
+            getTextToSpeech().speakText("¿Querés agregar un hashtag?");
+            context.put(STEP, 5);
+            return context;
         }
 
-        textToSpeech.speakText("Debe indicar sí, no o cancelar");
-
-        return 5;
-
-    }
-
-    public int instagram(String input){
-
-        if(input.equals("si")) {
-            commandHandlerManager.setCommandHandler(new CompartirEnInstagramHandler("compartir en instagram", textToSpeech, activity));
-            textToSpeech.speakText("¿Qué mensaje querés agregar?");
-            return 1;
-        }
-
-        if(input.equals("cancelar")) {
-            textToSpeech.speakText("Cancelando publicación");
-            return 0;
-        }
-
-        if(input.equals("no")){
-            commandHandlerManager.setCommandHandler(new CompartirEnInstagramHandler("compartir en instagram", textToSpeech, activity));
-            textToSpeech.speakText("¿Querés agregar un hashtag?");
-            return 5;
-        }
-
-        textToSpeech.speakText("Debe indicar sí, no o cancelar");
-
-        return 5;
-
+        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+        context.put(STEP, 5);
+        return context;
     }
 
 }

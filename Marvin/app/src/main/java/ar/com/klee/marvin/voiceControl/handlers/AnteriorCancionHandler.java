@@ -23,4 +23,9 @@ public class AnteriorCancionHandler extends CommandHandler{
         return context;
 
     }
+
+    @Override
+    protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
+        // TODO
+    }
 }

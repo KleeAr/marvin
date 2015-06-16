@@ -3,7 +3,6 @@ package ar.com.klee.marvin.voiceControl.handlers;
 import android.content.Context;
 
 import ar.com.klee.marvin.activities.CameraActivity;
-import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
@@ -35,7 +34,7 @@ public class CompartirFotoHandler extends CommandHandler{
 
     public CommandHandlerContext stepOne(CommandHandlerContext context){
 
-        CameraActivity cameraActivity = context.get(CAMERA_ACTIVITY, CameraActivity.class);
+        CameraActivity cameraActivity = context.get(ACTIVITY, CameraActivity.class);
         getTextToSpeech().speakText("¿En qué red social deseás compartir la foto?");
 
         cameraActivity.share();
@@ -46,7 +45,7 @@ public class CompartirFotoHandler extends CommandHandler{
     }
 
     public CommandHandlerContext stepThree(CommandHandlerContext context){
-        String input = context.get(INPUT, String.class);
+        String input = context.get(COMMAND, String.class);
         if(input.equals("facebook")) {
             getTextToSpeech().speakText("Compartiendo foto en Facebook. ¿Querés agregar un mensaje?");
             context.put(STEP, 4);
@@ -66,7 +65,7 @@ public class CompartirFotoHandler extends CommandHandler{
 
     public CommandHandlerContext facebook(CommandHandlerContext context){
 
-        String input = context.get(INPUT, String.class);
+        String input = context.get(COMMAND, String.class);
         if(input.equals("si")) {
             getCommandHandlerManager().setCommandHandler(new CompartirEnFacebookHandler("compartir en facebook", textToSpeech, activity));
             textToSpeech.speakText("¿Qué mensaje querés agregar?");

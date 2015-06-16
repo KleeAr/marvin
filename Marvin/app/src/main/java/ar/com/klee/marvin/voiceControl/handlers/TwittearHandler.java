@@ -3,6 +3,8 @@ package ar.com.klee.marvin.voiceControl.handlers;
 import android.content.Context;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -11,189 +13,187 @@ import ar.com.klee.marvin.social.TwitterService;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
-public class TwittearHandler extends CommandHandler{
+public class TwittearHandler extends CommandHandler {
 
-    private ExpressionMatcher expressionMatcher;
-    private String command;
-    private String message;
-    private boolean setMessage = false;
-    private ArrayList<String> hashtags;
-    private TTS textToSpeech;
-
-    public TwittearHandler(String command, TTS textToSpeech){
-
-        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
-        expressionMatcher = new ExpressionMatcher("twittear {mensaje}");
-
-        this.command = command;
-        this.textToSpeech = textToSpeech;
-
-        hashtags = new ArrayList<String>();
-
-    }
+    public static final String MENSAJE = "mensaje";
+    public static final String TWITTER_HASHTAGS = "TWITTER_HASHTAGS";
 
     public TwittearHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(textToSpeech, context, commandHandlerManager);
+        super("twittear {mensaje}",textToSpeech, context, commandHandlerManager);
     }
 
-    public boolean validateCommand(){
+    public CommandHandlerContext drive(CommandHandlerContext context){
 
-        Map<String, String> values = expressionMatcher.getValuesFromExpression(command);
-
-        message = values.get("mensaje");
-
-        return expressionMatcher.matches(command);
-
-    }
-
-    public int drive(int step, String input){
-
-        if(setMessage)
-            message = input;
-
+        if(context.get(SET_MESSAGE, Boolean.class)) {
+            context.put(MESSAGE, context.get(COMMAND, String.class));
+        }
+        Integer step = context.get(STEP, Integer.class);
         switch(step){
 
             case 1:
-                return stepOne();
+                return stepOne(context);
             case 3:
-                return stepThree(input);
+                return stepThree(context);
             case 5:
-                return stepFive(input);
+                return stepFive(context);
             case 7:
-                return stepSeven(input);
+                return stepSeven(context);
             case 9:
-                return stepNine(input);
+                return stepNine(context);
             case 11:
-                return stepEleven(input);
+                return stepEleven(context);
 
         }
-
-        return 0;
+        context.put(STEP, 0);
+        return context;
 
     }
 
+    @Override
+    protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
+        commandHandlerContext.put(SET_MESSAGE, false);
+        commandHandlerContext.put(MESSAGE, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.get(COMMAND, String.class)).get(MENSAJE));
+    }
+
     //PRONUNCIA MENSAJE
-    public int stepOne(){
+    public CommandHandlerContext stepOne(CommandHandlerContext context){
 
-        textToSpeech.speakText("¿Querés publicar en Twitter el mensaje " + message + " ?");
-
-        setMessage = false;
-
-        return 3;
+        getTextToSpeech().speakText("¿Querés publicar en Twitter el mensaje " + context.get(MESSAGE, String.class) + " ?");
+        context.put(TWITTER_HASHTAGS, new ArrayList<String>());
+        context.put(SET_MESSAGE, false);
+        context.put(STEP, 3);
+        return context;
 
     }
 
     //CONFIRMA MENSAJE
-    public int stepThree(String input){
-
+    public CommandHandlerContext stepThree(CommandHandlerContext context){
+        String input = context.get(COMMAND, String.class);
         if(input.equals("si")) {
-            textToSpeech.speakText("¿Querés agregar un hashtag junto al mensaje?");
-            return 5;
+            getTextToSpeech().speakText("¿Querés agregar un hashtag junto al mensaje?");
+            context.put(STEP, 5);
+            return context;
         }
 
         if(input.equals("cancelar")) {
-            textToSpeech.speakText("Cancelando publicación");
-            return 0;
+            getTextToSpeech().speakText("Cancelando publicación");
+            context.put(STEP, 0);
+            return context;
         }
 
         if(input.equals("no")){
-            textToSpeech.speakText("¿Qué mensaje deseás publicar?");
-            setMessage = true;
-            return 1;
+            getTextToSpeech().speakText("¿Qué mensaje deseás publicar?");
+            context.put(SET_MESSAGE, true);
+            context.put(STEP, 1);
+            return context;
         }
 
-        textToSpeech.speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
 
-        return 3;
+        context.put(STEP, 3);
+        return context;
 
     }
 
     //INDICA SI SE QUIERE AGREGAR UN HASHTAG
-    public int stepFive(String input){
-
+    public CommandHandlerContext stepFive(CommandHandlerContext context){
+        String input = context.get(COMMAND, String.class);
         if(input.equals("si")) {
-            textToSpeech.speakText("¿Qué hashtag querés agregar?");
-            return 7;
+            getTextToSpeech().speakText("¿Qué hashtag querés agregar?");
+            context.put(STEP, 7);
+            return context;
         }
 
         if(input.equals("cancelar")) {
-            textToSpeech.speakText("Cancelando publicación");
-            return 0;
+            getTextToSpeech().speakText("Cancelando publicación");
+            context.put(STEP, 0);
+            return context;
         }
 
         if(input.equals("no")){
-            postTweet(message);
-            return 0;
+            postTweet(context.get(MESSAGE, String.class), Collections.emptyList());
+            context.put(STEP, 0);
+            return context;
         }
 
-        textToSpeech.speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
 
-        return 5;
+        context.put(STEP, 5);
+        return context;
 
     }
 
     //INGRESA HASHTAG
-    public int stepSeven(String input){
+    public CommandHandlerContext stepSeven(CommandHandlerContext context){
+        String input = context.get(COMMAND, String.class);
+        getTextToSpeech().speakText("¿Querés agregar el hashtag " + input + " junto al mensaje?");
 
-        textToSpeech.speakText("¿Querés agregar el hashtag "+input+" junto al mensaje?");
-
-        hashtags.add(input);
-
-        return 9;
+        context.get(TWITTER_HASHTAGS, List.class).add(input);
+        context.put(STEP, 9);
+        return context;
 
     }
 
     //CONFIRMA HASHTAG
-    public int stepNine(String input){
-
+    public CommandHandlerContext stepNine(CommandHandlerContext context){
+        String input = context.get(COMMAND, String.class);
         if(input.equals("si")) {
-            textToSpeech.speakText("¿Querés agregar otro hashtag?");
-            return 11;
+            getTextToSpeech().speakText("¿Querés agregar otro hashtag?");
+            context.put(STEP, 11);
+            return context;
         }
 
         if(input.equals("cancelar")) {
-            textToSpeech.speakText("Cancelando publicación");
-            return 0;
+            getTextToSpeech().speakText("Cancelando publicación");
+            context.put(STEP, 0);
+            return context;
         }
 
         if(input.equals("no")){
-            textToSpeech.speakText("¿Qué hashtag querés agregar?");
+            getTextToSpeech().speakText("¿Qué hashtag querés agregar?");
+            List hashtags = context.get(TWITTER_HASHTAGS, List.class);
             hashtags.remove(hashtags.size()-1);
-            return 7;
+            context.put(STEP, 7);
+            return context;
         }
 
-        textToSpeech.speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
 
-        return 9;
+        context.put(STEP, 9);
+        return context;
 
     }
 
     //INDICA SI SE QUIERE AGREGAR OTRO HASHTAG
-    public int stepEleven(String input){
-
+    public CommandHandlerContext stepEleven(CommandHandlerContext context){
+        String input = context.get(COMMAND, String.class);
         if(input.equals("si")) {
-            textToSpeech.speakText("¿Qué hashtag querés agregar?");
-            return 7;
+            getTextToSpeech().speakText("¿Qué hashtag querés agregar?");
+            context.put(STEP, 7);
+            return context;
         }
 
         if(input.equals("cancelar")) {
-            textToSpeech.speakText("Cancelando publicación");
-            return 0;
+            getTextToSpeech().speakText("Cancelando publicación");
+            context.put(STEP, 0);
+            return context;
         }
 
         if(input.equals("no")){
-            postTweet(message);
-            return 0;
+            postTweet(context.get(MESSAGE,String.class), context.get(TWITTER_HASHTAGS,List.class));
+            context.put(STEP, 0);
+            return context;
         }
 
-        textToSpeech.speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
 
-        return 11;
+        context.put(STEP, 11);
+        return context;
 
     }
 
 
-    public void postTweet(String textToPublish) {
+    public void postTweet(String textToPublish, List<String> hashtags) {
 
         Character firstCharacter, newFirstCharacter;
 
@@ -233,11 +233,11 @@ public class TwittearHandler extends CommandHandler{
 
             TwitterService.getInstance().postTweet(textToPublish);
 
-            textToSpeech.speakText("El mensaje fue publicado");
+            getTextToSpeech().speakText("El mensaje fue publicado");
 
         }catch(IllegalStateException e){
 
-            textToSpeech.speakText("No agregaste una cuenta de Twitter en tu perfil");
+            getTextToSpeech().speakText("No agregaste una cuenta de Twitter en tu perfil");
 
         }
 

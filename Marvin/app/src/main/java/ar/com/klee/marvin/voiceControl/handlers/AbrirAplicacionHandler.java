@@ -36,4 +36,9 @@ public class AbrirAplicacionHandler extends CommandHandler{
         return currentContext;
 
     }
+
+    @Override
+    protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
+        // Do nothing
+    }
 }

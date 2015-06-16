@@ -3,7 +3,6 @@ package ar.com.klee.marvin.voiceControl.handlers;
 import android.content.Context;
 
 import ar.com.klee.marvin.activities.CameraActivity;
-import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
@@ -17,10 +16,15 @@ public class SacarFotoHandler extends CommandHandler{
 
         getTextToSpeech().speakText("Sacando foto");
 
-        context.get(CAMERA_ACTIVITY, CameraActivity.class).takePicture();
+        context.get(ACTIVITY, CameraActivity.class).takePicture();
 
         context.put(STEP,0);
         return context;
 
+    }
+
+    @Override
+    protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
+        // TODO
     }
 }

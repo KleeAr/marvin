@@ -21,4 +21,9 @@ public class BarrioHandler extends CommandHandler{
         return context;
 
     }
+
+    @Override
+    protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
+        // TODO
+    }
 }

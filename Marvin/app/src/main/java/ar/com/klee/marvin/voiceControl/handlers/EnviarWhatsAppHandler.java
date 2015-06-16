@@ -2,10 +2,6 @@ package ar.com.klee.marvin.voiceControl.handlers;
 
 import android.content.Context;
 
-import java.util.Map;
-
-import ar.com.klee.marvin.expressions.ExpressionMatcher;
-import ar.com.klee.marvin.expressions.exceptions.ExpressionMatcherException;
 import ar.com.klee.marvin.social.WhatsAppService;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -13,6 +9,7 @@ import ar.com.klee.marvin.voiceControl.TTS;
 public class EnviarWhatsAppHandler extends CommandHandler{
 
 
+    public static final String MENSAJE = "mensaje";
     private final WhatsAppService whatsAppService;
 
     public EnviarWhatsAppHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
@@ -23,7 +20,7 @@ public class EnviarWhatsAppHandler extends CommandHandler{
     public CommandHandlerContext drive(CommandHandlerContext context){
 
         if(context.get(SET_MESSAGE, Boolean.class)) {
-            context.put(MESSAGE, context.get(INPUT, String.class));
+            context.put(MESSAGE, context.get(COMMAND, String.class));
         }
         Integer step = context.get(STEP, Integer.class);
         switch(step){
@@ -36,6 +33,12 @@ public class EnviarWhatsAppHandler extends CommandHandler{
         }
         context.put(STEP, 0);
         return context;
+    }
+
+    @Override
+    protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
+        commandHandlerContext.put(SET_MESSAGE, false);
+        commandHandlerContext.put(MESSAGE, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.get(COMMAND,String.class)).get(MENSAJE));
     }
 
     //PRONUNCIA MENSAJE
@@ -52,7 +55,7 @@ public class EnviarWhatsAppHandler extends CommandHandler{
     //CONFIRMA MENSAJE
     public CommandHandlerContext stepThree(CommandHandlerContext context){
 
-        String input = context.get(INPUT, String.class);
+        String input = context.get(COMMAND, String.class);
         if(input.equals("si")) {
             sendWhatsApp(context.get(MESSAGE, String.class));
             context.put(STEP, 0);

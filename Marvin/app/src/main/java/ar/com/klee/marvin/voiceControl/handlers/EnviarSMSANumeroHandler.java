@@ -1,8 +1,11 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
+import android.content.Context;
+
 import java.util.Map;
 
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
 public class EnviarSMSANumeroHandler extends CommandHandler{
@@ -23,14 +26,8 @@ public class EnviarSMSANumeroHandler extends CommandHandler{
 
     }
 
-    public boolean validateCommand(){
-
-        Map<String, String> values = expressionMatcher.getValuesFromExpression(command);
-
-        number = values.get("numero");
-
-        return expressionMatcher.matches(command);
-
+    public EnviarSMSANumeroHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
+        super(textToSpeech, context, commandHandlerManager);
     }
 
     public int drive(int step, String input){

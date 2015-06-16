@@ -20,4 +20,9 @@ public class CalleAnteriorHandler extends CommandHandler{
         return currentContext;
 
     }
+
+    @Override
+    protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
+        // TODO
+    }
 }

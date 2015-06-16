@@ -1,8 +1,7 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
+import android.app.Activity;
 import android.content.Context;
-
-import java.util.Map;
 
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
@@ -10,14 +9,13 @@ import ar.com.klee.marvin.voiceControl.TTS;
 
 public abstract class CommandHandler {
 
-    protected static final String MESSAGE = "MESSAGE";
-    protected static final String SET_MESSAGE = "SET_MESSAGE";
-    protected static final String INPUT = "INPUT";
-    protected static final String STEP = "STEP";
-    protected static final String COMMAND = "COMMAND";
-    protected static final String CAMERA_ACTIVITY = "CAMERA_ACTIVITY";
-    protected static final String SET_CONTACT = "SET_CONTACT";
-    protected static final String CONTACT = "CONTACT";
+    public static final String MESSAGE = "MESSAGE";
+    public static final String SET_MESSAGE = "SET_MESSAGE";
+    public static final String COMMAND = "COMMAND";
+    public static final String STEP = "STEP";
+    public static final String ACTIVITY = "ACTIVITY";
+    public static final String SET_CONTACT = "SET_CONTACT";
+    public static final String CONTACT = "CONTACT";
 
     private ExpressionMatcher expressionMatcher;
     private TTS textToSpeech;
@@ -56,4 +54,13 @@ public abstract class CommandHandler {
         return commandHandlerManager;
     }
 
+    public CommandHandlerContext createContext(Activity activity, String command) {
+        CommandHandlerContext commandHandlerContext = new CommandHandlerContext();
+        commandHandlerContext.put(ACTIVITY, activity);
+        commandHandlerContext.put(COMMAND, command);
+        addSpecificCommandContext(commandHandlerContext);
+        return commandHandlerContext;
+    }
+
+    protected abstract void addSpecificCommandContext(CommandHandlerContext commandHandlerContext);
 }

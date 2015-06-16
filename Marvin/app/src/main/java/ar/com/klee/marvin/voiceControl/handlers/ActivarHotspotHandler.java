@@ -22,4 +22,9 @@ public class ActivarHotspotHandler extends CommandHandler{
         currentContext.put(STEP, 0);
         return currentContext;
     }
+
+    @Override
+    protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
+        // TODO: verify if there is something to do here
+    }
 }
