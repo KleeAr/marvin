@@ -11,6 +11,7 @@ public class CalleActualHandler extends CommandHandler{
 
     public CalleActualHandler(String command, TTS textToSpeech){
 
+        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
         expressionMatcher = new ExpressionMatcher("calle actual");
 
         this.command = command;

@@ -13,6 +13,7 @@ public class GuardarFotoHandler extends CommandHandler{
 
     public GuardarFotoHandler(String command, TTS textToSpeech, CameraActivity cameraActivity){
 
+        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
         expressionMatcher = new ExpressionMatcher("guardar foto");
 
         this.command = command;

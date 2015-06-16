@@ -11,6 +11,7 @@ public class CalleAnteriorHandler extends CommandHandler{
 
     public CalleAnteriorHandler(String command, TTS textToSpeech){
 
+        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
         expressionMatcher = new ExpressionMatcher("calle anterior");
 
         this.command = command;

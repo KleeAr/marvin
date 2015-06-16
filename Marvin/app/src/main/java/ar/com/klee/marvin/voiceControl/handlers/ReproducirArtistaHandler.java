@@ -14,6 +14,7 @@ public class ReproducirArtistaHandler extends CommandHandler{
 
     public ReproducirArtistaHandler(String command, TTS textToSpeech){
 
+        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
         expressionMatcher = new ExpressionMatcher("reproducir artista {artista}");
 
         this.command = command;

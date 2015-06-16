@@ -15,6 +15,7 @@ public class EnviarSMSAContactoHandler extends CommandHandler{
 
     public EnviarSMSAContactoHandler(String command, TTS textToSpeech){
 
+        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
         expressionMatcher = new ExpressionMatcher("enviar sms a {contacto}");
 
         this.command = command;

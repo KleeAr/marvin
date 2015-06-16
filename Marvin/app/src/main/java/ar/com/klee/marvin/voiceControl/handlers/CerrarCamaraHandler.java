@@ -15,6 +15,7 @@ public class CerrarCamaraHandler extends CommandHandler{
 
     public CerrarCamaraHandler(String command, TTS textToSpeech, CameraActivity activity, CommandHandlerManager commandHandlerManager){
 
+        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
         expressionMatcher = new ExpressionMatcher("cerrar cámara");
 
         this.command = command;

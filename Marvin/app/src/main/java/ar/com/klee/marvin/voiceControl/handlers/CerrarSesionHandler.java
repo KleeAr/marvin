@@ -1,7 +1,5 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
-import java.util.Map;
-
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.TTS;
 
@@ -13,6 +11,7 @@ public class CerrarSesionHandler extends CommandHandler{
 
     public CerrarSesionHandler(String command, TTS textToSpeech){
 
+        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
         expressionMatcher = new ExpressionMatcher("cerrar sesión");
 
         this.command = command;

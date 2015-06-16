@@ -5,6 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.speech.SpeechRecognizer;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import ar.com.klee.marvin.activities.CameraActivity;
@@ -20,6 +27,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CancelarFotoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CerrarCamaraHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CerrarSesionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
+import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 import ar.com.klee.marvin.voiceControl.handlers.CompartirFotoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.DesactivarHotspotHandler;
 import ar.com.klee.marvin.voiceControl.handlers.DetenerReproduccionHandler;
@@ -55,19 +63,30 @@ public class CommandHandlerManager {
 
     private boolean isError;
     private boolean isPhotoTaken;
+    private List<CommandHandler> commandHandlers;
+    private CommandHandlerContext currentContext;
 
     CommandHandlerManager(Context context, SpeechRecognizer mSpeechRecognizer, Intent mSpeechRecognizerIntent){
-
         Helper.commandHandlerManager = this;
-
         textToSpeech = new TTS(context, mSpeechRecognizer, mSpeechRecognizerIntent);
-
         this.context = context;
 
+        commandHandlers = Arrays.asList(new AbrirAplicacionHandler(textToSpeech, context, this),
+        new PublicarEnFacebookHandler(textToSpeech, context,this),
+        new ActivarHotspotHandler(textToSpeech, context, this),
+        new AgregarEventoHandler(textToSpeech, context, this),
+        new AnteriorCancionHandler(textToSpeech, context, this),
+        new BarrioHandler(textToSpeech, context, this),
+        new CalleActualHandler(textToSpeech, context, this),
+        new CalleAnteriorHandler(textToSpeech, context, this),
+        new CalleSiguienteHandler(textToSpeech, context, this),
+        new CancelarFotoHandler(textToSpeech, context, this),
+        new CerrarCamaraHandler(textToSpeech, context, this),
+        new CompartirFotoHandler(textToSpeech, context, this ),
+        new );
     }
 
     public boolean detectCommand(String command, boolean isListening){
-
         command = command.toLowerCase();
 
         StringTokenizer stringTokenizer = new StringTokenizer(command);
@@ -111,17 +130,22 @@ public class CommandHandlerManager {
 
             boolean isDefault = false;
 
+
+            final String finalCommand = command;
+            CommandHandler commandHandler1 = CollectionUtils.find(commandHandlers, new Predicate<CommandHandler>() {
+                @Override
+                public boolean evaluate(CommandHandler handlerToEvaluate) {
+                    return handlerToEvaluate.matches(finalCommand);
+                }
+            });
+
+            if(commandHandler1 != null) {
+                currentContext = commandHandler1.drive(currentContext);
+            } else {
+                wrongCommand("");
+            }
+
             switch (firstWord) {
-
-                case "abrir":
-                    commandHandler = new AbrirAplicacionHandler(command, textToSpeech, context, this);
-                    if (commandHandler.validateCommand()) {
-                        errorCounter = 0;
-                        actualStep = commandHandler.drive(1, command);
-                    } else
-                        wrongCommand("abrir aplicacion");
-                    break;
-
                 case "que":
                     if (stringTokenizer.hasMoreTokens()) {
                         secondWord = stringTokenizer.nextToken();
@@ -133,25 +157,16 @@ public class CommandHandlerManager {
 
                 case "cerrar":
                     commandHandler = new CerrarSesionHandler(command, textToSpeech);
-                    if (commandHandler.validateCommand()) {
+                    if (commandHandler.matches()) {
                         errorCounter = 0;
                         actualStep = commandHandler.drive(1, command);
                     } else
                         wrongCommand("cerrar sesión");
                     break;
 
-                case "publicar":
-                    commandHandler = new PublicarEnFacebookHandler(command, textToSpeech, context);
-                    if (commandHandler.validateCommand()) {
-                        errorCounter = 0;
-                        actualStep = commandHandler.drive(1, command);
-                    } else
-                        wrongCommand("publicar en facebook mensaje");
-                    break;
-
                 case "twittear":
                     commandHandler = new TwittearHandler(command, textToSpeech);
-                    if (commandHandler.validateCommand()) {
+                    if (commandHandler.matches()) {
                         errorCounter = 0;
                         actualStep = commandHandler.drive(1, command);
                     } else
@@ -163,14 +178,14 @@ public class CommandHandlerManager {
                         secondWord = stringTokenizer.nextToken();
                         if (secondWord.equals("whatsapp")) {
                             commandHandler = new EnviarWhatsAppHandler(command, textToSpeech, context);
-                            if (commandHandler.validateCommand()) {
+                            if (commandHandler.matches()) {
                                 errorCounter = 0;
                                 actualStep = commandHandler.drive(1, command);
                             } else
                                 wrongCommand("enviar whatsapp mensaje");
                         } else if (secondWord.equals("mail")) {
                             commandHandler = new EnviarMailAContactoHandler(command, textToSpeech);
-                            if (commandHandler.validateCommand()) {
+                            if (commandHandler.matches()) {
                                 errorCounter = 0;
                                 actualStep = commandHandler.drive(1, command);
                             } else
@@ -180,14 +195,14 @@ public class CommandHandlerManager {
                                 thirdWord = stringTokenizer.nextToken();
                                 if (thirdWord.equals("a")) {
                                     commandHandler = new EnviarSMSAContactoHandler(command, textToSpeech);
-                                    if (commandHandler.validateCommand()) {
+                                    if (commandHandler.matches()) {
                                         errorCounter = 0;
                                         actualStep = commandHandler.drive(1, command);
                                     } else
                                         wrongCommand("enviar sms a contacto");
                                 } else if (thirdWord.equals("al")) {
                                     commandHandler = new EnviarSMSANumeroHandler(command, textToSpeech);
-                                    if (commandHandler.validateCommand()) {
+                                    if (commandHandler.matches()) {
                                         errorCounter = 0;
                                         actualStep = commandHandler.drive(1, command);
                                     } else
@@ -204,7 +219,7 @@ public class CommandHandlerManager {
 
                 case "sms":
                     commandHandler = new SMSDeEmergenciaHandler(command, textToSpeech);
-                    if (commandHandler.validateCommand()) {
+                    if (commandHandler.matches()) {
                         errorCounter = 0;
                         actualStep = commandHandler.drive(1, command);
                     } else
@@ -216,21 +231,21 @@ public class CommandHandlerManager {
                         secondWord = stringTokenizer.nextToken();
                         if (secondWord.equals("música")) {
                             commandHandler = new ReproducirMusicaHandler(command, textToSpeech);
-                            if (commandHandler.validateCommand()) {
+                            if (commandHandler.matches()) {
                                 errorCounter = 0;
                                 actualStep = commandHandler.drive(1, command);
                             } else
                                 wrongCommand("reproducir música");
                         } else if (secondWord.equals("canción")) {
                             commandHandler = new ReproducirCancionHandler(command, textToSpeech);
-                            if (commandHandler.validateCommand()) {
+                            if (commandHandler.matches()) {
                                 errorCounter = 0;
                                 actualStep = commandHandler.drive(1, command);
                             } else
                                 wrongCommand("reproducir canción");
                         } else if (secondWord.equals("artista")) {
                             commandHandler = new ReproducirArtistaHandler(command, textToSpeech);
-                            if (commandHandler.validateCommand()) {
+                            if (commandHandler.matches()) {
                                 errorCounter = 0;
                                 actualStep = commandHandler.drive(1, command);
                             } else
@@ -243,7 +258,7 @@ public class CommandHandlerManager {
 
                 case "detener":
                     commandHandler = new DetenerReproduccionHandler(command, textToSpeech);
-                    if (commandHandler.validateCommand()) {
+                    if (commandHandler.matches()) {
                         errorCounter = 0;
                         actualStep = commandHandler.drive(1, command);
                     } else
@@ -252,7 +267,7 @@ public class CommandHandlerManager {
 
                 case "siguiente":
                     commandHandler = new SiguienteCancionHandler(command, textToSpeech);
-                    if (commandHandler.validateCommand()) {
+                    if (commandHandler.matches()) {
                         errorCounter = 0;
                         actualStep = commandHandler.drive(1, command);
                     } else
@@ -261,7 +276,7 @@ public class CommandHandlerManager {
 
                 case "anterior":
                     commandHandler = new AnteriorCancionHandler(command, textToSpeech);
-                    if (commandHandler.validateCommand()) {
+                    if (commandHandler.matches()) {
                         errorCounter = 0;
                         actualStep = commandHandler.drive(1, command);
                     } else
@@ -273,21 +288,21 @@ public class CommandHandlerManager {
                         secondWord = stringTokenizer.nextToken();
                         if (secondWord.equals("actual")) {
                             commandHandler = new CalleActualHandler(command, textToSpeech);
-                            if (commandHandler.validateCommand()) {
+                            if (commandHandler.matches()) {
                                 errorCounter = 0;
                                 actualStep = commandHandler.drive(1, command);
                             } else
                                 wrongCommand("calle actual");
                         } else if (secondWord.equals("siguiente")) {
                             commandHandler = new CalleSiguienteHandler(command, textToSpeech);
-                            if (commandHandler.validateCommand()) {
+                            if (commandHandler.matches()) {
                                 errorCounter = 0;
                                 actualStep = commandHandler.drive(1, command);
                             } else
                                 wrongCommand("calle siguiente");
                         } else if (secondWord.equals("anterior")) {
                             commandHandler = new CalleAnteriorHandler(command, textToSpeech);
-                            if (commandHandler.validateCommand()) {
+                            if (commandHandler.matches()) {
                                 errorCounter = 0;
                                 actualStep = commandHandler.drive(1, command);
                             } else
@@ -298,36 +313,9 @@ public class CommandHandlerManager {
                         wrongCommand("calle actual");
                     break;
 
-                case "barrio":
-                    commandHandler = new BarrioHandler(command, textToSpeech);
-                    if (commandHandler.validateCommand()) {
-                        errorCounter = 0;
-                        actualStep = commandHandler.drive(1, command);
-                    } else
-                        wrongCommand("barrio");
-                    break;
-
-                case "agregar":
-                    commandHandler = new AgregarEventoHandler(command, textToSpeech, context);
-                    if (commandHandler.validateCommand()) {
-                        errorCounter = 0;
-                        actualStep = commandHandler.drive(1, command);
-                    } else
-                        wrongCommand("agregar evento");
-                    break;
-
-                case "activar":
-                    commandHandler = new ActivarHotspotHandler(command, textToSpeech);
-                    if (commandHandler.validateCommand()) {
-                        errorCounter = 0;
-                        actualStep = commandHandler.drive(1, command);
-                    } else
-                        wrongCommand("activar hotspot");
-                    break;
-
                 case "desactivar":
                     commandHandler = new DesactivarHotspotHandler(command, textToSpeech);
-                    if (commandHandler.validateCommand()) {
+                    if (commandHandler.matches()) {
                         errorCounter = 0;
                         actualStep = commandHandler.drive(1, command);
                     } else
@@ -356,7 +344,7 @@ public class CommandHandlerManager {
 
                     case "cerrar":
                         commandHandler = new CerrarCamaraHandler(command, textToSpeech, (CameraActivity) activity, this);
-                        if (commandHandler.validateCommand()) {
+                        if (commandHandler.matches()) {
                             errorCounter = 0;
                             actualStep = commandHandler.drive(1, command);
                         } else
@@ -368,7 +356,7 @@ public class CommandHandlerManager {
                             secondWord = stringTokenizer.nextToken();
                             if (secondWord.equals("foto")) {
                                 commandHandler = new GuardarFotoHandler(command, textToSpeech, (CameraActivity) activity);
-                                if (commandHandler.validateCommand()) {
+                                if (commandHandler.matches()) {
                                     errorCounter = 0;
                                     actualStep = commandHandler.drive(1, command);
                                     isPhotoTaken = false;
@@ -376,7 +364,7 @@ public class CommandHandlerManager {
                                     wrongCommand("guardar foto");
                             } else if (secondWord.equals("y")) {
                                 commandHandler = new GuardarYCompartirFotoHandler(command, textToSpeech, this, (CameraActivity) activity);
-                                if (commandHandler.validateCommand()) {
+                                if (commandHandler.matches()) {
                                     errorCounter = 0;
                                     actualStep = commandHandler.drive(1, command);
                                     isPhotoTaken = false;
@@ -390,7 +378,7 @@ public class CommandHandlerManager {
 
                     case "cancelar":
                         commandHandler = new CancelarFotoHandler(command, textToSpeech, (CameraActivity) activity);
-                        if (commandHandler.validateCommand()) {
+                        if (commandHandler.matches()) {
                             errorCounter = 0;
                             actualStep = commandHandler.drive(1, command);
                             isPhotoTaken = false;
@@ -400,7 +388,7 @@ public class CommandHandlerManager {
 
                     case "compartir":
                         commandHandler = new CompartirFotoHandler(command, textToSpeech, this, context, (CameraActivity) activity);
-                        if (commandHandler.validateCommand()) {
+                        if (commandHandler.matches()) {
                             errorCounter = 0;
                             actualStep = commandHandler.drive(1, command);
                             isPhotoTaken = false;
@@ -421,7 +409,7 @@ public class CommandHandlerManager {
 
                     case "cerrar":
                         commandHandler = new CerrarCamaraHandler(command, textToSpeech, (CameraActivity) activity, this);
-                        if (commandHandler.validateCommand()) {
+                        if (commandHandler.matches()) {
                             errorCounter = 0;
                             actualStep = commandHandler.drive(1, command);
                         } else
@@ -430,7 +418,7 @@ public class CommandHandlerManager {
 
                     case "sacar":
                         commandHandler = new SacarFotoHandler(command, textToSpeech, (CameraActivity) activity);
-                        if (commandHandler.validateCommand()) {
+                        if (commandHandler.matches()) {
                             errorCounter = 0;
                             actualStep = commandHandler.drive(1, command);
                             isPhotoTaken = true;

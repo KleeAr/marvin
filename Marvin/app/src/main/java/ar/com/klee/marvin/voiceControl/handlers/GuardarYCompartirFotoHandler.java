@@ -1,8 +1,5 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
-import android.app.Activity;
-import android.content.Context;
-
 import ar.com.klee.marvin.activities.CameraActivity;
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
@@ -18,6 +15,7 @@ public class GuardarYCompartirFotoHandler extends CommandHandler{
 
     public GuardarYCompartirFotoHandler(String command, TTS textToSpeech, CommandHandlerManager commandHandlerManager, CameraActivity activity){
 
+        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
         expressionMatcher = new ExpressionMatcher("guardar y compartir foto");
 
         this.command = command;

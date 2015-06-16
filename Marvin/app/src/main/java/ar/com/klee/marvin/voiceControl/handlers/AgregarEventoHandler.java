@@ -1,180 +1,176 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
-import android.app.Activity;
 import android.content.Context;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.social.CalendarService;
-import ar.com.klee.marvin.social.FacebookService;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
 public class AgregarEventoHandler extends CommandHandler{
 
-    private ExpressionMatcher expressionMatcher;
-    private String command;
-    private String event;
-    private String day;
-    private String hour;
-    private boolean setEvent = false;
-    private TTS textToSpeech;
+    protected static final String SET_EVENT = "SET_EVENT";
+    protected static final String EVENT = "EVENT";
+    protected static final String DAY = "DAY";
+    protected static final String HOUR = "HOUR";
 
     private CalendarService calendarService;
 
-    public AgregarEventoHandler(String command, TTS textToSpeech, Context context){
-
-        expressionMatcher = new ExpressionMatcher("agregar evento {evento}");
-
-        this.command = command;
-        this.calendarService = new CalendarService(context);
-        this.textToSpeech = textToSpeech;
-
+    public AgregarEventoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
+        super("agregar evento {evento}", textToSpeech, context, commandHandlerManager);
     }
 
-    public boolean validateCommand(){
+    public CommandHandlerContext drive(CommandHandlerContext context){
 
-        Map<String, String> values = expressionMatcher.getValuesFromExpression(command);
+        if(!context.containsKey(SET_EVENT)) {
+            context.put(SET_EVENT, false);
+        }
+        Boolean setEvent = context.get(SET_EVENT, Boolean.class);
+        String input = context.get(INPUT, String.class);
+        Integer step = context.get(STEP, Integer.class);
 
-        event = values.get("evento");
-
-        return expressionMatcher.matches(command);
-
-    }
-
-    public int drive(int step, String input){
-
-        if(setEvent)
-            event = input;
+        if(setEvent) {
+            context.put(EVENT, input);
+        }
 
         switch(step){
 
             case 1:
-                return stepOne();
+                return stepOne(context);
             case 3:
-                return stepThree(input);
+                return stepThree(context);
             case 5:
-                return stepFive(input);
+                return stepFive(context);
             case 7:
-                return stepSeven(input);
+                return stepSeven(context);
             case 9:
-                return stepNine(input);
+                return stepNine(context);
             case 11:
-                return stepEleven(input);
+                return stepEleven(context);
 
         }
 
-        return 0;
+        context.put(STEP, 0);
+        return context;
 
     }
 
     //PRONUNCIA EVENTO
-    public int stepOne(){
+    public CommandHandlerContext stepOne(CommandHandlerContext context){
 
-        textToSpeech.speakText("¿Querés publicar " + event + " en el muro?");
+        getTextToSpeech().speakText("¿Querés publicar " + context.get(EVENT, String.class) + " en el muro?");
 
-        setEvent = false;
-
-        return 3;
+        context.put(SET_EVENT, false);
+        context.put(STEP, 3);
+        return context;
 
     }
 
     //CONFIRMA EVENTO
-    public int stepThree(String input){
+    public CommandHandlerContext stepThree(CommandHandlerContext context){
 
+        String input = context.get(INPUT, String.class);
         if(input.equals("si")) {
-            textToSpeech.speakText("¿En qué fecha es el evento?");
-            return 5;
+            getTextToSpeech().speakText("¿En qué fecha es el evento?");
+            return context;
         }
 
         if(input.equals("cancelar")) {
-            textToSpeech.speakText("Cancelando agregado de evento");
-            return 0;
+            getTextToSpeech().speakText("Cancelando agregado de evento");
+            return context;
         }
 
         if(input.equals("no")){
-            textToSpeech.speakText("¿Qué evento deseás crear?");
-            setEvent = true;
-            return 1;
+            getTextToSpeech().speakText("¿Qué evento deseás crear?");
+            context.put(SET_EVENT, true);
+            context.put(STEP, 1);
+            return context;
         }
 
-        textToSpeech.speakText("Debe indicar sí, no o cancelar");
-
-        return 3;
+        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+        context.put(STEP, 3);
+        return context;
 
     }
 
     //INDICA FECHA
-    public int stepFive(String input){
+    public CommandHandlerContext stepFive(CommandHandlerContext context){
 
         /*
         VALIDAR FECHA
          */
+        String input = context.get(INPUT, String.class);
+        getTextToSpeech().speakText("¿El evento es el " + input + "?");
 
-        textToSpeech.speakText("¿El evento es el "+input+"?");
-
-        day = input;
-
-        return 7;
+        context.put(DAY,input);
+        context.put(STEP, 7);
+        return context;
     }
 
     //CONFIRMA FECHA
-    public int stepSeven(String input){
-
+    public CommandHandlerContext stepSeven(CommandHandlerContext context) {
+        String input = context.get(INPUT, String.class);
         if(input.equals("si")) {
-            textToSpeech.speakText("¿A qué hora es el evento?");
-            return 9;
+            getTextToSpeech().speakText("¿A qué hora es el evento?");
+            context.put(STEP, 9);
+            return context;
         }
 
         if(input.equals("cancelar")) {
-            textToSpeech.speakText("Cancelando agregado de evento");
-            return 0;
+            getTextToSpeech().speakText("Cancelando agregado de evento");
+            context.put(STEP, 0);
+            return context;
         }
 
         if(input.equals("no")){
-            textToSpeech.speakText("¿En qué fecha es el evento?");
-            return 5;
+            getTextToSpeech().speakText("¿En qué fecha es el evento?");
+            context.put(STEP, 5);
+            return context;
         }
 
-        textToSpeech.speakText("Debe indicar sí, no o cancelar");
-
-        return 7;
+        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+        context.put(STEP, 7);
+        return context;
 
     }
 
     //INGRESA HORA
-    public int stepNine(String input){
-
-        textToSpeech.speakText("¿El evento es las "+input+"?");
-
-        hour = input;
-
-        return 11;
+    public CommandHandlerContext stepNine(CommandHandlerContext context) {
+        String input = context.get(INPUT, String.class);
+        getTextToSpeech().speakText("¿El evento es las " + input + "?");
+        context.put(HOUR,input);
+        context.put(STEP, 11);
+        return context;
 
     }
 
     //CONFIRMA HORA
-    public int stepEleven(String input){
-
+    public CommandHandlerContext stepEleven(CommandHandlerContext context){
+        String input = context.get(INPUT, String.class);
         if(input.equals("si")) {
-            textToSpeech.speakText("Agregando evento en el calendario");
-            return 0;
+            getTextToSpeech().speakText("Agregando evento en el calendario");
+            context.put(STEP, 0);
+            return context;
         }
 
         if(input.equals("cancelar")) {
-            textToSpeech.speakText("Cancelando agregado de evento");
-            return 0;
+            getTextToSpeech().speakText("Cancelando agregado de evento");
+            context.put(STEP, 0);
+            return context;
         }
 
         if(input.equals("no")){
-            textToSpeech.speakText("¿A qué hora es el evento?");
-            return 9;
+            getTextToSpeech().speakText("¿A qué hora es el evento?");
+            context.put(STEP, 9);
+            return context;
         }
 
-        textToSpeech.speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
 
-        return 11;
+        context.put(STEP, 11);
+        return context;
 
     }
 

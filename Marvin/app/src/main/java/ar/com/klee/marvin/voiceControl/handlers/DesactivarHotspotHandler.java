@@ -11,6 +11,7 @@ public class DesactivarHotspotHandler extends CommandHandler{
 
     public DesactivarHotspotHandler(String command, TTS textToSpeech){
 
+        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
         expressionMatcher = new ExpressionMatcher("desactivar hotspot");
 
         this.command = command;

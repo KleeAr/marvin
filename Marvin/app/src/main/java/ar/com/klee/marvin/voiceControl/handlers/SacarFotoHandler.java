@@ -13,6 +13,7 @@ public class SacarFotoHandler extends CommandHandler{
 
     public SacarFotoHandler(String command, TTS textToSpeech, CameraActivity cameraActivity){
 
+        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
         expressionMatcher = new ExpressionMatcher("sacar foto");
 
         this.command = command;

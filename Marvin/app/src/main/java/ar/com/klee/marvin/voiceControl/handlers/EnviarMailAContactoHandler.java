@@ -1,11 +1,8 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
-import android.app.Activity;
-
 import java.util.Map;
 
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
-import ar.com.klee.marvin.social.WhatsAppService;
 import ar.com.klee.marvin.voiceControl.TTS;
 
 public class EnviarMailAContactoHandler extends CommandHandler{
@@ -18,6 +15,7 @@ public class EnviarMailAContactoHandler extends CommandHandler{
 
     public EnviarMailAContactoHandler(String command, TTS textToSpeech){
 
+        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
         expressionMatcher = new ExpressionMatcher("enviar mail a {contacto}");
 
         this.command = command;

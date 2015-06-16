@@ -11,6 +11,7 @@ public class ReproducirMusicaHandler extends CommandHandler{
 
     public ReproducirMusicaHandler(String command, TTS textToSpeech){
 
+        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
         expressionMatcher = new ExpressionMatcher("reproducir música");
 
         this.command = command;

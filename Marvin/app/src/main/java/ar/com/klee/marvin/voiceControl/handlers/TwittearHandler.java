@@ -19,6 +19,7 @@ public class TwittearHandler extends CommandHandler{
 
     public TwittearHandler(String command, TTS textToSpeech){
 
+        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
         expressionMatcher = new ExpressionMatcher("twittear {mensaje}");
 
         this.command = command;

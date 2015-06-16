@@ -11,6 +11,7 @@ public class SMSDeEmergenciaHandler extends CommandHandler{
 
     public SMSDeEmergenciaHandler(String command, TTS textToSpeech){
 
+        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
         expressionMatcher = new ExpressionMatcher("sms de emergencia");
 
         this.command = command;

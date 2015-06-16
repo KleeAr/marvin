@@ -1,14 +1,9 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
-import android.app.Activity;
-import android.content.Context;
-
 import java.util.ArrayList;
-import java.util.Map;
 
 import ar.com.klee.marvin.activities.CameraActivity;
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
-import ar.com.klee.marvin.social.FacebookService;
 import ar.com.klee.marvin.voiceControl.TTS;
 
 public class CompartirEnFacebookHandler extends CommandHandler{
@@ -23,6 +18,7 @@ public class CompartirEnFacebookHandler extends CommandHandler{
 
     public CompartirEnFacebookHandler(String command, TTS textToSpeech, CameraActivity activity){
 
+        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
         expressionMatcher = new ExpressionMatcher("compartir en facebook");
 
         this.command = command;

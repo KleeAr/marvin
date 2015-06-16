@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import ar.com.klee.marvin.activities.CameraActivity;
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
-import ar.com.klee.marvin.social.TwitterService;
 import ar.com.klee.marvin.voiceControl.TTS;
 
 public class CompartirEnInstagramHandler extends CommandHandler{
@@ -18,6 +17,7 @@ public class CompartirEnInstagramHandler extends CommandHandler{
 
     public CompartirEnInstagramHandler(String command, TTS textToSpeech, CameraActivity activity){
 
+        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
         expressionMatcher = new ExpressionMatcher("compartir en instagram");
 
         this.command = command;

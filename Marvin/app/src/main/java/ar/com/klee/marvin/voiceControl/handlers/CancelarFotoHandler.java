@@ -13,6 +13,7 @@ public class CancelarFotoHandler extends CommandHandler{
 
     public CancelarFotoHandler(String command, TTS textToSpeech, CameraActivity cameraActivity){
 
+        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
         expressionMatcher = new ExpressionMatcher("cancelar foto");
 
         this.command = command;

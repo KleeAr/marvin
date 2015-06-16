@@ -1,15 +1,11 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
-import android.app.Activity;
 import android.content.Context;
 
-import java.util.ArrayList;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.expressions.exceptions.ExpressionMatcherException;
-import ar.com.klee.marvin.social.TwitterService;
 import ar.com.klee.marvin.social.WhatsAppService;
 import ar.com.klee.marvin.voiceControl.TTS;
 
@@ -24,6 +20,7 @@ public class EnviarWhatsAppHandler extends CommandHandler{
 
     public EnviarWhatsAppHandler(String command, TTS textToSpeech, Context context){
 
+        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
         whatsAppService =  new WhatsAppService(context);
 
         expressionMatcher = new ExpressionMatcher("enviar whatsapp {mensaje}");

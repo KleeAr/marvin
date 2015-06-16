@@ -11,6 +11,7 @@ public class DetenerReproduccionHandler extends CommandHandler{
 
     public DetenerReproduccionHandler(String command, TTS textToSpeech){
 
+        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
         expressionMatcher = new ExpressionMatcher("detener reproducción");
 
         this.command = command;
