@@ -8,4 +8,8 @@
     <string name="city_name_default">San Justo, BA</string>
     <string name="day_default_text">viernes</string>
     <string name="date_default_text">14 de mayo</string>
+    <string name="default_temperature">23°C</string>
+    <string name="title_activity_marvin">MarvinActivity</string>
+    <string name="defaultMainStreet">Av. De los Corrales 2900</string>
+    <string name="defaultSpeed">50</string>
 </resources>
