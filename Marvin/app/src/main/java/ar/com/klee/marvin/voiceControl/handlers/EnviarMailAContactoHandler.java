@@ -10,9 +10,6 @@ import ar.com.klee.marvin.voiceControl.TTS;
 
 public class EnviarMailAContactoHandler extends CommandHandler{
 
-    public static final String SET_CONTACT = "SET_CONTACT";
-    public static final String CONTACT = "CONTACT";
-
     public EnviarMailAContactoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
         super("enviar mail a {contacto}", textToSpeech, context, commandHandlerManager);
     }

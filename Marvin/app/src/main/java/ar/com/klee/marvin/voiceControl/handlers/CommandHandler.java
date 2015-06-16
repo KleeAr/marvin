@@ -16,6 +16,9 @@ public abstract class CommandHandler {
     protected static final String STEP = "STEP";
     protected static final String COMMAND = "COMMAND";
     protected static final String CAMERA_ACTIVITY = "CAMERA_ACTIVITY";
+    protected static final String SET_CONTACT = "SET_CONTACT";
+    protected static final String CONTACT = "CONTACT";
+
     private ExpressionMatcher expressionMatcher;
     private TTS textToSpeech;
 
