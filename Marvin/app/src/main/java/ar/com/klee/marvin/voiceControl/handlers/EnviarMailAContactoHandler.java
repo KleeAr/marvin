@@ -11,6 +11,7 @@ import ar.com.klee.marvin.voiceControl.TTS;
 public class EnviarMailAContactoHandler extends CommandHandler{
 
     public static final String SET_CONTACT = "SET_CONTACT";
+    public static final String CONTACT = "CONTACT";
 
     public EnviarMailAContactoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
         super("enviar mail a {contacto}", textToSpeech, context, commandHandlerManager);
@@ -24,7 +25,7 @@ public class EnviarMailAContactoHandler extends CommandHandler{
         Boolean setContact = context.get(SET_CONTACT, Boolean.class);
 
         if(setContact) {
-            context.put("CONTACT", context.get(INPUT, String.class));
+            context.put(CONTACT, context.get(INPUT, String.class));
         }
 
         Integer step = context.get(STEP, Integer.class);
@@ -47,74 +48,78 @@ public class EnviarMailAContactoHandler extends CommandHandler{
     }
 
     //PRONUNCIA CONTACTO
-    public int stepOne(CommandHandlerContext context){
+    public CommandHandlerContext stepOne(CommandHandlerContext context){
+        String contact = context.get(CONTACT, String.class);
+        getTextToSpeech().speakText("¿Querés enviar un mail al contacto " + contact + "?");
 
-        textToSpeech.speakText("¿Querés enviar un mail al contacto " + contact + "?");
+        context.put(SET_CONTACT, false);
 
-        setContact = false;
-
-        return 3;
+        context.put(STEP, 3);
+        return context;
 
     }
 
     //CONFIRMA CONTACTO
-    public int stepThree(CommandHandlerContext input){
-
+    public CommandHandlerContext stepThree(CommandHandlerContext context){
+        String input = context.get(INPUT, String.class);
         if(input.equals("si")) {
-            textToSpeech.speakText("¿Qué mensaje le querés mandar por mail?");
-            return 5;
+            getTextToSpeech().speakText("¿Qué mensaje le querés mandar por mail?");
+            context.put(STEP, 5);
+            return context;
         }
 
         if(input.equals("cancelar")) {
-            textToSpeech.speakText("Cancelando envío");
-            return 0;
+            getTextToSpeech().speakText("Cancelando envío");
+            context.put(STEP, 0);
+            return context;
         }
 
         if(input.equals("no")){
-            textToSpeech.speakText("¿A qué contacto querés mandarle el mail?");
-            setContact = true;
-            return 1;
+            getTextToSpeech().speakText("¿A qué contacto querés mandarle el mail?");
+            context.put(SET_CONTACT, true);
+            context.put(STEP, 1);
+            return context;
         }
 
-        textToSpeech.speakText("Debe indicar sí, no o cancelar");
-
-        return 3;
+        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+        context.put(STEP, 3);
+        return context;
 
     }
 
     //INGRESO MENSAJE
-    public int stepFive(CommandHandlerContext input){
+    public CommandHandlerContext stepFive(CommandHandlerContext context){
+        String input = context.get(INPUT, String.class);
+        getTextToSpeech().speakText("¿Querés enviar por mail el mensaje " + input + "?");
 
-        textToSpeech.speakText("¿Querés enviar por mail el mensaje " + input + "?");
-
-        return 7;
+        context.put(STEP, 7);
+        return context;
 
     }
 
     //CONFIRMACION DE MENSAJE
-    public int stepSeven(CommandHandlerContext input){
-
+    public CommandHandlerContext stepSeven(CommandHandlerContext context){
+        String input = context.get(INPUT, String.class);
         if(input.equals("si")) {
-            textToSpeech.speakText("Enviando mail");
-            return 0;
+            getTextToSpeech().speakText("Enviando mail");
+            context.put(STEP, 0);
+            return context;
         }
 
         if(input.equals("cancelar")) {
-            textToSpeech.speakText("Cancelando envío");
-            return 0;
+            getTextToSpeech().speakText("Cancelando envío");
+            context.put(STEP, 0);
+            return context;
         }
 
         if(input.equals("no")){
-            textToSpeech.speakText("¿Qué mensaje querés mandar?");
-            return 5;
+            getTextToSpeech().speakText("¿Qué mensaje querés mandar?");
+            context.put(STEP, 5);
+            return context;
         }
-
-        textToSpeech.speakText("Debe indicar sí, no o cancelar");
-
-        return 7;
-
+        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+        context.put(STEP, 7);
+        return context;
     }
-
-
 }
 
