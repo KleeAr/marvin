@@ -1,43 +1,30 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
+import android.content.Context;
+
 import java.util.Map;
 
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
 public class ReproducirArtistaHandler extends CommandHandler{
 
-    private ExpressionMatcher expressionMatcher;
-    private String command;
-    private String artist;
-    private TTS textToSpeech;
-
-    public ReproducirArtistaHandler(String command, TTS textToSpeech){
-
-        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
-        expressionMatcher = new ExpressionMatcher("reproducir artista {artista}");
-
-        this.command = command;
-
-        this.textToSpeech = textToSpeech;
-
+    public ReproducirArtistaHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
+        super("reproducir artista {artista}", textToSpeech, context, commandHandlerManager);
     }
 
-    public boolean validateCommand(){
-        return expressionMatcher.matches(command);
-    }
+    public CommandHandlerContext drive(CommandHandlerContext context){
 
-    public int drive(int step, String input){
+        Map<String, String> values = getExpressionMatcher().getValuesFromExpression(context.get(COMMAND, String.class));
 
-        Map<String, String> values = expressionMatcher.getValuesFromExpression(command);
+        String artist = values.get("cancion");
 
-        artist = values.get("cancion");
+        getTextToSpeech().speakText("Reproduciendo artista "+artist);
 
-        textToSpeech.speakText("Reproduciendo artista "+artist);
+        //TODO: CODIGO PARA BUSCAR Y REPRODUCIR UN ARTISTA
 
-        //CODIGO PARA BUSCAR Y REPRODUCIR UN ARTISTA
-
-        return 0;
-
+        context.put(STEP, 0);
+        return context;
     }
 }

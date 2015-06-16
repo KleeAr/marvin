@@ -1,43 +1,29 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
+import android.content.Context;
+
 import java.util.Map;
 
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
 public class ReproducirCancionHandler extends CommandHandler{
 
-    private ExpressionMatcher expressionMatcher;
-    private String command;
-    private String song;
-    private TTS textToSpeech;
-
-    public ReproducirCancionHandler(String command, TTS textToSpeech){
-
-        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
-        expressionMatcher = new ExpressionMatcher("reproducir canción {cancion}");
-
-        this.command = command;
-
-        this.textToSpeech = textToSpeech;
-
+    public ReproducirCancionHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
+        super("reproducir canción {cancion}", textToSpeech, context, commandHandlerManager);
     }
 
-    public boolean validateCommand(){
-        return expressionMatcher.matches(command);
-    }
+    public CommandHandlerContext drive(CommandHandlerContext context){
 
-    public int drive(int step, String input){
+        Map<String, String> values = getExpressionMatcher().getValuesFromExpression(context.get(COMMAND, String.class));
 
-        Map<String, String> values = expressionMatcher.getValuesFromExpression(command);
+        String song = values.get("cancion");
 
-        song = values.get("cancion");
-
-        textToSpeech.speakText("Reproduciendo canción "+song);
+        getTextToSpeech().speakText("Reproduciendo canción "+song);
 
         //CODIGO PARA BUSCAR Y REPRODUCIR UNA CANCION
-
-        return 0;
-
+        context.put(STEP, 0);
+        return context;
     }
 }

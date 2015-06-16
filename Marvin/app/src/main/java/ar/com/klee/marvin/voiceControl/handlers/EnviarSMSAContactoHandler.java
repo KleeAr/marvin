@@ -49,60 +49,69 @@ public class EnviarSMSAContactoHandler extends CommandHandler{
     }
 
     //CONFIRMA CONTACTO
-    public int stepThree(CommandHandlerContext input){
+    public CommandHandlerContext stepThree(CommandHandlerContext context){
 
+        String input = context.get(INPUT, String.class);
         if(input.equals("si")) {
             getTextToSpeech().speakText("¿Qué mensaje le querés mandar por sms?");
-            return 5;
+            context.put(STEP, 5);
+            return context;
         }
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando envío");
-            return 0;
+            context.put(STEP, 0);
+            return context;
         }
 
         if(input.equals("no")){
             getTextToSpeech().speakText("¿A qué contacto querés mandarle el sms?");
-            setContact = true;
-            return 1;
+            context.put(SET_CONTACT, true);
+            context.put(STEP, 1);
+            return context;
         }
 
         getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
 
-        return 3;
+        context.put(STEP, 3);
+        return context;
 
     }
 
     //INGRESO MENSAJE
-    public int stepFive(CommandHandlerContext input){
-
+    public CommandHandlerContext stepFive(CommandHandlerContext context){
+        String input = context.get(INPUT, String.class);
         getTextToSpeech().speakText("¿Querés enviar por sms el mensaje " + input + "?");
 
-        return 7;
+        context.put(STEP, 7);
+        return context;
 
     }
 
     //CONFIRMACION DE MENSAJE
-    public int stepSeven(CommandHandlerContext input){
-
+    public CommandHandlerContext stepSeven(CommandHandlerContext context){
+        String input = context.get(INPUT, String.class);
         if(input.equals("si")) {
             getTextToSpeech().speakText("Enviando sms");
-            return 0;
+            context.put(STEP, 0);
+            return context;
         }
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando envío");
-            return 0;
+            context.put(STEP, 0);
+            return context;
         }
 
         if(input.equals("no")){
             getTextToSpeech().speakText("¿Qué mensaje querés mandar?");
-            return 5;
+            context.put(STEP, 5);
+            return context;
         }
 
         getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
-
-        return 7;
+        context.put(STEP, 7);
+        return context;
 
     }
 
