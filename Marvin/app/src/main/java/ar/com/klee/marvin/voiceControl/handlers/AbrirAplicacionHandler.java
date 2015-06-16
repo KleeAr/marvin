@@ -24,7 +24,7 @@ public class AbrirAplicacionHandler extends CommandHandler{
         String app = values.get("aplicacion");
 
         getTextToSpeech().speakText("Abriendo "+ app);
-
+        
         //CODIGO PARA ABRIR APLICACION
 
         if(app.equals("cámara")) {

@@ -28,6 +28,8 @@ import ar.com.klee.marvin.voiceControl.handlers.CerrarCamaraHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CerrarSesionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
+import ar.com.klee.marvin.voiceControl.handlers.CompartirEnInstagramHandler;
+import ar.com.klee.marvin.voiceControl.handlers.CompartirEnTwitterHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CompartirFotoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.DesactivarHotspotHandler;
 import ar.com.klee.marvin.voiceControl.handlers.DetenerReproduccionHandler;
@@ -83,7 +85,24 @@ public class CommandHandlerManager {
         new CancelarFotoHandler(textToSpeech, context, this),
         new CerrarCamaraHandler(textToSpeech, context, this),
         new CompartirFotoHandler(textToSpeech, context, this ),
-        new );
+        new CompartirEnInstagramHandler(textToSpeech, context, this),
+        new CompartirEnTwitterHandler(textToSpeech, context, this),
+        new CompartirFotoHandler(textToSpeech, context, this),
+        new DesactivarHotspotHandler(textToSpeech, context, this),
+        new DetenerReproduccionHandler(textToSpeech, context, this),
+        new EnviarMailAContactoHandler(textToSpeech, context, this),
+        new EnviarSMSAContactoHandler(textToSpeech, context, this),
+        new EnviarSMSANumeroHandler(textToSpeech, context, this),
+        new EnviarWhatsAppHandler(textToSpeech, context, this),
+        new GuardarFotoHandler(textToSpeech, context, this),
+        new GuardarYCompartirFotoHandler(textToSpeech, context, this),
+        new ReproducirArtistaHandler(textToSpeech, context, this),
+        new ReproducirCancionHandler(textToSpeech, context, this),
+        new ReproducirMusicaHandler(textToSpeech, context, this),
+        new SacarFotoHandler(textToSpeech, context, this),
+        new SiguienteCancionHandler(textToSpeech, context, this),
+        new SMSDeEmergenciaHandler(textToSpeech, context, this),
+        new TwittearHandler(textToSpeech, context, this));
     }
 
     public boolean detectCommand(String command, boolean isListening){

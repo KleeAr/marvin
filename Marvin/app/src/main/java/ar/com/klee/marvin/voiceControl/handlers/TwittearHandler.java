@@ -1,11 +1,14 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.StringTokenizer;
 
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.social.TwitterService;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
 public class TwittearHandler extends CommandHandler{
@@ -27,6 +30,10 @@ public class TwittearHandler extends CommandHandler{
 
         hashtags = new ArrayList<String>();
 
+    }
+
+    public TwittearHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
+        super(textToSpeech, context, commandHandlerManager);
     }
 
     public boolean validateCommand(){

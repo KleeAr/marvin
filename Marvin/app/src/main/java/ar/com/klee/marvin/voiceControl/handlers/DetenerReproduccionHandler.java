@@ -1,36 +1,25 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
+import android.content.Context;
+
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
 public class DetenerReproduccionHandler extends CommandHandler{
 
-    private ExpressionMatcher expressionMatcher;
-    private String command;
-    private TTS textToSpeech;
-
-    public DetenerReproduccionHandler(String command, TTS textToSpeech){
-
-        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
-        expressionMatcher = new ExpressionMatcher("detener reproducción");
-
-        this.command = command;
-
-        this.textToSpeech = textToSpeech;
-
+    public DetenerReproduccionHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
+        super("detener reproducción", textToSpeech, context, commandHandlerManager);
     }
 
-    public boolean validateCommand(){
-        return expressionMatcher.matches(command);
-    }
+    public CommandHandlerContext drive(CommandHandlerContext context){
 
-    public int drive(int step, String input){
-
-        textToSpeech.speakText("Deteniendo reproducción");
+        getTextToSpeech().speakText("Deteniendo reproducción");
 
         //CODIGO PARA DETENER MUSICA
 
-        return 0;
+        context.put(STEP, 0);
+        return context;
 
     }
 }
