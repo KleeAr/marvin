@@ -9,88 +9,66 @@ import ar.com.klee.marvin.voiceControl.TTS;
 
 public class CompartirFotoHandler extends CommandHandler{
 
-    private ExpressionMatcher expressionMatcher;
-    private String command;
-    private TTS textToSpeech;
-    private CommandHandlerManager commandHandlerManager;
-    private Context context;
-    private CameraActivity activity;
-
-    public CompartirFotoHandler(String command, TTS textToSpeech, CommandHandlerManager commandHandlerManager, Context context, CameraActivity activity){
-
-        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
-        expressionMatcher = new ExpressionMatcher("compartir foto");
-
-        this.command = command;
-
-        this.textToSpeech = textToSpeech;
-
-        this.commandHandlerManager = commandHandlerManager;
-
-        this.context = context;
-
-        this.activity = activity;
-
+    public CompartirFotoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
+        super("compartir foto", textToSpeech, context, commandHandlerManager);
     }
 
-    public boolean validateCommand(){
-        return expressionMatcher.matches(command);
-    }
-
-    public int drive(int step, String input){
-
+    public CommandHandlerContext drive(CommandHandlerContext context){
+        Integer step = context.get(STEP, Integer.class);
         switch(step){
 
             case 1:
-                return stepOne();
+                return stepOne(context);
             case 3:
-                return stepThree(input);
+                return stepThree(context);
             case 4:
-                return facebook(input);
+                return facebook(context);
             case 5:
-                return twitter(input);
+                return twitter(context);
             case 6:
-                return instagram(input);
+                return instagram(context);
 
         }
+        context.put(STEP, 0);
+        return context;
+    }
 
-        return 0;
+    public CommandHandlerContext stepOne(CommandHandlerContext context){
+
+        CameraActivity cameraActivity = context.get(CAMERA_ACTIVITY, CameraActivity.class);
+        getTextToSpeech().speakText("¿En qué red social deseás compartir la foto?");
+
+        cameraActivity.share();
+
+        context.put(STEP, 3);
+        return context;
 
     }
 
-    public int stepOne(){
-
-        textToSpeech.speakText("¿En qué red social deseás compartir la foto?");
-
-        activity.share();
-
-        return 3;
-
-    }
-
-    public int stepThree(String input){
-
+    public CommandHandlerContext stepThree(CommandHandlerContext context){
+        String input = context.get(INPUT, String.class);
         if(input.equals("facebook")) {
-            textToSpeech.speakText("Compartiendo foto en Facebook. ¿Querés agregar un mensaje?");
-            return 4;
+            getTextToSpeech().speakText("Compartiendo foto en Facebook. ¿Querés agregar un mensaje?");
+            context.put(STEP, 4);
+            return context;
         }else if(input.equals("twitter")) {
-            textToSpeech.speakText("Compartiendo foto en Twitter. ¿Querés agregar un mensaje?");
-            return 5;
+            getTextToSpeech().speakText("Compartiendo foto en Twitter. ¿Querés agregar un mensaje?");
+            context.put(STEP, 5);
+            return context;
         }else if(input.equals("instagram")) {
-            textToSpeech.speakText("Compartiendo foto en Instagram. ¿Querés agregar un mensaje?");
-            return 6;
+            getTextToSpeech().speakText("Compartiendo foto en Instagram. ¿Querés agregar un mensaje?");
+            context.put(STEP, 6);
         }
-
-        textToSpeech.speakText("Debe indicar facebook, twitter o instagram");
-
-        return 3;
-
+        getTextToSpeech().speakText("Debe indicar facebook, twitter o instagram");
+        context.put(STEP, 3);
+        return context;
     }
 
-    public int facebook(String input){
+    public CommandHandlerContext facebook(CommandHandlerContext context){
 
+        String input = context.get(INPUT, String.class);
         if(input.equals("si")) {
-            commandHandlerManager.setCommandHandler(new CompartirEnFacebookHandler("compartir en facebook", textToSpeech, activity));
+            getCommandHandlerManager().setCommandHandler(new CompartirEnFacebookHandler("compartir en facebook", textToSpeech, activity));
             textToSpeech.speakText("¿Qué mensaje querés agregar?");
             return 1;
         }

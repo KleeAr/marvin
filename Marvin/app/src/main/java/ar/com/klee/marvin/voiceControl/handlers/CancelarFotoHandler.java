@@ -1,40 +1,25 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
+import android.app.Activity;
+import android.content.Context;
+
 import ar.com.klee.marvin.activities.CameraActivity;
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
 public class CancelarFotoHandler extends CommandHandler{
 
-    private ExpressionMatcher expressionMatcher;
-    private String command;
-    private TTS textToSpeech;
-    private CameraActivity cameraActivity;
-
-    public CancelarFotoHandler(String command, TTS textToSpeech, CameraActivity cameraActivity){
-
-        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
-        expressionMatcher = new ExpressionMatcher("cancelar foto");
-
-        this.command = command;
-
-        this.textToSpeech = textToSpeech;
-
-        this.cameraActivity = cameraActivity;
-
+    public CancelarFotoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
+        super("cancelar foto",textToSpeech, context, commandHandlerManager);
     }
 
-    public boolean validateCommand(){
-        return expressionMatcher.matches(command);
-    }
+    public CommandHandlerContext drive(CommandHandlerContext context){
+        getTextToSpeech().speakText("Cancelando foto");
 
-    public int drive(int step, String input){
-
-        textToSpeech.speakText("Cancelando foto");
-
+        CameraActivity cameraActivity = context.get(CAMERA_ACTIVITY, CameraActivity.class);
         cameraActivity.cancel();
-
-        return 0;
-
+        context.put(STEP, 0);
+        return context;
     }
 }
