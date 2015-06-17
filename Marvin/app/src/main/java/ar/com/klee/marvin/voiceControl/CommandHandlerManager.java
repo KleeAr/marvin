@@ -10,9 +10,7 @@ import org.apache.commons.collections4.Predicate;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.StringTokenizer;
 
-import ar.com.klee.marvin.activities.CameraActivity;
 import ar.com.klee.marvin.voiceControl.handlers.AbrirAplicacionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.ActivarHotspotHandler;
 import ar.com.klee.marvin.voiceControl.handlers.AgregarEventoHandler;
@@ -23,9 +21,9 @@ import ar.com.klee.marvin.voiceControl.handlers.CalleAnteriorHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CalleSiguienteHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CancelarFotoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CerrarCamaraHandler;
-import ar.com.klee.marvin.voiceControl.handlers.CerrarSesionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
+import ar.com.klee.marvin.voiceControl.handlers.CompartirEnFacebookHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CompartirEnInstagramHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CompartirEnTwitterHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CompartirFotoHandler;
@@ -54,7 +52,7 @@ public class CommandHandlerManager {
     private int currentActivity = ACTIVITY_MAIN;
     private int currentStep = 0;
     private int errorCounter = 0;
-    private CommandHandler commandHandler;
+    private CommandHandler currentCommandHandler;
 
     private TTS textToSpeech;
 
@@ -65,12 +63,20 @@ public class CommandHandlerManager {
     private boolean isPhotoTaken;
     private List<CommandHandler> commandHandlers;
     private CommandHandlerContext currentContext;
+    private CommandHandler compartirEnFacebookHandler;
+    private CommandHandler compartirEnTwitterHandler;
+    private CommandHandler compartirInstagramHandler;
 
     CommandHandlerManager(Context context, SpeechRecognizer mSpeechRecognizer, Intent mSpeechRecognizerIntent){
         Helper.commandHandlerManager = this;
         textToSpeech = new TTS(context, mSpeechRecognizer, mSpeechRecognizerIntent);
         this.context = context;
 
+        this.compartirEnTwitterHandler = new CompartirEnTwitterHandler(textToSpeech, context, this);
+        this.compartirEnFacebookHandler = new CompartirEnFacebookHandler(textToSpeech, context, this);
+        this.compartirInstagramHandler = new CompartirEnInstagramHandler(textToSpeech, context, this);
+
+        // Initialize all command handlers
         commandHandlers = Arrays.asList(new AbrirAplicacionHandler(textToSpeech, context, this),
         new PublicarEnFacebookHandler(textToSpeech, context,this),
         new ActivarHotspotHandler(textToSpeech, context, this),
@@ -83,8 +89,9 @@ public class CommandHandlerManager {
         new CancelarFotoHandler(textToSpeech, context, this),
         new CerrarCamaraHandler(textToSpeech, context, this),
         new CompartirFotoHandler(textToSpeech, context, this ),
-        new CompartirEnInstagramHandler(textToSpeech, context, this),
-        new CompartirEnTwitterHandler(textToSpeech, context, this),
+        this.compartirEnFacebookHandler,
+        this.compartirEnTwitterHandler,
+        this.compartirInstagramHandler,
         new CompartirFotoHandler(textToSpeech, context, this),
         new DesactivarHotspotHandler(textToSpeech, context, this),
         new DetenerReproduccionHandler(textToSpeech, context, this),
@@ -106,17 +113,11 @@ public class CommandHandlerManager {
     public boolean detectCommand(String command, boolean isListening){
         command = command.toLowerCase();
 
-        StringTokenizer stringTokenizer = new StringTokenizer(command);
-
-        String firstWord, secondWord, thirdWord;
-
-        firstWord = stringTokenizer.nextToken();
-
         isError = false;
 
         if(!isListening){
 
-            if(firstWord.equals("marvin")){
+            if(command.startsWith("marvin")){
 
                 //ACTIVAR PANTALLA DE ESCUCHA******************************
 
@@ -131,148 +132,42 @@ public class CommandHandlerManager {
 
         }
 
-        if(currentContext.get(CommandHandler.STEP, Integer.class) != 0){
-            currentContext = commandHandler.drive(currentContext);
-            if(currentContext.get(CommandHandler.STEP, Integer.class) == 0) {
-                return false;
-            }
-            return true;
-        }
-
-        if(currentActivity == ACTIVITY_MAIN) {
-
-            boolean isDefault = false;
-
-
-            final String finalCommand = command;
-            CommandHandler currentCommandHandler = CollectionUtils.find(commandHandlers, new Predicate<CommandHandler>() {
+        final String finalCommand = command;
+        if(currentContext.get(CommandHandler.STEP, Integer.class) == 0) {
+            // find the command that matches
+            currentCommandHandler = CollectionUtils.find(commandHandlers, new Predicate<CommandHandler>() {
                 @Override
                 public boolean evaluate(CommandHandler handlerToEvaluate) {
                     return handlerToEvaluate.matches(finalCommand);
                 }
             });
-
-            if(currentCommandHandler != null) {
-                currentContext = currentCommandHandler.drive(currentCommandHandler.createContext(activity, command));
-            } else {
-                wrongCommand("");
-            }
-
-            isDefault = true;
-            if (errorCounter >= 3 || (!isError && !isDefault && currentStep == 0))
-                return false;
-            else
-                return true;
-
-        } else if(currentActivity == ACTIVITY_CAMERA){
-
-            boolean isDefault = false;
-
-            if(isPhotoTaken) {
-
-                switch (firstWord) {
-
-                    case "cerrar":
-                        commandHandler = new CerrarCamaraHandler(command, textToSpeech, (CameraActivity) activity, this);
-                        if (commandHandler.matches()) {
-                            errorCounter = 0;
-                            currentStep = commandHandler.drive(1, command);
-                        } else
-                            wrongCommand("cerrar cámara");
-                        break;
-
-                    case "guardar":
-                        if (stringTokenizer.hasMoreTokens()) {
-                            secondWord = stringTokenizer.nextToken();
-                            if (secondWord.equals("foto")) {
-                                commandHandler = new GuardarFotoHandler(command, textToSpeech, (CameraActivity) activity);
-                                if (commandHandler.matches()) {
-                                    errorCounter = 0;
-                                    currentStep = commandHandler.drive(1, command);
-                                    isPhotoTaken = false;
-                                } else
-                                    wrongCommand("guardar foto");
-                            } else if (secondWord.equals("y")) {
-                                commandHandler = new GuardarYCompartirFotoHandler(command, textToSpeech, this, (CameraActivity) activity);
-                                if (commandHandler.matches()) {
-                                    errorCounter = 0;
-                                    currentStep = commandHandler.drive(1, command);
-                                    isPhotoTaken = false;
-                                } else
-                                    wrongCommand("guardar foto");
-                            } else
-                                wrongCommand("guardar foto");
-                        } else
-                            wrongCommand("guardar foto");
-                        break;
-
-                    case "cancelar":
-                        commandHandler = new CancelarFotoHandler(command, textToSpeech, (CameraActivity) activity);
-                        if (commandHandler.matches()) {
-                            errorCounter = 0;
-                            currentStep = commandHandler.drive(1, command);
-                            isPhotoTaken = false;
-                        } else
-                            wrongCommand("cancelar foto");
-                        break;
-
-                    case "compartir":
-                        commandHandler = new CompartirFotoHandler(command, textToSpeech, this, context, (CameraActivity) activity);
-                        if (commandHandler.matches()) {
-                            errorCounter = 0;
-                            currentStep = commandHandler.drive(1, command);
-                            isPhotoTaken = false;
-                        } else
-                            wrongCommand("compartir foto");
-                        break;
-
-                    default:
-                        isDefault = true;
-                        wrongCommand("guardar foto");
-                        break;
-
-                }
-
-            }else{
-
-                switch (firstWord) {
-
-                    case "cerrar":
-                        commandHandler = new CerrarCamaraHandler(command, textToSpeech, (CameraActivity) activity, this);
-                        if (commandHandler.matches()) {
-                            errorCounter = 0;
-                            currentStep = commandHandler.drive(1, command);
-                        } else
-                            wrongCommand("cerrar cámara");
-                        break;
-
-                    case "sacar":
-                        commandHandler = new SacarFotoHandler(command, textToSpeech, (CameraActivity) activity);
-                        if (commandHandler.matches()) {
-                            errorCounter = 0;
-                            currentStep = commandHandler.drive(1, command);
-                            isPhotoTaken = true;
-                        } else
-                            wrongCommand("sacar foto");
-                        break;
-
-                    default:
-                        isDefault = true;
-                        wrongCommand("sacar foto");
-                        break;
-
-                }
-
-            }
-
-            if (errorCounter >= 3 || (!isError && !isDefault && currentStep == 0))
-                return false;
-            else
-                return true;
+        }
+        if(currentCommandHandler != null) {
+            errorCounter = 0;
+            currentContext = currentCommandHandler.drive(currentCommandHandler.createContext(currentContext, activity, command));
+        } else {
+            // If command handler is null, then it didn't found any match, the command was wrong
+            wrongCommand(getSuggestions(command));
         }
 
-        return false;
+        if (errorCounter >= 3 || (!isError && currentStep == 0)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
+    private String getSuggestions(final String command) {
+        CommandHandler suggestedHandler = CollectionUtils.find(commandHandlers, new Predicate<CommandHandler>() {
+            @Override
+            public boolean evaluate(CommandHandler handlerToEvaluate) {
+                return handlerToEvaluate.isSimilar(command);
+            }
+        });
+        if(suggestedHandler == null) {
+            return "";
+        }
+        return suggestedHandler.getSuggestion();
     }
 
     public void wrongCommand(String suggestion){
@@ -289,9 +184,9 @@ public class CommandHandlerManager {
 
     }
 
-    public void setCommandHandler(CommandHandler commandHandler){
+    public void setCurrentCommandHandler(CommandHandler currentCommandHandler){
 
-        this.commandHandler = commandHandler;
+        this.currentCommandHandler = currentCommandHandler;
 
     }
 
@@ -312,4 +207,28 @@ public class CommandHandlerManager {
 
     }
 
+    public CommandHandler getCompartirEnFacebookHandler() {
+        return compartirEnFacebookHandler;
+    }
+
+    public void setCompartirEnFacebookHandler(CommandHandler compartirEnFacebookHandler) {
+        this.compartirEnFacebookHandler = compartirEnFacebookHandler;
+    }
+
+    public CommandHandler getCompartirEnTwitterHandler() {
+        return compartirEnTwitterHandler;
+    }
+
+    public void setCompartirEnTwitterHandler(CommandHandler compartirEnTwitterHandler) {
+        this.compartirEnTwitterHandler = compartirEnTwitterHandler;
+    }
+
+
+    public CommandHandler getCompartirInstagramHandler() {
+        return compartirInstagramHandler;
+    }
+
+    public void setCompartirInstagramHandler(CommandHandler compartirInstagramHandler) {
+        this.compartirInstagramHandler = compartirInstagramHandler;
+    }
 }

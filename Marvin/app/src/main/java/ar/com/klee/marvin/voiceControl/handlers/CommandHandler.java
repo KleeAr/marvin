@@ -54,7 +54,10 @@ public abstract class CommandHandler {
         return commandHandlerManager;
     }
 
-    public CommandHandlerContext createContext(Activity activity, String command) {
+    public CommandHandlerContext createContext(CommandHandlerContext currentContext, Activity activity, String command) {
+        if(currentContext != null && currentContext.get(STEP, Integer.class) != 0) {
+            return currentContext;
+        }
         CommandHandlerContext commandHandlerContext = new CommandHandlerContext();
         commandHandlerContext.put(ACTIVITY, activity);
         commandHandlerContext.put(COMMAND, command);
@@ -63,4 +66,12 @@ public abstract class CommandHandler {
     }
 
     protected abstract void addSpecificCommandContext(CommandHandlerContext commandHandlerContext);
+
+    public String getSuggestion() {
+        return getExpressionMatcher().getSuggestion();
+    }
+
+    public boolean isSimilar(String command) {
+        return getExpressionMatcher().isSimilar(command);
+    }
 }

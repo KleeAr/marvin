@@ -53,4 +53,10 @@ public class ExpressionMatcherTest {
         assertFalse("Must not match, since expression says 'was' instead of 'is'", expressionMatcher.matches("My name was Matias and i am 25 years old"));
     }
 
+    @Test
+    public void testIsSimilar() {
+        assertTrue(expressionMatcher.isSimilar("My car is Matias"));
+        assertEquals("my name is username and i am userage years old", expressionMatcher.getSuggestion());
+    }
+
 }
