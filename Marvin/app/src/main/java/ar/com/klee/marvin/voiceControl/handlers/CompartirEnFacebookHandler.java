@@ -1,66 +1,54 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 
 import ar.com.klee.marvin.activities.CameraActivity;
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
 public class CompartirEnFacebookHandler extends CommandHandler{
 
-    private ExpressionMatcher expressionMatcher;
-    private String command;
-    private String message;
-    private ArrayList<String> etiquetados;
-    private ArrayList<String> hashtags;
-    private TTS textToSpeech;
-    private CameraActivity activity;
-
-    public CompartirEnFacebookHandler(String command, TTS textToSpeech, CameraActivity activity){
-
-        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
-        expressionMatcher = new ExpressionMatcher("compartir en facebook");
-
-        this.command = command;
-        this.textToSpeech = textToSpeech;
-
-        etiquetados = new ArrayList<String>();
-        hashtags = new ArrayList<String>();
-
-        this.activity = activity;
-
+    public CompartirEnFacebookHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
+        super("compartir en facebook", textToSpeech, context, commandHandlerManager);
     }
 
-    public boolean validateCommand(){
 
-        return expressionMatcher.matches(command);
-
-    }
-
-    public int drive(int step, String input){
-
+    @Override
+    public CommandHandlerContext drive(CommandHandlerContext context){
+        Integer step = context.get(STEP, Integer.class);
+        // TODO --->> Start from here
         switch(step){
 
             case 1:
-                return stepOne(input);
+                return stepOne(context);
             case 3:
-                return stepThree(input);
+                return stepThree(context);
             case 5:
-                return stepFive(input);
+                return stepFive(context);
             case 7:
-                return stepSeven(input);
+                return stepSeven(context);
             case 9:
-                return stepNine(input);
+                return stepNine(context);
             case 11:
-                return stepEleven(input);
+                return stepEleven(context);
         }
-
-        return 0;
+        context.put(STEP, 0);
+        return context;
 
     }
 
+    @Override
+    protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
+        commandHandlerContext.put("HASHTAGS", new ArrayList<String>());
+        commandHandlerContext.put("TAGGED", new ArrayList<String>());
+        // TODO
+    }
+
     //PRONUNCIA MENSAJE
-    public int stepOne(String input){
+    public int stepOne(CommandHandlerContext context){
 
         message = input;
 
