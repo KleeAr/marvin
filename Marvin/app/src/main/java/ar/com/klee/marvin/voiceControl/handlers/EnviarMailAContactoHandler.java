@@ -120,5 +120,82 @@ public class EnviarMailAContactoHandler extends CommandHandler{
         context.put(STEP, 7);
         return context;
     }
+    //INDICA SI QUIERE AGREGAR ASUNTO
+    public int stepNine(String input){
+
+        if(input.equals("si")) {
+            textToSpeech.speakText("¿Qué asunto deseás agregar?");
+            return 11;
+        }
+
+        if(input.equals("cancelar")) {
+            textToSpeech.speakText("Cancelando envío");
+            return 0;
+        }
+
+        if(input.equals("no")){
+            textToSpeech.speakText("Enviando mail");
+            sendMail();
+            return 0;
+        }
+
+        textToSpeech.speakText("Debe indicar sí, no o cancelar");
+
+        return 9;
+
+    }
+
+    //INDICA ASUNTO
+    public int stepEleven(String input){
+
+        textToSpeech.speakText("¿Querés enviar el asunto " + input + "?");
+
+        subject = input;
+
+        return 13;
+
+    }
+
+    //CONFIRMA ASUNTO
+    public int stepThirteen(String input){
+
+        if(input.equals("si")) {
+            textToSpeech.speakText("Enviando mail");
+            sendMail();
+            return 0;
+        }
+
+        if(input.equals("cancelar")) {
+            textToSpeech.speakText("Cancelando envío");
+            return 0;
+        }
+
+        if(input.equals("no")){
+            textToSpeech.speakText("¿Qué asunto deseás agregar?");
+            return 11;
+        }
+
+        textToSpeech.speakText("Debe indicar sí, no o cancelar");
+
+        return 13;
+
+    }
+
+
+    public void sendMail(){
+
+        message = message + "\n\n\n" + "Mensaje enviado a través de MARVIN";
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        emailIntent.setType("message/rfc822");
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, contact);
+        //emailIntent.putExtra(Intent.EXTRA_CC, cc);
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        emailIntent.putExtra(Intent.EXTRA_TEXT, message);
+        emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        context.startActivity(Intent.createChooser(emailIntent, "Seleccionar cuenta de Email:"));
+
+    }
+
 }
 

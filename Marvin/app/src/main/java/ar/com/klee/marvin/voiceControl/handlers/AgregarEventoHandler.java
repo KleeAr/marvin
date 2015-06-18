@@ -1,9 +1,14 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
+import android.app.Activity;
 import android.content.Context;
 
+import java.util.ArrayList;
+import java.util.Map;
+
+import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.social.CalendarService;
-import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
+import ar.com.klee.marvin.social.FacebookService;
 import ar.com.klee.marvin.voiceControl.TTS;
 
 public class AgregarEventoHandler extends CommandHandler{
@@ -178,6 +183,74 @@ public class AgregarEventoHandler extends CommandHandler{
     public void createGoogleCalendarEvent(int year, int month, int day){
 
         calendarService.createEvent(year, month, day);
+
+    }
+
+    public int numericMonth(String monthStr){
+
+        monthStr = monthStr.toLowerCase();
+
+        switch(monthStr){
+
+            case "enero":
+                return 1;
+            case "febrero":
+                return 2;
+            case "marzo":
+                return 3;
+            case "abril":
+                return 4;
+            case "mayo":
+                return 5;
+            case "junio":
+                return 6;
+            case "julio":
+                return 7;
+            case "agosto":
+                return 8;
+            case "septiembre":
+                return 9;
+            case "setiembre":
+                return 9;
+            case "octubre":
+                return 10;
+            case "noviembre":
+                return 11;
+            case "diciembre":
+                return 12;
+
+        }
+
+        return 0;
+    }
+
+    public boolean validateDate(int inputDay, int inputMonth, int inputYear){
+
+        try {
+            GregorianCalendar gc = new GregorianCalendar();
+            gc.setLenient(false);        // must do this
+            gc.set(GregorianCalendar.YEAR, inputYear);
+            gc.set(GregorianCalendar.MONTH, inputMonth);
+            gc.set(GregorianCalendar.DATE, inputDay);
+
+            gc.getTime(); // exception thrown here
+
+            return true;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+
+            return false;
+        }
+
+    }
+
+    public boolean validateHour(int hour, int minute){
+
+        if(minute>=0 && minute<=59 && hour>=0 && hour<=23)
+            return true;
+
+        return false;
 
     }
 }
