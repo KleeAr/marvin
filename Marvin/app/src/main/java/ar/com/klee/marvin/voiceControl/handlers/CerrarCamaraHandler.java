@@ -1,31 +1,45 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
-import android.content.Context;
-
 import ar.com.klee.marvin.activities.CameraActivity;
+import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
 public class CerrarCamaraHandler extends CommandHandler{
 
+    private ExpressionMatcher expressionMatcher;
+    private String command;
+    private TTS textToSpeech;
+    private CameraActivity activity;
+    CommandHandlerManager commandHandlerManager;
 
-    public CerrarCamaraHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("cerrar cámara", textToSpeech, context, commandHandlerManager);
+    public CerrarCamaraHandler(String command, TTS textToSpeech, CameraActivity activity, CommandHandlerManager commandHandlerManager){
+
+        expressionMatcher = new ExpressionMatcher("cerrar cámara");
+
+        this.command = command;
+
+        this.textToSpeech = textToSpeech;
+
+        this.commandHandlerManager = commandHandlerManager;
+
+        this.activity = activity;
+
     }
 
-    public CommandHandlerContext drive(CommandHandlerContext context){
-        getTextToSpeech().speakText("Cerrando cámara");
-
-        getCommandHandlerManager().defineActivity(CommandHandlerManager.ACTIVITY_MAIN, null);
-
-        CameraActivity cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
-        cameraActivity.finish();
-        context.put(STEP, 0);
-        return context;
+    public boolean validateCommand(){
+        return expressionMatcher.matches(command);
     }
 
-    @Override
-    protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
-        // TODO
+    public int drive(int step, String input){
+
+        textToSpeech.speakText("Cerrando cámara");
+
+        commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_MAIN,null);
+
+        activity.finish();
+
+        return 0;
+
     }
 }

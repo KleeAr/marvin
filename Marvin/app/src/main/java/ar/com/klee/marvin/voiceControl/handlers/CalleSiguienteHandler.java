@@ -1,27 +1,35 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
-import android.content.Context;
-
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
-import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
 public class CalleSiguienteHandler extends CommandHandler{
 
-    public CalleSiguienteHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("calle siguiente", textToSpeech, context, commandHandlerManager);
+    private ExpressionMatcher expressionMatcher;
+    private String command;
+    private TTS textToSpeech;
+
+    public CalleSiguienteHandler(String command, TTS textToSpeech){
+
+        expressionMatcher = new ExpressionMatcher("calle siguiente");
+
+        this.command = command;
+
+        this.textToSpeech = textToSpeech;
+
     }
 
-    public CommandHandlerContext drive(CommandHandlerContext context){
-
-        getTextToSpeech().speakText("Estás en ");
-
-        context.put(STEP, 0);
-        return context;
+    public boolean validateCommand(){
+        return expressionMatcher.matches(command);
     }
 
-    @Override
-    protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
-        // TODO
+    public int drive(int step, String input){
+
+        textToSpeech.speakText("Estás en ");
+
+        //CODIGO PARA OBTENER CALLE SIGUIENTE
+
+        return 0;
+
     }
 }

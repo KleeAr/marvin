@@ -75,19 +75,4 @@ public class ExpressionMatcher {
 		return matcher.matches();
 	}
 
-    /**
-     *
-     * @param expression the expression to compare with the template
-     * @return <code>true</code> if the expression is similar to the template
-     */
-    public boolean isSimilar(String expression) {
-        return expression.startsWith(template.split(" ")[0]);
-    }
-
-    /**
-     * @return a suggestion string that matches this template
-     */
-    public String getSuggestion() {
-        return template.replaceAll("(\\{|\\})", "");
-    }
 }

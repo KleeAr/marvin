@@ -1,30 +1,35 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
-import android.content.Context;
-
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
-import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
 public class ActivarHotspotHandler extends CommandHandler{
 
+    private ExpressionMatcher expressionMatcher;
+    private String command;
+    private TTS textToSpeech;
 
-    public ActivarHotspotHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager){
-        super("activar hotspot", textToSpeech, context, commandHandlerManager);
+    public ActivarHotspotHandler(String command, TTS textToSpeech){
+
+        expressionMatcher = new ExpressionMatcher("activar hotspot");
+
+        this.command = command;
+
+        this.textToSpeech = textToSpeech;
+
     }
 
-    public CommandHandlerContext drive(CommandHandlerContext currentContext){
+    public boolean validateCommand(){
+        return expressionMatcher.matches(command);
+    }
 
-        getTextToSpeech().speakText("activando hotspot");
+    public int drive(int step, String input){
+
+        textToSpeech.speakText("activando hotspot");
 
         //CODIGO PARA ACTIVAR HOTSPOT
 
-        currentContext.put(STEP, 0);
-        return currentContext;
-    }
+        return 0;
 
-    @Override
-    protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
-        // TODO: verify if there is something to do here
     }
 }

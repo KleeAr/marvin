@@ -1,183 +1,365 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
+import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.Map;
+
+import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.social.CalendarService;
-import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
+import ar.com.klee.marvin.social.FacebookService;
 import ar.com.klee.marvin.voiceControl.TTS;
 
 public class AgregarEventoHandler extends CommandHandler{
 
-    protected static final String SET_EVENT = "SET_EVENT";
-    protected static final String EVENT = "EVENT";
-    protected static final String DAY = "DAY";
-    protected static final String HOUR = "HOUR";
+    private static final String TIME24HOURS_PATTERN = "([01]?[0-9]|2[0-3]):[0-5][0-9]";
+
+    private ExpressionMatcher expressionMatcher;
+    private String command;
+    private String event;
+    private int day;
+    private int month;
+    private int year;
+    private int hour;
+    private int minute;
+    private boolean setEvent = false;
+    private TTS textToSpeech;
 
     private CalendarService calendarService;
 
-    public AgregarEventoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("agregar evento {evento}", textToSpeech, context, commandHandlerManager);
-        calendarService = new CalendarService(context);
+    public AgregarEventoHandler(String command, TTS textToSpeech, Context context){
+
+        expressionMatcher = new ExpressionMatcher("agregar evento {evento}");
+
+        this.command = command;
+        this.calendarService = new CalendarService(context);
+        this.textToSpeech = textToSpeech;
+
     }
 
-    public CommandHandlerContext drive(CommandHandlerContext context){
+    public boolean validateCommand(){
 
-        Boolean setEvent = context.getBoolean(SET_EVENT);
-        String input = context.getString(COMMAND);
-        Integer step = context.getInteger(STEP);
+        Map<String, String> values = expressionMatcher.getValuesFromExpression(command);
 
-        if(setEvent) {
-            context.put(EVENT, input);
-        }
+        event = values.get("evento");
+
+        return expressionMatcher.matches(command);
+
+    }
+
+    public int drive(int step, String input){
+
+        if(setEvent)
+            event = input;
 
         switch(step){
 
             case 1:
-                return stepOne(context);
+                return stepOne();
             case 3:
-                return stepThree(context);
+                return stepThree(input);
             case 5:
-                return stepFive(context);
+                return stepFive(input);
             case 7:
-                return stepSeven(context);
+                return stepSeven(input);
             case 9:
-                return stepNine(context);
+                return stepNine(input);
             case 11:
-                return stepEleven(context);
+                return stepEleven(input);
 
         }
 
-        context.put(STEP, 0);
-        return context;
+        return 0;
 
-    }
-
-    @Override
-    protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
-        commandHandlerContext.put(EVENT, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.getString(COMMAND)).get("evento"));
-        commandHandlerContext.put(SET_EVENT, false);
     }
 
     //PRONUNCIA EVENTO
-    public CommandHandlerContext stepOne(CommandHandlerContext context){
+    public int stepOne(){
 
-        getTextToSpeech().speakText("¿Querés publicar " + context.getString(EVENT) + " en el muro?");
+        textToSpeech.speakText("¿Querés publicar " + event + " en el muro?");
 
-        context.put(SET_EVENT, false);
-        context.put(STEP, 3);
-        return context;
+        setEvent = false;
+
+        return 3;
 
     }
 
     //CONFIRMA EVENTO
-    public CommandHandlerContext stepThree(CommandHandlerContext context){
+    public int stepThree(String input){
 
-        String input = context.getString(COMMAND);
         if(input.equals("si")) {
-            getTextToSpeech().speakText("¿En qué fecha es el evento?");
-            return context;
+            textToSpeech.speakText("¿En qué fecha es el evento?");
+            return 5;
         }
 
         if(input.equals("cancelar")) {
-            getTextToSpeech().speakText("Cancelando agregado de evento");
-            return context;
+            textToSpeech.speakText("Cancelando agregado de evento");
+            return 0;
         }
 
         if(input.equals("no")){
-            getTextToSpeech().speakText("¿Qué evento deseás crear?");
-            context.put(SET_EVENT, true);
-            context.put(STEP, 1);
-            return context;
+            textToSpeech.speakText("¿Qué evento deseás crear?");
+            setEvent = true;
+            return 1;
         }
 
-        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
-        context.put(STEP, 3);
-        return context;
+        textToSpeech.speakText("Debe indicar sí, no o cancelar");
+
+        return 3;
 
     }
 
     //INDICA FECHA
-    public CommandHandlerContext stepFive(CommandHandlerContext context){
+    public int stepFive(String input){
 
-        /*
-        VALIDAR FECHA
-         */
-        String input = context.getString(COMMAND);
-        getTextToSpeech().speakText("¿El evento es el " + input + "?");
+        ExpressionMatcher dateFormat = new ExpressionMatcher("{day} de {month} del {year}");
 
-        context.put(DAY,input);
-        context.put(STEP, 7);
-        return context;
+        if(!dateFormat.matches(input)){
+
+            textToSpeech.speakText("Debe indicar la fecha con el formato: 13 de abril del 2016");
+
+            return 5;
+
+        }
+
+        Map<String, String> values = dateFormat.getValuesFromExpression(input);
+
+        String dayStr, monthStr, yearStr;
+
+        dayStr = values.get("day");
+        monthStr = values.get("month");
+        yearStr = values.get("year");
+
+        try{
+
+            day = Integer.parseInt(dayStr);
+
+        }catch(NumberFormatException e){
+
+            textToSpeech.speakText("Debe indicar un número para el día");
+
+            return 5;
+
+        }
+
+        try{
+
+            year = Integer.parseInt(yearStr);
+
+        }catch(NumberFormatException e){
+
+            textToSpeech.speakText("Debe indicar un número para el año");
+
+            return 5;
+
+        }
+
+        month = numericMonth(monthStr);
+
+        if(month == 0){
+
+            textToSpeech.speakText("Debe indicar la fecha con el formato: 13 de abril del 2016");
+
+            return 5;
+
+        }
+
+        if(!validateDate(day, month, year)){
+
+            textToSpeech.speakText("La fecha indicada es inválida");
+
+            return 5;
+
+        }
+
+        textToSpeech.speakText("¿El evento es el "+input+"?");
+
+        return 7;
     }
 
     //CONFIRMA FECHA
-    public CommandHandlerContext stepSeven(CommandHandlerContext context) {
-        String input = context.getString(COMMAND);
+    public int stepSeven(String input){
+
         if(input.equals("si")) {
-            getTextToSpeech().speakText("¿A qué hora es el evento?");
-            context.put(STEP, 9);
-            return context;
+            textToSpeech.speakText("¿A qué hora es el evento?");
+            return 9;
         }
 
         if(input.equals("cancelar")) {
-            getTextToSpeech().speakText("Cancelando agregado de evento");
-            context.put(STEP, 0);
-            return context;
+            textToSpeech.speakText("Cancelando agregado de evento");
+            return 0;
         }
 
         if(input.equals("no")){
-            getTextToSpeech().speakText("¿En qué fecha es el evento?");
-            context.put(STEP, 5);
-            return context;
+            textToSpeech.speakText("¿En qué fecha es el evento?");
+            return 5;
         }
 
-        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
-        context.put(STEP, 7);
-        return context;
+        textToSpeech.speakText("Debe indicar sí, no o cancelar");
+
+        return 7;
 
     }
 
     //INGRESA HORA
-    public CommandHandlerContext stepNine(CommandHandlerContext context) {
-        String input = context.getString(COMMAND);
-        getTextToSpeech().speakText("¿El evento es las " + input + "?");
-        context.put(HOUR,input);
-        context.put(STEP, 11);
-        return context;
+    public int stepNine(String input){
+
+        ExpressionMatcher hourFormat = new ExpressionMatcher("{hour} y {minute}");
+
+        if(!hourFormat.matches(input)){
+
+            textToSpeech.speakText("Debe indicar la hora como el siguiente ejemplo: 22 y 15");
+
+            return 9;
+
+        }
+
+        Map<String, String> values = hourFormat.getValuesFromExpression(input);
+
+        String hourStr, minuteStr;
+
+        hourStr = values.get("hour");
+        minuteStr = values.get("minute");
+
+        try{
+
+            hour = Integer.parseInt(hourStr);
+
+        }catch(NumberFormatException e){
+
+            textToSpeech.speakText("Debe indicar un número para la hora");
+
+            return 9;
+
+        }
+
+        try{
+
+            minute = Integer.parseInt(minuteStr);
+
+        }catch(NumberFormatException e){
+
+            textToSpeech.speakText("Debe indicar un número para el minuto");
+
+            return 9;
+
+        }
+
+        if(!validateHour(hour,minute)){
+
+            textToSpeech.speakText("Indicaste una hora incorrecta");
+
+            return 9;
+
+        }
+
+        textToSpeech.speakText("¿El evento es las "+input+"?");
+
+        return 11;
 
     }
 
     //CONFIRMA HORA
-    public CommandHandlerContext stepEleven(CommandHandlerContext context){
-        String input = context.getString(COMMAND);
+    public int stepEleven(String input){
+
         if(input.equals("si")) {
-            getTextToSpeech().speakText("Agregando evento en el calendario");
-            context.put(STEP, 0);
-            return context;
+            textToSpeech.speakText("Agregando evento en el calendario");
+            createGoogleCalendarEvent();
+            return 0;
         }
 
         if(input.equals("cancelar")) {
-            getTextToSpeech().speakText("Cancelando agregado de evento");
-            context.put(STEP, 0);
-            return context;
+            textToSpeech.speakText("Cancelando agregado de evento");
+            return 0;
         }
 
         if(input.equals("no")){
-            getTextToSpeech().speakText("¿A qué hora es el evento?");
-            context.put(STEP, 9);
-            return context;
+            textToSpeech.speakText("¿A qué hora es el evento?");
+            return 9;
         }
 
-        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+        textToSpeech.speakText("Debe indicar sí, no o cancelar");
 
-        context.put(STEP, 11);
-        return context;
+        return 11;
 
     }
 
-    public void createGoogleCalendarEvent(int year, int month, int day){
+    public void createGoogleCalendarEvent(){
+
+        Log.d("MVN_", event + " " + year + "/" + month + "/" + day + " - " + hour + ":" + minute);
 
         calendarService.createEvent(year, month, day);
+
+    }
+
+    public int numericMonth(String monthStr){
+
+        monthStr = monthStr.toLowerCase();
+
+        switch(monthStr){
+
+            case "enero":
+                return 1;
+            case "febrero":
+                return 2;
+            case "marzo":
+                return 3;
+            case "abril":
+                return 4;
+            case "mayo":
+                return 5;
+            case "junio":
+                return 6;
+            case "julio":
+                return 7;
+            case "agosto":
+                return 8;
+            case "septiembre":
+                return 9;
+            case "setiembre":
+                return 9;
+            case "octubre":
+                return 10;
+            case "noviembre":
+                return 11;
+            case "diciembre":
+                return 12;
+
+        }
+
+        return 0;
+    }
+
+    public boolean validateDate(int inputDay, int inputMonth, int inputYear){
+
+        try {
+            GregorianCalendar gc = new GregorianCalendar();
+            gc.setLenient(false);        // must do this
+            gc.set(GregorianCalendar.YEAR, inputYear);
+            gc.set(GregorianCalendar.MONTH, inputMonth);
+            gc.set(GregorianCalendar.DATE, inputDay);
+
+            gc.getTime(); // exception thrown here
+
+            return true;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+
+            return false;
+        }
+
+    }
+
+    public boolean validateHour(int hour, int minute){
+
+        if(minute>=0 && minute<=59 && hour>=0 && hour<=23)
+            return true;
+
+        return false;
 
     }
 }

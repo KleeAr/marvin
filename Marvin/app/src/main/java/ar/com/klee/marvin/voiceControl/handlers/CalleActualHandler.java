@@ -1,28 +1,35 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
-import android.content.Context;
-
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
-import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
 public class CalleActualHandler extends CommandHandler{
 
-    public CalleActualHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("calle actual",textToSpeech, context, commandHandlerManager);
+    private ExpressionMatcher expressionMatcher;
+    private String command;
+    private TTS textToSpeech;
+
+    public CalleActualHandler(String command, TTS textToSpeech){
+
+        expressionMatcher = new ExpressionMatcher("calle actual");
+
+        this.command = command;
+
+        this.textToSpeech = textToSpeech;
+
     }
 
-    public CommandHandlerContext drive(CommandHandlerContext currentContext){
-        getTextToSpeech().speakText("Estás en ");
-
-        //TODO: CODIGO PARA OBTENER CALLE ACTUAL
-
-        currentContext.put(STEP, 0);
-        return currentContext;
+    public boolean validateCommand(){
+        return expressionMatcher.matches(command);
     }
 
-    @Override
-    protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
-        // TODO
+    public int drive(int step, String input){
+
+        textToSpeech.speakText("Estás en ");
+
+        //CODIGO PARA OBTENER CALLE ACTUAL
+
+        return 0;
+
     }
 }
