@@ -1,35 +1,31 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
+import android.content.Context;
+
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
 public class AnteriorCancionHandler extends CommandHandler{
 
-    private ExpressionMatcher expressionMatcher;
-    private String command;
-    private TTS textToSpeech;
 
-    public AnteriorCancionHandler(String command, TTS textToSpeech){
-
-        expressionMatcher = new ExpressionMatcher("anterior canción");
-
-        this.command = command;
-
-        this.textToSpeech = textToSpeech;
+    public AnteriorCancionHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager){
+        super("anterior canción", textToSpeech, context, commandHandlerManager);
 
     }
 
-    public boolean validateCommand(){
-        return expressionMatcher.matches(command);
-    }
+    public CommandHandlerContext drive(CommandHandlerContext context){
 
-    public int drive(int step, String input){
-
-        textToSpeech.speakText("Reproduciendo");
+        getTextToSpeech().speakText("Reproduciendo");
 
         //CODIGO PARA VOLVER A LA CANCIÓN ANTERIOR
+        context.put(STEP, 0);
+        return context;
 
-        return 0;
+    }
 
+    @Override
+    protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
+        // TODO
     }
 }

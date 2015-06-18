@@ -1,228 +1,124 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 
-import java.util.Map;
-
-import ar.com.klee.marvin.expressions.ExpressionMatcher;
-import ar.com.klee.marvin.social.WhatsAppService;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
 public class EnviarMailAContactoHandler extends CommandHandler{
 
-    private ExpressionMatcher expressionMatcher;
-    private String command;
-    private String contact;
-    private String message;
-    private String subject = "";
-    private boolean setContact = false;
-    private TTS textToSpeech;
-    private Context context;
+    public static final String CONTACTO = "contacto";
 
-    public EnviarMailAContactoHandler(String command, TTS textToSpeech, Context context){
-
-        expressionMatcher = new ExpressionMatcher("enviar mail a {contacto}");
-
-        this.command = command;
-        this.textToSpeech = textToSpeech;
-
-        this.context = context;
-
+    public EnviarMailAContactoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
+        super("enviar mail a {contacto}", textToSpeech, context, commandHandlerManager);
     }
 
-    public boolean validateCommand(){
+    public CommandHandlerContext drive(CommandHandlerContext context){
 
-        Map<String, String> values = expressionMatcher.getValuesFromExpression(command);
+        Boolean setContact = context.getBoolean(SET_CONTACT);
 
-        contact = values.get("contacto");
+        if(setContact) {
+            context.put(CONTACT, context.getString(COMMAND));
+        }
 
-        return expressionMatcher.matches(command);
-
-    }
-
-    public int drive(int step, String input){
-
-        if(setContact)
-            contact = input;
-
+        Integer step = context.getInteger(STEP);
         switch(step){
 
             case 1:
-                return stepOne();
+                return stepOne(context);
             case 3:
-                return stepThree(input);
+                return stepThree(context);
             case 5:
-                return stepFive(input);
+                return stepFive(context);
             case 7:
-                return stepSeven(input);
-            case 9:
-                return stepNine(input);
-            case 11:
-                return stepEleven(input);
-            case 13:
-                return stepThirteen(input);
+                return stepSeven(context);
 
         }
 
-        return 0;
+        context.put(STEP, 0);
+        return context;
 
     }
 
+    @Override
+    protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
+        commandHandlerContext.put(CONTACT, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.getString(COMMAND)).get(CONTACTO));
+        commandHandlerContext.put(SET_CONTACT, false);
+    }
+
     //PRONUNCIA CONTACTO
-    public int stepOne(){
+    public CommandHandlerContext stepOne(CommandHandlerContext context){
+        String contact = context.getString(CONTACT);
+        getTextToSpeech().speakText("¿Querés enviar un mail al contacto " + contact + "?");
 
-        //OBTENER MAIL DEL CONTACTO
+        context.put(SET_CONTACT, false);
 
-        //CONTACTO INEXISTENTE - CONTACTO SIN MAIL
-
-        textToSpeech.speakText("¿Querés enviar un mail al contacto " + contact + "?");
-
-        setContact = false;
-
-        return 3;
+        context.put(STEP, 3);
+        return context;
 
     }
 
     //CONFIRMA CONTACTO
-    public int stepThree(String input){
-
+    public CommandHandlerContext stepThree(CommandHandlerContext context){
+        String input = context.getString(COMMAND);
         if(input.equals("si")) {
-            textToSpeech.speakText("¿Qué mensaje le querés mandar por mail?");
-            return 5;
+            getTextToSpeech().speakText("¿Qué mensaje le querés mandar por mail?");
+            context.put(STEP, 5);
+            return context;
         }
 
         if(input.equals("cancelar")) {
-            textToSpeech.speakText("Cancelando envío");
-            return 0;
+            getTextToSpeech().speakText("Cancelando envío");
+            context.put(STEP, 0);
+            return context;
         }
 
         if(input.equals("no")){
-            textToSpeech.speakText("¿A qué contacto querés mandarle el mail?");
-            setContact = true;
-            return 1;
+            getTextToSpeech().speakText("¿A qué contacto querés mandarle el mail?");
+            context.put(SET_CONTACT, true);
+            context.put(STEP, 1);
+            return context;
         }
 
-        textToSpeech.speakText("Debe indicar sí, no o cancelar");
-
-        return 3;
+        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+        context.put(STEP, 3);
+        return context;
 
     }
 
     //INGRESO MENSAJE
-    public int stepFive(String input){
+    public CommandHandlerContext stepFive(CommandHandlerContext context){
+        String input = context.getString(COMMAND);
+        getTextToSpeech().speakText("¿Querés enviar por mail el mensaje " + input + "?");
 
-        textToSpeech.speakText("¿Querés enviar por mail el mensaje " + input + "?");
-
-        message = input;
-
-        return 7;
+        context.put(STEP, 7);
+        return context;
 
     }
 
     //CONFIRMACION DE MENSAJE
-    public int stepSeven(String input){
-
+    public CommandHandlerContext stepSeven(CommandHandlerContext context){
+        String input = context.getString(COMMAND);
         if(input.equals("si")) {
-            textToSpeech.speakText("¿Deseás agregar un asunto?");
-
-            return 9;
+            getTextToSpeech().speakText("Enviando mail");
+            context.put(STEP, 0);
+            return context;
         }
 
         if(input.equals("cancelar")) {
-            textToSpeech.speakText("Cancelando envío");
-            return 0;
+            getTextToSpeech().speakText("Cancelando envío");
+            context.put(STEP, 0);
+            return context;
         }
 
         if(input.equals("no")){
-            textToSpeech.speakText("¿Qué mensaje querés mandar?");
-            return 5;
+            getTextToSpeech().speakText("¿Qué mensaje querés mandar?");
+            context.put(STEP, 5);
+            return context;
         }
-
-        textToSpeech.speakText("Debe indicar sí, no o cancelar");
-
-        return 7;
-
+        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+        context.put(STEP, 7);
+        return context;
     }
-
-    //INDICA SI QUIERE AGREGAR ASUNTO
-    public int stepNine(String input){
-
-        if(input.equals("si")) {
-            textToSpeech.speakText("¿Qué asunto deseás agregar?");
-            return 11;
-        }
-
-        if(input.equals("cancelar")) {
-            textToSpeech.speakText("Cancelando envío");
-            return 0;
-        }
-
-        if(input.equals("no")){
-            textToSpeech.speakText("Enviando mail");
-            sendMail();
-            return 0;
-        }
-
-        textToSpeech.speakText("Debe indicar sí, no o cancelar");
-
-        return 9;
-
-    }
-
-    //INDICA ASUNTO
-    public int stepEleven(String input){
-
-        textToSpeech.speakText("¿Querés enviar el asunto " + input + "?");
-
-        subject = input;
-
-        return 13;
-
-    }
-
-    //CONFIRMA ASUNTO
-    public int stepThirteen(String input){
-
-        if(input.equals("si")) {
-            textToSpeech.speakText("Enviando mail");
-            sendMail();
-            return 0;
-        }
-
-        if(input.equals("cancelar")) {
-            textToSpeech.speakText("Cancelando envío");
-            return 0;
-        }
-
-        if(input.equals("no")){
-            textToSpeech.speakText("¿Qué asunto deseás agregar?");
-            return 11;
-        }
-
-        textToSpeech.speakText("Debe indicar sí, no o cancelar");
-
-        return 13;
-
-    }
-
-
-    public void sendMail(){
-
-        message = message + "\n\n\n" + "Mensaje enviado a través de MARVIN";
-        Intent emailIntent = new Intent(Intent.ACTION_SEND);
-        emailIntent.setType("message/rfc822");
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, contact);
-        //emailIntent.putExtra(Intent.EXTRA_CC, cc);
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
-        emailIntent.putExtra(Intent.EXTRA_TEXT, message);
-        emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        context.startActivity(Intent.createChooser(emailIntent, "Seleccionar cuenta de Email:"));
-
-    }
-
-
 }
 

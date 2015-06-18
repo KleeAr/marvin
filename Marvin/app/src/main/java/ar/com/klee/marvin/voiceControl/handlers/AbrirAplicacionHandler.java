@@ -6,55 +6,38 @@ import android.content.Intent;
 import java.util.Map;
 
 import ar.com.klee.marvin.activities.CameraActivity;
-import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
-import ar.com.klee.marvin.voiceControl.Helper;
 import ar.com.klee.marvin.voiceControl.TTS;
 
 public class AbrirAplicacionHandler extends CommandHandler{
 
-    private ExpressionMatcher expressionMatcher;
-    private String command;
-    private TTS textToSpeech;
+    public AbrirAplicacionHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager){
 
-    private Context context;
-    private CommandHandlerManager commandHandlerManager;
-
-    public AbrirAplicacionHandler(String command, TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager){
-
-        expressionMatcher = new ExpressionMatcher("abrir {aplicacion}");
-
-        this.command = command;
-
-        this.textToSpeech = textToSpeech;
-
-        this.context = context;
-
-        this.commandHandlerManager = commandHandlerManager;
-
+        super("abrir {aplicacion}", textToSpeech, context, commandHandlerManager);
     }
 
-    public boolean validateCommand(){
-        return expressionMatcher.matches(command);
-    }
+    public CommandHandlerContext drive(CommandHandlerContext currentContext){
 
-    public int drive(int step, String input){
-
-        Map<String, String> values = expressionMatcher.getValuesFromExpression(command);
+        Map<String, String> values = getExpressionMatcher().getValuesFromExpression(currentContext.getString(COMMAND));
 
         String app = values.get("aplicacion");
 
-        textToSpeech.speakText("Abriendo "+ app);
-
+        getTextToSpeech().speakText("Abriendo "+ app);
+        
         //CODIGO PARA ABRIR APLICACION
 
         if(app.equals("cámara")) {
-            Intent intent = new Intent(context, CameraActivity.class);
+            Intent intent = new Intent(getContext(), CameraActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
+            getContext().startActivity(intent);
         }
+        currentContext.put(STEP, 0);
+        return currentContext;
 
-        return 0;
+    }
 
+    @Override
+    protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
+        // Do nothing
     }
 }
