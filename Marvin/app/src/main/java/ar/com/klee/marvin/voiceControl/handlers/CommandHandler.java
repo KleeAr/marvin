@@ -55,7 +55,7 @@ public abstract class CommandHandler {
     }
 
     public CommandHandlerContext createContext(CommandHandlerContext currentContext, Activity activity, String command) {
-        if(currentContext != null && currentContext.get(STEP, Integer.class) != 0) {
+        if(currentContext != null && currentContext.getInteger(STEP) != 0) {
             return currentContext;
         }
         CommandHandlerContext commandHandlerContext = new CommandHandlerContext();

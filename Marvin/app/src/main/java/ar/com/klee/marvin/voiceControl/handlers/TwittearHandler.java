@@ -5,10 +5,8 @@ import android.content.Context;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.StringTokenizer;
 
-import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.social.TwitterService;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -24,10 +22,10 @@ public class TwittearHandler extends CommandHandler {
 
     public CommandHandlerContext drive(CommandHandlerContext context){
 
-        if(context.get(SET_MESSAGE, Boolean.class)) {
-            context.put(MESSAGE, context.get(COMMAND, String.class));
+        if(context.getBoolean(SET_MESSAGE)) {
+            context.put(MESSAGE, context.getString(COMMAND));
         }
-        Integer step = context.get(STEP, Integer.class);
+        Integer step = context.getInteger(STEP);
         switch(step){
 
             case 1:
@@ -52,13 +50,13 @@ public class TwittearHandler extends CommandHandler {
     @Override
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
         commandHandlerContext.put(SET_MESSAGE, false);
-        commandHandlerContext.put(MESSAGE, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.get(COMMAND, String.class)).get(MENSAJE));
+        commandHandlerContext.put(MESSAGE, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.getString(COMMAND)).get(MENSAJE));
     }
 
     //PRONUNCIA MENSAJE
     public CommandHandlerContext stepOne(CommandHandlerContext context){
 
-        getTextToSpeech().speakText("¿Querés publicar en Twitter el mensaje " + context.get(MESSAGE, String.class) + " ?");
+        getTextToSpeech().speakText("¿Querés publicar en Twitter el mensaje " + context.getString(MESSAGE) + " ?");
         context.put(TWITTER_HASHTAGS, new ArrayList<String>());
         context.put(SET_MESSAGE, false);
         context.put(STEP, 3);
@@ -68,7 +66,7 @@ public class TwittearHandler extends CommandHandler {
 
     //CONFIRMA MENSAJE
     public CommandHandlerContext stepThree(CommandHandlerContext context){
-        String input = context.get(COMMAND, String.class);
+        String input = context.getString(COMMAND);
         if(input.equals("si")) {
             getTextToSpeech().speakText("¿Querés agregar un hashtag junto al mensaje?");
             context.put(STEP, 5);
@@ -97,7 +95,7 @@ public class TwittearHandler extends CommandHandler {
 
     //INDICA SI SE QUIERE AGREGAR UN HASHTAG
     public CommandHandlerContext stepFive(CommandHandlerContext context){
-        String input = context.get(COMMAND, String.class);
+        String input = context.getString(COMMAND);
         if(input.equals("si")) {
             getTextToSpeech().speakText("¿Qué hashtag querés agregar?");
             context.put(STEP, 7);
@@ -111,7 +109,7 @@ public class TwittearHandler extends CommandHandler {
         }
 
         if(input.equals("no")){
-            postTweet(context.get(MESSAGE, String.class), Collections.emptyList());
+            postTweet(context.getString(MESSAGE), Collections.<String>emptyList());
             context.put(STEP, 0);
             return context;
         }
@@ -125,10 +123,10 @@ public class TwittearHandler extends CommandHandler {
 
     //INGRESA HASHTAG
     public CommandHandlerContext stepSeven(CommandHandlerContext context){
-        String input = context.get(COMMAND, String.class);
+        String input = context.getString(COMMAND);
         getTextToSpeech().speakText("¿Querés agregar el hashtag " + input + " junto al mensaje?");
 
-        context.get(TWITTER_HASHTAGS, List.class).add(input);
+        context.getList(TWITTER_HASHTAGS, String.class).add(input);
         context.put(STEP, 9);
         return context;
 
@@ -136,7 +134,7 @@ public class TwittearHandler extends CommandHandler {
 
     //CONFIRMA HASHTAG
     public CommandHandlerContext stepNine(CommandHandlerContext context){
-        String input = context.get(COMMAND, String.class);
+        String input = context.getString(COMMAND);
         if(input.equals("si")) {
             getTextToSpeech().speakText("¿Querés agregar otro hashtag?");
             context.put(STEP, 11);
@@ -151,7 +149,7 @@ public class TwittearHandler extends CommandHandler {
 
         if(input.equals("no")){
             getTextToSpeech().speakText("¿Qué hashtag querés agregar?");
-            List hashtags = context.get(TWITTER_HASHTAGS, List.class);
+            List hashtags = context.getList(TWITTER_HASHTAGS, String.class);
             hashtags.remove(hashtags.size()-1);
             context.put(STEP, 7);
             return context;
@@ -166,7 +164,7 @@ public class TwittearHandler extends CommandHandler {
 
     //INDICA SI SE QUIERE AGREGAR OTRO HASHTAG
     public CommandHandlerContext stepEleven(CommandHandlerContext context){
-        String input = context.get(COMMAND, String.class);
+        String input = context.getString(COMMAND);
         if(input.equals("si")) {
             getTextToSpeech().speakText("¿Qué hashtag querés agregar?");
             context.put(STEP, 7);
@@ -180,7 +178,7 @@ public class TwittearHandler extends CommandHandler {
         }
 
         if(input.equals("no")){
-            postTweet(context.get(MESSAGE,String.class), context.get(TWITTER_HASHTAGS,List.class));
+            postTweet(context.getString(MESSAGE), context.getList(TWITTER_HASHTAGS, String.class));
             context.put(STEP, 0);
             return context;
         }

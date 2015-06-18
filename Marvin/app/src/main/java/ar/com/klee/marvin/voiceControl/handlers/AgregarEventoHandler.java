@@ -22,9 +22,9 @@ public class AgregarEventoHandler extends CommandHandler{
 
     public CommandHandlerContext drive(CommandHandlerContext context){
 
-        Boolean setEvent = context.get(SET_EVENT, Boolean.class);
-        String input = context.get(COMMAND, String.class);
-        Integer step = context.get(STEP, Integer.class);
+        Boolean setEvent = context.getBoolean(SET_EVENT);
+        String input = context.getString(COMMAND);
+        Integer step = context.getInteger(STEP);
 
         if(setEvent) {
             context.put(EVENT, input);
@@ -54,14 +54,14 @@ public class AgregarEventoHandler extends CommandHandler{
 
     @Override
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
-        commandHandlerContext.put(EVENT, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.get(COMMAND, String.class)).get("evento"));
+        commandHandlerContext.put(EVENT, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.getString(COMMAND)).get("evento"));
         commandHandlerContext.put(SET_EVENT, false);
     }
 
     //PRONUNCIA EVENTO
     public CommandHandlerContext stepOne(CommandHandlerContext context){
 
-        getTextToSpeech().speakText("¿Querés publicar " + context.get(EVENT, String.class) + " en el muro?");
+        getTextToSpeech().speakText("¿Querés publicar " + context.getString(EVENT) + " en el muro?");
 
         context.put(SET_EVENT, false);
         context.put(STEP, 3);
@@ -72,7 +72,7 @@ public class AgregarEventoHandler extends CommandHandler{
     //CONFIRMA EVENTO
     public CommandHandlerContext stepThree(CommandHandlerContext context){
 
-        String input = context.get(COMMAND, String.class);
+        String input = context.getString(COMMAND);
         if(input.equals("si")) {
             getTextToSpeech().speakText("¿En qué fecha es el evento?");
             return context;
@@ -102,7 +102,7 @@ public class AgregarEventoHandler extends CommandHandler{
         /*
         VALIDAR FECHA
          */
-        String input = context.get(COMMAND, String.class);
+        String input = context.getString(COMMAND);
         getTextToSpeech().speakText("¿El evento es el " + input + "?");
 
         context.put(DAY,input);
@@ -112,7 +112,7 @@ public class AgregarEventoHandler extends CommandHandler{
 
     //CONFIRMA FECHA
     public CommandHandlerContext stepSeven(CommandHandlerContext context) {
-        String input = context.get(COMMAND, String.class);
+        String input = context.getString(COMMAND);
         if(input.equals("si")) {
             getTextToSpeech().speakText("¿A qué hora es el evento?");
             context.put(STEP, 9);
@@ -139,7 +139,7 @@ public class AgregarEventoHandler extends CommandHandler{
 
     //INGRESA HORA
     public CommandHandlerContext stepNine(CommandHandlerContext context) {
-        String input = context.get(COMMAND, String.class);
+        String input = context.getString(COMMAND);
         getTextToSpeech().speakText("¿El evento es las " + input + "?");
         context.put(HOUR,input);
         context.put(STEP, 11);
@@ -149,7 +149,7 @@ public class AgregarEventoHandler extends CommandHandler{
 
     //CONFIRMA HORA
     public CommandHandlerContext stepEleven(CommandHandlerContext context){
-        String input = context.get(COMMAND, String.class);
+        String input = context.getString(COMMAND);
         if(input.equals("si")) {
             getTextToSpeech().speakText("Agregando evento en el calendario");
             context.put(STEP, 0);

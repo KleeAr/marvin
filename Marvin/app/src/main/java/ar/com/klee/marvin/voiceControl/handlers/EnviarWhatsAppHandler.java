@@ -19,10 +19,10 @@ public class EnviarWhatsAppHandler extends CommandHandler{
 
     public CommandHandlerContext drive(CommandHandlerContext context){
 
-        if(context.get(SET_MESSAGE, Boolean.class)) {
-            context.put(MESSAGE, context.get(COMMAND, String.class));
+        if(context.getBoolean(SET_MESSAGE)) {
+            context.put(MESSAGE, context.getString(COMMAND));
         }
-        Integer step = context.get(STEP, Integer.class);
+        Integer step = context.getInteger(STEP);
         switch(step){
 
             case 1:
@@ -38,13 +38,13 @@ public class EnviarWhatsAppHandler extends CommandHandler{
     @Override
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
         commandHandlerContext.put(SET_MESSAGE, false);
-        commandHandlerContext.put(MESSAGE, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.get(COMMAND,String.class)).get(MENSAJE));
+        commandHandlerContext.put(MESSAGE, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.getString(COMMAND)).get(MENSAJE));
     }
 
     //PRONUNCIA MENSAJE
     public CommandHandlerContext stepOne(CommandHandlerContext context){
 
-        getTextToSpeech().speakText("¿Querés enviar el mensaje " + context.get(MESSAGE, String.class) + " por WhatsApp?");
+        getTextToSpeech().speakText("¿Querés enviar el mensaje " + context.getString(MESSAGE) + " por WhatsApp?");
 
         context.put(SET_MESSAGE, false);
         context.put(STEP, 3);
@@ -55,9 +55,9 @@ public class EnviarWhatsAppHandler extends CommandHandler{
     //CONFIRMA MENSAJE
     public CommandHandlerContext stepThree(CommandHandlerContext context){
 
-        String input = context.get(COMMAND, String.class);
+        String input = context.getString(COMMAND);
         if(input.equals("si")) {
-            sendWhatsApp(context.get(MESSAGE, String.class));
+            sendWhatsApp(context.getString(MESSAGE));
             context.put(STEP, 0);
             return context;
         }

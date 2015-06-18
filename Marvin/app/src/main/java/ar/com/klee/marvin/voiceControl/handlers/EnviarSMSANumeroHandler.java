@@ -2,122 +2,123 @@ package ar.com.klee.marvin.voiceControl.handlers;
 
 import android.content.Context;
 
-import java.util.Map;
-
-import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
 public class EnviarSMSANumeroHandler extends CommandHandler{
 
-    private ExpressionMatcher expressionMatcher;
-    private String command;
-    private String number;
-    private boolean setNumber = false;
-    private TTS textToSpeech;
-
-    public EnviarSMSANumeroHandler(String command, TTS textToSpeech){
-
-        super(expressionMatcher, textToSpeech, context, commandHandlerManager);
-        expressionMatcher = new ExpressionMatcher("enviar sms al {numero}");
-
-        this.command = command;
-        this.textToSpeech = textToSpeech;
-
-    }
+    public static final String NUMBERO = "numero";
+    private static final String SET_NUMBER = "SET_NUMBER";
+    private static final String NUMBER = "NUMBER";
 
     public EnviarSMSANumeroHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(textToSpeech, context, commandHandlerManager);
+        super("enviar sms aL {numero}", textToSpeech, context, commandHandlerManager);
     }
 
-    public int drive(int step, String input){
+    public CommandHandlerContext drive(CommandHandlerContext context){
 
-        if(setNumber)
-            number = input;
+        Boolean setContact = context.getBoolean(SET_NUMBER);
+        if(setContact) {
+            context.put(NUMBER, context.getString(COMMAND));
+        }
 
+        Integer step = context.getInteger(STEP);
         switch(step){
 
             case 1:
-                return stepOne();
+                return stepOne(context);
             case 3:
-                return stepThree(input);
+                return stepThree(context);
             case 5:
-                return stepFive(input);
+                return stepFive(context);
             case 7:
-                return stepSeven(input);
+                return stepSeven(context);
 
         }
-
-        return 0;
-
-    }
-
-    //PRONUNCIA NUMERO
-    public int stepOne(){
-
-        textToSpeech.speakText("¿Querés enviar un sms al número " + number + "?");
-
-        setNumber = false;
-
-        return 3;
+        context.put(STEP, 0);
+        return context;
 
     }
 
-    //CONFIRMA NUMERO
-    public int stepThree(String input){
+    @Override
+    protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
+        commandHandlerContext.put(NUMBER, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.getString(COMMAND)).get(NUMBERO));
+        commandHandlerContext.put(SET_NUMBER, false);
+    }
 
+    //PRONUNCIA NUMBERO
+    public CommandHandlerContext stepOne(CommandHandlerContext context){
+        String contact = context.getString(NUMBER);
+        getTextToSpeech().speakText("¿Querés enviar un sms al numero " + contact + "?");
+        context.put(SET_NUMBER, false);
+        context.put(STEP, 3);
+        return context;
+    }
+
+    //CONFIRMA NUMBERO
+    public CommandHandlerContext stepThree(CommandHandlerContext context){
+
+        String input = context.getString(COMMAND);
         if(input.equals("si")) {
-            textToSpeech.speakText("¿Qué mensaje le querés mandar por sms?");
-            return 5;
+            getTextToSpeech().speakText("¿Qué mensaje le querés mandar por sms?");
+            context.put(STEP, 5);
+            return context;
         }
 
         if(input.equals("cancelar")) {
-            textToSpeech.speakText("Cancelando envío");
-            return 0;
+            getTextToSpeech().speakText("Cancelando envío");
+            context.put(STEP, 0);
+            return context;
         }
 
         if(input.equals("no")){
-            textToSpeech.speakText("¿A qué número querés mandarle el sms?");
-            setNumber = true;
-            return 1;
+            getTextToSpeech().speakText("¿A qué numero querés mandarle el sms?");
+            context.put(SET_NUMBER, true);
+            context.put(STEP, 1);
+            return context;
         }
 
-        textToSpeech.speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
 
-        return 3;
+        context.put(STEP, 3);
+        return context;
 
     }
 
     //INGRESO MENSAJE
-    public int stepFive(String input){
+    public CommandHandlerContext stepFive(CommandHandlerContext context){
+        String input = context.getString(COMMAND);
+        getTextToSpeech().speakText("¿Querés enviar por sms el mensaje " + input + "?");
 
-        textToSpeech.speakText("¿Querés enviar por sms el mensaje " + input + "?");
-
-        return 7;
+        context.put(STEP, 7);
+        return context;
 
     }
 
     //CONFIRMACION DE MENSAJE
-    public int stepSeven(String input){
-
+    public CommandHandlerContext stepSeven(CommandHandlerContext context){
+        String input = context.getString(COMMAND);
         if(input.equals("si")) {
-            textToSpeech.speakText("Enviando sms");
-            return 0;
+            getTextToSpeech().speakText("Enviando sms");
+            context.put(STEP, 0);
+            return context;
         }
 
         if(input.equals("cancelar")) {
-            textToSpeech.speakText("Cancelando envío");
-            return 0;
+            getTextToSpeech().speakText("Cancelando envío");
+            context.put(STEP, 0);
+            return context;
         }
 
         if(input.equals("no")){
-            textToSpeech.speakText("¿Qué mensaje querés mandar?");
-            return 5;
+            getTextToSpeech().speakText("¿Qué mensaje querés mandar?");
+            context.put(STEP, 5);
+            return context;
         }
 
-        textToSpeech.speakText("Debe indicar sí, no o cancelar");
-
-        return 7;
+        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+        context.put(STEP, 7);
+        return context;
 
     }
 

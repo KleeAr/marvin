@@ -4,7 +4,6 @@ import android.content.Context;
 
 import java.util.Map;
 
-import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
@@ -16,7 +15,7 @@ public class ReproducirCancionHandler extends CommandHandler{
 
     public CommandHandlerContext drive(CommandHandlerContext context){
 
-        Map<String, String> values = getExpressionMatcher().getValuesFromExpression(context.get(COMMAND, String.class));
+        Map<String, String> values = getExpressionMatcher().getValuesFromExpression(context.getString(COMMAND));
 
         String song = values.get("cancion");
 

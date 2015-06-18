@@ -2,9 +2,6 @@ package ar.com.klee.marvin.voiceControl.handlers;
 
 import android.content.Context;
 
-import java.util.Map;
-
-import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
@@ -19,7 +16,7 @@ public class ReproducirArtistaHandler extends CommandHandler{
 
     public CommandHandlerContext drive(CommandHandlerContext context){
 
-        String artist = context.get(ARTIST, String.class);
+        String artist = context.getString(ARTIST);
         getTextToSpeech().speakText("Reproduciendo artista " + artist);
 
         //TODO: CODIGO PARA BUSCAR Y REPRODUCIR UN ARTISTA
@@ -30,6 +27,6 @@ public class ReproducirArtistaHandler extends CommandHandler{
 
     @Override
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
-        commandHandlerContext.put(ARTIST, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.get(COMMAND, String.class)).get(ARTISTA));
+        commandHandlerContext.put(ARTIST, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.getString(COMMAND)).get(ARTISTA));
     }
 }

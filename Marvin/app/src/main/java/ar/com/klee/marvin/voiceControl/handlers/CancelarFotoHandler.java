@@ -15,7 +15,7 @@ public class CancelarFotoHandler extends CommandHandler{
     public CommandHandlerContext drive(CommandHandlerContext context){
         getTextToSpeech().speakText("Cancelando foto");
 
-        CameraActivity cameraActivity = context.get(ACTIVITY, CameraActivity.class);
+        CameraActivity cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
         cameraActivity.cancel();
         context.put(STEP, 0);
         return context;

@@ -3,13 +3,15 @@ package ar.com.klee.marvin.voiceControl.handlers;
 import android.content.Context;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import ar.com.klee.marvin.activities.CameraActivity;
-import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
 public class CompartirEnFacebookHandler extends CommandHandler{
+
+    protected static final String FACEBOOK_HASHTAG = "FACEBOOK_HASHTAG";
 
     public CompartirEnFacebookHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
         super("compartir en facebook", textToSpeech, context, commandHandlerManager);
@@ -18,8 +20,10 @@ public class CompartirEnFacebookHandler extends CommandHandler{
 
     @Override
     public CommandHandlerContext drive(CommandHandlerContext context){
-        Integer step = context.get(STEP, Integer.class);
-        // TODO --->> Start from here
+        Integer step = context.getInteger(STEP);
+        if(context.getBoolean(SET_MESSAGE)) {
+            context.put(MESSAGE, context.getString(COMMAND));
+        }
         switch(step){
 
             case 1:
@@ -48,126 +52,118 @@ public class CompartirEnFacebookHandler extends CommandHandler{
     }
 
     //PRONUNCIA MENSAJE
-    public int stepOne(CommandHandlerContext context){
-
-        message = input;
-
-        textToSpeech.speakText("¿Querés publicar el mensaje " + message + " junto a la foto?");
-
-        return 3;
-
+    public CommandHandlerContext stepOne(CommandHandlerContext context){
+        getTextToSpeech().speakText("¿Querés publicar el mensaje " + context.getString(MESSAGE) + " junto a la foto?");
+        context.put(SET_MESSAGE, false);
+        return context.put(STEP, 3);
     }
 
     //CONFIRMA MENSAJE
-    public int stepThree(String input){
+    public CommandHandlerContext stepThree(CommandHandlerContext context){
 
+        String input = context.getString(COMMAND);
         if(input.equals("si")) {
-            textToSpeech.speakText("¿Querés agregar un hashtag?");
-            return 5;
+            getTextToSpeech().speakText("¿Querés agregar un hashtag?");
+            return context.put(STEP, 5);
         }
 
         if(input.equals("cancelar")) {
-            textToSpeech.speakText("Cancelando publicación");
-            return 0;
+            getTextToSpeech().speakText("Cancelando publicación");
+            return context.put(STEP, 0);
         }
 
         if(input.equals("no")){
-            textToSpeech.speakText("¿Qué mensaje deseás publicar junto a la foto?");
-            return 1;
+            getTextToSpeech().speakText("¿Qué mensaje deseás publicar junto a la foto?");
+            return context.put(STEP, 1);
         }
 
-        textToSpeech.speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
 
-        return 3;
+        return context.put(STEP, 3);
 
     }
 
     //INDICA SI SE QUIERE AGREGAR UN HASHTAG
-    public int stepFive(String input){
-
+    public CommandHandlerContext stepFive(CommandHandlerContext context){
+        String input = context.getString(COMMAND);
         if(input.equals("si")) {
-            textToSpeech.speakText("¿Qué hashtag querés agregar?");
-            return 7;
+            getTextToSpeech().speakText("¿Qué hashtag querés agregar?");
+            return context.put(STEP, 7);
         }
 
         if(input.equals("cancelar")) {
-            textToSpeech.speakText("Cancelando publicación");
-            return 0;
+            getTextToSpeech().speakText("Cancelando publicación");
+            return context.put(STEP, 0);
         }
 
         if(input.equals("no")){
-            textToSpeech.speakText("Publicando en el muro de Facebook");
-            activity.shareInFacebook();
-            return 0;
+            getTextToSpeech().speakText("Publicando en el muro de Facebook");
+
+            context.getObject(ACTIVITY, CameraActivity.class).shareInFacebook();
+            return context.put(STEP, 0);
         }
 
-        textToSpeech.speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
 
-        return 5;
-
+        return context.put(STEP, 5);
     }
 
     //INGRESA HASHTAG
-    public int stepSeven(String input){
+    public CommandHandlerContext stepSeven(CommandHandlerContext context){
 
-        textToSpeech.speakText("¿Querés agregar el hashtag "+input+"?");
+        String hashtag = context.getString(COMMAND);
+        getTextToSpeech().speakText("¿Querés agregar el hashtag " + hashtag + "?");
 
-        hashtags.add(input);
+        context.getList(FACEBOOK_HASHTAG, String.class).add(hashtag);
 
-        return 9;
+        return context.put(STEP, 9);
 
     }
 
     //CONFIRMA HASHTAG
-    public int stepNine(String input){
-
+    public CommandHandlerContext stepNine(CommandHandlerContext context){
+        String input = context.getString(COMMAND);
         if(input.equals("si")) {
-            textToSpeech.speakText("¿Querés agregar otro hashtag?");
-            return 11;
+            getTextToSpeech().speakText("¿Querés agregar otro hashtag?");
+            return context.put(STEP, 11);
         }
 
         if(input.equals("cancelar")) {
-            textToSpeech.speakText("Cancelando publicación");
-            return 0;
+            getTextToSpeech().speakText("Cancelando publicación");
+            return context.put(STEP, 0);
         }
 
         if(input.equals("no")){
-            textToSpeech.speakText("¿Qué hashtag querés agregar?");
+            getTextToSpeech().speakText("¿Qué hashtag querés agregar?");
+            List<String> hashtags = context.getList(FACEBOOK_HASHTAG, String.class);
             hashtags.remove(hashtags.size()-1);
-            return 7;
+            return context.put(STEP, 7);
         }
 
-        textToSpeech.speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
 
-        return 9;
+        return context.put(STEP, 9);
 
     }
 
     //INDICA SI SE QUIERE AGREGAR OTRO HASHTAG
-    public int stepEleven(String input){
-
+    public CommandHandlerContext stepEleven(CommandHandlerContext context){
+        String input = context.getString(COMMAND);
         if(input.equals("si")) {
-            textToSpeech.speakText("¿Qué hashtag querés agregar?");
-            return 7;
+            getTextToSpeech().speakText("¿Qué hashtag querés agregar?");
+            return context.put(STEP, 7);
         }
-
         if(input.equals("cancelar")) {
-            textToSpeech.speakText("Cancelando publicación");
-            return 0;
+            getTextToSpeech().speakText("Cancelando publicación");
+            return context.put(STEP, 0);
         }
-
         if(input.equals("no")){
-            textToSpeech.speakText("Publicando en el muro de Facebook");
-
-            activity.shareInFacebook();
-
-            return 0;
+            getTextToSpeech().speakText("Publicando en el muro de Facebook");
+            context.getObject(ACTIVITY, CameraActivity.class).shareInFacebook();
+            return context.put(STEP, 0);
         }
-
-        textToSpeech.speakText("Debe indicar sí, no o cancelar");
-
-        return 11;
-
+        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+        return context.put(STEP, 11);
     }
 
 }

@@ -15,12 +15,12 @@ public class EnviarSMSAContactoHandler extends CommandHandler{
 
     public CommandHandlerContext drive(CommandHandlerContext context){
 
-        Boolean setContact = context.get(SET_CONTACT, Boolean.class);
+        Boolean setContact = context.getBoolean(SET_CONTACT);
         if(setContact) {
-            context.put(CONTACT, context.get(COMMAND, String.class));
+            context.put(CONTACT, context.getString(COMMAND));
         }
 
-        Integer step = context.get(STEP, Integer.class);
+        Integer step = context.getInteger(STEP);
         switch(step){
 
             case 1:
@@ -40,13 +40,13 @@ public class EnviarSMSAContactoHandler extends CommandHandler{
 
     @Override
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
-        commandHandlerContext.put(CONTACT, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.get(COMMAND, String.class)).get(CONTACTO));
+        commandHandlerContext.put(CONTACT, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.getString(COMMAND)).get(CONTACTO));
         commandHandlerContext.put(SET_CONTACT, false);
     }
 
     //PRONUNCIA CONTACTO
     public CommandHandlerContext stepOne(CommandHandlerContext context){
-        String contact = context.get(CONTACT, String.class);
+        String contact = context.getString(CONTACT);
         getTextToSpeech().speakText("¿Querés enviar un sms al contacto " + contact + "?");
         context.put(SET_CONTACT, false);
         context.put(STEP, 3);
@@ -56,7 +56,7 @@ public class EnviarSMSAContactoHandler extends CommandHandler{
     //CONFIRMA CONTACTO
     public CommandHandlerContext stepThree(CommandHandlerContext context){
 
-        String input = context.get(COMMAND, String.class);
+        String input = context.getString(COMMAND);
         if(input.equals("si")) {
             getTextToSpeech().speakText("¿Qué mensaje le querés mandar por sms?");
             context.put(STEP, 5);
@@ -85,7 +85,7 @@ public class EnviarSMSAContactoHandler extends CommandHandler{
 
     //INGRESO MENSAJE
     public CommandHandlerContext stepFive(CommandHandlerContext context){
-        String input = context.get(COMMAND, String.class);
+        String input = context.getString(COMMAND);
         getTextToSpeech().speakText("¿Querés enviar por sms el mensaje " + input + "?");
 
         context.put(STEP, 7);
@@ -95,7 +95,7 @@ public class EnviarSMSAContactoHandler extends CommandHandler{
 
     //CONFIRMACION DE MENSAJE
     public CommandHandlerContext stepSeven(CommandHandlerContext context){
-        String input = context.get(COMMAND, String.class);
+        String input = context.getString(COMMAND);
         if(input.equals("si")) {
             getTextToSpeech().speakText("Enviando sms");
             context.put(STEP, 0);

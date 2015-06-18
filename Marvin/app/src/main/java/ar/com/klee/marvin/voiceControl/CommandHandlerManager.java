@@ -133,7 +133,7 @@ public class CommandHandlerManager {
         }
 
         final String finalCommand = command;
-        if(currentContext.get(CommandHandler.STEP, Integer.class) == 0) {
+        if(currentContext.getInteger(CommandHandler.STEP) == 0) {
             // find the command that matches
             currentCommandHandler = CollectionUtils.find(commandHandlers, new Predicate<CommandHandler>() {
                 @Override

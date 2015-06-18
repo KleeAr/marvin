@@ -16,7 +16,7 @@ public class SacarFotoHandler extends CommandHandler{
 
         getTextToSpeech().speakText("Sacando foto");
 
-        context.get(ACTIVITY, CameraActivity.class).takePicture();
+        context.getObject(ACTIVITY, CameraActivity.class).takePicture();
 
         context.put(STEP,0);
         return context;

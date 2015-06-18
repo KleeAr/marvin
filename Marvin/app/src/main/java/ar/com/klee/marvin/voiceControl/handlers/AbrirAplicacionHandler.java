@@ -6,7 +6,6 @@ import android.content.Intent;
 import java.util.Map;
 
 import ar.com.klee.marvin.activities.CameraActivity;
-import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
@@ -19,7 +18,7 @@ public class AbrirAplicacionHandler extends CommandHandler{
 
     public CommandHandlerContext drive(CommandHandlerContext currentContext){
 
-        Map<String, String> values = getExpressionMatcher().getValuesFromExpression(currentContext.get(COMMAND, String.class));
+        Map<String, String> values = getExpressionMatcher().getValuesFromExpression(currentContext.getString(COMMAND));
 
         String app = values.get("aplicacion");
 

@@ -16,7 +16,7 @@ public class GuardarFotoHandler extends CommandHandler{
 
         getTextToSpeech().speakText("Guardando foto");
 
-        context.get(ACTIVITY, CameraActivity.class).save();
+        context.getObject(ACTIVITY, CameraActivity.class).save();
 
         context.put(STEP, 0);
         return context;

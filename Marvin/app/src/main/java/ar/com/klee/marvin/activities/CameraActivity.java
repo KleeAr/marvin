@@ -113,7 +113,7 @@ public class CameraActivity extends ActionBarActivity {
     private int findBackFacingCamera() {
         int cameraId = -1;
         //Search for the back facing camera
-        //get the number of cameras
+        //getString the number of cameras
         int numberOfCameras = Camera.getNumberOfCameras();
         //for every camera check
         for (int i = 0; i < numberOfCameras; i++) {

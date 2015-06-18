@@ -18,8 +18,10 @@ public class CompartirEnInstagramHandler extends CommandHandler{
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){
-
-        Integer step = context.get(STEP, Integer.class);
+        if(context.getBoolean(SET_MESSAGE)) {
+            context.put(MESSAGE, context.getString(COMMAND));
+        }
+        Integer step = context.getInteger(STEP);
         switch(step){
 
             case 1:
@@ -42,11 +44,16 @@ public class CompartirEnInstagramHandler extends CommandHandler{
 
     }
 
+    @Override
+    protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
+        List<String> hashtags = new ArrayList<>();
+        commandHandlerContext.put(INSTAGRAM_HASHTAG, hashtags);
+    }
+
     //PRONUNCIA MENSAJE
     public CommandHandlerContext stepOne(CommandHandlerContext context){
-
-        String message = context.get(MESSAGE, String.class);
-
+        String message = context.getString(MESSAGE);
+        context.put(SET_MESSAGE, false);
         getTextToSpeech().speakText("¿Querés publicar el mensaje " + message + " junto a la foto?");
         context.put(STEP, 3);
         return context;
@@ -56,7 +63,7 @@ public class CompartirEnInstagramHandler extends CommandHandler{
     //CONFIRMA MENSAJE
     public CommandHandlerContext stepThree(CommandHandlerContext context){
 
-        String input = context.get(COMMAND, String.class);
+        String input = context.getString(COMMAND);
 
         if(input.equals("si")) {
             getTextToSpeech().speakText("¿Querés agregar un hashtag junto a la foto?");
@@ -85,7 +92,7 @@ public class CompartirEnInstagramHandler extends CommandHandler{
 
     //INDICA SI SE QUIERE AGREGAR UN HASHTAG
     public CommandHandlerContext stepFive(CommandHandlerContext context){
-        String input = context.get(COMMAND, String.class);
+        String input = context.getString(COMMAND);
         if(input.equals("si")) {
             getTextToSpeech().speakText("¿Qué hashtag querés agregar?");
             context.put(STEP, 7);
@@ -100,7 +107,7 @@ public class CompartirEnInstagramHandler extends CommandHandler{
 
         if(input.equals("no")){
             getTextToSpeech().speakText("Publicando la foto en Instagram");
-            CameraActivity cameraActivity = context.get(ACTIVITY, CameraActivity.class);
+            CameraActivity cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
             cameraActivity.shareInInstagram();
             context.put(STEP, 0);
             return context;
@@ -116,13 +123,9 @@ public class CompartirEnInstagramHandler extends CommandHandler{
     //INGRESA HASHTAG
     @SuppressWarnings("unchecked")
     public CommandHandlerContext stepSeven(CommandHandlerContext context){
-        String input = context.get(COMMAND, String.class);
+        String input = context.getString(COMMAND);
         getTextToSpeech().speakText("¿Querés agregar el hashtag "+input+" junto a la foto?");
-        if(!context.containsKey(INSTAGRAM_HASHTAG)) {
-            List<String> hashtags = new ArrayList<>();
-            context.put(INSTAGRAM_HASHTAG, hashtags);
-        }
-        List<String> hashtags = context.get(INSTAGRAM_HASHTAG, List.class);
+        List<String> hashtags = context.getList(INSTAGRAM_HASHTAG, String.class);
         hashtags.add(input);
         context.put(STEP, 9);
         return context;
@@ -131,7 +134,7 @@ public class CompartirEnInstagramHandler extends CommandHandler{
 
     //CONFIRMA HASHTAG
     public CommandHandlerContext stepNine(CommandHandlerContext context){
-        String input = context.get(COMMAND, String.class);
+        String input = context.getString(COMMAND);
         if(input.equals("si")) {
             getTextToSpeech().speakText("¿Querés agregar otro hashtag?");
             context.put(STEP, 11);
@@ -146,7 +149,7 @@ public class CompartirEnInstagramHandler extends CommandHandler{
 
         if(input.equals("no")){
             getTextToSpeech().speakText("¿Qué hashtag querés agregar?");
-            List<String> hashtags = context.get(INSTAGRAM_HASHTAG, List.class);
+            List<String> hashtags = context.getList(INSTAGRAM_HASHTAG, String.class);
             hashtags.remove(hashtags.size()-1);
             context.put(STEP, 7);
             return context;
@@ -159,7 +162,7 @@ public class CompartirEnInstagramHandler extends CommandHandler{
 
     //INDICA SI SE QUIERE AGREGAR OTRO HASHTAG
     public CommandHandlerContext stepEleven(CommandHandlerContext context){
-        String input = context.get(COMMAND, String.class);
+        String input = context.getString(COMMAND);
         if(input.equals("si")) {
             getTextToSpeech().speakText("¿Qué hashtag querés agregar?");
             context.put(STEP, 7);
@@ -175,7 +178,7 @@ public class CompartirEnInstagramHandler extends CommandHandler{
         if(input.equals("no")){
             getTextToSpeech().speakText("Publicando la foto en Instagram");
 
-            CameraActivity cameraActivity = context.get(ACTIVITY, CameraActivity.class);
+            CameraActivity cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
             cameraActivity.shareInInstagram();
 
             context.put(STEP, 0);
