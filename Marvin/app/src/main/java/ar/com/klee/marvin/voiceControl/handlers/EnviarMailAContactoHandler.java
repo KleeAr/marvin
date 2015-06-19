@@ -1,6 +1,7 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
 import android.content.Context;
+import android.content.Intent;
 
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -8,6 +9,7 @@ import ar.com.klee.marvin.voiceControl.TTS;
 public class EnviarMailAContactoHandler extends CommandHandler{
 
     public static final String CONTACTO = "contacto";
+    private static final String SUBJECT = "SUBJECT";
 
     public EnviarMailAContactoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
         super("enviar mail a {contacto}", textToSpeech, context, commandHandlerManager);
@@ -32,7 +34,12 @@ public class EnviarMailAContactoHandler extends CommandHandler{
                 return stepFive(context);
             case 7:
                 return stepSeven(context);
-
+            case 9:
+                return stepNine(context);
+            case 11:
+                return stepEleven(context);
+            case 13:
+                return stepThirteen(context);
         }
 
         context.put(STEP, 0);
@@ -90,7 +97,7 @@ public class EnviarMailAContactoHandler extends CommandHandler{
     public CommandHandlerContext stepFive(CommandHandlerContext context){
         String input = context.getString(COMMAND);
         getTextToSpeech().speakText("¿Querés enviar por mail el mensaje " + input + "?");
-
+        context.put(MESSAGE, input);
         context.put(STEP, 7);
         return context;
 
@@ -100,8 +107,8 @@ public class EnviarMailAContactoHandler extends CommandHandler{
     public CommandHandlerContext stepSeven(CommandHandlerContext context){
         String input = context.getString(COMMAND);
         if(input.equals("si")) {
-            getTextToSpeech().speakText("Enviando mail");
-            context.put(STEP, 0);
+            getTextToSpeech().speakText("¿Deseás agregar un asunto?");
+            context.put(STEP, 9);
             return context;
         }
 
@@ -121,79 +128,74 @@ public class EnviarMailAContactoHandler extends CommandHandler{
         return context;
     }
     //INDICA SI QUIERE AGREGAR ASUNTO
-    public int stepNine(String input){
-
+    public CommandHandlerContext stepNine(CommandHandlerContext context){
+        String input = context.getString(COMMAND);
         if(input.equals("si")) {
-            textToSpeech.speakText("¿Qué asunto deseás agregar?");
-            return 11;
+            getTextToSpeech().speakText("¿Qué asunto deseás agregar?");
+            return context.put(STEP, 11);
         }
 
         if(input.equals("cancelar")) {
-            textToSpeech.speakText("Cancelando envío");
-            return 0;
+            getTextToSpeech().speakText("Cancelando envío");
+            return context.put(STEP, 0);
         }
 
         if(input.equals("no")){
-            textToSpeech.speakText("Enviando mail");
-            sendMail();
-            return 0;
+            getTextToSpeech().speakText("Enviando mail");
+            sendMail(context);
+            return context.put(STEP, 0);
         }
 
-        textToSpeech.speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
 
-        return 9;
-
+        return context.put(STEP, 9);
     }
 
     //INDICA ASUNTO
-    public int stepEleven(String input){
-
-        textToSpeech.speakText("¿Querés enviar el asunto " + input + "?");
-
-        subject = input;
-
-        return 13;
-
+    public CommandHandlerContext stepEleven(CommandHandlerContext context){
+        getTextToSpeech().speakText("¿Querés enviar el asunto " + context.getString(COMMAND) + "?");
+        context.put(SUBJECT, context.getString(COMMAND));
+        return context.put(STEP, 13);
     }
 
     //CONFIRMA ASUNTO
-    public int stepThirteen(String input){
-
+    public CommandHandlerContext stepThirteen(CommandHandlerContext context){
+        String input = context.getString(COMMAND);
         if(input.equals("si")) {
-            textToSpeech.speakText("Enviando mail");
-            sendMail();
-            return 0;
+            getTextToSpeech().speakText("Enviando mail");
+            sendMail(context);
+            return context.put(STEP, 0);
         }
 
         if(input.equals("cancelar")) {
-            textToSpeech.speakText("Cancelando envío");
-            return 0;
+            getTextToSpeech().speakText("Cancelando envío");
+            return context.put(STEP, 0);
         }
 
         if(input.equals("no")){
-            textToSpeech.speakText("¿Qué asunto deseás agregar?");
-            return 11;
+            getTextToSpeech().speakText("¿Qué asunto deseás agregar?");
+            return context.put(STEP, 11);
         }
 
-        textToSpeech.speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
 
-        return 13;
+        return context.put(STEP, 13);
 
     }
 
 
-    public void sendMail(){
+    public void sendMail(CommandHandlerContext context){
 
-        message = message + "\n\n\n" + "Mensaje enviado a través de MARVIN";
+        String message = context.getString(MESSAGE) + "\n\n\n" + "Mensaje enviado a través de MARVIN";
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
         emailIntent.setType("message/rfc822");
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, contact);
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, context.getString(CONTACT));
         //emailIntent.putExtra(Intent.EXTRA_CC, cc);
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, context.getString(SUBJECT));
         emailIntent.putExtra(Intent.EXTRA_TEXT, message);
         emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        context.startActivity(Intent.createChooser(emailIntent, "Seleccionar cuenta de Email:"));
+        getContext().startActivity(Intent.createChooser(emailIntent, "Seleccionar cuenta de Email:"));
 
     }
 
