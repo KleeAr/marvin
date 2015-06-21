@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Mensajes</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="inbox" />
+    <string name="send">Send</string>
+    <string name="title_activity_marvin_contesta">MarvinContesta</string>
+    <string name="title_activity_answer_sms">AnswerSMS</string>
+    <string name="title_activity_main">MainActivity</string>
+</resources>
