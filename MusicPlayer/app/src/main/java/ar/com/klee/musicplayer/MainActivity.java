@@ -14,6 +14,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 
+import org.cmc.music.metadata.IMusicMetadata;
+import org.cmc.music.metadata.MusicMetadataSet;
+import org.cmc.music.myid3.MyID3;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -84,13 +88,13 @@ public class MainActivity extends ActionBarActivity {
         MediaMetadataRetriever mmr = new MediaMetadataRetriever();
         mmr.setDataSource(songs.get(songs.size()-1).get("Path"));
 
-        songs.get(songs.size()-1).put("Title", mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
-        songs.get(songs.size()-1).put("Artist",mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST));
+        songs.get(songs.size()-1).put("Title", getSongData((songs.get(songs.size()-1).get("Path")),"Title"));
+        songs.get(songs.size()-1).put("Artist", getSongData((songs.get(songs.size() - 1).get("Path")), "Artist"));
 
         Log.d("MSC",songs.get(songs.size()-1).get("Path"));
         if(songs.get(songs.size()-1).get("Title") != null)
             Log.d("MSC",songs.get(songs.size()-1).get("Title"));
-        if(songs.get(songs.size()-1).get("Title") != null)
+        if(songs.get(songs.size()-1).get("Artist") != null)
             Log.d("MSC",songs.get(songs.size()-1).get("Artist"));
 
     }
@@ -236,4 +240,32 @@ public class MainActivity extends ActionBarActivity {
     public void setRandom(boolean random) {
         isRandom = random;
     }
+
+    public String getSongData(String path, String data) {
+
+        File src = new File(path);
+        MusicMetadataSet src_set = null;
+        try {
+            //src_set = new MyID3().read(src);
+            Log.d("MSC",path);
+            MyID3 id3 = new MyID3();
+            src_set = id3.read(src);
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        } // read metadata
+
+        if (src_set != null) {
+            try {
+                IMusicMetadata metadata = src_set.getSimplified();
+                if(data.equals("Artist"))
+                    return metadata.getArtist();
+                if(data.equals("Title"))
+                    return metadata.getSongTitle();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
 }
+
