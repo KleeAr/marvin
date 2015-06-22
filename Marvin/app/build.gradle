@@ -52,4 +52,5 @@ dependencies {
     compile 'com.google.android.gms:play-services:7.0.0'
     testCompile 'junit:junit:4.12'
     compile 'org.apache.commons:commons-collections4:4.0'
+    compile files('libs/MyID3_for_Android.jar')
 }
