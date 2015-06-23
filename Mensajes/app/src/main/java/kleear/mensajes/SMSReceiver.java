@@ -3,10 +3,7 @@ package kleear.mensajes;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.telephony.SmsMessage;
 import android.widget.Toast;
 
@@ -33,6 +30,9 @@ public class SMSReceiver extends BroadcastReceiver {
                 smsBody = smsMessage.getMessageBody().toString();
                 address = smsMessage.getOriginatingAddress();
 
+
+
+
                 smsMessageStr += "De: " + address + "\n";
                 smsMessageStr += smsBody + "\n";
             }
@@ -46,12 +46,16 @@ public class SMSReceiver extends BroadcastReceiver {
                     .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
 
 
-            //SMSActivity inst = SMSActivity.instance();
+
+
+           // SMSActivity inst = SMSActivity.instance();
             //inst.updateList(smsMessageStr);
         }
         //continue the normal process of sms and will get alert and reaches inbox
         //this.clearAbortBroadcast();
 
     }
+
+
 
 }

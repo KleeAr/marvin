@@ -59,6 +59,10 @@
             android:name=".voiceControl.STTService"
             android:label="STT" >
         </service>
+        <service
+            android:name=".musicPlayer.MusicService"
+            android:label="MusicService" >
+        </service>
         <activity
             android:name=".activities.CameraActivity"
             android:label="@string/title_activity_camara" >

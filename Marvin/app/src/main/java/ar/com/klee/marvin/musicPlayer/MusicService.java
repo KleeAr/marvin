@@ -1,5 +1,8 @@
 package ar.com.klee.marvin.musicPlayer;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaMetadataRetriever;
@@ -22,6 +25,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
+import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.activities.MainMenuActivity;
+
 public class MusicService extends Service {
 
     private static final String MEDIA_PATH = new String("/sdcard/Music/");
@@ -31,7 +37,6 @@ public class MusicService extends Service {
     private int currentDuration = 0;
     private int previousSong = 0;
     private boolean isRandom = false;
-    private boolean isPlaying = false;
 
     LocalBroadcastManager broadcaster;
     public static final String COPA_RESULT = "com.controlj.copame.backend.COPAService.REQUEST_PROCESSED";
@@ -43,6 +48,14 @@ public class MusicService extends Service {
         updateSongList(MEDIA_PATH);
 
         broadcaster = LocalBroadcastManager.getInstance(this);
+    }
+
+    public void onStop(){
+
+        if(mp.isPlaying()) {
+            mp.stop();
+        }
+        mp.release();
     }
 
     public void updateSongList(String path) {
@@ -84,6 +97,9 @@ public class MusicService extends Service {
 
         try {
 
+            sendResult("SONG_TITLE " + songs.get(currentSong).get("Title"));
+            sendResult("SONG_ARTIST " + songs.get(currentSong).get("Artist"));
+
             mp.reset();
             mp.setDataSource(songPath);
             mp.prepare();
@@ -116,8 +132,13 @@ public class MusicService extends Service {
 
     public void pause(){
 
-        if(mp.isPlaying())
+        if(mp.isPlaying()) {
+            currentDuration = mp.getCurrentPosition();
             mp.pause();
+        }
+
+        sendResult("SONG_TITLE " + "");
+        sendResult("SONG_ARTIST " + "");
 
     }
 
@@ -235,6 +256,12 @@ public class MusicService extends Service {
 
     }
 
+    public boolean isPlaying(){
+
+        return mp.isPlaying();
+
+    }
+
     public class MusicBinder extends Binder {
         public MusicService getService() {
             return MusicService.this;
@@ -246,5 +273,12 @@ public class MusicService extends Service {
     }
 
     private final IBinder mBinder = new MusicBinder();
+
+    public void sendResult(String message) {
+        Intent intent = new Intent(COPA_RESULT);
+        if(message != null)
+            intent.putExtra(COPA_MESSAGE, message);
+        broadcaster.sendBroadcast(intent);
+    }
 
 }

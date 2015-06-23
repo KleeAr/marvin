@@ -6,17 +6,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-
-import java.util.StringTokenizer;
-
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.musicPlayer.MusicService;
 import ar.com.klee.marvin.voiceControl.STTService;
@@ -31,9 +30,14 @@ public class MainMenuActivity extends ActionBarActivity {
     private BroadcastReceiver musicReceiver;
 
     private boolean mIsBound;
+    private boolean wasPlaying;
 
     private Button bt_play;
     private Button bt_pause;
+    private Button bt_next;
+    private Button bt_previous;
+
+    private ServiceConnection mConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,12 +46,14 @@ public class MainMenuActivity extends ActionBarActivity {
 
         bt_play = (Button) findViewById(R.id.bt_play);
         bt_pause = (Button) findViewById(R.id.bt_pause);
+        bt_next = (Button) findViewById(R.id.bt_next);
+        bt_previous = (Button) findViewById(R.id.bt_previous);
 
         bt_play.setVisibility(View.VISIBLE);
         bt_pause.setVisibility(View.INVISIBLE);
 
-        initializeSTTService();
         initializeMusicService();
+        initializeSTTService();
 
     }
 
@@ -84,25 +90,46 @@ public class MainMenuActivity extends ActionBarActivity {
 
             public void onReceive(Context context, Intent intent) {
 
-                String s = intent.getStringExtra(STTService.COPA_MESSAGE);
+                String notification = intent.getStringExtra(STTService.COPA_MESSAGE);
 
-                StringTokenizer st = new StringTokenizer(s);
+                if(notification.equals("Marvin")){
 
-                s = st.nextToken();
+                    if(musicService.isPlaying()) {
+                        wasPlaying = true;
+                        musicService.pause();
+                    }else
+                        wasPlaying = false;
 
-                if(s.equals("PB")){
+                    bt_play.setEnabled(false);
+                    bt_pause.setEnabled(false);
+                    bt_next.setEnabled(false);
+                    bt_previous.setEnabled(false);
 
-                    //escuchando.setProgress(Integer.parseInt(st.nextToken()));
+                    // ACTIVAR PANTALLA DE MARVIN
 
-                }
-                else if(s.equals("TV")){
+                }else if(notification.equals("MarvinFinish")){
 
-                    String toPost = "";
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            if(wasPlaying) {
+                                musicService.startPlaying();
+                            }
 
-                    while(st.hasMoreTokens())
-                        toPost += st.nextToken() + " ";
+                            bt_play.setEnabled(true);
+                            bt_pause.setEnabled(true);
+                            bt_next.setEnabled(true);
+                            bt_previous.setEnabled(true);
+                        }
+                    }, 5000);
 
-                    //speechToText.setText(toPost);
+                    // CERRAR PANTALLA DE MARVIN
+
+                }else if(notification.startsWith("Command ")){
+
+                    notification = notification.replace("Command ","");
+
+                    //MOSTRAR COMANDO
 
                 }
 
@@ -112,8 +139,17 @@ public class MainMenuActivity extends ActionBarActivity {
 
     public void initializeMusicService(){
 
-        musicServiceIntent = new Intent(this,MusicService.class);
-        startService(musicServiceIntent);
+        mConnection = new ServiceConnection() {
+            public void onServiceConnected(ComponentName className, IBinder service) {
+                musicService = ((MusicService.MusicBinder)service).getService();
+            }
+
+            public void onServiceDisconnected(ComponentName className) {
+                musicService = null;
+            }
+        };
+
+        doBindService();
 
         musicReceiver = new BroadcastReceiver() {
 
@@ -121,36 +157,27 @@ public class MainMenuActivity extends ActionBarActivity {
 
                 String notification = intent.getStringExtra(MusicService.COPA_MESSAGE);
 
-                StringTokenizer st = new StringTokenizer(notification);
+                if(notification.startsWith("SONG_TITLE ")){
 
-                notification = st.nextToken();
+                    notification = notification.replace("SONG_TITLE ","");
+                    Log.d("TITLE",notification);
 
-                if(notification.equals("PB")){
+                }else if(notification.startsWith("SONG_ARTIST ")) {
 
-                    //escuchando.setProgress(Integer.parseInt(st.nextToken()));
+                    notification = notification.replace("SONG_ARTIST ","");
+                    Log.d("ARTIST", notification);
 
                 }
-
             }
         };
-
     }
 
 /********** METODOS PARA OBTENER LA INSTANCIA DEL SERVICIO DE MUSICA ***********/
 
-    private ServiceConnection mConnection = new ServiceConnection() {
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            musicService = ((MusicService.MusicBinder)service).getService();
-        }
-
-        public void onServiceDisconnected(ComponentName className) {
-            musicService = null;
-        }
-    };
-
     void doBindService() {
-        bindService(new Intent(this,
-                MusicService.class), mConnection, Context.BIND_AUTO_CREATE);
+        musicServiceIntent = new Intent(this,MusicService.class);
+        startService(musicServiceIntent);
+        bindService(musicServiceIntent, mConnection, Context.BIND_AUTO_CREATE);
         mIsBound = true;
     }
 
@@ -171,9 +198,11 @@ public class MainMenuActivity extends ActionBarActivity {
 
     public void startPauseMusic(View view){
 
-        if(bt_play.
-        musicService.startPlaying();
-        else{
+        if(!musicService.isPlaying()) {
+            musicService.startPlaying();
+            bt_play.setVisibility(View.INVISIBLE);
+            bt_pause.setVisibility(View.VISIBLE);
+        }else{
             musicService.pause();
             bt_play.setVisibility(View.VISIBLE);
             bt_pause.setVisibility(View.INVISIBLE);
@@ -182,11 +211,21 @@ public class MainMenuActivity extends ActionBarActivity {
 
     public void nextSong(View view){
 
+        if(!musicService.isPlaying()) {
+            bt_play.setVisibility(View.INVISIBLE);
+            bt_pause.setVisibility(View.VISIBLE);
+        }
+
         musicService.nextSong();
 
     }
 
     public void previousSong(View view){
+
+        if(!musicService.isPlaying()) {
+            bt_play.setVisibility(View.INVISIBLE);
+            bt_pause.setVisibility(View.VISIBLE);
+        }
 
         musicService.previousSong();
 
@@ -221,10 +260,17 @@ public class MainMenuActivity extends ActionBarActivity {
     // Sale de la aplicación deteniendo el servicio
     public void exit(View view){
 
+        musicService.onStop();
         stopService(voiceControlServiceIntent);
         stopService(musicServiceIntent);
 
         finish();
+
+    }
+
+    public MusicService getMusicService(){
+
+        return musicService;
 
     }
 
