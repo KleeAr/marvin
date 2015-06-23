@@ -27,6 +27,7 @@ public class STTService extends Service {
     private CommandHandlerManager commandHandlerManager;
 
     private boolean isListening;
+    private boolean previousListening;
 
     LocalBroadcastManager broadcaster;
     public static final String COPA_RESULT = "com.controlj.copame.backend.COPAService.REQUEST_PROCESSED";
@@ -111,9 +112,16 @@ public class STTService extends Service {
             ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
             String text = matches.get(0);
 
+            previousListening = isListening;
+
             isListening = commandHandlerManager.detectCommand(text, isListening);
 
-            sendResult("TV " + text);
+            if(isListening && !previousListening)
+                sendResult("Marvin");
+            else if(isListening && previousListening)
+                sendResult("Command " + text);
+            else if(!isListening && previousListening)
+                sendResult("MarvinFinish");
 
         }
 

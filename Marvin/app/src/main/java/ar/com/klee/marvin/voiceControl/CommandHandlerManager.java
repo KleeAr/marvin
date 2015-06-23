@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.speech.SpeechRecognizer;
+import android.util.Log;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
@@ -78,7 +79,6 @@ public class CommandHandlerManager {
 
         // Initialize all command handlers
         commandHandlers = Arrays.asList(new AbrirAplicacionHandler(textToSpeech, context, this),
-        new PublicarEnFacebookHandler(textToSpeech, context,this),
         new ActivarHotspotHandler(textToSpeech, context, this),
         new AgregarEventoHandler(textToSpeech, context, this),
         new AnteriorCancionHandler(textToSpeech, context, this),
@@ -101,6 +101,7 @@ public class CommandHandlerManager {
         new EnviarWhatsAppHandler(textToSpeech, context, this),
         new GuardarFotoHandler(textToSpeech, context, this),
         new GuardarYCompartirFotoHandler(textToSpeech, context, this),
+        new PublicarEnFacebookHandler(textToSpeech, context,this),
         new ReproducirArtistaHandler(textToSpeech, context, this),
         new ReproducirCancionHandler(textToSpeech, context, this),
         new ReproducirMusicaHandler(textToSpeech, context, this),
@@ -119,8 +120,6 @@ public class CommandHandlerManager {
 
             if(command.startsWith("marvin")){
 
-                //ACTIVAR PANTALLA DE ESCUCHA******************************
-
                 textToSpeech.speakText("Te escucho");
                 return true;
 
@@ -133,7 +132,7 @@ public class CommandHandlerManager {
         }
 
         final String finalCommand = command;
-        if(currentContext.getInteger(CommandHandler.STEP) == 0) {
+        if(currentContext == null || currentContext.getInteger(CommandHandler.STEP) == 0) {
             // find the command that matches
             currentCommandHandler = CollectionUtils.find(commandHandlers, new Predicate<CommandHandler>() {
                 @Override
