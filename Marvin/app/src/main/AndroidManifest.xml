@@ -60,7 +60,7 @@
             android:label="STT" >
         </service>
         <service
-            android:name=".media.music.MusicService"
+            android:name=".multimedia.music.MusicService"
             android:label="MusicService" >
         </service>
         <activity
