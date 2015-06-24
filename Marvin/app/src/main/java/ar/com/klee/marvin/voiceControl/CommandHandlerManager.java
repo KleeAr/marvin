@@ -14,6 +14,7 @@ import java.util.List;
 
 import ar.com.klee.marvin.voiceControl.handlers.AbrirAplicacionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.ActivarHotspotHandler;
+import ar.com.klee.marvin.voiceControl.handlers.ActivarReproduccionAleatoriaHandler;
 import ar.com.klee.marvin.voiceControl.handlers.AgregarEventoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.AnteriorCancionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.BarrioHandler;
@@ -29,6 +30,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CompartirEnInstagramHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CompartirEnTwitterHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CompartirFotoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.DesactivarHotspotHandler;
+import ar.com.klee.marvin.voiceControl.handlers.DesactivarReproduccionAleatoriaHandler;
 import ar.com.klee.marvin.voiceControl.handlers.DetenerReproduccionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.EnviarMailAContactoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.EnviarSMSAContactoHandler;
@@ -82,6 +84,7 @@ public class CommandHandlerManager {
         // Initialize all command handlers
         commandHandlers = Arrays.asList(new AbrirAplicacionHandler(textToSpeech, context, this),
         new ActivarHotspotHandler(textToSpeech, context, this),
+        new ActivarReproduccionAleatoriaHandler(textToSpeech, context, this),
         new AgregarEventoHandler(textToSpeech, context, this),
         new AnteriorCancionHandler(textToSpeech, context, this),
         new BarrioHandler(textToSpeech, context, this),
@@ -96,6 +99,7 @@ public class CommandHandlerManager {
         this.compartirInstagramHandler,
         new CompartirFotoHandler(textToSpeech, context, this),
         new DesactivarHotspotHandler(textToSpeech, context, this),
+        new DesactivarReproduccionAleatoriaHandler(textToSpeech, context, this),
         new DetenerReproduccionHandler(textToSpeech, context, this),
         new EnviarMailAContactoHandler(textToSpeech, context, this),
         new EnviarSMSAContactoHandler(textToSpeech, context, this),

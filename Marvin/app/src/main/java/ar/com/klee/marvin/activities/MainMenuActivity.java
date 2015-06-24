@@ -281,6 +281,12 @@ public class MainMenuActivity extends ActionBarActivity {
 
     }
 
+    public boolean setRandom(boolean random){
+
+        return musicService.setRandom(random);
+
+    }
+
     public void openCamera(View v){
 
         Intent intent = new Intent(this, CameraActivity.class );

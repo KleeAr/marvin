@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.Stack;
 
 public class MusicService extends Service {
 
@@ -27,7 +28,7 @@ public class MusicService extends Service {
     private MediaPlayer mp = new MediaPlayer();
     private int currentSong = 0;
     private int currentDuration = 0;
-    private int previousSong = 0;
+    private Stack previousSongs = new Stack();
     private boolean isRandom = false;
 
     LocalBroadcastManager broadcaster;
@@ -141,7 +142,7 @@ public class MusicService extends Service {
         }
 
         currentDuration = 0;
-        previousSong = currentSong;
+        previousSongs.push(currentSong);
         if(isRandom) {
             Random rn = new Random();
             currentSong = rn.nextInt() % songs.size();
@@ -160,7 +161,7 @@ public class MusicService extends Service {
         }
 
         currentDuration = 0;
-        previousSong = currentSong;
+        previousSongs.push(currentSong);
         if(isRandom) {
             Random rn = new Random();
             currentSong = rn.nextInt() % songs.size();
@@ -178,12 +179,14 @@ public class MusicService extends Service {
         }
 
         currentDuration = 0;
-        if(currentSong == previousSong || !isRandom) {
+        if(!previousSongs.empty())
+            currentSong = (int) previousSongs.pop();
+        else {
             currentSong--;
             if(currentSong == -1)
                 currentSong = songs.size()-1;
-        }else
-            currentSong = previousSong;
+        }
+
         playSong(songs.get(currentSong).get("Path"));
     }
 
@@ -194,16 +197,23 @@ public class MusicService extends Service {
         }
 
         currentDuration = 0;
-        if(currentSong == previousSong || !isRandom) {
+        if(!previousSongs.empty())
+            currentSong = (int) previousSongs.pop();
+        else {
             currentSong--;
             if(currentSong == -1)
                 currentSong = songs.size()-1;
-        }else
-            currentSong = previousSong;
+        }
     }
 
-    public void setRandom(boolean random) {
+    public boolean setRandom(boolean random) {
+
+        if((isRandom && random)||(!isRandom && !random))
+            return false;
+
         isRandom = random;
+
+        return true;
     }
 
     public String getSongData(String path, String data) {
