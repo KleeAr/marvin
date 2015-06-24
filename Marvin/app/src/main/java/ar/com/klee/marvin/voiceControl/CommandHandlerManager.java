@@ -36,6 +36,7 @@ import ar.com.klee.marvin.voiceControl.handlers.EnviarSMSANumeroHandler;
 import ar.com.klee.marvin.voiceControl.handlers.EnviarWhatsAppHandler;
 import ar.com.klee.marvin.voiceControl.handlers.GuardarFotoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.GuardarYCompartirFotoHandler;
+import ar.com.klee.marvin.voiceControl.handlers.PausarMusicaHandler;
 import ar.com.klee.marvin.voiceControl.handlers.PublicarEnFacebookHandler;
 import ar.com.klee.marvin.voiceControl.handlers.ReproducirArtistaHandler;
 import ar.com.klee.marvin.voiceControl.handlers.ReproducirCancionHandler;
@@ -59,6 +60,7 @@ public class CommandHandlerManager {
 
     private Context context;
     private Activity activity;
+    private Activity mainActivity;
 
     private boolean isError;
     private boolean isPhotoTaken;
@@ -101,6 +103,7 @@ public class CommandHandlerManager {
         new EnviarWhatsAppHandler(textToSpeech, context, this),
         new GuardarFotoHandler(textToSpeech, context, this),
         new GuardarYCompartirFotoHandler(textToSpeech, context, this),
+        new PausarMusicaHandler(textToSpeech, context, this),
         new PublicarEnFacebookHandler(textToSpeech, context,this),
         new ReproducirArtistaHandler(textToSpeech, context, this),
         new ReproducirCancionHandler(textToSpeech, context, this),
@@ -203,6 +206,22 @@ public class CommandHandlerManager {
 
         if(currentActivity == ACTIVITY_CAMERA)
             isPhotoTaken = false;
+
+    }
+
+    public void defineMainActivity(Activity activity){
+
+        this.mainActivity = activity;
+
+        currentActivity = ACTIVITY_MAIN;
+
+        this.activity = mainActivity;
+
+    }
+
+    public Activity getMainActivity(){
+
+        return mainActivity;
 
     }
 

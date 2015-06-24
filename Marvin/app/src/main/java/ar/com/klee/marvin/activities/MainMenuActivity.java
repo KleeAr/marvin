@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.musicPlayer.MusicService;
+import ar.com.klee.marvin.voiceControl.Helper;
 import ar.com.klee.marvin.voiceControl.STTService;
 
 
@@ -52,8 +53,8 @@ public class MainMenuActivity extends ActionBarActivity {
         bt_play.setVisibility(View.VISIBLE);
         bt_pause.setVisibility(View.INVISIBLE);
 
-        initializeMusicService();
         initializeSTTService();
+        initializeMusicService();
 
     }
 
@@ -113,7 +114,12 @@ public class MainMenuActivity extends ActionBarActivity {
                     handler.postDelayed(new Runnable() {
                         public void run() {
                             if(wasPlaying) {
+                                bt_play.setVisibility(View.INVISIBLE);
+                                bt_pause.setVisibility(View.VISIBLE);
                                 musicService.startPlaying();
+                            }else{
+                                bt_play.setVisibility(View.VISIBLE);
+                                bt_pause.setVisibility(View.INVISIBLE);
                             }
 
                             bt_play.setEnabled(true);
@@ -131,6 +137,8 @@ public class MainMenuActivity extends ActionBarActivity {
 
                     //MOSTRAR COMANDO
 
+                }else if(notification.equals("Started")){
+                    setCommandHandlerManager();
                 }
 
             }
@@ -220,6 +228,19 @@ public class MainMenuActivity extends ActionBarActivity {
 
     }
 
+    public void nextSongSet(){
+
+        if(!musicService.isPlaying()) {
+            bt_play.setVisibility(View.INVISIBLE);
+            bt_pause.setVisibility(View.VISIBLE);
+        }
+
+        wasPlaying = true;
+
+        musicService.nextSongSet();
+
+    }
+
     public void previousSong(View view){
 
         if(!musicService.isPlaying()) {
@@ -228,6 +249,35 @@ public class MainMenuActivity extends ActionBarActivity {
         }
 
         musicService.previousSong();
+
+    }
+
+    public void previousSongSet(){
+
+        if(!musicService.isPlaying()) {
+            bt_play.setVisibility(View.INVISIBLE);
+            bt_pause.setVisibility(View.VISIBLE);
+        }
+
+        wasPlaying = true;
+
+        musicService.previousSongSet();
+
+    }
+
+    public boolean findArtist(String artist){
+
+        wasPlaying = true;
+
+        return musicService.findArtist(artist);
+
+    }
+
+    public boolean findSong(String song){
+
+        wasPlaying = true;
+
+        return musicService.findTitle(song);
 
     }
 
@@ -248,6 +298,7 @@ public class MainMenuActivity extends ActionBarActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(musicReceiver,
                 new IntentFilter(STTService.COPA_RESULT)
         );
+
     }
 
     // Utilizado por el receptor de parámetros del servicio de comandos de voz
@@ -272,6 +323,22 @@ public class MainMenuActivity extends ActionBarActivity {
 
         return musicService;
 
+    }
+
+    public boolean getWasPlaying(){
+
+        return wasPlaying;
+
+    }
+
+    public void setWasPlaying(boolean was){
+
+        wasPlaying = was;
+
+    }
+
+    public void setCommandHandlerManager(){
+        Helper.commandHandlerManager.defineMainActivity(this);
     }
 
 }

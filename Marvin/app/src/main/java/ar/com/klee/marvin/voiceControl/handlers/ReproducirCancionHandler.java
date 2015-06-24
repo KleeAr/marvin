@@ -4,6 +4,7 @@ import android.content.Context;
 
 import java.util.Map;
 
+import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
@@ -19,9 +20,11 @@ public class ReproducirCancionHandler extends CommandHandler{
 
         String song = values.get("cancion");
 
-        getTextToSpeech().speakText("Reproduciendo canción " + song);
+        if(!context.getObject(ACTIVITY, MainMenuActivity.class).findSong(song))
+            getTextToSpeech().speakText("La canción " + song + " no fue encontrada");
+        else
+            getTextToSpeech().speakText("Reproducdiendo canción " + song);
 
-        //CODIGO PARA BUSCAR Y REPRODUCIR UNA CANCION
         context.put(STEP, 0);
         return context;
     }

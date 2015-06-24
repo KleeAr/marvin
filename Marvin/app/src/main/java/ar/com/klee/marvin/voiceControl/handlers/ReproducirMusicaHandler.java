@@ -2,6 +2,7 @@ package ar.com.klee.marvin.voiceControl.handlers;
 
 import android.content.Context;
 
+import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -14,9 +15,12 @@ public class ReproducirMusicaHandler extends CommandHandler{
 
     public CommandHandlerContext drive(CommandHandlerContext context){
 
-        getTextToSpeech().speakText("Reproduciendo música");
+        if(!context.getObject(ACTIVITY, MainMenuActivity.class).getWasPlaying()) {
+            getTextToSpeech().speakText("Reproduciendo música");
+            context.getObject(ACTIVITY, MainMenuActivity.class).setWasPlaying(true);
+        }else
+            getTextToSpeech().speakText("La música ya estaba sonando");
 
-        //CODIGO PARA REPRUDUCIR MUSICA
         context.put(STEP, 0);
         return context;
 

@@ -137,8 +137,8 @@ public class MusicService extends Service {
             mp.pause();
         }
 
-        sendResult("SONG_TITLE " + "");
-        sendResult("SONG_ARTIST " + "");
+        sendResult("SONG_TITLE " + " ");
+        sendResult("SONG_ARTIST " + " ");
 
     }
 
@@ -161,6 +161,24 @@ public class MusicService extends Service {
         playSong(songs.get(currentSong).get("Path"));
     }
 
+    public void nextSongSet() {
+
+        if(songs.size() == 0) {
+            //NO HAY CANCIONES
+        }
+
+        currentDuration = 0;
+        previousSong = currentSong;
+        if(isRandom) {
+            Random rn = new Random();
+            currentSong = rn.nextInt() % songs.size();
+        }else {
+            currentSong++;
+            if (currentSong == songs.size())
+                currentSong = 0;
+        }
+    }
+
     public void previousSong() {
 
         if(songs.size() == 0) {
@@ -175,6 +193,21 @@ public class MusicService extends Service {
         }else
             currentSong = previousSong;
         playSong(songs.get(currentSong).get("Path"));
+    }
+
+    public void previousSongSet() {
+
+        if(songs.size() == 0) {
+            //NO HAY CANCIONES
+        }
+
+        currentDuration = 0;
+        if(currentSong == previousSong || !isRandom) {
+            currentSong--;
+            if(currentSong == -1)
+                currentSong = songs.size()-1;
+        }else
+            currentSong = previousSong;
     }
 
     public void setRandom(boolean random) {
@@ -218,41 +251,85 @@ public class MusicService extends Service {
 
     }
 
-    public int findTitle(String title){
+    public boolean findTitle(String title){
 
-        int i = 0;
+        int marker = currentSong + 1;
 
         title = title.toLowerCase();
 
-        while(i < songs.size()){
+        while(marker < songs.size()){
 
-            if(songs.get(i).get("Title").toLowerCase().equals(title))
-                return i;
+            if(songs.get(marker).get("Title").toLowerCase().equals(title)){
 
-            i++;
+                currentSong = marker;
+                currentDuration = 0;
+
+                return true;
+            }
+
+            marker++;
 
         }
 
-        return -1;
+        marker = 0;
+
+        while(marker <= currentSong){
+
+            if(songs.get(marker).get("Title").toLowerCase().equals(title)){
+
+                currentSong = marker;
+                currentDuration = 0;
+
+                return true;
+            }
+
+            marker++;
+
+        }
+
+
+        return false;
 
     }
 
-    public int findArtist(String artist){
+    public boolean findArtist(String artist){
 
-        int i = 0;
+        int marker = currentSong + 1;
 
         artist = artist.toLowerCase();
 
-        while(i < songs.size()){
+        while(marker < songs.size()){
 
-            if(songs.get(i).get("Artist").toLowerCase().equals(artist))
-                return i;
+            if(songs.get(marker).get("Artist").toLowerCase().equals(artist)){
 
-            i++;
+                currentSong = marker;
+                currentDuration = 0;
+
+                return true;
+            }
+
+            marker++;
 
         }
 
-        return -1;
+        marker = 0;
+
+        while(marker <= currentSong){
+
+            if(songs.get(marker).get("Artist").toLowerCase().equals(artist)){
+
+                currentSong = marker;
+                currentDuration = 0;
+
+                return true;
+            }
+
+            marker++;
+
+        }
+
+
+        return false;
 
     }
 
