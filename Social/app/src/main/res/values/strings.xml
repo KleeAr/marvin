@@ -12,4 +12,5 @@
     <string name="title_activity_marvin">MarvinActivity</string>
     <string name="defaultMainStreet">Av. De los Corrales 2900</string>
     <string name="defaultSpeed">50</string>
+    <string name="title_activity_you_tube_results">YouTubeResultsActivity</string>
 </resources>

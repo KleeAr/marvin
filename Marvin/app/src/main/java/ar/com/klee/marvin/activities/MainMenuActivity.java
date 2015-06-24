@@ -17,7 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import ar.com.klee.marvin.R;
-import ar.com.klee.marvin.musicPlayer.MusicService;
+import ar.com.klee.marvin.multimedia.music.MusicService;
 import ar.com.klee.marvin.voiceControl.STTService;
 
 
