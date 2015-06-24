@@ -17,7 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import ar.com.klee.marvin.R;
-import ar.com.klee.marvin.musicPlayer.MusicService;
+import ar.com.klee.marvin.multimedia.music.MusicService;
 import ar.com.klee.marvin.voiceControl.Helper;
 import ar.com.klee.marvin.voiceControl.STTService;
 
@@ -240,7 +240,7 @@ public class MainMenuActivity extends ActionBarActivity {
         musicService.nextSongSet();
 
     }
-
+    
     public void previousSong(View view){
 
         if(!musicService.isPlaying()) {
@@ -298,7 +298,6 @@ public class MainMenuActivity extends ActionBarActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(musicReceiver,
                 new IntentFilter(STTService.COPA_RESULT)
         );
-
     }
 
     // Utilizado por el receptor de parámetros del servicio de comandos de voz

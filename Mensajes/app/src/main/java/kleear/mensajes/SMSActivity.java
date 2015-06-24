@@ -5,6 +5,7 @@ import android.app.Activity;
 
 import android.app.AlertDialog;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -63,10 +65,11 @@ public class SMSActivity extends Activity implements OnItemClickListener {
         int indexAddress = smsInboxCursor.getColumnIndex("address");
         int date = smsInboxCursor.getColumnIndex("date");
 
+
         // Revisar muestra datos erroneos
-        Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(date);
-        String dateText = c.get(Calendar.YEAR) + "/" + c.get(Calendar.MONTH) + "/" + c.get(Calendar.DAY_OF_MONTH) + "-" + c.get(Calendar.HOUR_OF_DAY);
+       Calendar c = Calendar.getInstance();
+       c.setTimeInMillis(date);
+       String dateText = c.get(Calendar.YEAR) + "/" + c.get(Calendar.MONTH) + "/" + c.get(Calendar.DAY_OF_MONTH) + "-" + c.get(Calendar.HOUR_OF_DAY);
 
         if (indexBody < 0 || !smsInboxCursor.moveToFirst()) return;
         arrayAdapter.clear();
@@ -155,5 +158,7 @@ public class SMSActivity extends Activity implements OnItemClickListener {
 
         return contactName;
     }
+
+
 }
 

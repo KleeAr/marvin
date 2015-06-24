@@ -1,8 +1,5 @@
-package ar.com.klee.marvin.musicPlayer;
+package ar.com.klee.marvin.multimedia.music;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaMetadataRetriever;
@@ -10,8 +7,6 @@ import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
-import android.view.View;
 
 import org.cmc.music.metadata.IMusicMetadata;
 import org.cmc.music.metadata.MusicMetadataSet;
@@ -24,9 +19,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-
-import ar.com.klee.marvin.R;
-import ar.com.klee.marvin.activities.MainMenuActivity;
 
 public class MusicService extends Service {
 

@@ -35,9 +35,9 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Send email"
-        android:onClick="sendEmail"
-        android:id="@+id/send_email" />
+        android:text="Search in YouTube"
+        android:onClick="searchInYouTube"
+        android:id="@+id/search_youtube" />
 
     <Button
         android:layout_width="wrap_content"

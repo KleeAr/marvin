@@ -11,17 +11,15 @@ import android.widget.Toast;
 
 import ar.com.klee.social.dialogs.DateTimeDialog;
 import ar.com.klee.social.services.FacebookService;
-import ar.com.klee.social.services.GMailService;
 import ar.com.klee.social.services.TwitterService;
 import ar.com.klee.social.services.WhatsAppService;
 import ar.com.klee.social.services.exceptions.WhatsAppException;
 
 
-public class PublishActivity extends FragmentActivity {
+public class PublishActivity extends FragmentActivity{
 
     private WhatsAppService whatsAppService;
     private FacebookService facebookService;
-    private GMailService gmailService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +27,7 @@ public class PublishActivity extends FragmentActivity {
         setContentView(R.layout.publish_layout);
         whatsAppService =  new WhatsAppService(this);
         facebookService = new FacebookService(this);
-        gmailService = new GMailService(this);
+
     }
 
 
@@ -88,13 +86,6 @@ public class PublishActivity extends FragmentActivity {
     private String getTextToPublish() {
         TextView publishText = (TextView)findViewById(R.id.publishText);
         return publishText.getText().toString();
-    }
-
-    public void sendEmail(View view) {
-        final String textToPublish = getTextToPublish();
-        if(!textToPublish.isEmpty()) {
-            gmailService.sendEmail(textToPublish);
-        }
     }
 
 }
