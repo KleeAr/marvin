@@ -16,6 +16,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.multimedia.music.MusicService;
 import ar.com.klee.marvin.voiceControl.Helper;
@@ -206,6 +208,11 @@ public class MainMenuActivity extends ActionBarActivity {
 
     public void startPauseMusic(View view){
 
+        if(musicService.isListEmpty()){
+            Toast.makeText(this, "No se encontraron canciones en el dispositivo", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         if(!musicService.isPlaying()) {
             musicService.startPlaying();
             bt_play.setVisibility(View.INVISIBLE);
@@ -218,6 +225,11 @@ public class MainMenuActivity extends ActionBarActivity {
     }
 
     public void nextSong(View view){
+
+        if(musicService.isListEmpty()){
+            Toast.makeText(this, "No se encontraron canciones en el dispositivo", Toast.LENGTH_LONG).show();
+            return;
+        }
 
         if(!musicService.isPlaying()) {
             bt_play.setVisibility(View.INVISIBLE);
@@ -242,6 +254,11 @@ public class MainMenuActivity extends ActionBarActivity {
     }
     
     public void previousSong(View view){
+
+        if(musicService.isListEmpty()){
+            Toast.makeText(this, "No se encontraron canciones en el dispositivo", Toast.LENGTH_LONG).show();
+            return;
+        }
 
         if(!musicService.isPlaying()) {
             bt_play.setVisibility(View.INVISIBLE);
@@ -284,6 +301,12 @@ public class MainMenuActivity extends ActionBarActivity {
     public boolean setRandom(boolean random){
 
         return musicService.setRandom(random);
+
+    }
+
+    public boolean isListEmpty(){
+
+        return musicService.isListEmpty();
 
     }
 

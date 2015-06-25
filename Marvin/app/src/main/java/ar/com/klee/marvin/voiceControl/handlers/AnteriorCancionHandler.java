@@ -17,9 +17,12 @@ public class AnteriorCancionHandler extends CommandHandler{
 
     public CommandHandlerContext drive(CommandHandlerContext context){
 
-        getTextToSpeech().speakText("Volviendo a la canción anterior");
-
-        context.getObject(ACTIVITY, MainMenuActivity.class).previousSongSet();
+        if(context.getObject(ACTIVITY, MainMenuActivity.class).isListEmpty()) {
+            getTextToSpeech().speakText("No se han encontrado canciones en el dispositivo");
+        }else {
+            getTextToSpeech().speakText("Volviendo a la canción anterior");
+            context.getObject(ACTIVITY, MainMenuActivity.class).previousSongSet();
+        }
 
         context.put(STEP, 0);
         return context;

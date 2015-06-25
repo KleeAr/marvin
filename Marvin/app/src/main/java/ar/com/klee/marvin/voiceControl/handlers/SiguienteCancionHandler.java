@@ -16,9 +16,12 @@ public class SiguienteCancionHandler extends CommandHandler{
 
     public CommandHandlerContext drive(CommandHandlerContext context){
 
-        getTextToSpeech().speakText("Pasando a la siguiente canción");
-
-        context.getObject(ACTIVITY, MainMenuActivity.class).nextSongSet();
+        if(context.getObject(ACTIVITY, MainMenuActivity.class).isListEmpty()) {
+            getTextToSpeech().speakText("No se han encontrado canciones en el dispositivo");
+        }else {
+            getTextToSpeech().speakText("Pasando a la siguiente canción");
+            context.getObject(ACTIVITY, MainMenuActivity.class).nextSongSet();
+        }
 
         context.put(STEP, 0);
         return context;

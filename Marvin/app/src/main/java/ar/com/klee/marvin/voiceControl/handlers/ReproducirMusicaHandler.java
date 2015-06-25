@@ -15,11 +15,15 @@ public class ReproducirMusicaHandler extends CommandHandler{
 
     public CommandHandlerContext drive(CommandHandlerContext context){
 
-        if(!context.getObject(ACTIVITY, MainMenuActivity.class).getWasPlaying()) {
-            getTextToSpeech().speakText("Reproduciendo música");
-            context.getObject(ACTIVITY, MainMenuActivity.class).setWasPlaying(true);
-        }else
-            getTextToSpeech().speakText("La música ya estaba sonando");
+        if(context.getObject(ACTIVITY, MainMenuActivity.class).isListEmpty()){
+            getTextToSpeech().speakText("No se han encontrado canciones en el dispositivo");
+        }else {
+            if (!context.getObject(ACTIVITY, MainMenuActivity.class).getWasPlaying()) {
+                getTextToSpeech().speakText("Reproduciendo música");
+                context.getObject(ACTIVITY, MainMenuActivity.class).setWasPlaying(true);
+            } else
+                getTextToSpeech().speakText("La música ya estaba sonando");
+        }
 
         context.put(STEP, 0);
         return context;

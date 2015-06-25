@@ -116,7 +116,7 @@ public class MusicService extends Service {
     public void startPlaying(){
 
         if(songs.size() == 0) {
-            //NO HAY CANCIONES
+            return;
         }
 
         playSong(songs.get(currentSong).get("Path"));
@@ -214,6 +214,10 @@ public class MusicService extends Service {
         isRandom = random;
 
         return true;
+    }
+
+    public boolean isListEmpty(){
+        return songs.isEmpty();
     }
 
     public String getSongData(String path, String data) {

@@ -19,10 +19,14 @@ public class ReproducirArtistaHandler extends CommandHandler{
 
         String artist = context.getString(ARTIST);
 
-        if(!context.getObject(ACTIVITY, MainMenuActivity.class).findArtist(artist))
-            getTextToSpeech().speakText("El artista " + artist + " no fue encontrado");
-        else
-            getTextToSpeech().speakText("Reproduciendo artista " + artist);
+        if(context.getObject(ACTIVITY, MainMenuActivity.class).isListEmpty()) {
+            getTextToSpeech().speakText("No se han encontrado canciones en el dispositivo");
+        }else {
+            if (!context.getObject(ACTIVITY, MainMenuActivity.class).findArtist(artist))
+                getTextToSpeech().speakText("El artista " + artist + " no fue encontrado");
+            else
+                getTextToSpeech().speakText("Reproduciendo artista " + artist);
+        }
 
         context.put(STEP, 0);
         return context;
