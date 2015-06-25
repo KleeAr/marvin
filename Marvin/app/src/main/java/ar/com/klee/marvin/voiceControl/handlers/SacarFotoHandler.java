@@ -14,9 +14,13 @@ public class SacarFotoHandler extends CommandHandler{
 
     public CommandHandlerContext drive(CommandHandlerContext context){
 
-        getTextToSpeech().speakText("Sacando foto");
-
-        context.getObject(ACTIVITY, CameraActivity.class).takePicture();
+        if(!getCommandHandlerManager().getIsPhotoTaken()) {
+            getTextToSpeech().speakText("Sacando foto");
+            context.getObject(ACTIVITY, CameraActivity.class).takePicture();
+            getCommandHandlerManager().setIsPhotoTaken(true);
+        }else{
+            getTextToSpeech().speakText("Debés indicar qué hacer con la foto ya sacada");
+        }
 
         context.put(STEP,0);
         return context;
