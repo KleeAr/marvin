@@ -145,7 +145,7 @@ public class MusicService extends Service {
         previousSongs.push(currentSong);
         if(isRandom) {
             Random rn = new Random();
-            currentSong = rn.nextInt() % songs.size();
+            currentSong = rn.nextInt(songs.size());
         }else {
             currentSong++;
             if (currentSong == songs.size())
@@ -164,7 +164,7 @@ public class MusicService extends Service {
         previousSongs.push(currentSong);
         if(isRandom) {
             Random rn = new Random();
-            currentSong = rn.nextInt() % songs.size();
+            currentSong = rn.nextInt(songs.size());
         }else {
             currentSong++;
             if (currentSong == songs.size())
