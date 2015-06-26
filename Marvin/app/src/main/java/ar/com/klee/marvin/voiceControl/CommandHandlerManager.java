@@ -162,12 +162,14 @@ public class CommandHandlerManager {
         if(currentCommandHandler != null) {
             errorCounter = 0;
             currentContext = currentCommandHandler.drive(currentCommandHandler.createContext(currentContext, activity, command));
+            currentStep = currentContext.getInteger("STEP");
         } else {
             // If command handler is null, then it didn't found any match, the command was wrong
             wrongCommand(getSuggestions(command));
         }
 
         if (errorCounter >= 3 || (!isError && currentStep == 0)) {
+            currentCommandHandler = null;
             return false;
         } else {
             return true;
