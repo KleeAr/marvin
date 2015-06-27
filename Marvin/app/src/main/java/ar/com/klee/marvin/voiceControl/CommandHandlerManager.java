@@ -139,7 +139,7 @@ new DesactivarHotspotHandler(textToSpeech, context, this),
                 new GuardarYCompartirFotoHandler(textToSpeech, context, this),
                 new SacarFotoHandler(textToSpeech, context, this));
 
-        commandHandlers = new HashMap();
+        commandHandlers = new HashMap<>();
 
         commandHandlers.put(ACTIVITY_MAIN,commandHandlersMainMenu);
         commandHandlers.put(ACTIVITY_CAMERA,commandHandlersCamera);
@@ -288,5 +288,13 @@ new DesactivarHotspotHandler(textToSpeech, context, this),
 
     public void setCompartirInstagramHandler(CommandHandler compartirInstagramHandler) {
         this.compartirInstagramHandler = compartirInstagramHandler;
+    }
+
+    public static boolean isInstanceInitialized() {
+        return instance != null;
+    }
+
+    public static void destroyInstance() {
+        instance = null;
     }
 }

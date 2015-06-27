@@ -6,17 +6,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +51,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CommandHandlerManager.destroyInstance();
         setContentView(R.layout.activity_main_menu);
 
         bt_play = (Button) findViewById(R.id.bt_play);
@@ -379,7 +382,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     }
 
     public void setCommandHandlerManager(){
-        Helper.commandHandlerManager.defineMainActivity(this);
+        commandHandlerManager.defineMainActivity(this);
     }
 
 }

@@ -4,8 +4,12 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
+
+import java.util.List;
 
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.multimedia.video.YouTubeVideo;
 
 public class SearchResultActivity extends ActionBarActivity {
 
@@ -13,7 +17,9 @@ public class SearchResultActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_result);
-        Bundle bundle = getIntent().getExtras();
+        List<YouTubeVideo> videos = getIntent().getExtras().getParcelableArrayList("videos");
+        TextView text = (TextView)findViewById(R.id.search_result_text);
+        text.setText(videos.toString());
     }
 
 

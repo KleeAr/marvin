@@ -44,7 +44,11 @@ public class STTService extends Service {
         mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,this.getPackageName());
 
-        commandHandlerManager = CommandHandlerManager.initializeInstance(getApplicationContext(), mSpeechRecognizer, mSpeechRecognizerIntent);
+        if(CommandHandlerManager.isInstanceInitialized()) {
+            commandHandlerManager = CommandHandlerManager.getInstance();
+        } else {
+            commandHandlerManager = CommandHandlerManager.initializeInstance(getApplicationContext(), mSpeechRecognizer, mSpeechRecognizerIntent);
+        }
 
         broadcaster = LocalBroadcastManager.getInstance(this);
 
