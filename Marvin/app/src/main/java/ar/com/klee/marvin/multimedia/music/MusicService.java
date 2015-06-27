@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.Stack;
 
 public class MusicService extends Service {
 
@@ -27,7 +28,7 @@ public class MusicService extends Service {
     private MediaPlayer mp = new MediaPlayer();
     private int currentSong = 0;
     private int currentDuration = 0;
-    private int previousSong = 0;
+    private Stack previousSongs = new Stack();
     private boolean isRandom = false;
 
     LocalBroadcastManager broadcaster;
@@ -115,7 +116,7 @@ public class MusicService extends Service {
     public void startPlaying(){
 
         if(songs.size() == 0) {
-            //NO HAY CANCIONES
+            return;
         }
 
         playSong(songs.get(currentSong).get("Path"));
@@ -129,8 +130,8 @@ public class MusicService extends Service {
             mp.pause();
         }
 
-        sendResult("SONG_TITLE " + "");
-        sendResult("SONG_ARTIST " + "");
+        sendResult("SONG_TITLE " + " ");
+        sendResult("SONG_ARTIST " + " ");
 
     }
 
@@ -141,16 +142,34 @@ public class MusicService extends Service {
         }
 
         currentDuration = 0;
-        previousSong = currentSong;
+        previousSongs.push(currentSong);
         if(isRandom) {
             Random rn = new Random();
-            currentSong = rn.nextInt() % songs.size();
+            currentSong = rn.nextInt(songs.size());
         }else {
             currentSong++;
             if (currentSong == songs.size())
                 currentSong = 0;
         }
         playSong(songs.get(currentSong).get("Path"));
+    }
+
+    public void nextSongSet() {
+
+        if(songs.size() == 0) {
+            //NO HAY CANCIONES
+        }
+
+        currentDuration = 0;
+        previousSongs.push(currentSong);
+        if(isRandom) {
+            Random rn = new Random();
+            currentSong = rn.nextInt(songs.size());
+        }else {
+            currentSong++;
+            if (currentSong == songs.size())
+                currentSong = 0;
+        }
     }
 
     public void previousSong() {
@@ -160,17 +179,45 @@ public class MusicService extends Service {
         }
 
         currentDuration = 0;
-        if(currentSong == previousSong || !isRandom) {
+        if(!previousSongs.empty())
+            currentSong = (int) previousSongs.pop();
+        else {
             currentSong--;
             if(currentSong == -1)
                 currentSong = songs.size()-1;
-        }else
-            currentSong = previousSong;
+        }
+
         playSong(songs.get(currentSong).get("Path"));
     }
 
-    public void setRandom(boolean random) {
+    public void previousSongSet() {
+
+        if(songs.size() == 0) {
+            //NO HAY CANCIONES
+        }
+
+        currentDuration = 0;
+        if(!previousSongs.empty())
+            currentSong = (int) previousSongs.pop();
+        else {
+            currentSong--;
+            if(currentSong == -1)
+                currentSong = songs.size()-1;
+        }
+    }
+
+    public boolean setRandom(boolean random) {
+
+        if((isRandom && random)||(!isRandom && !random))
+            return false;
+
         isRandom = random;
+
+        return true;
+    }
+
+    public boolean isListEmpty(){
+        return songs.isEmpty();
     }
 
     public String getSongData(String path, String data) {
@@ -210,41 +257,85 @@ public class MusicService extends Service {
 
     }
 
-    public int findTitle(String title){
+    public boolean findTitle(String title){
 
-        int i = 0;
+        int marker = currentSong + 1;
 
         title = title.toLowerCase();
 
-        while(i < songs.size()){
+        while(marker < songs.size()){
 
-            if(songs.get(i).get("Title").toLowerCase().equals(title))
-                return i;
+            if(songs.get(marker).get("Title").toLowerCase().equals(title)){
 
-            i++;
+                currentSong = marker;
+                currentDuration = 0;
+
+                return true;
+            }
+
+            marker++;
 
         }
 
-        return -1;
+        marker = 0;
+
+        while(marker <= currentSong){
+
+            if(songs.get(marker).get("Title").toLowerCase().equals(title)){
+
+                currentSong = marker;
+                currentDuration = 0;
+
+                return true;
+            }
+
+            marker++;
+
+        }
+
+
+        return false;
 
     }
 
-    public int findArtist(String artist){
+    public boolean findArtist(String artist){
 
-        int i = 0;
+        int marker = currentSong + 1;
 
         artist = artist.toLowerCase();
 
-        while(i < songs.size()){
+        while(marker < songs.size()){
 
-            if(songs.get(i).get("Artist").toLowerCase().equals(artist))
-                return i;
+            if(songs.get(marker).get("Artist").toLowerCase().equals(artist)){
 
-            i++;
+                currentSong = marker;
+                currentDuration = 0;
+
+                return true;
+            }
+
+            marker++;
 
         }
 
-        return -1;
+        marker = 0;
+
+        while(marker <= currentSong){
+
+            if(songs.get(marker).get("Artist").toLowerCase().equals(artist)){
+
+                currentSong = marker;
+                currentDuration = 0;
+
+                return true;
+            }
+
+            marker++;
+
+        }
+
+
+        return false;
 
     }
 

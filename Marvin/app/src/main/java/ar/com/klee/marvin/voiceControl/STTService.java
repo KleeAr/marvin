@@ -50,6 +50,8 @@ public class STTService extends Service {
 
         isListening = false;
         mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
+
+        sendResult("Started");
     }
 
     @Override

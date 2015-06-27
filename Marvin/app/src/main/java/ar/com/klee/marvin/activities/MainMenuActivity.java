@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -17,7 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-
+import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,7 +121,12 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     handler.postDelayed(new Runnable() {
                         public void run() {
                             if(wasPlaying) {
+                                bt_play.setVisibility(View.INVISIBLE);
+                                bt_pause.setVisibility(View.VISIBLE);
                                 musicService.startPlaying();
+                            }else{
+                                bt_play.setVisibility(View.VISIBLE);
+                                bt_pause.setVisibility(View.INVISIBLE);
                             }
 
                             bt_play.setEnabled(true);
@@ -140,6 +144,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
                     //MOSTRAR COMANDO
 
+                }else if(notification.equals("Started")){
+                    setCommandHandlerManager();
                 }
 
             }
@@ -207,6 +213,11 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     public void startPauseMusic(View view){
 
+        if(musicService.isListEmpty()){
+            Toast.makeText(this, "No se encontraron canciones en el dispositivo", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         if(!musicService.isPlaying()) {
             musicService.startPlaying();
             bt_play.setVisibility(View.INVISIBLE);
@@ -220,6 +231,11 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     public void nextSong(View view){
 
+        if(musicService.isListEmpty()){
+            Toast.makeText(this, "No se encontraron canciones en el dispositivo", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         if(!musicService.isPlaying()) {
             bt_play.setVisibility(View.INVISIBLE);
             bt_pause.setVisibility(View.VISIBLE);
@@ -229,7 +245,25 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     }
 
+    public void nextSongSet(){
+
+        if(!musicService.isPlaying()) {
+            bt_play.setVisibility(View.INVISIBLE);
+            bt_pause.setVisibility(View.VISIBLE);
+        }
+
+        wasPlaying = true;
+
+        musicService.nextSongSet();
+
+    }
+    
     public void previousSong(View view){
+
+        if(musicService.isListEmpty()){
+            Toast.makeText(this, "No se encontraron canciones en el dispositivo", Toast.LENGTH_LONG).show();
+            return;
+        }
 
         if(!musicService.isPlaying()) {
             bt_play.setVisibility(View.INVISIBLE);
@@ -237,6 +271,47 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         }
 
         musicService.previousSong();
+
+    }
+
+    public void previousSongSet(){
+
+        if(!musicService.isPlaying()) {
+            bt_play.setVisibility(View.INVISIBLE);
+            bt_pause.setVisibility(View.VISIBLE);
+        }
+
+        wasPlaying = true;
+
+        musicService.previousSongSet();
+
+    }
+
+    public boolean findArtist(String artist){
+
+        wasPlaying = true;
+
+        return musicService.findArtist(artist);
+
+    }
+
+    public boolean findSong(String song){
+
+        wasPlaying = true;
+
+        return musicService.findTitle(song);
+
+    }
+
+    public boolean setRandom(boolean random){
+
+        return musicService.setRandom(random);
+
+    }
+
+    public boolean isListEmpty(){
+
+        return musicService.isListEmpty();
 
     }
 
@@ -291,4 +366,20 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         intent.putExtras(bundle);
         startActivity(intent);
     }
+    public boolean getWasPlaying(){
+
+        return wasPlaying;
+
+    }
+
+    public void setWasPlaying(boolean was){
+
+        wasPlaying = was;
+
+    }
+
+    public void setCommandHandlerManager(){
+        Helper.commandHandlerManager.defineMainActivity(this);
+    }
+
 }

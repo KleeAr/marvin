@@ -10,10 +10,13 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ar.com.klee.marvin.voiceControl.handlers.AbrirAplicacionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.ActivarHotspotHandler;
+import ar.com.klee.marvin.voiceControl.handlers.ActivarReproduccionAleatoriaHandler;
 import ar.com.klee.marvin.voiceControl.handlers.AgregarEventoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.AnteriorCancionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.BarrioHandler;
@@ -30,6 +33,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CompartirEnInstagramHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CompartirEnTwitterHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CompartirFotoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.DesactivarHotspotHandler;
+import ar.com.klee.marvin.voiceControl.handlers.DesactivarReproduccionAleatoriaHandler;
 import ar.com.klee.marvin.voiceControl.handlers.DetenerReproduccionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.EnviarMailAContactoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.EnviarSMSAContactoHandler;
@@ -37,6 +41,7 @@ import ar.com.klee.marvin.voiceControl.handlers.EnviarSMSANumeroHandler;
 import ar.com.klee.marvin.voiceControl.handlers.EnviarWhatsAppHandler;
 import ar.com.klee.marvin.voiceControl.handlers.GuardarFotoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.GuardarYCompartirFotoHandler;
+import ar.com.klee.marvin.voiceControl.handlers.PausarMusicaHandler;
 import ar.com.klee.marvin.voiceControl.handlers.PublicarEnFacebookHandler;
 import ar.com.klee.marvin.voiceControl.handlers.ReproducirArtistaHandler;
 import ar.com.klee.marvin.voiceControl.handlers.ReproducirCancionHandler;
@@ -61,10 +66,13 @@ public class CommandHandlerManager {
 
     private Context context;
     private Activity activity;
+    private Activity mainActivity;
 
     private boolean isError;
     private boolean isPhotoTaken;
-    private List<CommandHandler> commandHandlers;
+    private List<CommandHandler> commandHandlersMainMenu;
+    private List<CommandHandler> commandHandlersCamera;
+    private Map<Integer,List<CommandHandler>> commandHandlers;
     private CommandHandlerContext currentContext;
     private CommandHandler compartirEnFacebookHandler;
     private CommandHandler compartirEnTwitterHandler;
@@ -94,38 +102,48 @@ public class CommandHandlerManager {
         this.compartirInstagramHandler = new CompartirEnInstagramHandler(textToSpeech, context, this);
 
         // Initialize all command handlers
-        commandHandlers = Arrays.asList(new AbrirAplicacionHandler(textToSpeech, context, this),
+        commandHandlersMainMenu = Arrays.asList(new AbrirAplicacionHandler(textToSpeech, context, this),
         new ActivarHotspotHandler(textToSpeech, context, this),
+        new ActivarReproduccionAleatoriaHandler(textToSpeech, context, this),
         new AgregarEventoHandler(textToSpeech, context, this),
         new AnteriorCancionHandler(textToSpeech, context, this),
         new BarrioHandler(textToSpeech, context, this),
         new CalleActualHandler(textToSpeech, context, this),
         new CalleAnteriorHandler(textToSpeech, context, this),
         new CalleSiguienteHandler(textToSpeech, context, this),
-        new CancelarFotoHandler(textToSpeech, context, this),
-        new CerrarCamaraHandler(textToSpeech, context, this),
-        new CompartirFotoHandler(textToSpeech, context, this ),
-        this.compartirEnFacebookHandler,
-        this.compartirEnTwitterHandler,
-        this.compartirInstagramHandler,
-        new BuscarEnYoutubeHandler(textToSpeech, context, this),
-        new CompartirFotoHandler(textToSpeech, context, this),
-        new DesactivarHotspotHandler(textToSpeech, context, this),
+new BuscarEnYoutubeHandler(textToSpeech, context, this),        
+new DesactivarHotspotHandler(textToSpeech, context, this),
+        new DesactivarReproduccionAleatoriaHandler(textToSpeech, context, this),
         new DetenerReproduccionHandler(textToSpeech, context, this),
         new EnviarMailAContactoHandler(textToSpeech, context, this),
         new EnviarSMSAContactoHandler(textToSpeech, context, this),
         new EnviarSMSANumeroHandler(textToSpeech, context, this),
         new EnviarWhatsAppHandler(textToSpeech, context, this),
-        new GuardarFotoHandler(textToSpeech, context, this),
-        new GuardarYCompartirFotoHandler(textToSpeech, context, this),
+        new PausarMusicaHandler(textToSpeech, context, this),
         new PublicarEnFacebookHandler(textToSpeech, context,this),
         new ReproducirArtistaHandler(textToSpeech, context, this),
         new ReproducirCancionHandler(textToSpeech, context, this),
         new ReproducirMusicaHandler(textToSpeech, context, this),
-        new SacarFotoHandler(textToSpeech, context, this),
         new SiguienteCancionHandler(textToSpeech, context, this),
         new SMSDeEmergenciaHandler(textToSpeech, context, this),
         new TwittearHandler(textToSpeech, context, this));
+
+        commandHandlersCamera = Arrays.asList(new CancelarFotoHandler(textToSpeech, context, this),
+                new CerrarCamaraHandler(textToSpeech, context, this),
+                new CompartirFotoHandler(textToSpeech, context, this ),
+                this.compartirEnFacebookHandler,
+                this.compartirEnTwitterHandler,
+                this.compartirInstagramHandler,
+                new CompartirFotoHandler(textToSpeech, context, this),
+                new GuardarFotoHandler(textToSpeech, context, this),
+                new GuardarYCompartirFotoHandler(textToSpeech, context, this),
+                new SacarFotoHandler(textToSpeech, context, this));
+
+        commandHandlers = new HashMap();
+
+        commandHandlers.put(ACTIVITY_MAIN,commandHandlersMainMenu);
+        commandHandlers.put(ACTIVITY_CAMERA,commandHandlersCamera);
+
     }
 
     public boolean detectCommand(String command, boolean isListening){
@@ -151,7 +169,7 @@ public class CommandHandlerManager {
         final String finalCommand = command;
         if(currentContext == null || currentContext.getInteger(CommandHandler.STEP) == 0) {
             // find the command that matches
-            currentCommandHandler = CollectionUtils.find(commandHandlers, new Predicate<CommandHandler>() {
+            currentCommandHandler = CollectionUtils.find(commandHandlers.get(currentActivity), new Predicate<CommandHandler>() {
                 @Override
                 public boolean evaluate(CommandHandler handlerToEvaluate) {
                     return handlerToEvaluate.matches(finalCommand);
@@ -161,12 +179,14 @@ public class CommandHandlerManager {
         if(currentCommandHandler != null) {
             errorCounter = 0;
             currentContext = currentCommandHandler.drive(currentCommandHandler.createContext(currentContext, activity, command));
+            currentStep = currentContext.getInteger("STEP");
         } else {
             // If command handler is null, then it didn't found any match, the command was wrong
             wrongCommand(getSuggestions(command));
         }
 
         if (errorCounter >= 3 || (!isError && currentStep == 0)) {
+            currentCommandHandler = null;
             return false;
         } else {
             return true;
@@ -174,7 +194,7 @@ public class CommandHandlerManager {
     }
 
     private String getSuggestions(final String command) {
-        CommandHandler suggestedHandler = CollectionUtils.find(commandHandlers, new Predicate<CommandHandler>() {
+        CommandHandler suggestedHandler = CollectionUtils.find(commandHandlers.get(currentActivity), new Predicate<CommandHandler>() {
             @Override
             public boolean evaluate(CommandHandler handlerToEvaluate) {
                 return handlerToEvaluate.isSimilar(command);
@@ -212,6 +232,12 @@ public class CommandHandlerManager {
 
     }
 
+    public boolean getIsPhotoTaken(){
+
+        return isPhotoTaken;
+
+    }
+
     public void defineActivity(int activityType, Activity activity){
 
         currentActivity = activityType;
@@ -220,6 +246,22 @@ public class CommandHandlerManager {
 
         if(currentActivity == ACTIVITY_CAMERA)
             isPhotoTaken = false;
+
+    }
+
+    public void defineMainActivity(Activity activity){
+
+        this.mainActivity = activity;
+
+        currentActivity = ACTIVITY_MAIN;
+
+        this.activity = mainActivity;
+
+    }
+
+    public Activity getMainActivity(){
+
+        return mainActivity;
 
     }
 

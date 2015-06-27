@@ -39,13 +39,23 @@ public class CompartirFotoHandler extends CommandHandler{
 
     public CommandHandlerContext stepOne(CommandHandlerContext context){
 
-        CameraActivity cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
-        getTextToSpeech().speakText("¿En qué red social deseás compartir la foto?");
+        if(getCommandHandlerManager().getIsPhotoTaken()) {
 
-        cameraActivity.share();
+            getTextToSpeech().speakText("¿En qué red social deseás compartirla?");
+            context.getObject(ACTIVITY, CameraActivity.class).share();
+            getCommandHandlerManager().setIsPhotoTaken(false);
 
-        context.put(STEP, 3);
-        return context;
+            context.put(STEP, 3);
+            return context;
+
+        }else{
+
+            getTextToSpeech().speakText("Debés sacar una foto antes");
+
+            context.put(STEP, 0);
+            return context;
+
+        }
 
     }
 

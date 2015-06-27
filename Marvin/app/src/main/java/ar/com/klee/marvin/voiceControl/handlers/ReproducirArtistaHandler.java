@@ -2,6 +2,7 @@ package ar.com.klee.marvin.voiceControl.handlers;
 
 import android.content.Context;
 
+import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
@@ -17,9 +18,15 @@ public class ReproducirArtistaHandler extends CommandHandler{
     public CommandHandlerContext drive(CommandHandlerContext context){
 
         String artist = context.getString(ARTIST);
-        getTextToSpeech().speakText("Reproduciendo artista " + artist);
 
-        //TODO: CODIGO PARA BUSCAR Y REPRODUCIR UN ARTISTA
+        if(context.getObject(ACTIVITY, MainMenuActivity.class).isListEmpty()) {
+            getTextToSpeech().speakText("No se han encontrado canciones en el dispositivo");
+        }else {
+            if (!context.getObject(ACTIVITY, MainMenuActivity.class).findArtist(artist))
+                getTextToSpeech().speakText("El artista " + artist + " no fue encontrado");
+            else
+                getTextToSpeech().speakText("Reproduciendo artista " + artist);
+        }
 
         context.put(STEP, 0);
         return context;

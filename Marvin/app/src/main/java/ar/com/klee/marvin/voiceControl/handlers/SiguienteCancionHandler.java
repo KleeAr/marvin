@@ -2,6 +2,7 @@ package ar.com.klee.marvin.voiceControl.handlers;
 
 import android.content.Context;
 
+import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -15,9 +16,13 @@ public class SiguienteCancionHandler extends CommandHandler{
 
     public CommandHandlerContext drive(CommandHandlerContext context){
 
-        getTextToSpeech().speakText("Reproduciendo");
+        if(context.getObject(ACTIVITY, MainMenuActivity.class).isListEmpty()) {
+            getTextToSpeech().speakText("No se han encontrado canciones en el dispositivo");
+        }else {
+            getTextToSpeech().speakText("Pasando a la siguiente canción");
+            context.getObject(ACTIVITY, MainMenuActivity.class).nextSongSet();
+        }
 
-        //CODIGO PARA AVANZAR A LA CANCIÓN SIGUIENTE
         context.put(STEP, 0);
         return context;
 

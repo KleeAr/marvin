@@ -24,14 +24,14 @@ public class CalendarService {
         this.context = context;
     }
 
-    public void createEvent(int year, int monthOfYear, int dayOfMonth) {
+    public void createEvent(String event, int dayOfMonth, int monthOfYear, int year, int hour, int minute) {
         Calendar beginTime = Calendar.getInstance();
-        beginTime.set(year, monthOfYear, dayOfMonth, 10, 0);
+        beginTime.set(year, monthOfYear, dayOfMonth, hour, minute);
         long startMillis = beginTime.getTimeInMillis();
         Calendar endTime = Calendar.getInstance();
-        endTime.set(year, monthOfYear, dayOfMonth, 11, 30);
+        endTime.set(year, monthOfYear, dayOfMonth, hour, minute);
         long endMillis = endTime.getTimeInMillis();
-        new CreateEventTask().execute(context, startMillis, endMillis);
+        new CreateEventTask().execute(context, startMillis, endMillis, event);
     }
 
     private class CreateEventTask extends AsyncTask<Object, Integer, Long> {
@@ -45,8 +45,8 @@ public class CalendarService {
 
             values.put(CalendarContract.Events.DTSTART, (Long)params[1]);
             values.put(CalendarContract.Events.DTEND, (Long)params[2]);
-            values.put(CalendarContract.Events.TITLE, "Event Name");
-            values.put(CalendarContract.Events.DESCRIPTION, "Event Description");
+            values.put(CalendarContract.Events.TITLE, (String)params[3]);
+            values.put(CalendarContract.Events.DESCRIPTION, (String)params[3]);
             values.put(CalendarContract.Events.CALENDAR_ID, DEFAULT_CALENDAR_ID);
             values.put(CalendarContract.Events.EVENT_TIMEZONE, timeZone.getID());
             Uri eventUri = context.getContentResolver().insert(CalendarContract.Events.CONTENT_URI, values);
