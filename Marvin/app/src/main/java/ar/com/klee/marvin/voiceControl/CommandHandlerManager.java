@@ -17,6 +17,7 @@ import ar.com.klee.marvin.voiceControl.handlers.ActivarHotspotHandler;
 import ar.com.klee.marvin.voiceControl.handlers.AgregarEventoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.AnteriorCancionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.BarrioHandler;
+import ar.com.klee.marvin.voiceControl.handlers.BuscarEnYoutubeHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CalleActualHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CalleAnteriorHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CalleSiguienteHandler;
@@ -49,6 +50,7 @@ public class CommandHandlerManager {
 
     public static final int ACTIVITY_MAIN = 1;
     public static final int ACTIVITY_CAMERA = 2;
+    private static CommandHandlerManager instance;
 
     private int currentActivity = ACTIVITY_MAIN;
     private int currentStep = 0;
@@ -68,8 +70,22 @@ public class CommandHandlerManager {
     private CommandHandler compartirEnTwitterHandler;
     private CommandHandler compartirInstagramHandler;
 
-    CommandHandlerManager(Context context, SpeechRecognizer mSpeechRecognizer, Intent mSpeechRecognizerIntent){
-        Helper.commandHandlerManager = this;
+    public static CommandHandlerManager getInstance() {
+        if (instance == null) {
+            throw new IllegalStateException("Instance not initialized. Call initializeInstance before calling getInstance");
+        }
+        return instance;
+    }
+
+    public static CommandHandlerManager initializeInstance(Context context, SpeechRecognizer mSpeechRecognizer, Intent mSpeechRecognizerIntent) {
+        if(instance != null) {
+            throw new IllegalStateException("Instance already initialized");
+        }
+        CommandHandlerManager.instance = new CommandHandlerManager(context, mSpeechRecognizer, mSpeechRecognizerIntent);
+        return instance;
+    }
+
+    private CommandHandlerManager(Context context, SpeechRecognizer mSpeechRecognizer, Intent mSpeechRecognizerIntent){
         textToSpeech = new TTS(context, mSpeechRecognizer, mSpeechRecognizerIntent);
         this.context = context;
 
@@ -92,6 +108,7 @@ public class CommandHandlerManager {
         this.compartirEnFacebookHandler,
         this.compartirEnTwitterHandler,
         this.compartirInstagramHandler,
+        new BuscarEnYoutubeHandler(textToSpeech, context, this),
         new CompartirFotoHandler(textToSpeech, context, this),
         new DesactivarHotspotHandler(textToSpeech, context, this),
         new DetenerReproduccionHandler(textToSpeech, context, this),

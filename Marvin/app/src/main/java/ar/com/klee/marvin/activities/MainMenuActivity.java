@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -16,18 +17,25 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.multimedia.music.MusicService;
+import ar.com.klee.marvin.multimedia.video.YouTubeVideo;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
 
 
-public class MainMenuActivity extends ActionBarActivity {
+public class MainMenuActivity extends ActionBarActivity implements DelegateTask<List<YouTubeVideo>> {
 
     private Intent voiceControlServiceIntent;
     private Intent musicServiceIntent;
     private MusicService musicService;
     private BroadcastReceiver voiceControlReceiver;
     private BroadcastReceiver musicReceiver;
+    private CommandHandlerManager commandHandlerManager;
 
     private boolean mIsBound;
     private boolean wasPlaying;
@@ -54,6 +62,7 @@ public class MainMenuActivity extends ActionBarActivity {
 
         initializeMusicService();
         initializeSTTService();
+        commandHandlerManager = CommandHandlerManager.getInstance();
 
     }
 
@@ -274,4 +283,12 @@ public class MainMenuActivity extends ActionBarActivity {
 
     }
 
+    @Override
+    public void executeCallback(List<YouTubeVideo> result) {
+        Intent intent = new Intent(this, SearchResultActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList("videos", new ArrayList<Parcelable>(result));
+        intent.putExtras(bundle);
+        startActivity(intent);
+    }
 }

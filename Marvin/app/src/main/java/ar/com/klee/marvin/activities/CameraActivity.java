@@ -66,7 +66,7 @@ public class CameraActivity extends ActionBarActivity {
         saveAndShare.setVisibility(View.INVISIBLE);
         cancel.setVisibility(View.INVISIBLE);
 
-        commandHandlerManager = Helper.commandHandlerManager;
+        commandHandlerManager = CommandHandlerManager.getInstance();
 
         commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_CAMERA,this);
 

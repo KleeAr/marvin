@@ -7,4 +7,5 @@
     <string name="title_activity_registracion">Registracion</string>
     <string name="title_activity_camara">Camara</string>
     <string name="facebook_app_id">1391887564472051</string>
+    <string name="title_activity_search_result">SearchResultActivity</string>
 </resources>

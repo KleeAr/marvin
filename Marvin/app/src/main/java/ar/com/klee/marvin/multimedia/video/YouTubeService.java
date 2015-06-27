@@ -78,7 +78,7 @@ public class YouTubeService {
 
         @Override
         protected void onPostExecute(List<YouTubeVideo> youTubeVideos) {
-            delegate.execute(youTubeVideos);
+            delegate.executeCallback(youTubeVideos);
         }
     }
 }
