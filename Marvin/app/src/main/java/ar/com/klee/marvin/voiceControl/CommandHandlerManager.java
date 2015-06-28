@@ -95,6 +95,9 @@ public class CommandHandlerManager {
     }
 
     private CommandHandlerManager(Context context, SpeechRecognizer mSpeechRecognizer, Intent mSpeechRecognizerIntent){
+
+
+
         textToSpeech = new TTS(context, mSpeechRecognizer, mSpeechRecognizerIntent);
         this.context = context;
 

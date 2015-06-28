@@ -64,7 +64,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         initializeMusicService();
         initializeSTTService();
-        commandHandlerManager = CommandHandlerManager.getInstance();
 
     }
 
@@ -102,8 +101,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             public void onReceive(Context context, Intent intent) {
 
                 String notification = intent.getStringExtra(STTService.COPA_MESSAGE);
-
-                Log.d("NOT",notification);
 
                 if(notification.equals("Marvin")){
 
@@ -150,6 +147,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     //MOSTRAR COMANDO
 
                 }else if(notification.equals("Started")){
+                    commandHandlerManager = CommandHandlerManager.getInstance();
                     setCommandHandlerManager();
                 }
 

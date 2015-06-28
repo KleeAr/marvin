@@ -122,12 +122,14 @@ public class STTService extends Service {
 
             isListening = commandHandlerManager.detectCommand(text, isListening);
 
-            if(isListening && !previousListening)
-                sendResult("Marvin");
-            else if(isListening && previousListening)
-                sendResult("Command " + text);
-            else if(!isListening && previousListening)
-                sendResult("MarvinFinish");
+            if(text != null && text != "") {
+                if (isListening && !previousListening)
+                    sendResult("Marvin");
+                else if (isListening && previousListening)
+                    sendResult("Command " + text);
+                else if (!isListening && previousListening)
+                    sendResult("MarvinFinish");
+            }
         }
 
         @Override

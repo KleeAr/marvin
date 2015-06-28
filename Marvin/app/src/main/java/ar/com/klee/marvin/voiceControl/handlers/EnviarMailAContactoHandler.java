@@ -58,6 +58,8 @@ public class EnviarMailAContactoHandler extends CommandHandler{
         String contact = context.getString(CONTACT);
         getTextToSpeech().speakText("¿Querés enviar un mail al contacto " + contact + "?");
 
+        context.put("MAIL","federico.sinopoli@gmail.com");
+
         context.put(SET_CONTACT, false);
 
         context.put(STEP, 3);
@@ -142,6 +144,7 @@ public class EnviarMailAContactoHandler extends CommandHandler{
 
         if(input.equals("no")){
             getTextToSpeech().speakText("Enviando mail");
+            context.put(SUBJECT, "");
             sendMail(context);
             return context.put(STEP, 0);
         }
@@ -189,13 +192,12 @@ public class EnviarMailAContactoHandler extends CommandHandler{
         String message = context.getString(MESSAGE) + "\n\n\n" + "Mensaje enviado a través de MARVIN";
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
         emailIntent.setType("message/rfc822");
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, context.getString(CONTACT));
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, context.getString("MAIL"));
         //emailIntent.putExtra(Intent.EXTRA_CC, cc);
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, context.getString(SUBJECT));
         emailIntent.putExtra(Intent.EXTRA_TEXT, message);
         emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-        getContext().startActivity(Intent.createChooser(emailIntent, "Seleccionar cuenta de Email:"));
+        getCommandHandlerManager().getMainActivity().startActivity(Intent.createChooser(emailIntent, "Seleccionar cuenta de Email:"));
 
     }
 
