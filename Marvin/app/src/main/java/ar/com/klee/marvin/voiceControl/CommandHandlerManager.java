@@ -20,6 +20,7 @@ import ar.com.klee.marvin.voiceControl.handlers.ActivarReproduccionAleatoriaHand
 import ar.com.klee.marvin.voiceControl.handlers.AgregarEventoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.AnteriorCancionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.BarrioHandler;
+import ar.com.klee.marvin.voiceControl.handlers.BuscarEnYoutubeHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CalleActualHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CalleAnteriorHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CalleSiguienteHandler;
@@ -55,6 +56,7 @@ public class CommandHandlerManager {
 
     public static final int ACTIVITY_MAIN = 1;
     public static final int ACTIVITY_CAMERA = 2;
+    private static CommandHandlerManager instance;
 
     private int currentActivity = ACTIVITY_MAIN;
     private int currentStep = 0;
@@ -77,8 +79,22 @@ public class CommandHandlerManager {
     private CommandHandler compartirEnTwitterHandler;
     private CommandHandler compartirInstagramHandler;
 
-    CommandHandlerManager(Context context, SpeechRecognizer mSpeechRecognizer, Intent mSpeechRecognizerIntent){
-        Helper.commandHandlerManager = this;
+    public static CommandHandlerManager getInstance() {
+        if (instance == null) {
+            throw new IllegalStateException("Instance not initialized. Call initializeInstance before calling getInstance");
+        }
+        return instance;
+    }
+
+    public static CommandHandlerManager initializeInstance(Context context, SpeechRecognizer mSpeechRecognizer, Intent mSpeechRecognizerIntent) {
+        if(instance != null) {
+            throw new IllegalStateException("Instance already initialized");
+        }
+        CommandHandlerManager.instance = new CommandHandlerManager(context, mSpeechRecognizer, mSpeechRecognizerIntent);
+        return instance;
+    }
+
+    private CommandHandlerManager(Context context, SpeechRecognizer mSpeechRecognizer, Intent mSpeechRecognizerIntent){
         textToSpeech = new TTS(context, mSpeechRecognizer, mSpeechRecognizerIntent);
         this.context = context;
 
@@ -88,43 +104,44 @@ public class CommandHandlerManager {
 
         // Initialize all command handlers
         commandHandlersMainMenu = Arrays.asList(new AbrirAplicacionHandler(textToSpeech, context, this),
-        new ActivarHotspotHandler(textToSpeech, context, this),
-        new ActivarReproduccionAleatoriaHandler(textToSpeech, context, this),
-        new AgregarEventoHandler(textToSpeech, context, this),
-        new AnteriorCancionHandler(textToSpeech, context, this),
-        new BarrioHandler(textToSpeech, context, this),
-        new CalleActualHandler(textToSpeech, context, this),
-        new CalleAnteriorHandler(textToSpeech, context, this),
-        new CalleSiguienteHandler(textToSpeech, context, this),
-        new CerrarSesionHandler(textToSpeech, context, this),
-        new DesactivarHotspotHandler(textToSpeech, context, this),
-        new DesactivarReproduccionAleatoriaHandler(textToSpeech, context, this),
-        new DetenerReproduccionHandler(textToSpeech, context, this),
-        new EnviarMailAContactoHandler(textToSpeech, context, this),
-        new EnviarSMSAContactoHandler(textToSpeech, context, this),
-        new EnviarSMSANumeroHandler(textToSpeech, context, this),
-        new EnviarWhatsAppHandler(textToSpeech, context, this),
-        new PausarMusicaHandler(textToSpeech, context, this),
-        new PublicarEnFacebookHandler(textToSpeech, context,this),
-        new ReproducirArtistaHandler(textToSpeech, context, this),
-        new ReproducirCancionHandler(textToSpeech, context, this),
-        new ReproducirMusicaHandler(textToSpeech, context, this),
-        new SiguienteCancionHandler(textToSpeech, context, this),
-        new SMSDeEmergenciaHandler(textToSpeech, context, this),
-        new TwittearHandler(textToSpeech, context, this));
+            new ActivarHotspotHandler(textToSpeech, context, this),
+            new ActivarReproduccionAleatoriaHandler(textToSpeech, context, this),
+            new AgregarEventoHandler(textToSpeech, context, this),
+            new AnteriorCancionHandler(textToSpeech, context, this),
+            new BarrioHandler(textToSpeech, context, this),
+            new BuscarEnYoutubeHandler(textToSpeech, context, this),
+            new CalleActualHandler(textToSpeech, context, this),
+            new CalleAnteriorHandler(textToSpeech, context, this),
+            new CalleSiguienteHandler(textToSpeech, context, this),
+            new CerrarSesionHandler(textToSpeech, context, this),
+            new DesactivarHotspotHandler(textToSpeech, context, this),
+            new DesactivarReproduccionAleatoriaHandler(textToSpeech, context, this),
+            new DetenerReproduccionHandler(textToSpeech, context, this),
+            new EnviarMailAContactoHandler(textToSpeech, context, this),
+            new EnviarSMSAContactoHandler(textToSpeech, context, this),
+            new EnviarSMSANumeroHandler(textToSpeech, context, this),
+            new EnviarWhatsAppHandler(textToSpeech, context, this),
+            new PausarMusicaHandler(textToSpeech, context, this),
+            new PublicarEnFacebookHandler(textToSpeech, context,this),
+            new ReproducirArtistaHandler(textToSpeech, context, this),
+            new ReproducirCancionHandler(textToSpeech, context, this),
+            new ReproducirMusicaHandler(textToSpeech, context, this),
+            new SiguienteCancionHandler(textToSpeech, context, this),
+            new SMSDeEmergenciaHandler(textToSpeech, context, this),
+            new TwittearHandler(textToSpeech, context, this));
 
         commandHandlersCamera = Arrays.asList(new CancelarFotoHandler(textToSpeech, context, this),
-                new CerrarCamaraHandler(textToSpeech, context, this),
-                new CompartirFotoHandler(textToSpeech, context, this ),
-                this.compartirEnFacebookHandler,
-                this.compartirEnTwitterHandler,
-                this.compartirInstagramHandler,
-                new CompartirFotoHandler(textToSpeech, context, this),
-                new GuardarFotoHandler(textToSpeech, context, this),
-                new GuardarYCompartirFotoHandler(textToSpeech, context, this),
-                new SacarFotoHandler(textToSpeech, context, this));
+            new CerrarCamaraHandler(textToSpeech, context, this),
+            new CompartirFotoHandler(textToSpeech, context, this ),
+            this.compartirEnFacebookHandler,
+            this.compartirEnTwitterHandler,
+            this.compartirInstagramHandler,
+            new CompartirFotoHandler(textToSpeech, context, this),
+            new GuardarFotoHandler(textToSpeech, context, this),
+            new GuardarYCompartirFotoHandler(textToSpeech, context, this),
+            new SacarFotoHandler(textToSpeech, context, this));
 
-        commandHandlers = new HashMap();
+        commandHandlers = new HashMap<>();
 
         commandHandlers.put(ACTIVITY_MAIN,commandHandlersMainMenu);
         commandHandlers.put(ACTIVITY_CAMERA,commandHandlersCamera);
@@ -273,5 +290,13 @@ public class CommandHandlerManager {
 
     public void setCompartirInstagramHandler(CommandHandler compartirInstagramHandler) {
         this.compartirInstagramHandler = compartirInstagramHandler;
+    }
+
+    public static boolean isInstanceInitialized() {
+        return instance != null;
+    }
+
+    public static void destroyInstance() {
+        instance = null;
     }
 }
