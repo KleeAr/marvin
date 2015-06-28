@@ -1,7 +1,9 @@
 package ar.com.klee.marvin.multimedia.music;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.os.Binder;
@@ -40,10 +42,20 @@ public class MusicService extends Service {
 
         updateSongList(MEDIA_PATH);
 
+        getSharedPreferences();
+
         broadcaster = LocalBroadcastManager.getInstance(this);
     }
 
     public void onStop(){
+
+        SharedPreferences sharedPreferences = getSharedPreferences("musicService",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("song", songs.get(currentSong).get("Title"));
+        editor.putString("artist", songs.get(currentSong).get("Artist"));
+        editor.putInt("duration", currentDuration);
+        editor.putInt("position", currentSong);
+        editor.commit();
 
         if(mp.isPlaying()) {
             mp.stop();
@@ -84,6 +96,32 @@ public class MusicService extends Service {
                 return true;
             return (name.endsWith(".mp3"));
         }
+    }
+
+    public void getSharedPreferences(){
+
+        String song, artist;
+        Integer duration, position;
+
+        SharedPreferences sharedPreferences = getSharedPreferences("musicService", Context.MODE_PRIVATE);
+        song = sharedPreferences.getString("song","");
+        artist = sharedPreferences.getString("artist","");
+        duration = sharedPreferences.getInt("duration", 0);
+        position = sharedPreferences.getInt("position",0);
+
+        if(!song.equals("") && !artist.equals("")) {
+            if (!songs.get(position).get("Title").equals(song) || !songs.get(position).get("Artist").equals(artist)){
+                int result = findSongAndArtist(song, artist);
+                if(result!=-1){
+                    currentSong = result;
+                    currentDuration = duration;
+                }
+            }else{
+                currentSong = position;
+                currentDuration = duration;
+            }
+        }
+
     }
 
     public void playSong(String songPath) {
@@ -137,15 +175,17 @@ public class MusicService extends Service {
 
     public void nextSong() {
 
-        if(songs.size() == 0) {
-            //NO HAY CANCIONES
-        }
-
         currentDuration = 0;
         previousSongs.push(currentSong);
         if(isRandom) {
             Random rn = new Random();
-            currentSong = rn.nextInt(songs.size());
+            int choosenSong;
+            choosenSong = rn.nextInt(songs.size());
+            if(songs.size()!=1) {
+                while (choosenSong == currentSong)
+                    choosenSong = rn.nextInt(songs.size());
+            }
+            currentSong = choosenSong;
         }else {
             currentSong++;
             if (currentSong == songs.size())
@@ -156,15 +196,16 @@ public class MusicService extends Service {
 
     public void nextSongSet() {
 
-        if(songs.size() == 0) {
-            //NO HAY CANCIONES
-        }
-
         currentDuration = 0;
         previousSongs.push(currentSong);
         if(isRandom) {
             Random rn = new Random();
-            currentSong = rn.nextInt(songs.size());
+            int choosenSong = rn.nextInt(songs.size());
+            if(songs.size()!=1) {
+                while (choosenSong == currentSong)
+                    choosenSong = rn.nextInt(songs.size());
+            }
+            currentSong = choosenSong;
         }else {
             currentSong++;
             if (currentSong == songs.size())
@@ -173,10 +214,6 @@ public class MusicService extends Service {
     }
 
     public void previousSong() {
-
-        if(songs.size() == 0) {
-            //NO HAY CANCIONES
-        }
 
         currentDuration = 0;
         if(!previousSongs.empty())
@@ -191,10 +228,6 @@ public class MusicService extends Service {
     }
 
     public void previousSongSet() {
-
-        if(songs.size() == 0) {
-            //NO HAY CANCIONES
-        }
 
         currentDuration = 0;
         if(!previousSongs.empty())
@@ -336,6 +369,24 @@ public class MusicService extends Service {
 
 
         return false;
+
+    }
+
+    public int findSongAndArtist(String song, String artist){
+
+        int marker = 0;
+
+        while(marker < songs.size()){
+
+            if(songs.get(marker).get("Title").equals(song) && songs.get(marker).get("Artist").equals(artist)){
+                return marker;
+            }
+
+            marker++;
+
+        }
+
+        return -1;
 
     }
 

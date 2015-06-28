@@ -58,7 +58,7 @@ public class EnviarMailAContactoHandler extends CommandHandler{
         String contact = context.getString(CONTACT);
         getTextToSpeech().speakText("¿Querés enviar un mail al contacto " + contact + "?");
 
-        context.put("MAIL","federico.sinopoli@gmail.com");
+        context.put("MAIL","fsinopoli@prismamp.com");
 
         context.put(SET_CONTACT, false);
 
