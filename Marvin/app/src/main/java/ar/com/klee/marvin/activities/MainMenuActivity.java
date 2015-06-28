@@ -6,11 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,19 +19,24 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.multimedia.music.MusicService;
-import ar.com.klee.marvin.voiceControl.Helper;
+import ar.com.klee.marvin.multimedia.video.YouTubeVideo;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
 
 
-public class MainMenuActivity extends ActionBarActivity {
+public class MainMenuActivity extends ActionBarActivity implements DelegateTask<List<YouTubeVideo>> {
 
     private Intent voiceControlServiceIntent;
     private Intent musicServiceIntent;
     private MusicService musicService;
     private BroadcastReceiver voiceControlReceiver;
     private BroadcastReceiver musicReceiver;
+    private CommandHandlerManager commandHandlerManager;
 
     private boolean mIsBound;
     private boolean wasPlaying;
@@ -45,6 +51,7 @@ public class MainMenuActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CommandHandlerManager.destroyInstance();
         setContentView(R.layout.activity_main_menu);
 
         bt_play = (Button) findViewById(R.id.bt_play);
@@ -55,8 +62,9 @@ public class MainMenuActivity extends ActionBarActivity {
         bt_play.setVisibility(View.VISIBLE);
         bt_pause.setVisibility(View.INVISIBLE);
 
-        initializeSTTService();
         initializeMusicService();
+        initializeSTTService();
+        commandHandlerManager = CommandHandlerManager.getInstance();
 
     }
 
@@ -355,6 +363,14 @@ public class MainMenuActivity extends ActionBarActivity {
 
     }
 
+    @Override
+    public void executeCallback(List<YouTubeVideo> result) {
+        Intent intent = new Intent(this, SearchResultActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList("videos", new ArrayList<Parcelable>(result));
+        intent.putExtras(bundle);
+        startActivity(intent);
+    }
     public boolean getWasPlaying(){
 
         return wasPlaying;
@@ -368,7 +384,7 @@ public class MainMenuActivity extends ActionBarActivity {
     }
 
     public void setCommandHandlerManager(){
-        Helper.commandHandlerManager.defineMainActivity(this);
+        commandHandlerManager.defineMainActivity(this);
     }
 
 }

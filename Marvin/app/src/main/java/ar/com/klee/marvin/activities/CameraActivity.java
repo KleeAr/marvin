@@ -1,14 +1,6 @@
 package ar.com.klee.marvin.activities;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -28,11 +20,18 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.camera.CameraDialog;
 import ar.com.klee.marvin.camera.CameraPreview;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
-import ar.com.klee.marvin.voiceControl.Helper;
 
 public class CameraActivity extends ActionBarActivity {
 
@@ -66,7 +65,7 @@ public class CameraActivity extends ActionBarActivity {
         saveAndShare.setVisibility(View.INVISIBLE);
         cancel.setVisibility(View.INVISIBLE);
 
-        commandHandlerManager = Helper.commandHandlerManager;
+        commandHandlerManager = CommandHandlerManager.getInstance();
 
         commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_CAMERA,this);
 

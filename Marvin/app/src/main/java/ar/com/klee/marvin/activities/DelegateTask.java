@@ -5,5 +5,5 @@ package ar.com.klee.marvin.activities;
  */
 public interface DelegateTask<T> {
 
-    void execute(T result);
+    void executeCallback(T result);
 }
