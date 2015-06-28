@@ -25,6 +25,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CalleAnteriorHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CalleSiguienteHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CancelarFotoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CerrarCamaraHandler;
+import ar.com.klee.marvin.voiceControl.handlers.CerrarSesionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 import ar.com.klee.marvin.voiceControl.handlers.CompartirEnFacebookHandler;
@@ -95,6 +96,7 @@ public class CommandHandlerManager {
         new CalleActualHandler(textToSpeech, context, this),
         new CalleAnteriorHandler(textToSpeech, context, this),
         new CalleSiguienteHandler(textToSpeech, context, this),
+        new CerrarSesionHandler(textToSpeech, context, this),
         new DesactivarHotspotHandler(textToSpeech, context, this),
         new DesactivarReproduccionAleatoriaHandler(textToSpeech, context, this),
         new DetenerReproduccionHandler(textToSpeech, context, this),

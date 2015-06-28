@@ -95,6 +95,8 @@ public class MainMenuActivity extends ActionBarActivity {
 
                 String notification = intent.getStringExtra(STTService.COPA_MESSAGE);
 
+                Log.d("NOT",notification);
+
                 if(notification.equals("Marvin")){
 
                     if(musicService.isPlaying()) {
@@ -123,13 +125,13 @@ public class MainMenuActivity extends ActionBarActivity {
                                 bt_play.setVisibility(View.VISIBLE);
                                 bt_pause.setVisibility(View.INVISIBLE);
                             }
-
-                            bt_play.setEnabled(true);
-                            bt_pause.setEnabled(true);
-                            bt_next.setEnabled(true);
-                            bt_previous.setEnabled(true);
                         }
                     }, 5000);
+
+                    bt_play.setEnabled(true);
+                    bt_pause.setEnabled(true);
+                    bt_next.setEnabled(true);
+                    bt_previous.setEnabled(true);
 
                     // CERRAR PANTALLA DE MARVIN
 

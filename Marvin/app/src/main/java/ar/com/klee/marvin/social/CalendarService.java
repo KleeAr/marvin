@@ -26,10 +26,10 @@ public class CalendarService {
 
     public void createEvent(String event, int dayOfMonth, int monthOfYear, int year, int hour, int minute) {
         Calendar beginTime = Calendar.getInstance();
-        beginTime.set(year, monthOfYear, dayOfMonth, hour, minute);
+        beginTime.set(year, monthOfYear-1, dayOfMonth, hour, minute);
         long startMillis = beginTime.getTimeInMillis();
         Calendar endTime = Calendar.getInstance();
-        endTime.set(year, monthOfYear, dayOfMonth, hour, minute);
+        endTime.set(year, monthOfYear-1, dayOfMonth, hour, minute);
         long endMillis = endTime.getTimeInMillis();
         new CreateEventTask().execute(context, startMillis, endMillis, event);
     }

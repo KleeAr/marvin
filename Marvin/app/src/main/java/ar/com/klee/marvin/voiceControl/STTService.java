@@ -124,13 +124,12 @@ public class STTService extends Service {
                 sendResult("Command " + text);
             else if(!isListening && previousListening)
                 sendResult("MarvinFinish");
-
         }
 
         @Override
         public void onRmsChanged(float rmsdB){
 
-            sendResult("PB " + (int) rmsdB);
+            //sendResult("PB " + (int) rmsdB);
 
         }
 
@@ -183,6 +182,7 @@ public class STTService extends Service {
         if(message != null)
             intent.putExtra(COPA_MESSAGE, message);
         broadcaster.sendBroadcast(intent);
+
     }
 
 }

@@ -7,6 +7,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.social.CalendarService;
@@ -72,7 +73,7 @@ public class AgregarEventoHandler extends CommandHandler{
     //PRONUNCIA EVENTO
     public CommandHandlerContext stepOne(CommandHandlerContext context){
 
-        getTextToSpeech().speakText("¿Querés agregar el evento " + context.getString(EVENT) + "?");
+        getTextToSpeech().speakText("¿Querés agregar al calendario el evento " + context.getString(EVENT) + "?");
 
         context.put(SET_EVENT, false);
         context.put(STEP, 3);
@@ -114,8 +115,6 @@ public class AgregarEventoHandler extends CommandHandler{
 
         String input = context.getString(COMMAND);
 
-        Log.d("DATE",input);
-
         ExpressionMatcher dateFormat = new ExpressionMatcher("{day} de {month} del {year}");
 
         if(!dateFormat.matches(input)){
@@ -135,6 +134,10 @@ public class AgregarEventoHandler extends CommandHandler{
         monthStr = values.get("month");
         yearStr = values.get("year");
 
+        if(dayStr.equals("primero")){
+            dayStr = "1";
+        }
+
         try{
 
             context.put(DAY, Integer.parseInt(dayStr));
@@ -148,9 +151,32 @@ public class AgregarEventoHandler extends CommandHandler{
 
         }
 
+        StringTokenizer st = new StringTokenizer(yearStr);
+        ArrayList<String> yearValues = new ArrayList<String>();
+
+        while(st.hasMoreTokens()){
+            yearValues.add(st.nextToken());
+        }
+
         try{
 
-            context.put(YEAR, Integer.parseInt(yearStr));
+            Integer year = 0;
+            int i = 0;
+            while(i != yearValues.size()) {
+                year += Integer.parseInt(yearValues.get(i));
+                i++;
+            }
+            context.put(YEAR, year);
+
+            if(year>2099){
+                getTextToSpeech().speakText("El anio debe ser menor a 2100");
+                context.put(STEP, 5);
+                return context;
+            }else if(year<2015){
+                getTextToSpeech().speakText("El anio debe ser mayor a 2014");
+                context.put(STEP, 5);
+                return context;
+            }
 
         }catch(NumberFormatException e){
 
@@ -183,7 +209,6 @@ public class AgregarEventoHandler extends CommandHandler{
 
         getTextToSpeech().speakText("¿El evento es el " + input + "?");
 
-        context.put(DAY,input);
         context.put(STEP, 7);
         return context;
     }
@@ -220,14 +245,12 @@ public class AgregarEventoHandler extends CommandHandler{
 
         String input = context.getString(COMMAND);
 
-        Log.d("HOUR",input);
-
         ExpressionMatcher hourFormat = new ExpressionMatcher("{hour} y {minute}");
         ExpressionMatcher hourOClockFormat = new ExpressionMatcher("{hour} horas");
 
         if(!hourFormat.matches(input) && !hourOClockFormat.matches(input)){
 
-            getTextToSpeech().speakText("Debe indicar la hora como sigue: 22 y 15, o 13 horas si es puntual");
+            getTextToSpeech().speakText("Debe indicar la hora como sigue: 22 y 15, o 13 horas, si es puntual");
 
             context.put(STEP, 9);
             return context;
@@ -243,16 +266,30 @@ public class AgregarEventoHandler extends CommandHandler{
             values = hourFormat.getValuesFromExpression(input);
             hourStr = values.get("hour");
             minuteStr = values.get("minute");
+
+            if(minuteStr.equals("cuarto"))
+                minuteStr = "15";
+            else if(minuteStr.equals("media"))
+                minuteStr = "30";
+
         }else {
             values = hourOClockFormat.getValuesFromExpression(input);
             hourStr = values.get("hour");
             isOClock = true;
         }
 
-        hourStr = hourStr.toLowerCase();
-
-        if(hourStr.equals("una"))
+        if(hourStr.equals("ciro")) {
+            hourStr = "0";
+            input = input.replace("ciro","0");
+        }else if(hourStr.equals("una"))
             hourStr = "1";
+
+
+
+        boolean isOne = false;
+
+        if(hourStr.equals("1"))
+            isOne = true;
 
         try{
 
@@ -260,10 +297,20 @@ public class AgregarEventoHandler extends CommandHandler{
 
         }catch(NumberFormatException e){
 
-            getTextToSpeech().speakText("Debe indicar un número para la hora");
+            hourStr = convertHour(hourStr);
 
-            context.put(STEP, 9);
-            return context;
+            try{
+
+                context.put(HOUR, Integer.parseInt(hourStr));
+
+            }catch (NumberFormatException e2){
+
+                getTextToSpeech().speakText("Debe indicar un número para la hora");
+
+                context.put(STEP, 9);
+                return context;
+
+            }
 
         }
 
@@ -274,10 +321,20 @@ public class AgregarEventoHandler extends CommandHandler{
 
             } catch (NumberFormatException e) {
 
-                getTextToSpeech().speakText("Debe indicar un número para el minuto");
+                minuteStr = convertMinute(minuteStr);
 
-                context.put(STEP, 9);
-                return context;
+                try{
+
+                    context.put(MINUTE, Integer.parseInt(minuteStr));
+
+                }catch (NumberFormatException e2) {
+
+                    getTextToSpeech().speakText("Debe indicar un número para el minuto");
+
+                    context.put(STEP, 9);
+                    return context;
+
+                }
 
             }
         }else{
@@ -293,7 +350,13 @@ public class AgregarEventoHandler extends CommandHandler{
 
         }
 
-        getTextToSpeech().speakText("¿El evento es a las " + input + "?");
+        if(!isOne)
+            getTextToSpeech().speakText("¿El evento es a las " + input + "?");
+        else
+            if(isOClock)
+                getTextToSpeech().speakText("¿El evento es a la una horas?");
+            else
+                getTextToSpeech().speakText("¿El evento es a la una y " + minuteStr + "?");
 
         context.put(STEP, 11);
         return context;
@@ -453,6 +516,196 @@ public class AgregarEventoHandler extends CommandHandler{
             return false;
         }
 
+    }
+
+    public String convertHour(String input){
+
+        switch(input){
+
+            case "cero":
+                return "0";
+            case "uno":
+                return "1";
+            case "dos":
+                return "2";
+            case "tres":
+                return "3";
+            case "cuatro":
+                return "4";
+            case "cinco":
+                return "5";
+            case "seis":
+                return "6";
+            case "siete":
+                return "7";
+            case "ocho":
+                return "8";
+            case "nueve":
+                return "9";
+            case "diez":
+                return "10";
+            case "once":
+                return "11";
+            case "doce":
+                return "12";
+            case "trece":
+                return "13";
+            case "catorce":
+                return "14";
+            case "quince":
+                return "15";
+            case "dieciseis":
+                return "16";
+            case "diecisiete":
+                return "17";
+            case "dieciocho":
+                return "18";
+            case "diecinueve":
+                return "19";
+            case "veinte":
+                return "20";
+            case "veintiuna":
+                return "21";
+            case "veintiuno":
+                return "21";
+            case "veintidos":
+                return "22";
+            case "veintitres":
+                return "23";
+            default:
+                return input;
+        }
+    }
+
+    public String convertMinute(String input){
+
+        switch(input){
+
+            case "cero":
+                return "0";
+            case "uno":
+                return "1";
+            case "dos":
+                return "2";
+            case "tres":
+                return "3";
+            case "cuatro":
+                return "4";
+            case "cinco":
+                return "5";
+            case "seis":
+                return "6";
+            case "siete":
+                return "7";
+            case "ocho":
+                return "8";
+            case "nueve":
+                return "9";
+            case "diez":
+                return "10";
+            case "once":
+                return "11";
+            case "doce":
+                return "12";
+            case "trece":
+                return "13";
+            case "catorce":
+                return "14";
+            case "quince":
+                return "15";
+            case "dieciseis":
+                return "16";
+            case "diecisiete":
+                return "17";
+            case "dieciocho":
+                return "18";
+            case "diecinueve":
+                return "19";
+            case "veinte":
+                return "20";
+            case "veintiuna":
+                return "21";
+            case "veintiuno":
+                return "21";
+            case "veintidos":
+                return "22";
+            case "veintitres":
+                return "23";
+            case "veinticuatro":
+                return "24";
+            case "veinticinco":
+                return "25";
+            case "veintiseis":
+                return "26";
+            case "veintisiete":
+                return "27";
+            case "veintiocho":
+                return "28";
+            case "veintinueve":
+                return "29";
+            case "treinta":
+                return "30";
+            case "treinta y uno":
+                return "31";
+            case "treinta y dos":
+                return "32";
+            case "treinta y tres":
+                return "33";
+            case "treinta y cuatro":
+                return "34";
+            case "treinta y cinco":
+                return "35";
+            case "treinta y seis":
+                return "36";
+            case "treinta y siete":
+                return "37";
+            case "treinta y ocho":
+                return "38";
+            case "treinta y nueve":
+                return "39";
+            case "cuarenta":
+                return "40";
+            case "cuarenta y uno":
+                return "41";
+            case "cuarenta y dos":
+                return "42";
+            case "cuarenta y tres":
+                return "43";
+            case "cuarenta y cuatro":
+                return "44";
+            case "cuarenta y cinco":
+                return "45";
+            case "cuarenta y seis":
+                return "46";
+            case "cuarenta y siete":
+                return "47";
+            case "cuarenta y ocho":
+                return "48";
+            case "cuarenta y nueve":
+                return "49";
+            case "cincuenta":
+                return "50";
+            case "cincuenta y uno":
+                return "51";
+            case "cincuenta y dos":
+                return "52";
+            case "cincuenta y tres":
+                return "53";
+            case "cincuenta y cuatro":
+                return "54";
+            case "cincuenta y cinco":
+                return "55";
+            case "cincuenta y seis":
+                return "56";
+            case "cincuenta y siete":
+                return "57";
+            case "cincuenta y ocho":
+                return "58";
+            case "cincuenta y nueve":
+                return "59";
+            default:
+                return input;
+        }
     }
 
     public boolean validateHour(int hour, int minute){

@@ -12,14 +12,14 @@ public class CerrarSesionHandler extends CommandHandler{
     private String command;
     private TTS textToSpeech;
 
-    protected CerrarSesionHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
+    public CerrarSesionHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
         super("cerrar sesión", textToSpeech, context, commandHandlerManager);
     }
 
     @Override
     public CommandHandlerContext drive(CommandHandlerContext currentContext) {
 
-        textToSpeech.speakText("Cerrando sesión. Adios");
+        getTextToSpeech().speakText("Cerrando sesión. Adios");
 
         //CODIGO PARA CERRAR SESION
 
