@@ -9,72 +9,76 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="vertical">
-
     </LinearLayout>
 
-    <Button
+    <TextView
+        android:background="#FF000000"
+        android:layout_height="30dp"
+        android:layout_width="fill_parent"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/textView_buttonInfo"
+        android:textColor="#FFFFFFFF"
+        android:gravity="center_horizontal|bottom"
+        android:textAlignment="gravity"
+        android:textStyle="bold" />
+
+    <ImageButton
         android:id="@+id/button_capture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Capture"
-        android:layout_gravity="center_horizontal"
-        android:layout_alignParentTop="false"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true" />
-
-    <Button
-        android:id="@+id/button_saveAndShare"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Save and Share"
-        android:layout_alignParentTop="false"
-        android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="false"
-        android:layout_alignParentRight="true"
-        android:layout_margin="0dp"
-        android:onClick="saveAndShare" />
+        android:src="@mipmap/camera_button"
+        android:contentDescription="Sacar Foto"
+        android:background="@null"
+        android:layout_centerHorizontal="true" />
 
-    <Button
-        android:id="@+id/button_share"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Share"
-        android:layout_alignParentTop="false"
-        android:layout_centerHorizontal="false"
-        android:layout_alignParentBottom="false"
-        android:layout_alignParentLeft="true"
-        android:layout_margin="0dp"
-        android:layout_alignParentRight="false"
-        android:layout_above="@+id/button_cancel"
-        android:onClick="share" />
-
-    <Button
-        android:id="@+id/button_cancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cancel"
-        android:layout_alignParentTop="false"
-        android:layout_centerHorizontal="false"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="0dp"
-        android:onClick="cancel" />
-
-    <Button
+    <ImageButton
         android:id="@+id/button_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Save"
-        android:layout_alignParentTop="false"
-        android:layout_centerHorizontal="false"
-        android:layout_alignParentBottom="false"
+        android:layout_alignParentBottom="true"
+        android:src="@mipmap/save_button"
+        android:contentDescription="Guardar Foto"
+        android:background="@null"
+        android:layout_marginBottom="20dp" />
+
+    <ImageButton
+        android:id="@+id/button_share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Share"
+        android:layout_alignParentBottom="true"
+        android:src="@mipmap/share_button"
+        android:contentDescription="Compartir Foto"
+        android:background="@null"
+        android:layout_marginBottom="20dp"
+        android:layout_toRightOf="@+id/button_save" />
+
+    <ImageButton
+        android:id="@+id/button_saveAndShare"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save and share"
+        android:layout_alignParentBottom="true"
+        android:src="@mipmap/save_and_share_button"
+        android:contentDescription="Guardar y Compartir Foto"
+        android:background="@null"
+        android:layout_marginBottom="20dp"
+        android:layout_toLeftOf="@+id/button_cancel" />
+
+    <ImageButton
+        android:id="@+id/button_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:layout_alignParentBottom="true"
+        android:src="@mipmap/cancel_button"
+        android:contentDescription="Cancelar Foto"
+        android:background="@null"
+        android:layout_marginBottom="20dp"
         android:layout_alignParentLeft="false"
-        android:layout_alignParentRight="true"
-        android:layout_margin="0dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_above="@+id/button_saveAndShare"
-        android:onClick="save" />
+        android:layout_alignParentRight="true" />
 
 </RelativeLayout>

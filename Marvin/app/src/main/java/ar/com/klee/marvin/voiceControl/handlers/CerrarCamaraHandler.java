@@ -14,12 +14,16 @@ public class CerrarCamaraHandler extends CommandHandler{
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){
+
+        CameraActivity cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
+
+        if(getCommandHandlerManager().getIsPhotoTaken()){
+            cameraActivity.cancel();
+        }
         getTextToSpeech().speakText("Cerrando cámara");
 
         getCommandHandlerManager().defineActivity(CommandHandlerManager.ACTIVITY_MAIN, getCommandHandlerManager().getMainActivity());
-        getCommandHandlerManager().setIsPhotoTaken(false);
 
-        CameraActivity cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
         cameraActivity.finish();
         context.put(STEP, 0);
         return context;
