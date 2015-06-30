@@ -2,6 +2,7 @@ package ar.com.klee.marvin.voiceControl.handlers;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -10,6 +11,7 @@ public class EnviarMailAContactoHandler extends CommandHandler{
 
     public static final String CONTACTO = "contacto";
     private static final String SUBJECT = "SUBJECT";
+    private static final String MAIL = "MAIL";
 
     public EnviarMailAContactoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
         super("enviar mail a {contacto}", textToSpeech, context, commandHandlerManager);
@@ -58,7 +60,7 @@ public class EnviarMailAContactoHandler extends CommandHandler{
         String contact = context.getString(CONTACT);
         getTextToSpeech().speakText("¿Querés enviar un mail al contacto " + contact + "?");
 
-        context.put("MAIL","fsinopoli@prismamp.com");
+        context.put(MAIL,"fsinopoli@prismamp.com");
 
         context.put(SET_CONTACT, false);
 
@@ -143,7 +145,7 @@ public class EnviarMailAContactoHandler extends CommandHandler{
         }
 
         if(input.equals("no")){
-            getTextToSpeech().speakText("Enviando mail");
+            getTextToSpeech().speakText("Configurando mail. Seleccioná con qué cuenta querés enviarlo.");
             context.put(SUBJECT, "");
             sendMail(context);
             return context.put(STEP, 0);
@@ -165,7 +167,7 @@ public class EnviarMailAContactoHandler extends CommandHandler{
     public CommandHandlerContext stepThirteen(CommandHandlerContext context){
         String input = context.getString(COMMAND);
         if(input.equals("si")) {
-            getTextToSpeech().speakText("Enviando mail");
+            getTextToSpeech().speakText("Configurando mail. Seleccioná con qué cuenta querés enviarlo.");
             sendMail(context);
             return context.put(STEP, 0);
         }
@@ -189,15 +191,21 @@ public class EnviarMailAContactoHandler extends CommandHandler{
 
     public void sendMail(CommandHandlerContext context){
 
+        Character firstCharacter, newFirstCharacter;
         String message = context.getString(MESSAGE) + "\n\n\n" + "Mensaje enviado a través de MARVIN";
-        Intent emailIntent = new Intent(Intent.ACTION_SEND);
-        emailIntent.setType("message/rfc822");
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, context.getString("MAIL"));
+
+        firstCharacter = message.charAt(0);
+        newFirstCharacter = Character.toUpperCase(firstCharacter);
+        message = message.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
+
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", context.getString(MAIL), null));
+        //emailIntent.setType("message/rfc822");
+        //emailIntent.putExtra(Intent.EXTRA_EMAIL, context.getString(MAIL));
         //emailIntent.putExtra(Intent.EXTRA_CC, cc);
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, context.getString(SUBJECT));
         emailIntent.putExtra(Intent.EXTRA_TEXT, message);
         emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        getCommandHandlerManager().getMainActivity().startActivity(Intent.createChooser(emailIntent, "Seleccionar cuenta de Email:"));
+        getCommandHandlerManager().getMainActivity().startActivity(Intent.createChooser(emailIntent, "Seleccioná Cuenta de Email:"));
 
     }
 
