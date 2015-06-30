@@ -40,6 +40,8 @@ public class MusicService extends Service {
     public void onCreate(){
         super.onCreate();
 
+        mp.setVolume((float)0.5,(float)0.5);
+
         updateSongList(MEDIA_PATH);
 
         getSharedPreferences();

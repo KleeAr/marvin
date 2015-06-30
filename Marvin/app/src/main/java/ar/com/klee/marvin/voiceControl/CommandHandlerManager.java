@@ -19,6 +19,7 @@ import ar.com.klee.marvin.voiceControl.handlers.ActivarHotspotHandler;
 import ar.com.klee.marvin.voiceControl.handlers.ActivarReproduccionAleatoriaHandler;
 import ar.com.klee.marvin.voiceControl.handlers.AgregarEventoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.AnteriorCancionHandler;
+import ar.com.klee.marvin.voiceControl.handlers.BajarVolumenHandler;
 import ar.com.klee.marvin.voiceControl.handlers.BarrioHandler;
 import ar.com.klee.marvin.voiceControl.handlers.BuscarEnYoutubeHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CalleActualHandler;
@@ -40,6 +41,7 @@ import ar.com.klee.marvin.voiceControl.handlers.EnviarMailAContactoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.EnviarSMSAContactoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.EnviarSMSANumeroHandler;
 import ar.com.klee.marvin.voiceControl.handlers.EnviarWhatsAppHandler;
+import ar.com.klee.marvin.voiceControl.handlers.EstablecerVolumenHandler;
 import ar.com.klee.marvin.voiceControl.handlers.GuardarFotoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.GuardarYCompartirFotoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.PausarMusicaHandler;
@@ -50,6 +52,7 @@ import ar.com.klee.marvin.voiceControl.handlers.ReproducirMusicaHandler;
 import ar.com.klee.marvin.voiceControl.handlers.SMSDeEmergenciaHandler;
 import ar.com.klee.marvin.voiceControl.handlers.SacarFotoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.SiguienteCancionHandler;
+import ar.com.klee.marvin.voiceControl.handlers.SubirVolumenHandler;
 import ar.com.klee.marvin.voiceControl.handlers.TwittearHandler;
 
 public class CommandHandlerManager {
@@ -111,6 +114,7 @@ public class CommandHandlerManager {
             new ActivarReproduccionAleatoriaHandler(textToSpeech, context, this),
             new AgregarEventoHandler(textToSpeech, context, this),
             new AnteriorCancionHandler(textToSpeech, context, this),
+            new BajarVolumenHandler(textToSpeech, context, this),
             new BarrioHandler(textToSpeech, context, this),
             new BuscarEnYoutubeHandler(textToSpeech, context, this),
             new CalleActualHandler(textToSpeech, context, this),
@@ -124,6 +128,7 @@ public class CommandHandlerManager {
             new EnviarSMSAContactoHandler(textToSpeech, context, this),
             new EnviarSMSANumeroHandler(textToSpeech, context, this),
             new EnviarWhatsAppHandler(textToSpeech, context, this),
+            new EstablecerVolumenHandler(textToSpeech, context, this),
             new PausarMusicaHandler(textToSpeech, context, this),
             new PublicarEnFacebookHandler(textToSpeech, context,this),
             new ReproducirArtistaHandler(textToSpeech, context, this),
@@ -131,6 +136,7 @@ public class CommandHandlerManager {
             new ReproducirMusicaHandler(textToSpeech, context, this),
             new SiguienteCancionHandler(textToSpeech, context, this),
             new SMSDeEmergenciaHandler(textToSpeech, context, this),
+            new SubirVolumenHandler(textToSpeech, context, this),
             new TwittearHandler(textToSpeech, context, this));
 
         commandHandlersCamera = Arrays.asList(new CancelarFotoHandler(textToSpeech, context, this),
