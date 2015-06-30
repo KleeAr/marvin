@@ -22,7 +22,7 @@ import ar.com.klee.marvin.multimedia.video.exceptions.YouTubeException;
  */
 public class YouTubeService {
 
-    private static final String API_KEY = "AIzaSyCChQomu1xFifFz4qRVjoY4vX8UWc2sxf4";
+    public static final String API_KEY = "AIzaSyCChQomu1xFifFz4qRVjoY4vX8UWc2sxf4";
     private static final Long NUMBER_OF_VIDEOS_RETURNED = 10L;
     private static final String VIDEO = "video";
     private static final String FIELDS_TO_GET = "items(id/kind,id/videoId,snippet/title,snippet/description,snippet/channelTitle,snippet/thumbnails/default/url)";

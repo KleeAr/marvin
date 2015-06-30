@@ -1,25 +1,33 @@
 package ar.com.klee.marvin.activities;
 
-import android.support.v7.app.ActionBarActivity;
+import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.YouTubePlayerActivity;
 import ar.com.klee.marvin.multimedia.video.YouTubeVideo;
+import ar.com.klee.marvin.multimedia.video.adapter.YouTubeListAdapter;
 
-public class SearchResultActivity extends ActionBarActivity {
+public class SearchResultActivity extends ListActivity implements AdapterView.OnItemClickListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_result);
         List<YouTubeVideo> videos = getIntent().getExtras().getParcelableArrayList("videos");
-        TextView text = (TextView)findViewById(R.id.search_result_text);
-        text.setText(videos.toString());
+        YouTubeListAdapter adapter = new YouTubeListAdapter(this,R.layout.you_tube_video_item,videos);
+        setListAdapter(adapter);
+        getListView().setOnItemClickListener(this);
     }
 
 
@@ -43,5 +51,15 @@ public class SearchResultActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        YouTubeVideo video = (YouTubeVideo) getListAdapter().getItem(position);
+        Intent intent = new Intent(this, YouTubePlayerActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("video",video);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 }

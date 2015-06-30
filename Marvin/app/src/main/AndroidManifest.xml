@@ -81,6 +81,10 @@
             android:name=".activities.SearchResultActivity"
             android:label="@string/title_activity_search_result" >
         </activity>
+        <activity
+            android:name=".YouTubePlayerActivity"
+            android:label="@string/title_activity_you_tube_player" >
+        </activity>
     </application>
 
 </manifest>
