@@ -2,6 +2,7 @@ package ar.com.klee.marvin.voiceControl.handlers;
 
 import android.content.Context;
 
+import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -13,9 +14,8 @@ public class CalleActualHandler extends CommandHandler{
     }
 
     public CommandHandlerContext drive(CommandHandlerContext currentContext){
-        getTextToSpeech().speakText("Estás en ");
 
-        //TODO: CODIGO PARA OBTENER CALLE ACTUAL
+        getTextToSpeech().speakText("Estás en " + currentContext.getObject(ACTIVITY, MainMenuActivity.class).getAddress());
 
         currentContext.put(STEP, 0);
         return currentContext;

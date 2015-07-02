@@ -2,6 +2,7 @@ package ar.com.klee.marvin.voiceControl.handlers;
 
 import android.content.Context;
 
+import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -14,9 +15,8 @@ public class BarrioHandler extends CommandHandler{
 
     public CommandHandlerContext drive(CommandHandlerContext context){
 
-        getTextToSpeech().speakText("Estás en ");
+        getTextToSpeech().speakText("Estás en " + context.getObject(ACTIVITY, MainMenuActivity.class).getTown());
 
-        //CODIGO PARA OBTENER BARRIO
         context.put(STEP, 0);
         return context;
 
