@@ -7,10 +7,10 @@ import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
-public class CalleActualHandler extends CommandHandler{
+public class DireccionHandler extends CommandHandler{
 
-    public CalleActualHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("calle actual",textToSpeech, context, commandHandlerManager);
+    public DireccionHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
+        super("dirección",textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext currentContext){

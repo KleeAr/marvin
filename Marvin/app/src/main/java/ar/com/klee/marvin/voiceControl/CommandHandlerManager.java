@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.speech.SpeechRecognizer;
-import android.util.Log;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
@@ -22,9 +21,9 @@ import ar.com.klee.marvin.voiceControl.handlers.AnteriorCancionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.BajarVolumenHandler;
 import ar.com.klee.marvin.voiceControl.handlers.BarrioHandler;
 import ar.com.klee.marvin.voiceControl.handlers.BuscarEnYoutubeHandler;
-import ar.com.klee.marvin.voiceControl.handlers.CalleActualHandler;
-import ar.com.klee.marvin.voiceControl.handlers.CalleAnteriorHandler;
-import ar.com.klee.marvin.voiceControl.handlers.CalleSiguienteHandler;
+import ar.com.klee.marvin.voiceControl.handlers.DireccionHandler;
+import ar.com.klee.marvin.voiceControl.handlers.AnteriorInterseccionHandler;
+import ar.com.klee.marvin.voiceControl.handlers.SiguienteInterseccion;
 import ar.com.klee.marvin.voiceControl.handlers.CancelarFotoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CerrarCamaraHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CerrarSesionHandler;
@@ -112,16 +111,15 @@ public class CommandHandlerManager {
             new ActivarReproduccionAleatoriaHandler(textToSpeech, context, this),
             new AgregarEventoHandler(textToSpeech, context, this),
             new AnteriorCancionHandler(textToSpeech, context, this),
+            new AnteriorInterseccionHandler(textToSpeech, context, this),
             new BajarVolumenHandler(textToSpeech, context, this),
             new BarrioHandler(textToSpeech, context, this),
             new BuscarEnYoutubeHandler(textToSpeech, context, this),
-            new CalleActualHandler(textToSpeech, context, this),
-            new CalleAnteriorHandler(textToSpeech, context, this),
-            new CalleSiguienteHandler(textToSpeech, context, this),
             new CerrarSesionHandler(textToSpeech, context, this),
             new DesactivarHotspotHandler(textToSpeech, context, this),
             new DesactivarReproduccionAleatoriaHandler(textToSpeech, context, this),
             new DetenerReproduccionHandler(textToSpeech, context, this),
+            new DireccionHandler(textToSpeech, context, this),
             new EnviarMailAContactoHandler(textToSpeech, context, this),
             new EnviarSMSAContactoHandler(textToSpeech, context, this),
             new EnviarSMSANumeroHandler(textToSpeech, context, this),
@@ -133,6 +131,7 @@ public class CommandHandlerManager {
             new ReproducirCancionHandler(textToSpeech, context, this),
             new ReproducirMusicaHandler(textToSpeech, context, this),
             new SiguienteCancionHandler(textToSpeech, context, this),
+            new SiguienteInterseccion(textToSpeech, context, this),
             new SMSDeEmergenciaHandler(textToSpeech, context, this),
             new SubirVolumenHandler(textToSpeech, context, this),
             new TwittearHandler(textToSpeech, context, this));

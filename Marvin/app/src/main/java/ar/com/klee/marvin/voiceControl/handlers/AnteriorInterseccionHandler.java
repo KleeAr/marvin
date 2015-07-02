@@ -6,10 +6,10 @@ import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
-public class CalleAnteriorHandler extends CommandHandler{
+public class AnteriorInterseccionHandler extends CommandHandler{
 
-    public CalleAnteriorHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("calle anterior",textToSpeech, context, commandHandlerManager);
+    public AnteriorInterseccionHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
+        super("anterior intersección",textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext currentContext){
