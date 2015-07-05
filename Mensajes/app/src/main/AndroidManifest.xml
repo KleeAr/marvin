@@ -27,26 +27,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SMSActivity"
+            android:name=".SMSInbox"
             android:label="@string/inbox" >
         </activity>
 
-        <receiver
-            android:name=".SMSReceiver"
-            android:exported="true" >
-            <intent-filter android:priority="999" >
-                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
-            </intent-filter>
-        </receiver>
 
-        <activity
-            android:name=".MarvinContesta"
-            android:label="@string/title_activity_marvin_contesta" >
-        </activity>
-        <activity
-            android:name=".AnswerSMS"
-            android:label="@string/title_activity_answer_sms" >
-        </activity>
     </application>
 
 </manifest>
