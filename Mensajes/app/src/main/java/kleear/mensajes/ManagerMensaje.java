@@ -53,7 +53,11 @@ public class ManagerMensaje extends Activity {
         IntentFilter filter = new IntentFilter(ACTION);
         this.registerReceiver(mReceivedSMSReceiver, filter);
 
+
         buttonSend = (Button) findViewById(R.id.send);
+        Typeface fontBold = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");
+        buttonSend.setTypeface(fontBold);
+
         buttonSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,16 +65,17 @@ public class ManagerMensaje extends Activity {
             }
         });
 
+
         //capturura el evento del boton para abril el historial de mensajes recibidos
         buttonInbox = (Button) findViewById(R.id.btnInbox);
+        Typeface fontRegular = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");
+        buttonInbox.setTypeface(fontRegular);
+
         buttonInbox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), SMSInbox.class );
                 startActivity(i);
-
-                Typeface font = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");
-                buttonSend.setTypeface(font);
 
             }
         });
@@ -83,8 +88,12 @@ public class ManagerMensaje extends Activity {
         customDialog.setContentView(R.layout.dialog_popup_outputsms);
         customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        phoneNo = (EditText) findViewById(R.id.mobileNumber);
+
+             phoneNo = (EditText) findViewById(R.id.mobileNumber);
+
+
         messageBody = (EditText) findViewById(R.id.smsBody);
+
 
         customDialog.findViewById(R.id.cancelar).setOnClickListener(new View.OnClickListener() {
 
@@ -128,23 +137,28 @@ public class ManagerMensaje extends Activity {
 
     }
 
-    private void displayIncomingSMS()
-    {
+    private void displayIncomingSMS(){
         final Dialog customDialog = new Dialog(this);
         customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         customDialog.setCancelable(false);
         customDialog.setContentView(R.layout.dialog_incoming);
         customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
+
+
         TextView contact = (TextView) customDialog.findViewById(R.id.contact);
         contact.setText(incomingMensaje.getContactName());
+
+
         TextView phone = (TextView) customDialog.findViewById(R.id.phone);
         phone.setText(incomingMensaje.getPhoneNumber());
+
 
         Date date= new Date(incomingMensaje.getDate());
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
         TextView dateTime = (TextView) customDialog.findViewById(R.id.date);
         dateTime.setText(format.format(date));
+
 
         TextView bodySMS = (TextView) customDialog.findViewById(R.id.contenido);
         bodySMS.setText(incomingMensaje.getBodyMessage());
@@ -191,6 +205,7 @@ public class ManagerMensaje extends Activity {
 
         TextView contact = (TextView) customDialog.findViewById(R.id.contact);
         contact.setText(incomingMensaje.getContactName());
+
         TextView phone = (TextView) customDialog.findViewById(R.id.phone);
         phone.setText(incomingMensaje.getPhoneNumber());
 
