@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -51,6 +52,10 @@ public class SMSInbox extends Activity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sms_inbox);
+
+        Typeface fontBold = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");
+        TextView textView = (TextView) findViewById(R.id.textView);
+        textView.setTypeface(fontBold);
 
         smsListView = (ListView) findViewById(R.id.SMSList);
         refreshSmsInbox();
@@ -149,11 +154,18 @@ public class SMSInbox extends Activity  {
         //setea el fondo transparente
         customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
+        Typeface fontBold = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");
+        Typeface fontRegular = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");
+
+        TextView textFor = (TextView) customDialog.findViewById(R.id.textFor);
+        textFor.setTypeface(fontRegular);
 
         TextView contact = (TextView) customDialog.findViewById(R.id.contact);
         contact.setText(mensaje.getContactName());
+        contact.setTypeface(fontBold);
         TextView phone = (TextView) customDialog.findViewById(R.id.phone);
         phone.setText(mensaje.getPhoneNumber());
+        phone.setTypeface(fontBold);
 
         customDialog.findViewById(R.id.cancelar).setOnClickListener(new View.OnClickListener() {
 
@@ -166,7 +178,9 @@ public class SMSInbox extends Activity  {
 
             @Override
             public void onClick(View view) {
+                Typeface fontRegular = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");
                 EditText contenido = (EditText) customDialog.findViewById(R.id.contenido);
+                contenido.setTypeface(fontRegular);
                 String smsBody=contenido.getText().toString();
                 try {
                     SmsManager smsManager = SmsManager.getDefault();

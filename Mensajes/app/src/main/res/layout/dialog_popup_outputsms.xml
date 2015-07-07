@@ -7,18 +7,17 @@
     android:weightSum="1">
 
 
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Para"
+        android:id="@+id/contact" />
+
     <RelativeLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="117dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Para"
-            android:id="@+id/contact"
-            android:layout_gravity="center_vertical" />
+        android:layout_height="98dp">
 
         <ImageView
             android:layout_width="53dp"

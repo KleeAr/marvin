@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Para"
-        android:id="@+id/textView3" />
+        android:id="@+id/textFor" />
 
     <RelativeLayout
         android:orientation="vertical"

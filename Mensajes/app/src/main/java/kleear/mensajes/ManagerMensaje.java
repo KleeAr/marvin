@@ -17,10 +17,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,9 +39,13 @@ public class ManagerMensaje extends Activity {
 
     private Button buttonSend;
     private Button buttonInbox;
-    private EditText phoneNo;
-    private EditText messageBody;
+    private static EditText phoneNo;
+    private static EditText messageBody;
+
+
+
     public static final String SMS_BUNDLE = "pdus";
+
 
     private static final String LOG_TAG = "SMSReceiver";
     static final String ACTION = "android.provider.Telephony.SMS_RECEIVED";
@@ -50,26 +56,29 @@ public class ManagerMensaje extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mensaje);
 
+
+
         IntentFilter filter = new IntentFilter(ACTION);
         this.registerReceiver(mReceivedSMSReceiver, filter);
 
 
         buttonSend = (Button) findViewById(R.id.send);
-        Typeface fontBold = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");
-        buttonSend.setTypeface(fontBold);
+
+
 
         buttonSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 displaySendSMS();
+
             }
         });
 
 
         //capturura el evento del boton para abril el historial de mensajes recibidos
         buttonInbox = (Button) findViewById(R.id.btnInbox);
-        Typeface fontRegular = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");
-        buttonInbox.setTypeface(fontRegular);
+
 
         buttonInbox.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,36 +97,48 @@ public class ManagerMensaje extends Activity {
         customDialog.setContentView(R.layout.dialog_popup_outputsms);
         customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
+        Typeface fontBold = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");
+        Typeface fontRegular = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");
 
-             phoneNo = (EditText) findViewById(R.id.mobileNumber);
+        TextView contact = (TextView) customDialog.findViewById(R.id.contact);
+        contact.setTypeface(fontBold);
+
+        TextView titleMensaje = (TextView) customDialog.findViewById(R.id.titleMensaje);
+        titleMensaje.setTypeface(fontBold);
 
 
-        messageBody = (EditText) findViewById(R.id.smsBody);
+
+        phoneNo = (EditText) customDialog.findViewById(R.id.mobileNumber);
+        phoneNo.setTypeface(fontRegular);
+        messageBody = (EditText) customDialog.findViewById(R.id.smsBody);
+        messageBody.setTypeface(fontRegular);
+
 
 
         customDialog.findViewById(R.id.cancelar).setOnClickListener(new View.OnClickListener() {
 
             @Override
-            public void onClick(View view){
+            public void onClick(View view) {
                 customDialog.dismiss();
             }
         });
+
         customDialog.findViewById(R.id.enviar).setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                final String smsNumber = phoneNo.getText().toString();
-                final String smsBody = messageBody.getText().toString();
+                String smsNumber = phoneNo.getText().toString();
+                String smsBody = messageBody.getText().toString();
                 try {
                     SmsManager smsManager = SmsManager.getDefault();
                     smsManager.sendTextMessage(smsNumber, null, smsBody, null, null);
-                    Toast.makeText(getApplicationContext(), "SMS Enviado!",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "SMS Enviado!", Toast.LENGTH_LONG).show();
                 } catch (Exception e) {
-                    Toast.makeText(getApplicationContext(),"Fallo envió de SMS, intenta luego!",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Fallo envió de SMS, intenta luego!", Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
-                Toast.makeText(ManagerMensaje.this,smsBody, Toast.LENGTH_SHORT).show();
                 customDialog.dismiss();
+
 
             }
         });
@@ -137,6 +158,7 @@ public class ManagerMensaje extends Activity {
 
     }
 
+
     private void displayIncomingSMS(){
         final Dialog customDialog = new Dialog(this);
         customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -144,24 +166,32 @@ public class ManagerMensaje extends Activity {
         customDialog.setContentView(R.layout.dialog_incoming);
         customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
+        Typeface fontBold = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");
+        Typeface fontRegular = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");
 
+        TextView title =(TextView) customDialog.findViewById(R.id.title);
+        title.setTypeface(fontRegular);
 
         TextView contact = (TextView) customDialog.findViewById(R.id.contact);
         contact.setText(incomingMensaje.getContactName());
+        contact.setTypeface(fontBold);
 
 
         TextView phone = (TextView) customDialog.findViewById(R.id.phone);
         phone.setText(incomingMensaje.getPhoneNumber());
+        phone.setTypeface(fontRegular);
 
 
         Date date= new Date(incomingMensaje.getDate());
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         TextView dateTime = (TextView) customDialog.findViewById(R.id.date);
         dateTime.setText(format.format(date));
+        dateTime.setTypeface(fontRegular);
 
 
         TextView bodySMS = (TextView) customDialog.findViewById(R.id.contenido);
         bodySMS.setText(incomingMensaje.getBodyMessage());
+        bodySMS.setTypeface(fontRegular);
 
 
         customDialog.findViewById(R.id.cancelar).setOnClickListener(new View.OnClickListener() {
@@ -202,12 +232,21 @@ public class ManagerMensaje extends Activity {
         customDialog.setContentView(R.layout.dialog_popup);
         customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
+        Typeface fontBold = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");
+        Typeface fontRegular = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");
+
+        TextView textFor = (TextView) customDialog.findViewById(R.id.textFor);
+        textFor.setTypeface(fontRegular);
 
         TextView contact = (TextView) customDialog.findViewById(R.id.contact);
         contact.setText(incomingMensaje.getContactName());
+        contact.setTypeface(fontBold);
+
 
         TextView phone = (TextView) customDialog.findViewById(R.id.phone);
         phone.setText(incomingMensaje.getPhoneNumber());
+        phone.setTypeface(fontRegular);
+
 
         customDialog.findViewById(R.id.cancelar).setOnClickListener(new View.OnClickListener() {
 
@@ -220,7 +259,9 @@ public class ManagerMensaje extends Activity {
 
             @Override
             public void onClick(View view) {
+                Typeface fontRegular = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");
                 EditText contenido = (EditText) customDialog.findViewById(R.id.contenido);
+                contenido.setTypeface(fontRegular);
                 String smsBody=contenido.getText().toString();
                 try {
                     SmsManager smsManager = SmsManager.getDefault();
