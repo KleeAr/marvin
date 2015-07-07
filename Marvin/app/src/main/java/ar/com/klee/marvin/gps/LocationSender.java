@@ -37,6 +37,12 @@ public class LocationSender {
     private String address;
     private String town;
 
+    private double actualLatitude = 0.0;
+    private double actualLongitude = 0.0;
+    private double previousLatitude = 0.0;
+    private double previousLongitude = 0.0;
+
+
     private Context context;
 
     public LocationSender(Context context){
@@ -52,6 +58,12 @@ public class LocationSender {
 
                 double longitude = location.getLongitude();
                 double latitude = location.getLatitude();
+
+                previousLatitude = actualLatitude;
+                previousLongitude = actualLongitude;
+
+                actualLatitude = latitude;
+                actualLongitude = longitude;
 
                 setLocation(latitude, longitude);
             }
@@ -102,6 +114,28 @@ public class LocationSender {
                 e.printStackTrace();
             }
         }
+    }
+
+    public String nextStreet(){
+
+        if(previousLongitude == 0.0 || previousLongitude == 0.0)
+            return "error";
+
+        IntersectionSender intersection = new IntersectionSender(actualLatitude, actualLongitude, previousLatitude, previousLongitude, context);
+
+        return intersection.findStreet(IntersectionSender.NEXT_STREET);
+
+    }
+
+    public String previousStreet(){
+
+        if(previousLongitude == 0.0 || previousLongitude == 0.0)
+            return "error";
+
+        IntersectionSender intersection = new IntersectionSender(actualLatitude, actualLongitude, previousLatitude, previousLongitude, context);
+
+        return intersection.findStreet(IntersectionSender.PREVIOUS_STREET);
+
     }
 
     public String getAddress(){

@@ -401,4 +401,17 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     }
 
+    public String nextStreet(){
+
+        return locationSender.nextStreet();
+
+    }
+
+    public String previousStreet(){
+
+        return locationSender.previousStreet();
+
+    }
+
+
 }
