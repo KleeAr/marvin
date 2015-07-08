@@ -26,6 +26,7 @@ import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.gps.LocationSender;
 import ar.com.klee.marvin.multimedia.music.MusicService;
 import ar.com.klee.marvin.multimedia.video.YouTubeVideo;
+import ar.com.klee.marvin.sms.SMSManager;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
 
@@ -42,6 +43,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     private boolean mIsBound;
     private boolean wasPlaying;
+
+    private SMSManager smsManager;
 
     private Button bt_play;
     private Button bt_pause;
@@ -68,6 +71,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         initializeSTTService();
 
         locationSender = new LocationSender(this);
+
+        smsManager = new SMSManager();
 
     }
 
@@ -412,6 +417,5 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         return locationSender.previousStreet();
 
     }
-
 
 }
