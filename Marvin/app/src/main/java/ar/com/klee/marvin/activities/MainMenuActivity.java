@@ -23,8 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.gps.LocationSender;
 import ar.com.klee.marvin.multimedia.music.MusicService;
 import ar.com.klee.marvin.multimedia.video.YouTubeVideo;
+import ar.com.klee.marvin.sms.SMSDriver;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
 
@@ -37,9 +39,12 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     private BroadcastReceiver voiceControlReceiver;
     private BroadcastReceiver musicReceiver;
     private CommandHandlerManager commandHandlerManager;
+    private LocationSender locationSender;
 
     private boolean mIsBound;
     private boolean wasPlaying;
+
+    private SMSDriver smsDriver;
 
     private Button bt_play;
     private Button bt_pause;
@@ -64,6 +69,10 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         initializeMusicService();
         initializeSTTService();
+
+        locationSender = new LocationSender(this);
+
+        smsDriver = new SMSDriver(this);
 
     }
 
@@ -190,7 +199,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         };
     }
 
-/********** METODOS PARA OBTENER LA INSTANCIA DEL SERVICIO DE MUSICA ***********/
+    /********** METODOS PARA OBTENER LA INSTANCIA DEL SERVICIO DE MUSICA ***********/
 
     void doBindService() {
         musicServiceIntent = new Intent(this,MusicService.class);
@@ -384,5 +393,31 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     public void setCommandHandlerManager(){
         commandHandlerManager.defineMainActivity(this);
     }
+
+    public String getAddress(){
+
+        return locationSender.getAddress();
+
+    }
+
+    public String getTown(){
+
+        return locationSender.getTown();
+
+    }
+
+    public String nextStreet(){
+
+        return locationSender.nextStreet();
+
+    }
+
+    public String previousStreet(){
+
+        return locationSender.previousStreet();
+
+    }
+
+
 
 }

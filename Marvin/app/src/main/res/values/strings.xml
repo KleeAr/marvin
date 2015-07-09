@@ -10,4 +10,5 @@
     <string name="title_activity_search_result">SearchResultActivity</string>
     <string name="title_activity_you_tube_player">YouTubePlayerActivity</string>
     <string name="title_activity_bluetooth">BluetoothActivity</string>
+    <string name="title_activity_smsinbox">SMSInboxActivity</string>
 </resources>

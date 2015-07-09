@@ -3,6 +3,7 @@ package ar.com.klee.marvin.voiceControl.handlers;
 import android.content.Context;
 
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
+import ar.com.klee.marvin.hotspot.WiFiHotspot;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
@@ -14,9 +15,16 @@ public class DesactivarHotspotHandler extends CommandHandler{
 
     public CommandHandlerContext drive(CommandHandlerContext context){
 
-        getTextToSpeech().speakText("desactivando hotspot");
+        WiFiHotspot wiFiHotspot = new WiFiHotspot(getContext());
 
-        //CODIGO PARA DESACTIVAR HOTSPOT
+        if(wiFiHotspot.isApOn(getContext())) {
+            if (wiFiHotspot.removeWifiAccessPoint())
+                getTextToSpeech().speakText("Desactivando hotspot");
+            else
+                getTextToSpeech().speakText("El hotspot no pudo ser desactivado");
+        }else{
+            getTextToSpeech().speakText("El hotspot ya está desactivado");
+        }
 
         context.put(STEP, 0);
         return context;

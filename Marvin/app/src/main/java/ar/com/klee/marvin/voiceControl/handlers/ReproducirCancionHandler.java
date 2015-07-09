@@ -26,7 +26,7 @@ public class ReproducirCancionHandler extends CommandHandler{
             if (!context.getObject(ACTIVITY, MainMenuActivity.class).findSong(song))
                 getTextToSpeech().speakText("La canción " + song + " no fue encontrada");
             else
-                getTextToSpeech().speakText("Reproducdiendo canción " + song);
+                getTextToSpeech().speakText("Reproduciendo canción " + song);
         }
 
         context.put(STEP, 0);
