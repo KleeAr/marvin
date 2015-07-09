@@ -1,6 +1,13 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
+import android.provider.ContactsContract;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -8,6 +15,7 @@ import ar.com.klee.marvin.voiceControl.TTS;
 public class EnviarSMSAContactoHandler extends CommandHandler{
 
     public static final String CONTACTO = "contacto";
+    public static final String NUMBER= "NUMBER";
 
     public EnviarSMSAContactoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
         super("enviar sms a {contacto}", textToSpeech, context, commandHandlerManager);
@@ -42,11 +50,22 @@ public class EnviarSMSAContactoHandler extends CommandHandler{
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
         commandHandlerContext.put(CONTACT, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.getString(COMMAND)).get(CONTACTO));
         commandHandlerContext.put(SET_CONTACT, false);
+        commandHandlerContext.put(NUMBER, "");
     }
 
     //PRONUNCIA CONTACTO
     public CommandHandlerContext stepOne(CommandHandlerContext context){
         String contact = context.getString(CONTACT);
+
+        context.put(NUMBER,validateContact(contact));
+
+        if(context.getString(NUMBER).equals("")){
+            getTextToSpeech().speakText("El contacto no fue encontrado en la lista. Reingresalo");
+            context.put(SET_CONTACT, true);
+            context.put(STEP, 1);
+            return context;
+        }
+
         getTextToSpeech().speakText("¿Querés enviar un sms al contacto " + contact + "?");
         context.put(SET_CONTACT, false);
         context.put(STEP, 3);
@@ -98,6 +117,7 @@ public class EnviarSMSAContactoHandler extends CommandHandler{
         String input = context.getString(COMMAND);
         if(input.equals("si")) {
             getTextToSpeech().speakText("Enviando sms");
+
             context.put(STEP, 0);
             return context;
         }
@@ -120,6 +140,60 @@ public class EnviarSMSAContactoHandler extends CommandHandler{
 
     }
 
+    public String validateContact(String contact){
+
+        List<HashMap<String,String>> contacts = new ArrayList<HashMap<String,String>>();
+
+        String accents = "áéíóúÁÉÍÓÚ";
+        String noAccents = "aeiouAEIOU";
+        String contactsWithoutAccent = contact;
+
+        int i;
+
+        for(i=0;i<accents.length();i++){
+
+            contactsWithoutAccent.replace(accents.charAt(i),noAccents.charAt(i));
+
+        }
+
+        ContentResolver cr = getContext().getContentResolver();
+        Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,null, null, null, null);
+        if (cur.getCount() > 0) {
+            while (cur.moveToNext()) {
+                String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
+                String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
+                    Cursor pCur = cr.query(
+                            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                            null,
+                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = ?",
+                            new String[]{id}, null);
+                    while (pCur.moveToNext()) {
+                        String phoneNo = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                        HashMap<String,String> data = new HashMap<String,String>();
+                        data.put("NAME",name);
+                        data.put("NUMBER",phoneNo);
+                        contacts.add(data);
+                    }
+                    pCur.close();
+                }
+            }
+
+            i = 0;
+
+            while(i < contacts.size()){
+
+                if(contacts.get(i).get("NAME").toLowerCase().equals(contact) || contacts.get(i).get("NAME").toLowerCase().equals(contactsWithoutAccent) )
+                    return contacts.get(i).get("NUMBER");
+
+                i++;
+            }
+
+        }
+
+        return "";
+
+    }
 
 }
 

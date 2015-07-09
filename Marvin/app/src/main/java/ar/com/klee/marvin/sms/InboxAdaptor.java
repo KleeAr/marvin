@@ -10,6 +10,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import ar.com.klee.marvin.R;
+
 /**
  * Clase para adaptar los items de la lista de mensajes Inbox
  */

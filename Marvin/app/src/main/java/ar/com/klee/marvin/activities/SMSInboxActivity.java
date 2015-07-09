@@ -2,42 +2,32 @@ package ar.com.klee.marvin.activities;
 
 import android.app.Activity;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 
-import android.provider.ContactsContract;
 import android.telephony.SmsManager;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
+import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.sms.InboxAdaptor;
 import ar.com.klee.marvin.sms.Mensaje;
+import ar.com.klee.marvin.sms.SMSDriver;
 
 public class SMSInboxActivity extends Activity {
 
@@ -72,7 +62,7 @@ public class SMSInboxActivity extends Activity {
         if (indexBody < 0 || !smsInboxCursor.moveToFirst()) return;
         do {
 
-            String contactName = ManagerMensaje.getContactName(getApplicationContext(), smsInboxCursor.getString(indexAddress));
+            String contactName = SMSDriver.getContactName(getApplicationContext(), smsInboxCursor.getString(indexAddress));
             Mensaje iMensaje = new Mensaje(smsInboxCursor.getString(indexAddress), smsInboxCursor.getString(indexBody), contactName, (long) inboxDate);
 
             smsMessagesList.add(iMensaje);
@@ -188,7 +178,7 @@ public class SMSInboxActivity extends Activity {
                     Toast.makeText(getApplicationContext(),"Fallo envió de SMS, intenta luego!",Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
-                Toast.makeText(SMSInbox.this,smsBody, Toast.LENGTH_SHORT).show();
+                Toast.makeText(SMSInboxActivity.this,smsBody, Toast.LENGTH_SHORT).show();
                 customDialog.dismiss();
 
             }
@@ -200,7 +190,7 @@ public class SMSInboxActivity extends Activity {
             {
                 customDialog.dismiss();
                 //metodo a desarrollar de lectura de mensaje por voz
-                Toast.makeText(SMSInbox.this, "LEER", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SMSInboxActivity.this, "LEER", Toast.LENGTH_SHORT).show();
 
             }
         });

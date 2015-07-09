@@ -6,37 +6,60 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.telephony.SmsManager;
+import android.telephony.SmsMessage;
 import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class SMSManager {
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
+import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
+
+public class SMSDriver {
 
     public static final String SMS_BUNDLE = "pdus";
     private static final String ACTION = "android.provider.Telephony.SMS_RECEIVED";
     private static Mensaje incomingMensaje; //variable para guardar el mensaje recibido
 
-    public SMSManager(){
+    private static EditText phoneNo;
+    private static EditText messageBody;
+
+    private Context context;
+    private CommandHandlerManager commandHandlerManager;
+
+    public SMSDriver(Context context){
 
         IntentFilter filter = new IntentFilter(ACTION);
-        this.registerReceiver(mReceivedSMSReceiver, filter);
+        context.registerReceiver(mReceivedSMSReceiver, filter);
+
+        this.context = context;
+
+        commandHandlerManager = CommandHandlerManager.getInstance();
 
     }
 
     public void displaySendSMS() {
-        final Dialog customDialog = new Dialog(this);
+        final Dialog customDialog = new Dialog(context);
         customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         customDialog.setCancelable(false);
         customDialog.setContentView(R.layout.dialog_popup_outputsms);
         customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        Typeface fontBold = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");
-        Typeface fontRegular = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");
+        Typeface fontBold = Typeface.createFromAsset(context.getAssets(),"Bariol_Bold.otf");
+        Typeface fontRegular = Typeface.createFromAsset(context.getAssets(),"Bariol_Bold.otf");
 
         TextView contact = (TextView) customDialog.findViewById(R.id.contact);
         contact.setTypeface(fontBold);
@@ -70,9 +93,9 @@ public class SMSManager {
                 try {
                     SmsManager smsManager = SmsManager.getDefault();
                     smsManager.sendTextMessage(smsNumber, null, smsBody, null, null);
-                    Toast.makeText(getApplicationContext(), "SMS Enviado!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "SMS Enviado!", Toast.LENGTH_LONG).show();
                 } catch (Exception e) {
-                    Toast.makeText(getApplicationContext(), "Fallo envió de SMS, intenta luego!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "Fallo envió de SMS, intenta luego!", Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
                 customDialog.dismiss();
@@ -87,7 +110,7 @@ public class SMSManager {
             {
                 customDialog.dismiss();
                 //metodo a desarrollar de lectura de mensaje por voz
-                Toast.makeText(ManagerMensaje.this, "LEER", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "LEER", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -98,14 +121,14 @@ public class SMSManager {
 
 
     public void displayIncomingSMS(){
-        final Dialog customDialog = new Dialog(this);
+        final Dialog customDialog = new Dialog(context);
         customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         customDialog.setCancelable(false);
         customDialog.setContentView(R.layout.dialog_incoming);
         customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        Typeface fontBold = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");
-        Typeface fontRegular = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");
+        Typeface fontBold = Typeface.createFromAsset(context.getAssets(),"Bariol_Bold.otf");
+        Typeface fontRegular = Typeface.createFromAsset(context.getAssets(),"Bariol_Bold.otf");
 
         TextView title =(TextView) customDialog.findViewById(R.id.title);
         title.setTypeface(fontRegular);
@@ -154,7 +177,7 @@ public class SMSManager {
             {
                 customDialog.dismiss();
                 //metodo a desarrollar de lectura de mensaje por voz
-                Toast.makeText(ManagerMensaje.this, "LEER", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "LEER", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -164,14 +187,14 @@ public class SMSManager {
 
     //copiar archivos que estan en la carpeta drawable y colors de la carpeta values
     public  void displayRespuesta(){
-        final Dialog customDialog = new Dialog(this);
+        final Dialog customDialog = new Dialog(context);
         customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         customDialog.setCancelable(false);
         customDialog.setContentView(R.layout.dialog_popup);
         customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        Typeface fontBold = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");
-        Typeface fontRegular = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");
+        Typeface fontBold = Typeface.createFromAsset(context.getAssets(),"Bariol_Bold.otf");
+        Typeface fontRegular = Typeface.createFromAsset(context.getAssets(),"Bariol_Bold.otf");
 
         TextView textFor = (TextView) customDialog.findViewById(R.id.textFor);
         textFor.setTypeface(fontRegular);
@@ -197,19 +220,19 @@ public class SMSManager {
 
             @Override
             public void onClick(View view) {
-                Typeface fontRegular = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");
+                Typeface fontRegular = Typeface.createFromAsset(context.getAssets(),"Bariol_Bold.otf");
                 EditText contenido = (EditText) customDialog.findViewById(R.id.contenido);
                 contenido.setTypeface(fontRegular);
                 String smsBody=contenido.getText().toString();
                 try {
                     SmsManager smsManager = SmsManager.getDefault();
                     smsManager.sendTextMessage(incomingMensaje.getPhoneNumber(), null, smsBody, null, null);
-                    Toast.makeText(getApplicationContext(), "SMS Enviado!",Toast.LENGTH_LONG).show();
+                    Toast.makeText(context.getApplicationContext(), "SMS Enviado!",Toast.LENGTH_LONG).show();
                 } catch (Exception e) {
-                    Toast.makeText(getApplicationContext(),"Fallo envió de SMS, intenta luego!",Toast.LENGTH_LONG).show();
+                    Toast.makeText(context.getApplicationContext(),"Fallo envió de SMS, intenta luego!",Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
-                Toast.makeText(ManagerMensaje.this,smsBody, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,smsBody, Toast.LENGTH_SHORT).show();
                 customDialog.dismiss();
 
             }
@@ -221,13 +244,12 @@ public class SMSManager {
             {
                 customDialog.dismiss();
                 //metodo a desarrollar de lectura de mensaje por voz
-                Toast.makeText(ManagerMensaje.this, "LEER", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "LEER", Toast.LENGTH_SHORT).show();
 
             }
         });
 
         customDialog.show();
-
 
     }
 
