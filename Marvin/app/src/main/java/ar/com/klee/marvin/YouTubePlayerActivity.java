@@ -87,7 +87,7 @@ public class YouTubePlayerActivity extends YouTubeBaseActivity implements
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player,
                                         boolean wasRestored) {
         if (!wasRestored) {
-            player.cueVideo(video.getId());
+            player.loadVideo(video.getId());
         }
     }
 

@@ -21,6 +21,7 @@ import ar.com.klee.marvin.voiceControl.handlers.AgregarEventoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.AnteriorCancionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.BajarVolumenHandler;
 import ar.com.klee.marvin.voiceControl.handlers.BarrioHandler;
+import ar.com.klee.marvin.voiceControl.handlers.BuscarDispositivosHandler;
 import ar.com.klee.marvin.voiceControl.handlers.BuscarEnYoutubeHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CalleActualHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CalleAnteriorHandler;
@@ -110,6 +111,7 @@ public class CommandHandlerManager {
 
         // Initialize all command handlers
         commandHandlersMainMenu = Arrays.asList(new AbrirAplicacionHandler(textToSpeech, context, this),
+                new BuscarDispositivosHandler(textToSpeech, context, this),
             new ActivarHotspotHandler(textToSpeech, context, this),
             new ActivarReproduccionAleatoriaHandler(textToSpeech, context, this),
             new AgregarEventoHandler(textToSpeech, context, this),

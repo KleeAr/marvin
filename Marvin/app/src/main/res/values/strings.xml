@@ -9,4 +9,5 @@
     <string name="facebook_app_id">1391887564472051</string>
     <string name="title_activity_search_result">SearchResultActivity</string>
     <string name="title_activity_you_tube_player">YouTubePlayerActivity</string>
+    <string name="title_activity_bluetooth">BluetoothActivity</string>
 </resources>
