@@ -236,6 +236,12 @@ public class CommandHandlerManager {
 
     }
 
+    public void setCurrentContext(CommandHandlerContext currentContext){
+
+        this.currentContext = currentContext;
+
+    }
+
     public void setIsPhotoTaken(boolean isPhotoTaken){
 
         this.isPhotoTaken = isPhotoTaken;
@@ -273,6 +279,43 @@ public class CommandHandlerManager {
 
         return mainActivity;
 
+    }
+
+    public Context getContext(){
+
+        return context;
+
+    }
+
+    public void setNullCommand(){
+
+        currentCommandHandler = null;
+        currentContext = null;
+
+    }
+
+    public TTS getTextToSpeech(){
+
+        return textToSpeech;
+
+    }
+
+    public CommandHandler getCommandHandler(){
+
+        return currentCommandHandler;
+
+    }
+
+    public int getCurrentActivity(){
+        return currentActivity;
+    }
+
+    public Activity getActivity(){
+        return activity;
+    }
+
+    public CommandHandlerContext getCurrentContext(){
+        return currentContext;
     }
 
     public CommandHandler getCompartirEnFacebookHandler() {

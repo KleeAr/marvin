@@ -59,6 +59,15 @@ public class TTS {
 
     }
 
+    public int speakTextWithoutStart(String textToSpeak){
+
+        ttsObject.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH, null);
+
+        int delayTime = textToSpeak.length()/5 + 1;
+        return (delayTime * 550);
+
+    }
+
     /* Método finishSpeak
     ** -Libera los recursos del TextToSpeak engine
     */

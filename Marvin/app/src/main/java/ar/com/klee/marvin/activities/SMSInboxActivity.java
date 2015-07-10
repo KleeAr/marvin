@@ -138,7 +138,7 @@ public class SMSInboxActivity extends Activity {
         //obligamos al usuario a pulsar los botones para cerrarlo
         customDialog.setCancelable(false);
         //establecemos el contenido de nuestro dialog
-        customDialog.setContentView(R.layout.dialog_popup);
+        customDialog.setContentView(R.layout.dialog_sms_respond);
         //setea el fondo transparente
         customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 

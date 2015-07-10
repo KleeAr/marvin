@@ -72,7 +72,11 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         locationSender = new LocationSender(this);
 
-        smsDriver = new SMSDriver(this);
+        if(SMSDriver.isInstanceInitialized()) {
+            smsDriver = SMSDriver.getInstance();
+        } else {
+            smsDriver = SMSDriver.initializeInstance(getApplicationContext());
+        }
 
     }
 
@@ -394,6 +398,10 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         commandHandlerManager.defineMainActivity(this);
     }
 
+/**************************************
+**********LOCATION METHODS************
+*************************************/
+
     public String getAddress(){
 
         return locationSender.getAddress();
@@ -418,6 +426,58 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     }
 
+/**************************************
+*************SMS METHODS**************
+*************************************/
 
+
+    public void displaySendSMS(){
+
+        smsDriver.displaySendSMS();
+
+    }
+
+    public void setNumber(String number){
+
+        smsDriver.setNumber(number);
+
+    }
+
+    public void setMessageBody(String message){
+
+        smsDriver.setMessageBody(message);
+
+    }
+
+    public String sendMessage(){
+
+        return smsDriver.sendMessage();
+
+    }
+
+    public void cancelMessage(){
+
+        smsDriver.cancelMessage();
+
+    }
+
+    public void displayRespondSMS(){
+
+        smsDriver.cancelMessage();
+        smsDriver.displayRespuesta();
+
+    }
+
+    public void setAnswer(String message){
+
+        smsDriver.setAnswer(message);
+
+    }
+
+    public String respondMessage(){
+
+        return smsDriver.respondMessage();
+
+    }
 
 }

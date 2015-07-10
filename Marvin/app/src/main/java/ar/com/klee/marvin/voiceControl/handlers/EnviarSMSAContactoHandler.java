@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import ar.com.klee.marvin.activities.CameraActivity;
+import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
@@ -51,6 +53,8 @@ public class EnviarSMSAContactoHandler extends CommandHandler{
         commandHandlerContext.put(CONTACT, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.getString(COMMAND)).get(CONTACTO));
         commandHandlerContext.put(SET_CONTACT, false);
         commandHandlerContext.put(NUMBER, "");
+
+        commandHandlerContext.getObject(ACTIVITY, MainMenuActivity.class).displaySendSMS();
     }
 
     //PRONUNCIA CONTACTO
@@ -65,6 +69,8 @@ public class EnviarSMSAContactoHandler extends CommandHandler{
             context.put(STEP, 1);
             return context;
         }
+
+        context.getObject(ACTIVITY, MainMenuActivity.class).setNumber(context.getString(NUMBER));
 
         getTextToSpeech().speakText("¿Querés enviar un sms al contacto " + contact + "?");
         context.put(SET_CONTACT, false);
@@ -84,12 +90,14 @@ public class EnviarSMSAContactoHandler extends CommandHandler{
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando envío");
+            context.getObject(ACTIVITY,MainMenuActivity.class).cancelMessage();
             context.put(STEP, 0);
             return context;
         }
 
         if(input.equals("no")){
             getTextToSpeech().speakText("¿A qué contacto querés mandarle el sms?");
+            context.getObject(ACTIVITY, MainMenuActivity.class).setNumber("");
             context.put(SET_CONTACT, true);
             context.put(STEP, 1);
             return context;
@@ -105,31 +113,32 @@ public class EnviarSMSAContactoHandler extends CommandHandler{
     //INGRESO MENSAJE
     public CommandHandlerContext stepFive(CommandHandlerContext context){
         String input = context.getString(COMMAND);
+        input.replaceFirst(((Character)input.charAt(0)).toString(),((Character)Character.toUpperCase(input.charAt(0))).toString());
+        context.getObject(ACTIVITY, MainMenuActivity.class).setMessageBody(input);
         getTextToSpeech().speakText("¿Querés enviar por sms el mensaje " + input + "?");
-
         context.put(STEP, 7);
         return context;
-
     }
 
     //CONFIRMACION DE MENSAJE
     public CommandHandlerContext stepSeven(CommandHandlerContext context){
         String input = context.getString(COMMAND);
         if(input.equals("si")) {
-            getTextToSpeech().speakText("Enviando sms");
-
+            getTextToSpeech().speakText(context.getObject(ACTIVITY,MainMenuActivity.class).sendMessage());
             context.put(STEP, 0);
             return context;
         }
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando envío");
+            context.getObject(ACTIVITY,MainMenuActivity.class).cancelMessage();
             context.put(STEP, 0);
             return context;
         }
 
         if(input.equals("no")){
             getTextToSpeech().speakText("¿Qué mensaje querés mandar?");
+            context.getObject(ACTIVITY, MainMenuActivity.class).setMessageBody("");
             context.put(STEP, 5);
             return context;
         }
