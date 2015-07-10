@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
 import ar.com.klee.marvin.voiceControl.handlers.ResponderSMSHandler;
@@ -56,6 +57,9 @@ public class SMSDriver {
 
         instance = this;
 
+    }
+
+    public void initializeCommandHandlerManager(){
         commandHandlerManager = CommandHandlerManager.getInstance();
     }
 
@@ -75,7 +79,7 @@ public class SMSDriver {
     }
 
     public void displaySendSMS() {
-        final Dialog customDialog = new Dialog(context);
+        final Dialog customDialog = new Dialog(commandHandlerManager.getMainActivity());
         customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         customDialog.setCancelable(false);
         customDialog.setContentView(R.layout.dialog_sms_send);
@@ -106,6 +110,7 @@ public class SMSDriver {
             public void onClick(View view) {
                 STTService.getInstance().setIsListening(false);
                 commandHandlerManager.setNullCommand();
+                ((MainMenuActivity)commandHandlerManager.getMainActivity()).setButtonsEnabled();
                 customDialog.dismiss();
             }
         });
@@ -126,6 +131,7 @@ public class SMSDriver {
                 }
                 STTService.getInstance().setIsListening(false);
                 commandHandlerManager.setNullCommand();
+                ((MainMenuActivity)commandHandlerManager.getMainActivity()).setButtonsEnabled();
                 customDialog.dismiss();
             }
         });
@@ -195,7 +201,7 @@ public class SMSDriver {
 
 
     public void displayIncomingSMS(){
-        final Dialog customDialog = new Dialog(context);
+        final Dialog customDialog = new Dialog(commandHandlerManager.getMainActivity());
         customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         customDialog.setCancelable(false);
         customDialog.setContentView(R.layout.dialog_sms_incoming);
@@ -255,6 +261,7 @@ public class SMSDriver {
             public void onClick(View view){
                 STTService.getInstance().setIsListening(false);
                 commandHandlerManager.setNullCommand();
+                ((MainMenuActivity)commandHandlerManager.getMainActivity()).setButtonsEnabled();
                 customDialog.dismiss();
             }
         });
@@ -322,6 +329,7 @@ public class SMSDriver {
         }, delay);
 
         STTService.getInstance().setIsListening(true);
+        ((MainMenuActivity)commandHandlerManager.getMainActivity()).setButtonsDisabled();
         commandHandlerManager.setCurrentCommandHandler(new ResponderSMSHandler(commandHandlerManager.getTextToSpeech(), commandHandlerManager.getContext(), commandHandlerManager));
         commandHandlerManager.setCurrentContext(commandHandlerManager.getCommandHandler().drive(commandHandlerManager.getCommandHandler().createContext(commandHandlerManager.getCurrentContext(), commandHandlerManager.getActivity(), "responder sms")));
 
@@ -329,7 +337,7 @@ public class SMSDriver {
 
     //copiar archivos que estan en la carpeta drawable y colors de la carpeta values
     public  void displayRespuesta(){
-        final Dialog customDialog = new Dialog(context);
+        final Dialog customDialog = new Dialog(commandHandlerManager.getMainActivity());
         customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         customDialog.setCancelable(false);
         customDialog.setContentView(R.layout.dialog_sms_respond);
@@ -359,6 +367,7 @@ public class SMSDriver {
             public void onClick(View view){
                 STTService.getInstance().setIsListening(false);
                 commandHandlerManager.setNullCommand();
+                ((MainMenuActivity)commandHandlerManager.getMainActivity()).setButtonsEnabled();
                 customDialog.dismiss();
             }
         });
@@ -380,6 +389,7 @@ public class SMSDriver {
                 }
                 STTService.getInstance().setIsListening(false);
                 commandHandlerManager.setNullCommand();
+                ((MainMenuActivity)commandHandlerManager.getMainActivity()).setButtonsEnabled();
                 customDialog.dismiss();
 
             }

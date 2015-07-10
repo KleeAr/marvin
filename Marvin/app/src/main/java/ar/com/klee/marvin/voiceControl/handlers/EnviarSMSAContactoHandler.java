@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.ContactsContract;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -113,7 +114,12 @@ public class EnviarSMSAContactoHandler extends CommandHandler{
     //INGRESO MENSAJE
     public CommandHandlerContext stepFive(CommandHandlerContext context){
         String input = context.getString(COMMAND);
-        input.replaceFirst(((Character)input.charAt(0)).toString(),((Character)Character.toUpperCase(input.charAt(0))).toString());
+
+        Character firstCharacter, newFirstCharacter;
+        firstCharacter = input.charAt(0);
+        newFirstCharacter = Character.toUpperCase(firstCharacter);
+        input = input.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
+
         context.getObject(ACTIVITY, MainMenuActivity.class).setMessageBody(input);
         getTextToSpeech().speakText("¿Querés enviar por sms el mensaje " + input + "?");
         context.put(STEP, 7);
@@ -155,15 +161,18 @@ public class EnviarSMSAContactoHandler extends CommandHandler{
 
         String accents = "áéíóúÁÉÍÓÚ";
         String noAccents = "aeiouAEIOU";
-        String contactsWithoutAccent = contact;
+        String contactWithoutAccent = contact;
 
         int i;
 
         for(i=0;i<accents.length();i++){
 
-            contactsWithoutAccent.replace(accents.charAt(i),noAccents.charAt(i));
+            contactWithoutAccent.replace(accents.charAt(i),noAccents.charAt(i));
 
         }
+
+        Log.d("APP",contact);
+        Log.d("APP",contactWithoutAccent);
 
         ContentResolver cr = getContext().getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,null, null, null, null);
@@ -191,8 +200,7 @@ public class EnviarSMSAContactoHandler extends CommandHandler{
             i = 0;
 
             while(i < contacts.size()){
-
-                if(contacts.get(i).get("NAME").toLowerCase().equals(contact) || contacts.get(i).get("NAME").toLowerCase().equals(contactsWithoutAccent) )
+                if(contacts.get(i).get("NAME").toLowerCase().equals(contact) || contacts.get(i).get("NAME").toLowerCase().equals(contactWithoutAccent) )
                     return contacts.get(i).get("NUMBER");
 
                 i++;

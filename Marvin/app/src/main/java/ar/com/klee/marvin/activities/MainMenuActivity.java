@@ -161,6 +161,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
                 }else if(notification.equals("Started")){
                     commandHandlerManager = CommandHandlerManager.getInstance();
+                    smsDriver.initializeCommandHandlerManager();
                     setCommandHandlerManager();
                 }
 
@@ -477,6 +478,24 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     public String respondMessage(){
 
         return smsDriver.respondMessage();
+
+    }
+
+    public void setButtonsEnabled(){
+
+        bt_play.setEnabled(true);
+        bt_pause.setEnabled(true);
+        bt_next.setEnabled(true);
+        bt_previous.setEnabled(true);
+
+    }
+
+    public void setButtonsDisabled(){
+
+        bt_play.setEnabled(false);
+        bt_pause.setEnabled(false);
+        bt_next.setEnabled(false);
+        bt_previous.setEnabled(false);
 
     }
 

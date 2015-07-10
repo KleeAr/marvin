@@ -11,8 +11,9 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Para"
-        android:id="@+id/textFor" />
+        android:text="Para:"
+        android:id="@+id/textFor"
+        android:textColor="@android:color/black" />
 
     <RelativeLayout
         android:orientation="vertical"
@@ -24,19 +25,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="contacto"
+            android:text="Contacto"
             android:id="@+id/contact"
-            android:layout_gravity="center_vertical" />
+            android:layout_gravity="center_vertical"
+            android:textColor="@android:color/black" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="telefono"
+            android:text="Número"
             android:id="@+id/phone"
             android:layout_below="@+id/contact"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:textColor="@android:color/black" />
 
         <ImageView
             android:layout_width="53dp"
@@ -60,7 +63,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/black"
         android:layout_weight="10.09"
-        android:hint="Escribir mensaje"/>
+        android:hint="Ingresá mensaje"/>
 
     <LinearLayout
         android:id="@+id/botonera"

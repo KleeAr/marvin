@@ -85,7 +85,12 @@ public class ResponderSMSHandler extends CommandHandler{
     //INGRESO MENSAJE
     public CommandHandlerContext stepFive(CommandHandlerContext context){
         String input = context.getString(COMMAND);
-        input.replaceFirst(((Character)input.charAt(0)).toString(),((Character)Character.toUpperCase(input.charAt(0))).toString());
+
+        Character firstCharacter, newFirstCharacter;
+        firstCharacter = input.charAt(0);
+        newFirstCharacter = Character.toUpperCase(firstCharacter);
+        input = input.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
+
         context.getObject(ACTIVITY, MainMenuActivity.class).setAnswer(input);
         getTextToSpeech().speakText("¿Querés responder el mensaje " + input + "?");
         context.put(STEP, 7);

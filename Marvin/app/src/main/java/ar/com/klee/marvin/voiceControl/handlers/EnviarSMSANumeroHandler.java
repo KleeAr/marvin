@@ -45,6 +45,8 @@ public class EnviarSMSANumeroHandler extends CommandHandler{
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
         commandHandlerContext.put(NUMBER, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.getString(COMMAND)).get(NUMBERO));
         commandHandlerContext.put(SET_NUMBER, false);
+
+        commandHandlerContext.getObject(ACTIVITY, MainMenuActivity.class).displaySendSMS();
     }
 
     //PRONUNCIA NUMERO
@@ -66,14 +68,22 @@ public class EnviarSMSANumeroHandler extends CommandHandler{
 
         }
 
-        getTextToSpeech().speakText("¿Querés enviar un sms al numero " + contact + "?");
+        int i = 0;
+        String contactWithSpaces = "";
+
+        while(i < contact.length()){
+            contactWithSpaces += contact.charAt(i) + " ";
+            i++;
+        }
+
+        getTextToSpeech().speakText("¿Querés enviar un sms al numero " + contactWithSpaces + "?");
         context.getObject(ACTIVITY, MainMenuActivity.class).setNumber(contact);
         context.put(SET_NUMBER, false);
         context.put(STEP, 3);
         return context;
     }
 
-    //CONFIRMA NUMBERO
+    //CONFIRMA NUMERO
     public CommandHandlerContext stepThree(CommandHandlerContext context){
 
         String input = context.getString(COMMAND);
@@ -108,7 +118,12 @@ public class EnviarSMSANumeroHandler extends CommandHandler{
     //INGRESO MENSAJE
     public CommandHandlerContext stepFive(CommandHandlerContext context){
         String input = context.getString(COMMAND);
-        input.replaceFirst(((Character)input.charAt(0)).toString(),((Character)Character.toUpperCase(input.charAt(0))).toString());
+
+        Character firstCharacter, newFirstCharacter;
+        firstCharacter = input.charAt(0);
+        newFirstCharacter = Character.toUpperCase(firstCharacter);
+        input = input.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
+
         getTextToSpeech().speakText("¿Querés enviar por sms el mensaje " + input + "?");
         context.getObject(ACTIVITY, MainMenuActivity.class).setMessageBody(input);
         context.put(STEP, 7);
