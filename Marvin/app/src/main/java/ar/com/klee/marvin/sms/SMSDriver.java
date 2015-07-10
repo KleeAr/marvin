@@ -3,6 +3,8 @@ package ar.com.klee.marvin.sms;
 
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -14,6 +16,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.view.View;
@@ -25,6 +28,8 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.activities.MainMenuActivity;
@@ -96,8 +101,6 @@ public class SMSDriver {
         TextView titleMensaje = (TextView) customDialog.findViewById(R.id.titleMensaje);
         titleMensaje.setTypeface(fontBold);
 
-
-
         phoneNo = (EditText) customDialog.findViewById(R.id.mobileNumber);
         phoneNo.setTypeface(fontRegular);
         messageBody = (EditText) customDialog.findViewById(R.id.smsBody);
@@ -121,18 +124,26 @@ public class SMSDriver {
             public void onClick(View view) {
                 String smsNumber = phoneNo.getText().toString();
                 String smsBody = messageBody.getText().toString();
-                try {
-                    SmsManager smsManager = SmsManager.getDefault();
-                    smsManager.sendTextMessage(smsNumber, null, smsBody, null, null);
-                    Toast.makeText(context, "SMS enviado", Toast.LENGTH_LONG).show();
-                } catch (Exception e) {
-                    Toast.makeText(context, "El envío falló. Revisá los datos ingresados y reintentá.", Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
+                if(smsNumber.equals(""))
+                    Toast.makeText(context, "Ingresá un número", Toast.LENGTH_LONG).show();
+                else if(smsBody.equals(""))
+                    Toast.makeText(context, "Ingresá un mensaje", Toast.LENGTH_LONG).show();
+                else {
+                    try {
+                        SmsManager smsManager = SmsManager.getDefault();
+                        smsManager.sendTextMessage(smsNumber, null, smsBody, null, null);
+                        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
+                            saveInOutbox(smsNumber, smsBody);
+                        Toast.makeText(context, "SMS enviado", Toast.LENGTH_LONG).show();
+                    } catch (Exception e) {
+                        Toast.makeText(context, "El envío falló. Revisá los datos ingresados y reintentá.", Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                    }
+                    STTService.getInstance().setIsListening(false);
+                    commandHandlerManager.setNullCommand();
+                    ((MainMenuActivity) commandHandlerManager.getMainActivity()).setButtonsEnabled();
+                    customDialog.dismiss();
                 }
-                STTService.getInstance().setIsListening(false);
-                commandHandlerManager.setNullCommand();
-                ((MainMenuActivity)commandHandlerManager.getMainActivity()).setButtonsEnabled();
-                customDialog.dismiss();
             }
         });
         customDialog.findViewById(R.id.leer).setOnClickListener(new View.OnClickListener() {
@@ -143,21 +154,27 @@ public class SMSDriver {
                 final boolean isListening = STTService.getInstance().getIsListening();
                 STTService.getInstance().setIsListening(false);
 
-                customDialog.findViewById(R.id.cancelar).setEnabled(false);
-                customDialog.findViewById(R.id.leer).setEnabled(false);
-                customDialog.findViewById(R.id.enviar).setEnabled(false);
+                String smsBody = messageBody.getText().toString();
 
-                int delay = commandHandlerManager.getTextToSpeech().speakTextWithoutStart(messageBody.getText().toString());
+                if(smsBody.equals(""))
+                    Toast.makeText(context, "Ingresá un mensaje", Toast.LENGTH_LONG).show();
+                else {
+                    customDialog.findViewById(R.id.cancelar).setEnabled(false);
+                    customDialog.findViewById(R.id.leer).setEnabled(false);
+                    customDialog.findViewById(R.id.enviar).setEnabled(false);
 
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        STTService.getInstance().setIsListening(isListening);
-                        customDialog.findViewById(R.id.cancelar).setEnabled(true);
-                        customDialog.findViewById(R.id.leer).setEnabled(true);
-                        customDialog.findViewById(R.id.enviar).setEnabled(true);
-                    }
-                }, delay);
+                    int delay = commandHandlerManager.getTextToSpeech().speakTextWithoutStart(smsBody);
+
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            STTService.getInstance().setIsListening(isListening);
+                            customDialog.findViewById(R.id.cancelar).setEnabled(true);
+                            customDialog.findViewById(R.id.leer).setEnabled(true);
+                            customDialog.findViewById(R.id.enviar).setEnabled(true);
+                        }
+                    }, delay);
+                }
             }
         });
 
@@ -187,9 +204,19 @@ public class SMSDriver {
 
         String smsNumber = phoneNo.getText().toString();
         String smsBody = messageBody.getText().toString();
+        if(smsNumber.equals("")){
+            actualDialog.dismiss();
+            return "El mensaje no pudo ser enviado. No debés blanquear el número ingresado.";
+        }
+        if(smsBody.equals("")){
+            actualDialog.dismiss();
+            return "El mensaje no pudo ser enviado. No debés blanquear el mensaje ingresado.";
+        }
         try {
             SmsManager smsManager = SmsManager.getDefault();
             smsManager.sendTextMessage(smsNumber, null, smsBody, null, null);
+            if(android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
+                saveInOutbox(smsNumber, smsBody);
             actualDialog.dismiss();
             return "El mensaje fue enviado correctamente";
         } catch (Exception e) {
@@ -379,19 +406,26 @@ public class SMSDriver {
                 answer = (EditText) customDialog.findViewById(R.id.contenido);
                 answer.setTypeface(fontRegular);
                 String smsBody=answer.getText().toString();
-                try {
-                    SmsManager smsManager = SmsManager.getDefault();
-                    smsManager.sendTextMessage(incomingMensaje.getPhoneNumber(), null, smsBody, null, null);
-                    Toast.makeText(context.getApplicationContext(), "SMS enviado",Toast.LENGTH_LONG).show();
-                } catch (Exception e) {
-                    Toast.makeText(context.getApplicationContext(),"El envío falló. Reintentá luego",Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-                }
-                STTService.getInstance().setIsListening(false);
-                commandHandlerManager.setNullCommand();
-                ((MainMenuActivity)commandHandlerManager.getMainActivity()).setButtonsEnabled();
-                customDialog.dismiss();
+                if(smsBody.equals(""))
+                    Toast.makeText(context, "Ingresá un mensaje", Toast.LENGTH_LONG).show();
+                else {
+                    try {
 
+                        SmsManager smsManager = SmsManager.getDefault();
+                        smsManager.sendTextMessage(incomingMensaje.getPhoneNumber(), null, smsBody, null, null);
+                        if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
+                            saveInOutbox(incomingMensaje.getPhoneNumber(), smsBody);
+                        Toast.makeText(context.getApplicationContext(), "SMS enviado", Toast.LENGTH_LONG).show();
+
+                    } catch (Exception e) {
+                        Toast.makeText(context.getApplicationContext(), "El envío falló. Reintentá luego", Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                    }
+                    STTService.getInstance().setIsListening(false);
+                    commandHandlerManager.setNullCommand();
+                    ((MainMenuActivity) commandHandlerManager.getMainActivity()).setButtonsEnabled();
+                    customDialog.dismiss();
+                }
             }
         });
         customDialog.findViewById(R.id.leer).setOnClickListener(new View.OnClickListener() {
@@ -402,22 +436,28 @@ public class SMSDriver {
                 final boolean isListening = STTService.getInstance().getIsListening();
                 STTService.getInstance().setIsListening(false);
 
-                customDialog.findViewById(R.id.cancelar).setEnabled(false);
-                customDialog.findViewById(R.id.leer).setEnabled(false);
-                customDialog.findViewById(R.id.responder).setEnabled(false);
+                String smsBody = answer.getText().toString();
 
-                int delay = commandHandlerManager.getTextToSpeech().speakTextWithoutStart(answer.getText().toString());
+                if(smsBody.equals(""))
+                    Toast.makeText(context, "Ingresá un mensaje", Toast.LENGTH_LONG).show();
+                else {
 
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        STTService.getInstance().setIsListening(isListening);
-                        customDialog.findViewById(R.id.cancelar).setEnabled(true);
-                        customDialog.findViewById(R.id.leer).setEnabled(true);
-                        customDialog.findViewById(R.id.responder).setEnabled(true);
-                    }
-                }, delay);
+                    customDialog.findViewById(R.id.cancelar).setEnabled(false);
+                    customDialog.findViewById(R.id.leer).setEnabled(false);
+                    customDialog.findViewById(R.id.responder).setEnabled(false);
 
+                    int delay = commandHandlerManager.getTextToSpeech().speakTextWithoutStart(smsBody);
+
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            STTService.getInstance().setIsListening(isListening);
+                            customDialog.findViewById(R.id.cancelar).setEnabled(true);
+                            customDialog.findViewById(R.id.leer).setEnabled(true);
+                            customDialog.findViewById(R.id.responder).setEnabled(true);
+                        }
+                    }, delay);
+                }
             }
         });
 
@@ -434,9 +474,15 @@ public class SMSDriver {
     public String respondMessage(){
 
         String smsBody = answer.getText().toString();
+        if(smsBody.equals("")) {
+            actualDialog.dismiss();
+            return "El mensaje no pudo ser enviado. No debés blanquear el mensaje ingresado";
+        }
         try {
             SmsManager smsManager = SmsManager.getDefault();
             smsManager.sendTextMessage(incomingMensaje.getPhoneNumber(), null, smsBody, null, null);
+            if(android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
+                saveInOutbox(incomingMensaje.getPhoneNumber(), smsBody);
             actualDialog.dismiss();
             return "El mensaje fue enviado correctamente";
         } catch (Exception e) {
@@ -523,6 +569,21 @@ Retorna un string con el nombre
         return inbox.size();
 
     }
+
+    public void saveInOutbox(String number, String message){
+
+        ContentValues values = new ContentValues();
+        values.put("address", number); // phone number to send
+        values.put("date", System.currentTimeMillis());
+        values.put("read", "1"); // if you want to mark is as unread set to 0
+        values.put("type", "2"); // 2 means sent message
+        values.put("body", message);
+
+        Uri uri = Uri.parse("content://sms/");
+        context.getContentResolver().insert(uri,values);
+
+    }
+
 
     public static boolean isInstanceInitialized() {
         return instance != null;

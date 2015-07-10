@@ -1,8 +1,15 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
+import android.provider.ContactsContract;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -58,9 +65,17 @@ public class EnviarMailAContactoHandler extends CommandHandler{
     //PRONUNCIA CONTACTO
     public CommandHandlerContext stepOne(CommandHandlerContext context){
         String contact = context.getString(CONTACT);
-        getTextToSpeech().speakText("¿Querés enviar un mail al contacto " + contact + "?");
 
-        context.put(MAIL,"fsinopoli@prismamp.com");
+        context.put(MAIL,validateContact(contact));
+
+        if(context.getString(MAIL).equals("")){
+            getTextToSpeech().speakText("El contacto " + contact + "no fue encontrado. ¿A quién querés mandarle el mail?");
+            context.put(SET_CONTACT, true);
+            context.put(STEP, 1);
+            return context;
+        }
+
+        getTextToSpeech().speakText("¿Querés enviar un mail al contacto " + contact + "?");
 
         context.put(SET_CONTACT, false);
 
@@ -206,6 +221,62 @@ public class EnviarMailAContactoHandler extends CommandHandler{
         emailIntent.putExtra(Intent.EXTRA_TEXT, message);
         emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         getCommandHandlerManager().getMainActivity().startActivity(Intent.createChooser(emailIntent, "Seleccioná Cuenta de Email:"));
+
+    }
+
+    public String validateContact(String contact){
+
+        List<HashMap<String,String>> contacts = new ArrayList<HashMap<String,String>>();
+
+        String accents = "áéíóúÁÉÍÓÚ";
+        String noAccents = "aeiouAEIOU";
+        String contactWithoutAccent = contact;
+
+        int i;
+
+        for(i=0;i<accents.length();i++){
+
+            contactWithoutAccent = contactWithoutAccent.replace(accents.charAt(i),noAccents.charAt(i));
+
+        }
+
+        ContentResolver cr = getContext().getContentResolver();
+        Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,null, null, null, null);
+        if (cur.getCount() > 0) {
+            while (cur.moveToNext()) {
+                String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
+                String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                String mail = cur.getString(cur.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+                if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
+                    Cursor pCur = cr.query(
+                            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                            null,
+                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = ?",
+                            new String[]{id}, null);
+                    while (pCur.moveToNext()) {
+                        String phoneNo = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                        HashMap<String,String> data = new HashMap<String,String>();
+                        data.put("NAME",name);
+                        data.put("NUMBER",phoneNo);
+                        data.put("MAIL",mail);
+                        contacts.add(data);
+                    }
+                    pCur.close();
+                }
+            }
+
+            i = 0;
+
+            while(i < contacts.size()){
+                if(contacts.get(i).get("NAME").toLowerCase().equals(contact) || contacts.get(i).get("NAME").toLowerCase().equals(contactWithoutAccent) )
+                    return contacts.get(i).get("MAIL");
+
+                i++;
+            }
+
+        }
+
+        return "";
 
     }
 

@@ -59,6 +59,24 @@ public class TTS {
 
     }
 
+    public void speakTextWithNumbers(String textToSpeak) {
+
+        int delayTime = textToSpeak.length()/5 + 1;
+        delayTime = delayTime * 900;
+
+        // Reproduce el texto
+        ttsObject.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH, null);
+
+        // Execute some code after delayTime seconds have passed
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
+            }
+        }, delayTime);
+
+    }
+
     public int speakTextWithoutStart(String textToSpeak){
 
         ttsObject.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH, null);

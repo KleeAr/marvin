@@ -65,7 +65,7 @@ public class EnviarSMSAContactoHandler extends CommandHandler{
         context.put(NUMBER,validateContact(contact));
 
         if(context.getString(NUMBER).equals("")){
-            getTextToSpeech().speakText("El contacto no fue encontrado en la lista. Reingresalo");
+            getTextToSpeech().speakText("El contacto " + contact + "no fue encontrado. ¿A quién querés mandarle el mensaje?");
             context.put(SET_CONTACT, true);
             context.put(STEP, 1);
             return context;
@@ -167,12 +167,9 @@ public class EnviarSMSAContactoHandler extends CommandHandler{
 
         for(i=0;i<accents.length();i++){
 
-            contactWithoutAccent.replace(accents.charAt(i),noAccents.charAt(i));
+            contactWithoutAccent = contactWithoutAccent.replace(accents.charAt(i),noAccents.charAt(i));
 
         }
-
-        Log.d("APP",contact);
-        Log.d("APP",contactWithoutAccent);
 
         ContentResolver cr = getContext().getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,null, null, null, null);

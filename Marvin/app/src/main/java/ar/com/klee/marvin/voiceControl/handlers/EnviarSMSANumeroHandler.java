@@ -68,7 +68,7 @@ public class EnviarSMSANumeroHandler extends CommandHandler{
 
         }
 
-        int i = 0;
+        int i = 1;
         String contactWithSpaces = "";
 
         while(i < contact.length()){
@@ -76,7 +76,7 @@ public class EnviarSMSANumeroHandler extends CommandHandler{
             i++;
         }
 
-        getTextToSpeech().speakText("¿Querés enviar un sms al numero " + contactWithSpaces + "?");
+        getTextToSpeech().speakTextWithNumbers("¿Querés enviar un sms al numero " + contactWithSpaces + "?");
         context.getObject(ACTIVITY, MainMenuActivity.class).setNumber(contact);
         context.put(SET_NUMBER, false);
         context.put(STEP, 3);
