@@ -1,22 +1,22 @@
 package kleear.phoneapp;
 
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
 /**
- * Created by Leo on 14/06/2015.
+ * Clase para administrar las llamadas entrantes
  */
 public class IncomingCall extends Activity {
     private Button btnAceptar;
@@ -25,11 +25,12 @@ public class IncomingCall extends Activity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_incoming_call);
 
         //Declaracion de los botones
-        btnAceptar = (Button)findViewById(R.id.btnAceptar);
-        btnRechazar = (Button)findViewById(R.id.btnRechazar);
+        btnAceptar = (Button)findViewById(R.id.btnAceptar); //se puede cambiar por imagenes
+        btnRechazar = (Button)findViewById(R.id.btnRechazar); //se puede cambiar por imagenes
 
         //Obtencion del parametro pasado de la Activity llamadora
         Bundle bundle = getIntent().getExtras();
@@ -37,12 +38,16 @@ public class IncomingCall extends Activity {
 
 
         //Establecer el los datos en la interfaz
-        textView = (TextView) findViewById(R.id.textView);
-        textView.setText("Llamada entrante: "+  getContactName(getApplicationContext(), dato));
+        Typeface fontBold = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");
+        textView = (TextView) findViewById(R.id.toCall);
+        textView.setText("Llamada entrante:"+"\n"+ getContactName(getApplicationContext(), dato));
+        textView.setTypeface(fontBold);
 
 
 
         btnAceptar.setOnClickListener(new View.OnClickListener() {
+
+            @Override
             public void onClick(View view) {
                 //Acciones
                 Context mContext = getApplicationContext();
@@ -56,18 +61,20 @@ public class IncomingCall extends Activity {
                 am.setMode(AudioManager.MODE_IN_CALL);
                 am.setSpeakerphoneOn(true);
 
-                //finish(); //Regresa a la activity anterior
+                finish(); //Regresa a la activity anterior
 
             }
         });
 
         btnRechazar.setOnClickListener( new View.OnClickListener() {
+            @Override
             public void onClick(View view){
                 //Acciones
                 Context mContext = getApplicationContext();
                 Intent buttonDown = new Intent(Intent.ACTION_MEDIA_BUTTON); buttonDown.putExtra(Intent.EXTRA_KEY_EVENT,
                         new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_HEADSETHOOK));
                 mContext.sendOrderedBroadcast(buttonDown, "android.permission.CALL_PRIVILEGED");
+                finish(); //Regresa a la activity anterior
 
 
             }
@@ -75,8 +82,12 @@ public class IncomingCall extends Activity {
 
 
     }
-    public String getContactName(Context context, final String phoneNumber)
-    {
+
+    /*
+    Funcion que recibe como parametro un numero de telefono
+    Retorna el nombre del contacto si esta registrado, sino devuelve el numero de telefono
+     */
+    public String getContactName(Context context, final String phoneNumber){
         Uri uri;
         String[] projection;
 

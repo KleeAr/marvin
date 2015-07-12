@@ -1,17 +1,21 @@
 package kleear.phoneapp;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CallLog;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -19,6 +23,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+
+/*
+* Clase donde se maneja el historial de llamdas a traves de una lista
+ */
 
 
 public class HistorialList extends Activity implements AdapterView.OnItemClickListener {
@@ -34,6 +42,7 @@ public class HistorialList extends Activity implements AdapterView.OnItemClickLi
         mylistView = (ListView) findViewById(R.id.listviewshow);
         mylistView.setOnItemClickListener(this);
 
+        //Acceso a la lista historica de llamadas
         Cursor cursorH = getContentResolver().query(CallLog.Calls.CONTENT_URI, null, null, null, null);
         int number = cursorH.getColumnIndex(CallLog.Calls.NUMBER);
         int type = cursorH.getColumnIndex(CallLog.Calls.TYPE);
@@ -67,7 +76,7 @@ public class HistorialList extends Activity implements AdapterView.OnItemClickLi
             objCall.setDuration(callDuration);
             objCall.setDate(callDayTime);
             objCall.setType(dir);
-            mylist.add(objCall);
+            mylist.add(objCall); //se agrega el objeto a la lista
 
 
         }
@@ -80,18 +89,15 @@ public class HistorialList extends Activity implements AdapterView.OnItemClickLi
             Collections.sort(mylist, new Comparator<Call>() {
                 @Override
                 public int compare(Call lhs, Call rhs) {
-                    return lhs.getDate().compareTo(rhs.getDate());
+                    return rhs.getDate().compareTo(lhs.getDate());
                 }
             });
 
             if(mylist.size()==0)
-                showToast("No se han encontrado llamadas!!!");
+                Toast.makeText(this,"Registro de llamadas vacio!", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void showToast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-    }
 
     @Override
     public void onItemClick(AdapterView<?> listview, View v, int position,
@@ -100,26 +106,60 @@ public class HistorialList extends Activity implements AdapterView.OnItemClickLi
         showCallDialog(objetoCall.getNumberPhone());
     }
 
-    private void showCallDialog(final String number) {
 
-        AlertDialog alert = new AlertDialog.Builder(HistorialList.this).create();
-        alert.setTitle("Confirmar llamada");
-        alert.setMessage("Estas seguro de llamar a " + number + " ?");
-        alert.setButton("No", new DialogInterface.OnClickListener() {
+/*
+* Muesta el dialogo de consulta sobre si se quiere realizar alguna accion sobre un item de la lista de llamadas
+* Recibe como parametro el numero del item selecccionado
+ */
+    public  void showCallDialog(final String number){
+        final Dialog customDialog = new Dialog(this);
+        customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        customDialog.setCancelable(false);
+        customDialog.setContentView(R.layout.dialog_inbox);
+        customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        Typeface fontBold = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");
+
+
+        TextView textFor = (TextView) customDialog.findViewById(R.id.toCall);
+        textFor.setTypeface(fontBold);
+        textFor.setText("¿Quieres realizar alguna accion con el numero: " + number + " ?");
+
+
+        customDialog.findViewById(R.id.cancelar).setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
+            public void onClick(View view){
+                customDialog.dismiss();
             }
         });
-        alert.setButton2("Si", new DialogInterface.OnClickListener() {
+        customDialog.findViewById(R.id.responder).setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onClick(DialogInterface dialog, int which) {
+            public void onClick(View view) {
+                Toast.makeText(HistorialList.this,"Envia SMS", Toast.LENGTH_SHORT).show();
+                //Llamar a la funcion que enviar mensajes con el numero fijo
+                customDialog.dismiss();
+
+            }
+        });
+        customDialog.findViewById(R.id.llamar).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view)
+            {
+                customDialog.dismiss();
                 Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number));
                 startActivity(intent);
+
             }
         });
-        alert.show();
+
+        customDialog.show();
+
+
     }
+
 
 }
 

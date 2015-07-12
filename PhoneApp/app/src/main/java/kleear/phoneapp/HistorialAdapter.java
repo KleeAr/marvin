@@ -12,6 +12,9 @@ import android.widget.TextView;
 import java.text.DateFormat;
 import java.util.List;
 
+/*
+* Clase utilizada para adaptar los items de la lista de mensajes entrantes
+ */
 
 public class HistorialAdapter extends ArrayAdapter<Call> {
 

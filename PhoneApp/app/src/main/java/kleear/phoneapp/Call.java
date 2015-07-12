@@ -2,7 +2,7 @@ package kleear.phoneapp;
 
 import java.util.Date;
 /**
- * Created by Leo
+ * Clase Llamada, para almacenar las lladamadas entrantes
  */
 public class Call {
 
