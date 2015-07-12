@@ -7,7 +7,7 @@ import java.util.Date;
 public class Mensaje implements Serializable {
 
     private String phoneNumber, contactName, bodyMessage;
-    private Long date;
+    private String date;
 
     public String getPhoneNumber() {
         return phoneNumber;
@@ -33,15 +33,15 @@ public class Mensaje implements Serializable {
         this.bodyMessage = bodyMessage;
     }
 
-    public Long getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Long date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
-    public Mensaje(String phoneNumber, String bodyMessage, String contactName, Long date) {
+    public Mensaje(String phoneNumber, String bodyMessage, String contactName, String date) {
         this.phoneNumber = phoneNumber;
         this.bodyMessage = bodyMessage;
         this.contactName = contactName;

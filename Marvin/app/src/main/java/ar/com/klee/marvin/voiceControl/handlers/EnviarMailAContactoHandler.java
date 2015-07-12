@@ -6,11 +6,14 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.StringTokenizer;
 
+import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
@@ -19,6 +22,9 @@ public class EnviarMailAContactoHandler extends CommandHandler{
     public static final String CONTACTO = "contacto";
     private static final String SUBJECT = "SUBJECT";
     private static final String MAIL = "MAIL";
+    private static final String MAILS = "MAILS";
+    private static final String NAMES = "NAMES";
+    private static final String SET_MATCHES = "SET_MATCHES";
 
     public EnviarMailAContactoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
         super("enviar mail a {contacto}", textToSpeech, context, commandHandlerManager);
@@ -60,28 +66,99 @@ public class EnviarMailAContactoHandler extends CommandHandler{
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
         commandHandlerContext.put(CONTACT, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.getString(COMMAND)).get(CONTACTO));
         commandHandlerContext.put(SET_CONTACT, false);
+        commandHandlerContext.put(SET_MATCHES, false);
     }
 
     //PRONUNCIA CONTACTO
     public CommandHandlerContext stepOne(CommandHandlerContext context){
         String contact = context.getString(CONTACT);
 
-        context.put(MAIL,validateContact(contact));
+        if(!context.getBoolean(SET_MATCHES)) {
+            List<HashMap<String, String>> matches;
 
-        if(context.getString(MAIL).equals("")){
-            getTextToSpeech().speakText("El contacto " + contact + "no fue encontrado. ¿A quién querés mandarle el mail?");
+            matches = validateContact(contact);
+
+            if(matches.size() == 0){
+                getTextToSpeech().speakText("El contacto " + contact + " no fue encontrado o no tiene un mail asociado. ¿A quién querés mandarle el mail?");
+                context.put(SET_CONTACT, true);
+                context.put(STEP, 1);
+                return context;
+            }
+
+            if(matches.size() == 1) {
+                context.put(MAIL,matches.get(0).get("MAIL"));
+                getTextToSpeech().speakText("¿Querés enviar un mail al contacto " + contact + "?");
+                context.put(SET_CONTACT, false);
+                context.put(STEP, 3);
+                return context;
+            }
+
+            String message = "Se detectaron varios contactos con mail asociado. Indicá ";
+            List<String> mails = new ArrayList<>();
+            List<String> names = new ArrayList<>();
+
+            for(int i=1; i<=matches.size(); i++){
+                message += ((Integer)i).toString() + " si es " + matches.get(i-1).get("NAME") + ". ";
+                names.add(matches.get(i-1).get("NAME"));
+                mails.add(matches.get(i-1).get("MAIL"));
+            }
+            getTextToSpeech().speakText(message);
+            context.put(MAILS, mails);
+            context.put(NAMES, names);
+            context.put(SET_MATCHES, true);
             context.put(SET_CONTACT, true);
             context.put(STEP, 1);
             return context;
+
+        }else{
+
+            int number;
+
+            try{
+
+                contact = convertNumber(contact);
+                number = Integer.parseInt(contact);
+
+            }catch(NumberFormatException e){
+
+                String message = "Debés indicar un número. Indicá ";
+
+                for(int i=1; i<=context.getObject("NAMES",List.class).size(); i++){
+                    message += ((Integer)i).toString() + " si es " + context.getObject("NAMES",List.class).get(i-1) + ". ";
+                }
+
+                getTextToSpeech().speakText(message);
+                context.put(SET_MATCHES, true);
+                context.put(SET_CONTACT, true);
+                context.put(STEP, 1);
+                return context;
+
+            }
+
+            if(number<1 || number>context.getObject("NAMES",List.class).size()){
+
+                String message = "Número incorrecto. Indicá ";
+
+                for(int i=1; i<=context.getObject("NAMES",List.class).size(); i++){
+                    message += ((Integer)i).toString() + " si es " + context.getObject("NAMES",List.class).get(i-1) + ". ";
+                }
+
+                getTextToSpeech().speakText(message);
+                context.put(SET_MATCHES, true);
+                context.put(SET_CONTACT, true);
+                context.put(STEP, 1);
+                return context;
+            }
+
+            context.put(MAIL, context.getObject(MAILS,List.class).get(number-1));
+            context.put(CONTACT, context.getObject(NAMES,List.class).get(number-1));
+            getTextToSpeech().speakText("¿Querés enviar un mail al contacto " + context.getString(CONTACT) + "?");
+            context.put(SET_CONTACT, false);
+            context.put(SET_MATCHES, false);
+            context.put(STEP, 3);
+            return context;
+
         }
-
-        getTextToSpeech().speakText("¿Querés enviar un mail al contacto " + contact + "?");
-
-        context.put(SET_CONTACT, false);
-
-        context.put(STEP, 3);
-        return context;
-
     }
 
     //CONFIRMA CONTACTO
@@ -213,30 +290,41 @@ public class EnviarMailAContactoHandler extends CommandHandler{
         newFirstCharacter = Character.toUpperCase(firstCharacter);
         message = message.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
 
+        String subject = context.getString(SUBJECT);
+        firstCharacter = subject.charAt(0);
+        newFirstCharacter = Character.toUpperCase(firstCharacter);
+        subject = subject.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
+
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", context.getString(MAIL), null));
         //emailIntent.setType("message/rfc822");
         //emailIntent.putExtra(Intent.EXTRA_EMAIL, context.getString(MAIL));
         //emailIntent.putExtra(Intent.EXTRA_CC, cc);
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, context.getString(SUBJECT));
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
         emailIntent.putExtra(Intent.EXTRA_TEXT, message);
         emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         getCommandHandlerManager().getMainActivity().startActivity(Intent.createChooser(emailIntent, "Seleccioná Cuenta de Email:"));
 
     }
 
-    public String validateContact(String contact){
+    public List<HashMap<String,String>> validateContact(String contact){
 
         List<HashMap<String,String>> contacts = new ArrayList<HashMap<String,String>>();
+        List<HashMap<String,String>> suggestedContacts = new ArrayList<HashMap<String,String>>();
 
         String accents = "áéíóúÁÉÍÓÚ";
         String noAccents = "aeiouAEIOU";
         String contactWithoutAccent = contact;
+
+        StringTokenizer stringTokenizerContact = new StringTokenizer(contact);
+        String suggestedContact = stringTokenizerContact.nextToken();
+        String suggestedContactWithoutAccent = suggestedContact;
 
         int i;
 
         for(i=0;i<accents.length();i++){
 
             contactWithoutAccent = contactWithoutAccent.replace(accents.charAt(i),noAccents.charAt(i));
+            suggestedContactWithoutAccent = suggestedContactWithoutAccent.replace(accents.charAt(i),noAccents.charAt(i));
 
         }
 
@@ -246,38 +334,94 @@ public class EnviarMailAContactoHandler extends CommandHandler{
             while (cur.moveToNext()) {
                 String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
                 String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                String mail = cur.getString(cur.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
                 if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
-                    Cursor pCur = cr.query(
-                            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                            null,
-                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = ?",
-                            new String[]{id}, null);
-                    while (pCur.moveToNext()) {
-                        String phoneNo = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+
+                    Cursor emails = cr.query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null,
+                            ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = " + id, null, null);
+
+                    while (emails.moveToNext()) {
+
+                        String mail = emails.getString(emails.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+
                         HashMap<String,String> data = new HashMap<String,String>();
-                        data.put("NAME",name);
-                        data.put("NUMBER",phoneNo);
-                        data.put("MAIL",mail);
-                        contacts.add(data);
+                        StringTokenizer stringTokenizerName = new StringTokenizer(name);
+                        String firstName = stringTokenizerName.nextToken().toLowerCase();
+                        if(name.toLowerCase().equals(contact) || name.toLowerCase().equals(contactWithoutAccent)) {
+                            data.put("MAIL",mail);
+                            contacts.add(data);
+                        }else if(firstName.equals(suggestedContact) || firstName.equals(suggestedContactWithoutAccent)){
+                            data.put("NAME", name);
+                            data.put("MAIL",mail);
+                            suggestedContacts.add(data);
+                        }
                     }
-                    pCur.close();
+
+                    emails.close();
                 }
             }
-
-            i = 0;
-
-            while(i < contacts.size()){
-                if(contacts.get(i).get("NAME").toLowerCase().equals(contact) || contacts.get(i).get("NAME").toLowerCase().equals(contactWithoutAccent) )
-                    return contacts.get(i).get("MAIL");
-
-                i++;
-            }
-
         }
 
-        return "";
+        cur.close();
 
+        if(contacts.size() != 0)
+            return contacts;
+        return suggestedContacts;
+
+    }
+
+    public String convertNumber(String input){
+
+        switch(input){
+
+            case "uno":
+                return "1";
+            case "dos":
+                return "2";
+            case "tres":
+                return "3";
+            case "cuatro":
+                return "4";
+            case "cinco":
+                return "5";
+            case "seis":
+                return "6";
+            case "siete":
+                return "7";
+            case "ocho":
+                return "8";
+            case "nueve":
+                return "9";
+            case "diez":
+                return "10";
+            case "once":
+                return "11";
+            case "doce":
+                return "12";
+            case "trece":
+                return "13";
+            case "catorce":
+                return "14";
+            case "quince":
+                return "15";
+            case "dieciseis":
+                return "16";
+            case "diecisiete":
+                return "17";
+            case "dieciocho":
+                return "18";
+            case "diecinueve":
+                return "19";
+            case "veinte":
+                return "20";
+            case "veintiuno":
+                return "21";
+            case "veintidos":
+                return "22";
+            case "veintitres":
+                return "23";
+            default:
+                return input;
+        }
     }
 
 }

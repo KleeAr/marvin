@@ -73,7 +73,7 @@ public class EnviarSMSAContactoHandler extends CommandHandler{
             matches = validateContact(contact);
 
             if(matches.size() == 0){
-                getTextToSpeech().speakText("El contacto " + contact + "no fue encontrado. ¿A quién querés mandarle el sms?");
+                getTextToSpeech().speakText("El contacto " + contact + " no fue encontrado. ¿A quién querés mandarle el sms?");
                 context.put(SET_CONTACT, true);
                 context.put(STEP, 1);
                 return context;
@@ -287,6 +287,8 @@ public class EnviarSMSAContactoHandler extends CommandHandler{
                 }
             }
         }
+
+        cur.close();
 
         if(contacts.size() != 0)
             return contacts;

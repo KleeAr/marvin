@@ -262,18 +262,23 @@ public class SMSDriver {
         title.setTypeface(fontRegular);
 
         TextView contact = (TextView) customDialog.findViewById(R.id.contact);
-        contact.setText(incomingMensaje.getContactName());
-        contact.setTypeface(fontBold);
-
         TextView phone = (TextView) customDialog.findViewById(R.id.phone);
-        phone.setText(incomingMensaje.getPhoneNumber());
-        phone.setTypeface(fontRegular);
+
+        if(incomingMensaje.getContactName()!=null) {
+            contact.setText(incomingMensaje.getContactName());
+            contact.setTypeface(fontBold);
+            phone.setText(incomingMensaje.getPhoneNumber());
+            phone.setTypeface(fontRegular);
+        }else{
+            contact.setText(incomingMensaje.getPhoneNumber());
+            contact.setTypeface(fontBold);
+            phone.setText("Número no agendado");
+            phone.setTypeface(fontRegular);
+        }
 
 
-        Date date= new Date(incomingMensaje.getDate());
-        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         TextView dateTime = (TextView) customDialog.findViewById(R.id.date);
-        dateTime.setText(format.format(date));
+        dateTime.setText(incomingMensaje.getDate());
         dateTime.setTypeface(fontRegular);
 
 
@@ -379,13 +384,19 @@ public class SMSDriver {
         textFor.setTypeface(fontRegular);
 
         TextView contact = (TextView) customDialog.findViewById(R.id.contact);
-        contact.setText(incomingMensaje.getContactName());
-        contact.setTypeface(fontBold);
-
-
         TextView phone = (TextView) customDialog.findViewById(R.id.phone);
-        phone.setText(incomingMensaje.getPhoneNumber());
-        phone.setTypeface(fontRegular);
+
+        if(incomingMensaje.getContactName()!=null) {
+            contact.setText(incomingMensaje.getContactName());
+            contact.setTypeface(fontBold);
+            phone.setText(incomingMensaje.getPhoneNumber());
+            phone.setTypeface(fontRegular);
+        }else{
+            contact.setText(incomingMensaje.getPhoneNumber());
+            contact.setTypeface(fontBold);
+            phone.setText("Número no agendado");
+            phone.setTypeface(fontRegular);
+        }
 
 
         customDialog.findViewById(R.id.cancelar).setOnClickListener(new View.OnClickListener() {
@@ -510,7 +521,9 @@ public class SMSDriver {
                         SmsMessage smsMessage = SmsMessage.createFromPdu((byte[]) sms[i]);
 
                         String nameContact=getContactName(context,smsMessage.getOriginatingAddress());
-                        Mensaje incomingMensaje = new Mensaje(smsMessage.getOriginatingAddress(),smsMessage.getMessageBody(),nameContact, smsMessage.getTimestampMillis());
+                        Date date = new Date(smsMessage.getTimestampMillis());
+                        String formattedDate = new SimpleDateFormat("dd/MM/yyyy").format(date);
+                        Mensaje incomingMensaje = new Mensaje(smsMessage.getOriginatingAddress(),smsMessage.getMessageBody(),nameContact, formattedDate);
 
                         inbox.add(incomingMensaje);
 

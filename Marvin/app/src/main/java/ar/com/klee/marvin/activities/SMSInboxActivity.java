@@ -21,7 +21,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import ar.com.klee.marvin.R;
@@ -58,12 +60,14 @@ public class SMSInboxActivity extends Activity {
         int indexAddress = smsInboxCursor.getColumnIndex("address");
         int inboxDate = smsInboxCursor.getColumnIndex("date");
 
+        Date date = new Date(smsInboxCursor.getLong(inboxDate));
+        String formattedDate = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(date);
 
         if (indexBody < 0 || !smsInboxCursor.moveToFirst()) return;
         do {
 
             String contactName = SMSDriver.getContactName(getApplicationContext(), smsInboxCursor.getString(indexAddress));
-            Mensaje iMensaje = new Mensaje(smsInboxCursor.getString(indexAddress), smsInboxCursor.getString(indexBody), contactName, (long) inboxDate);
+            Mensaje iMensaje = new Mensaje(smsInboxCursor.getString(indexAddress), smsInboxCursor.getString(indexBody), contactName, formattedDate);
 
             smsMessagesList.add(iMensaje);
         } while (smsInboxCursor.moveToNext());
