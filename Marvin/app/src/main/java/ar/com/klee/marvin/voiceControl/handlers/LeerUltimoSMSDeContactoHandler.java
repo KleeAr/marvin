@@ -2,11 +2,8 @@ package ar.com.klee.marvin.voiceControl.handlers;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.provider.ContactsContract;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,31 +11,29 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import ar.com.klee.marvin.activities.MainMenuActivity;
+import ar.com.klee.marvin.activities.SMSInboxActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
-public class EnviarMailAContactoHandler extends CommandHandler{
+public class LeerUltimoSMSDeContactoHandler extends CommandHandler{
 
+    public static final String SET_MATCHES = "SET_MATCHES";
+    public static final String NAMES = "NAMES";
     public static final String CONTACTO = "contacto";
-    private static final String SUBJECT = "SUBJECT";
-    private static final String MAIL = "MAIL";
-    private static final String MAILS = "MAILS";
-    private static final String NAMES = "NAMES";
-    private static final String SET_MATCHES = "SET_MATCHES";
 
-    public EnviarMailAContactoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("enviar mail a {contacto}", textToSpeech, context, commandHandlerManager);
+    public LeerUltimoSMSDeContactoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
+        super("leer último sms de {contacto}", textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){
 
         Boolean setContact = context.getBoolean(SET_CONTACT);
-
         if(setContact) {
             context.put(CONTACT, context.getString(COMMAND));
         }
-
+        
         Integer step = context.getInteger(STEP);
+
         switch(step){
 
             case 1:
@@ -49,15 +44,10 @@ public class EnviarMailAContactoHandler extends CommandHandler{
                 return stepFive(context);
             case 7:
                 return stepSeven(context);
-            case 9:
-                return stepNine(context);
-            case 11:
-                return stepEleven(context);
-            case 13:
-                return stepThirteen(context);
+
         }
 
-        context.put(STEP, 0);
+        context.put(STEP,0);
         return context;
 
     }
@@ -67,10 +57,12 @@ public class EnviarMailAContactoHandler extends CommandHandler{
         commandHandlerContext.put(CONTACT, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.getString(COMMAND)).get(CONTACTO));
         commandHandlerContext.put(SET_CONTACT, false);
         commandHandlerContext.put(SET_MATCHES, false);
+
     }
 
-    //PRONUNCIA CONTACTO
+    //INGRESA CONTACTO Y LEE MENSAJE
     public CommandHandlerContext stepOne(CommandHandlerContext context){
+
         String contact = context.getString(CONTACT);
 
         if(!context.getBoolean(SET_MATCHES)) {
@@ -79,31 +71,39 @@ public class EnviarMailAContactoHandler extends CommandHandler{
             matches = validateContact(contact);
 
             if(matches.size() == 0){
-                getTextToSpeech().speakText("El contacto " + contact + " no fue encontrado o no tiene un mail asociado. ¿A quién querés mandarle el mail?");
+                getTextToSpeech().speakText("El contacto " + contact + " no fue encontrado. ¿De qué contacto querés consultar el último sms?");
                 context.put(SET_CONTACT, true);
                 context.put(STEP, 1);
                 return context;
             }
 
             if(matches.size() == 1) {
-                context.put(MAIL,matches.get(0).get("MAIL"));
-                getTextToSpeech().speakText("¿Querés enviar un mail al contacto " + contact + "?");
+
+                String message = context.getObject(ACTIVITY, SMSInboxActivity.class).getLastMessageOfContact(context.getString(CONTACT));
+
+                if(message.equals("")){
+                    getTextToSpeech().speakText("No hay mensajes del contacto " + context.getString(CONTACT));
+                    context.put(SET_CONTACT, false);
+                    context.put(SET_MATCHES, false);
+                    context.put(STEP, 0);
+                    return context;
+                }
+                getTextToSpeech().speakText( message + ". ¿Te gustaría llamar a ese número o responder el mensaje?");
+                context.getObject(ACTIVITY, SMSInboxActivity.class).showCallDialog();
                 context.put(SET_CONTACT, false);
+                context.put(SET_MATCHES, false);
                 context.put(STEP, 3);
                 return context;
             }
 
-            String message = "Se detectaron varios contactos con mail asociado. Indicá ";
-            List<String> mails = new ArrayList<>();
+            String message = "Se detectaron varios contactos. Indicá ";
             List<String> names = new ArrayList<>();
 
             for(int i=1; i<=matches.size(); i++){
                 message += ((Integer)i).toString() + " si es " + matches.get(i-1).get("NAME") + ". ";
                 names.add(matches.get(i-1).get("NAME"));
-                mails.add(matches.get(i-1).get("MAIL"));
             }
             getTextToSpeech().speakText(message);
-            context.put(MAILS, mails);
             context.put(NAMES, names);
             context.put(SET_MATCHES, true);
             context.put(SET_CONTACT, true);
@@ -150,40 +150,68 @@ public class EnviarMailAContactoHandler extends CommandHandler{
                 return context;
             }
 
-            context.put(MAIL, context.getObject(MAILS,List.class).get(number-1));
             context.put(CONTACT, context.getObject(NAMES,List.class).get(number-1));
-            getTextToSpeech().speakText("¿Querés enviar un mail al contacto " + context.getString(CONTACT) + "?");
+
+            String message = context.getObject(ACTIVITY, SMSInboxActivity.class).getLastMessageOfContact(context.getString(CONTACT));
+
+            if(message.equals("")){
+                getTextToSpeech().speakText("No hay mensajes del contacto " + context.getString(CONTACT));
+                context.put(SET_CONTACT, false);
+                context.put(SET_MATCHES, false);
+                context.put(STEP, 0);
+                return context;
+            }
+            getTextToSpeech().speakText( message + ". ¿Te gustaría llamar a ese número o responder el mensaje?");
+            context.getObject(ACTIVITY, SMSInboxActivity.class).showCallDialog();
             context.put(SET_CONTACT, false);
             context.put(SET_MATCHES, false);
             context.put(STEP, 3);
             return context;
 
         }
+
     }
 
-    //CONFIRMA CONTACTO
+    //INDICA SI QUIERE HACER ALGO
     public CommandHandlerContext stepThree(CommandHandlerContext context){
+
         String input = context.getString(COMMAND);
         if(input.equals("si")) {
-            getTextToSpeech().speakText("¿Qué mensaje le querés mandar por mail?");
+            getTextToSpeech().speakText("¿Querés llamar o responder?");
+            context.put(STEP, 3);
+            return context;
+        }
+
+        if(input.equals("llamar")) {
+            getTextToSpeech().speakText("Realizando llamada");
+            context.getObject(ACTIVITY, SMSInboxActivity.class).call();
+            context.put(STEP, 0);
+            return context;
+        }
+
+        if(input.equals("responder")) {
+            getTextToSpeech().speakText("¿Qué mensaje le querés mandar?");
+            context.getObject(ACTIVITY,SMSInboxActivity.class).respond();
             context.put(STEP, 5);
             return context;
         }
 
         if(input.equals("cancelar")) {
-            getTextToSpeech().speakText("Cancelando envío");
+            getTextToSpeech().speakText("No se enviará respuesta");
+            context.getObject(ACTIVITY,SMSInboxActivity.class).cancelDialog();
             context.put(STEP, 0);
             return context;
         }
 
         if(input.equals("no")){
-            getTextToSpeech().speakText("¿A qué contacto querés mandarle el mail?");
-            context.put(SET_CONTACT, true);
-            context.put(STEP, 1);
+            getTextToSpeech().speakText("No se enviará respuesta");
+            context.getObject(ACTIVITY, SMSInboxActivity.class).cancelDialog();
+            context.put(STEP, 0);
             return context;
         }
 
-        getTextToSpeech().speakText("Debés indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debés indicar llamar, responder o cancelar");
+
         context.put(STEP, 3);
         return context;
 
@@ -192,117 +220,44 @@ public class EnviarMailAContactoHandler extends CommandHandler{
     //INGRESO MENSAJE
     public CommandHandlerContext stepFive(CommandHandlerContext context){
         String input = context.getString(COMMAND);
-        getTextToSpeech().speakText("¿Querés enviar por mail el mensaje " + input + "?");
-        context.put(MESSAGE, input);
+
+        Character firstCharacter, newFirstCharacter;
+        firstCharacter = input.charAt(0);
+        newFirstCharacter = Character.toUpperCase(firstCharacter);
+        input = input.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
+
+        context.getObject(ACTIVITY, SMSInboxActivity.class).setAnswer(input);
+        getTextToSpeech().speakText("¿Querés responder el mensaje " + input + "?");
         context.put(STEP, 7);
         return context;
-
     }
 
     //CONFIRMACION DE MENSAJE
     public CommandHandlerContext stepSeven(CommandHandlerContext context){
         String input = context.getString(COMMAND);
         if(input.equals("si")) {
-            getTextToSpeech().speakText("¿Deseás agregar un asunto?");
-            context.put(STEP, 9);
+            getTextToSpeech().speakText(context.getObject(ACTIVITY,SMSInboxActivity.class).respondMessage());
+            context.put(STEP, 0);
             return context;
         }
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando envío");
+            context.getObject(ACTIVITY,SMSInboxActivity.class).cancelDialog();
             context.put(STEP, 0);
             return context;
         }
 
         if(input.equals("no")){
-            getTextToSpeech().speakText("¿Qué mensaje querés mandar?");
+            getTextToSpeech().speakText("¿Qué mensaje querés responder?");
+            context.getObject(ACTIVITY, SMSInboxActivity.class).setAnswer("");
             context.put(STEP, 5);
             return context;
         }
+
         getTextToSpeech().speakText("Debés indicar sí, no o cancelar");
         context.put(STEP, 7);
         return context;
-    }
-    //INDICA SI QUIERE AGREGAR ASUNTO
-    public CommandHandlerContext stepNine(CommandHandlerContext context){
-        String input = context.getString(COMMAND);
-        if(input.equals("si")) {
-            getTextToSpeech().speakText("¿Qué asunto deseás agregar?");
-            return context.put(STEP, 11);
-        }
-
-        if(input.equals("cancelar")) {
-            getTextToSpeech().speakText("Cancelando envío");
-            return context.put(STEP, 0);
-        }
-
-        if(input.equals("no")){
-            getTextToSpeech().speakText("Configurando mail. Seleccioná con qué cuenta querés enviarlo.");
-            context.put(SUBJECT, "");
-            sendMail(context);
-            return context.put(STEP, 0);
-        }
-
-        getTextToSpeech().speakText("Debés indicar sí, no o cancelar");
-
-        return context.put(STEP, 9);
-    }
-
-    //INDICA ASUNTO
-    public CommandHandlerContext stepEleven(CommandHandlerContext context){
-        getTextToSpeech().speakText("¿Querés enviar el asunto " + context.getString(COMMAND) + "?");
-        context.put(SUBJECT, context.getString(COMMAND));
-        return context.put(STEP, 13);
-    }
-
-    //CONFIRMA ASUNTO
-    public CommandHandlerContext stepThirteen(CommandHandlerContext context){
-        String input = context.getString(COMMAND);
-        if(input.equals("si")) {
-            getTextToSpeech().speakText("Configurando mail. Seleccioná con qué cuenta querés enviarlo.");
-            sendMail(context);
-            return context.put(STEP, 0);
-        }
-
-        if(input.equals("cancelar")) {
-            getTextToSpeech().speakText("Cancelando envío");
-            return context.put(STEP, 0);
-        }
-
-        if(input.equals("no")){
-            getTextToSpeech().speakText("¿Qué asunto deseás agregar?");
-            return context.put(STEP, 11);
-        }
-
-        getTextToSpeech().speakText("Debés indicar sí, no o cancelar");
-
-        return context.put(STEP, 13);
-
-    }
-
-
-    public void sendMail(CommandHandlerContext context){
-
-        Character firstCharacter, newFirstCharacter;
-        String message = context.getString(MESSAGE) + "\n\n\n" + "Mensaje enviado a través de MARVIN";
-
-        firstCharacter = message.charAt(0);
-        newFirstCharacter = Character.toUpperCase(firstCharacter);
-        message = message.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
-
-        String subject = context.getString(SUBJECT);
-        firstCharacter = subject.charAt(0);
-        newFirstCharacter = Character.toUpperCase(firstCharacter);
-        subject = subject.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
-
-        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", context.getString(MAIL), null));
-        //emailIntent.setType("message/rfc822");
-        //emailIntent.putExtra(Intent.EXTRA_EMAIL, context.getString(MAIL));
-        //emailIntent.putExtra(Intent.EXTRA_CC, cc);
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
-        emailIntent.putExtra(Intent.EXTRA_TEXT, message);
-        emailIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        getCommandHandlerManager().getMainActivity().startActivity(Intent.createChooser(emailIntent, "Seleccioná Cuenta de Email:"));
 
     }
 
@@ -335,28 +290,28 @@ public class EnviarMailAContactoHandler extends CommandHandler{
                 String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
                 String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
                 if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
-
-                    Cursor emails = cr.query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null,
-                            ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = " + id, null, null);
-
-                    while (emails.moveToNext()) {
-
-                        String mail = emails.getString(emails.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
-
+                    Cursor pCur = cr.query(
+                            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                            null,
+                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = ?",
+                            new String[]{id}, null);
+                    while (pCur.moveToNext()) {
+                        String phoneNo = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                         HashMap<String,String> data = new HashMap<String,String>();
                         StringTokenizer stringTokenizerName = new StringTokenizer(name);
                         String firstName = stringTokenizerName.nextToken().toLowerCase();
+
                         if(name.toLowerCase().equals(contact) || name.toLowerCase().equals(contactWithoutAccent)) {
-                            data.put("MAIL",mail);
+                            data.put("NAME", name);
+                            data.put("NUMBER", phoneNo);
                             contacts.add(data);
                         }else if(firstName.equals(suggestedContact) || firstName.equals(suggestedContactWithoutAccent)){
                             data.put("NAME", name);
-                            data.put("MAIL",mail);
+                            data.put("NUMBER", phoneNo);
                             suggestedContacts.add(data);
                         }
                     }
-
-                    emails.close();
+                    pCur.close();
                 }
             }
         }
@@ -425,4 +380,3 @@ public class EnviarMailAContactoHandler extends CommandHandler{
     }
 
 }
-

@@ -264,7 +264,7 @@ public class SMSDriver {
         TextView contact = (TextView) customDialog.findViewById(R.id.contact);
         TextView phone = (TextView) customDialog.findViewById(R.id.phone);
 
-        if(incomingMensaje.getContactName()!=null) {
+        if(!incomingMensaje.getContactName().equals(incomingMensaje.getPhoneNumber())) {
             contact.setText(incomingMensaje.getContactName());
             contact.setTypeface(fontBold);
             phone.setText(incomingMensaje.getPhoneNumber());
@@ -380,6 +380,9 @@ public class SMSDriver {
         Typeface fontBold = Typeface.createFromAsset(context.getAssets(),"Bariol_Bold.otf");
         Typeface fontRegular = Typeface.createFromAsset(context.getAssets(),"Bariol_Bold.otf");
 
+        answer = (EditText) customDialog.findViewById(R.id.contenido);
+        answer.setTypeface(fontRegular);
+
         TextView textFor = (TextView) customDialog.findViewById(R.id.textFor);
         textFor.setTypeface(fontRegular);
 
@@ -413,9 +416,6 @@ public class SMSDriver {
 
             @Override
             public void onClick(View view) {
-                Typeface fontRegular = Typeface.createFromAsset(context.getAssets(),"Bariol_Bold.otf");
-                answer = (EditText) customDialog.findViewById(R.id.contenido);
-                answer.setTypeface(fontRegular);
                 String smsBody=answer.getText().toString();
                 if(smsBody.equals(""))
                     Toast.makeText(context, "Ingresá un mensaje", Toast.LENGTH_LONG).show();
@@ -455,7 +455,7 @@ public class SMSDriver {
 
                     customDialog.findViewById(R.id.cancelar).setEnabled(false);
                     customDialog.findViewById(R.id.leer).setEnabled(false);
-                    customDialog.findViewById(R.id.responder).setEnabled(false);
+                    customDialog.findViewById(R.id.enviar).setEnabled(false);
 
                     int delay = commandHandlerManager.getTextToSpeech().speakTextWithoutStart(smsBody);
 
@@ -465,7 +465,7 @@ public class SMSDriver {
                             STTService.getInstance().setIsListening(isListening);
                             customDialog.findViewById(R.id.cancelar).setEnabled(true);
                             customDialog.findViewById(R.id.leer).setEnabled(true);
-                            customDialog.findViewById(R.id.responder).setEnabled(true);
+                            customDialog.findViewById(R.id.enviar).setEnabled(true);
                         }
                     }, delay);
                 }

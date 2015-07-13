@@ -83,7 +83,7 @@ public class CompartirEnInstagramHandler extends CommandHandler{
             return context;
         }
 
-        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debés indicar sí, no o cancelar");
 
         context.put(STEP, 3);
         return context;
@@ -113,7 +113,7 @@ public class CompartirEnInstagramHandler extends CommandHandler{
             return context;
         }
 
-        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debés indicar sí, no o cancelar");
 
         context.put(STEP, 5);
         return context;
@@ -155,7 +155,7 @@ public class CompartirEnInstagramHandler extends CommandHandler{
             return context;
         }
 
-        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debés indicar sí, no o cancelar");
         context.put(STEP, 9);
         return context;
     }
@@ -185,7 +185,7 @@ public class CompartirEnInstagramHandler extends CommandHandler{
             return context;
         }
 
-        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debés indicar sí, no o cancelar");
         context.put(STEP, 11);
         return context;
 

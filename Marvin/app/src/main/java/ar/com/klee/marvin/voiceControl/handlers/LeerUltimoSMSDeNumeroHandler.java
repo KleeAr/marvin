@@ -4,38 +4,36 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.ContactsContract;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import ar.com.klee.marvin.activities.CameraActivity;
 import ar.com.klee.marvin.activities.MainMenuActivity;
+import ar.com.klee.marvin.activities.SMSInboxActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
-public class EnviarSMSAContactoHandler extends CommandHandler{
+public class LeerUltimoSMSDeNumeroHandler extends CommandHandler{
 
-    public static final String CONTACTO = "contacto";
-    public static final String NUMBER= "NUMBER";
-    public static final String NUMBERS = "NUMBERS";
-    public static final String NAMES = "NAMES";
-    public static final String SET_MATCHES = "SET_MATCHES";
+    public static final String NUMERO = "numero";
+    private static final String SET_NUMBER = "SET_NUMBER";
+    private static final String NUMBER = "NUMBER";
 
-    public EnviarSMSAContactoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("enviar sms a {contacto}", textToSpeech, context, commandHandlerManager);
+    public LeerUltimoSMSDeNumeroHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
+        super("leer último sms del número {numero}", textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){
 
-        Boolean setContact = context.getBoolean(SET_CONTACT);
+        Boolean setContact = context.getBoolean(SET_NUMBER);
         if(setContact) {
-            context.put(CONTACT, context.getString(COMMAND));
+            context.put(NUMBER, context.getString(COMMAND));
         }
 
         Integer step = context.getInteger(STEP);
+
         switch(step){
 
             case 1:
@@ -48,141 +46,102 @@ public class EnviarSMSAContactoHandler extends CommandHandler{
                 return stepSeven(context);
 
         }
-        context.put(STEP, 0);
+
+        context.put(STEP,0);
         return context;
 
     }
 
     @Override
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
-        commandHandlerContext.put(CONTACT, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.getString(COMMAND)).get(CONTACTO));
-        commandHandlerContext.put(SET_CONTACT, false);
-        commandHandlerContext.put(NUMBER, "");
-        commandHandlerContext.put(SET_MATCHES, false);
-
-        commandHandlerContext.getObject(ACTIVITY, MainMenuActivity.class).displaySendSMS();
+        commandHandlerContext.put(NUMBER, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.getString(COMMAND)).get(NUMERO));
+        commandHandlerContext.put(SET_NUMBER, false);
     }
 
-    //PRONUNCIA CONTACTO
+    //INGRESA NUMERO Y LEE MENSAJE
     public CommandHandlerContext stepOne(CommandHandlerContext context){
-        String contact = context.getString(CONTACT);
 
-        if(!context.getBoolean(SET_MATCHES)) {
-            List<HashMap<String, String>> matches;
+        String contact = context.getString(NUMBER);
 
-            matches = validateContact(contact);
+        contact = contact.replace(" ","");
 
-            if(matches.size() == 0){
-                getTextToSpeech().speakText("El contacto " + contact + " no fue encontrado. ¿A quién querés mandarle el sms?");
-                context.put(SET_CONTACT, true);
-                context.put(STEP, 1);
-                return context;
-            }
+        try{
 
-            if(matches.size() == 1) {
-                context.put(NUMBER,matches.get(0).get("NUMBER"));
-                context.getObject(ACTIVITY, MainMenuActivity.class).setNumber(context.getString(NUMBER));
-                getTextToSpeech().speakText("¿Querés enviar un sms al contacto " + contact + "?");
-                context.put(SET_CONTACT, false);
-                context.put(STEP, 3);
-                return context;
-            }
+            Integer.parseInt(contact);
 
-            String message = "Se detectaron varios contactos. Indicá ";
-            List<String> numbers = new ArrayList<>();
-            List<String> names = new ArrayList<>();
+        }catch (NumberFormatException e){
 
-            for(int i=1; i<=matches.size(); i++){
-                message += ((Integer)i).toString() + " si es " + matches.get(i-1).get("NAME") + ". ";
-                names.add(matches.get(i-1).get("NAME"));
-                numbers.add(matches.get(i-1).get("NUMBER"));
-            }
-            getTextToSpeech().speakText(message);
-            context.put(NUMBERS, numbers);
-            context.put(NAMES, names);
-            context.put(SET_MATCHES, true);
-            context.put(SET_CONTACT, true);
+            getTextToSpeech().speakText("No se indicó un número. Reingresalo");
+            context.put(SET_NUMBER, true);
             context.put(STEP, 1);
             return context;
 
-        }else{
-
-            int number;
-
-            try{
-
-                contact = convertNumber(contact);
-                number = Integer.parseInt(contact);
-
-            }catch(NumberFormatException e){
-
-                String message = "Debés indicar un número. Indicá ";
-
-                for(int i=1; i<=context.getObject("NAMES",List.class).size(); i++){
-                    message += ((Integer)i).toString() + " si es " + context.getObject("NAMES",List.class).get(i-1) + ". ";
-                }
-
-                getTextToSpeech().speakText(message);
-                context.put(SET_MATCHES, true);
-                context.put(SET_CONTACT, true);
-                context.put(STEP, 1);
-                return context;
-
-            }
-
-            if(number<1 || number>context.getObject("NAMES",List.class).size()){
-
-                String message = "Número incorrecto. Indicá ";
-
-                for(int i=1; i<=context.getObject("NAMES",List.class).size(); i++){
-                    message += ((Integer)i).toString() + " si es " + context.getObject("NAMES",List.class).get(i-1) + ". ";
-                }
-
-                getTextToSpeech().speakText(message);
-                context.put(SET_MATCHES, true);
-                context.put(SET_CONTACT, true);
-                context.put(STEP, 1);
-                return context;
-            }
-
-            context.put(NUMBER, context.getObject(NUMBERS,List.class).get(number-1));
-            context.put(CONTACT, context.getObject(NAMES,List.class).get(number-1));
-            context.getObject(ACTIVITY, MainMenuActivity.class).setNumber(context.getString(NUMBER));
-            getTextToSpeech().speakText("¿Querés enviar un sms al contacto " + context.getString(CONTACT) + "?");
-            context.put(SET_CONTACT, false);
-            context.put(SET_MATCHES, false);
-            context.put(STEP, 3);
-            return context;
-
         }
+
+        int i = 1;
+        String contactWithSpaces = "";
+
+        while(i < contact.length()){
+            contactWithSpaces += contact.charAt(i) + " ";
+            i++;
+        }
+
+        String message = context.getObject(ACTIVITY, SMSInboxActivity.class).getLastMessageOfNumber(context.getString(NUMBER));
+
+        if(message.equals("")){
+            getTextToSpeech().speakText("No hay mensajes del número " + contactWithSpaces);
+            context.put(SET_NUMBER, false);
+            context.put(STEP, 0);
+            return context;
+        }
+
+        getTextToSpeech().speakText( message + ". ¿Te gustaría llamar a ese número o responder el mensaje?");
+        context.getObject(ACTIVITY, SMSInboxActivity.class).showCallDialog();
+        context.put(SET_NUMBER, false);
+        context.put(STEP, 3);
+        return context;
+
     }
 
-    //CONFIRMA CONTACTO
+    //INDICA SI QUIERE HACER ALGO
     public CommandHandlerContext stepThree(CommandHandlerContext context){
 
         String input = context.getString(COMMAND);
         if(input.equals("si")) {
-            getTextToSpeech().speakText("¿Qué mensaje le querés mandar por sms?");
+            getTextToSpeech().speakText("¿Querés llamar o responder?");
+            context.put(STEP, 3);
+            return context;
+        }
+
+        if(input.equals("llamar")) {
+            getTextToSpeech().speakText("Realizando llamada");
+            context.getObject(ACTIVITY, SMSInboxActivity.class).call();
+            context.put(STEP, 0);
+            return context;
+        }
+
+        if(input.equals("responder")) {
+            getTextToSpeech().speakText("¿Qué mensaje le querés mandar?");
+            context.getObject(ACTIVITY,SMSInboxActivity.class).respond();
             context.put(STEP, 5);
             return context;
         }
 
         if(input.equals("cancelar")) {
-            getTextToSpeech().speakText("Cancelando envío");
-            context.getObject(ACTIVITY,MainMenuActivity.class).cancelMessage();
+            getTextToSpeech().speakText("No se enviará respuesta");
+            context.getObject(ACTIVITY,SMSInboxActivity.class).cancelDialog();
             context.put(STEP, 0);
             return context;
         }
 
         if(input.equals("no")){
-            getTextToSpeech().speakText("¿A qué contacto querés mandarle el sms?");
-            context.getObject(ACTIVITY, MainMenuActivity.class).setNumber("");
-            context.put(SET_CONTACT, true);
-            context.put(STEP, 1);
+            getTextToSpeech().speakText("No se enviará respuesta");
+            context.getObject(ACTIVITY, SMSInboxActivity.class).cancelDialog();
+            context.put(STEP, 0);
             return context;
         }
 
-        getTextToSpeech().speakText("Debés indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debés indicar llamar, responder o cancelar");
 
         context.put(STEP, 3);
         return context;
@@ -198,8 +157,8 @@ public class EnviarSMSAContactoHandler extends CommandHandler{
         newFirstCharacter = Character.toUpperCase(firstCharacter);
         input = input.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
 
-        context.getObject(ACTIVITY, MainMenuActivity.class).setMessageBody(input);
-        getTextToSpeech().speakText("¿Querés enviar por sms el mensaje " + input + "?");
+        context.getObject(ACTIVITY, SMSInboxActivity.class).setAnswer(input);
+        getTextToSpeech().speakText("¿Querés responder el mensaje " + input + "?");
         context.put(STEP, 7);
         return context;
     }
@@ -208,21 +167,21 @@ public class EnviarSMSAContactoHandler extends CommandHandler{
     public CommandHandlerContext stepSeven(CommandHandlerContext context){
         String input = context.getString(COMMAND);
         if(input.equals("si")) {
-            getTextToSpeech().speakText(context.getObject(ACTIVITY,MainMenuActivity.class).sendMessage());
+            getTextToSpeech().speakText(context.getObject(ACTIVITY,SMSInboxActivity.class).respondMessage());
             context.put(STEP, 0);
             return context;
         }
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando envío");
-            context.getObject(ACTIVITY,MainMenuActivity.class).cancelMessage();
+            context.getObject(ACTIVITY,SMSInboxActivity.class).cancelDialog();
             context.put(STEP, 0);
             return context;
         }
 
         if(input.equals("no")){
-            getTextToSpeech().speakText("¿Qué mensaje querés mandar?");
-            context.getObject(ACTIVITY, MainMenuActivity.class).setMessageBody("");
+            getTextToSpeech().speakText("¿Qué mensaje querés responder?");
+            context.getObject(ACTIVITY, SMSInboxActivity.class).setAnswer("");
             context.put(STEP, 5);
             return context;
         }
@@ -352,4 +311,3 @@ public class EnviarSMSAContactoHandler extends CommandHandler{
     }
 
 }
-

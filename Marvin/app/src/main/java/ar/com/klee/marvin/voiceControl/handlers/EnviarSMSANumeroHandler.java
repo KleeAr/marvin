@@ -8,12 +8,12 @@ import ar.com.klee.marvin.voiceControl.TTS;
 
 public class EnviarSMSANumeroHandler extends CommandHandler{
 
-    public static final String NUMBERO = "numero";
+    public static final String NUMERO = "numero";
     private static final String SET_NUMBER = "SET_NUMBER";
     private static final String NUMBER = "NUMBER";
 
     public EnviarSMSANumeroHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("enviar sms al {numero}", textToSpeech, context, commandHandlerManager);
+        super("enviar sms al número {numero}", textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){
@@ -43,7 +43,7 @@ public class EnviarSMSANumeroHandler extends CommandHandler{
 
     @Override
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
-        commandHandlerContext.put(NUMBER, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.getString(COMMAND)).get(NUMBERO));
+        commandHandlerContext.put(NUMBER, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.getString(COMMAND)).get(NUMERO));
         commandHandlerContext.put(SET_NUMBER, false);
 
         commandHandlerContext.getObject(ACTIVITY, MainMenuActivity.class).displaySendSMS();
@@ -61,7 +61,7 @@ public class EnviarSMSANumeroHandler extends CommandHandler{
 
         }catch (NumberFormatException e){
 
-            getTextToSpeech().speakText("No se indicó un número");
+            getTextToSpeech().speakText("No se indicó un número. Reingresalo");
             context.put(SET_NUMBER, true);
             context.put(STEP, 1);
             return context;
