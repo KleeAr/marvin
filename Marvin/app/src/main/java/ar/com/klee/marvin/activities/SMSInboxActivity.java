@@ -67,6 +67,13 @@ public class SMSInboxActivity extends Activity {
         commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_SMS_INBOX,this);
     }
 
+    public void onBackPressed(){
+        commandHandlerManager.setNullCommand();
+        STTService.getInstance().setIsListening(false);
+        commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_MAIN, commandHandlerManager.getMainActivity());
+        this.finish();
+    }
+
     public void refreshSmsInbox() {
 
         //Obtención de los datos de los mensajes de entrada
@@ -97,14 +104,13 @@ public class SMSInboxActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 
-                mensaje = (Mensaje) parent.getAdapter().getItem(position); //recupera el objeto en la posición deseada
+                position++;
 
-                showCallDialog();
-
+                commandHandlerManager.setNullCommand();
                 STTService.getInstance().setIsListening(true);
                 STTService.getInstance().stopListening();
                 commandHandlerManager.setCurrentCommandHandler(new LeerSMSNumeroHandler(commandHandlerManager.getTextToSpeech(), commandHandlerManager.getContext(), commandHandlerManager));
-                commandHandlerManager.setCurrentContext(commandHandlerManager.getCommandHandler().drive(commandHandlerManager.getCommandHandler().createContext(commandHandlerManager.getCurrentContext(), commandHandlerManager.getActivity(), "leer sms número " + position)));
+                commandHandlerManager.setCurrentContext(commandHandlerManager.getCommandHandler().drive(commandHandlerManager.getCommandHandler().createContext(commandHandlerManager.getCurrentContext(), commandHandlerManager.getActivity(), "leer sms número " + ((Integer)position).toString())));
 
             }
         });
@@ -134,13 +140,22 @@ public class SMSInboxActivity extends Activity {
 
     public String getLastMessageOfContact(String contact){
 
-        int i = 0;
+        int i;
+
+        String accents = "áéíóúÁÉÍÓÚ";
+        String noAccents = "aeiouAEIOU";
+        String contactWithoutAccent = contact;
+
+        for(i=0;i<accents.length();i++)
+            contactWithoutAccent = contactWithoutAccent.replace(accents.charAt(i),noAccents.charAt(i));
+
+        i = 0;
 
         while(i < smsMessagesList.size()){
 
             Mensaje message = smsMessagesList.get(i);
 
-            if(message.getContactName().toLowerCase().equals(contact)){
+            if(message.getContactName().toLowerCase().equals(contact) || message.getContactName().toLowerCase().equals(contactWithoutAccent)){
                 String toSpeak = "";
 
                 toSpeak += message.getContactName() + " te envió un mensaje el ";
@@ -198,7 +213,7 @@ public class SMSInboxActivity extends Activity {
 
     public String getMessageNro(int index){
 
-        if(index > 0 && index < smsMessagesList.size()){
+        if(index >= 0 && index < smsMessagesList.size()){
 
             Mensaje message = smsMessagesList.get(index);
 
@@ -220,7 +235,7 @@ public class SMSInboxActivity extends Activity {
 
         }
 
-        return ((Integer)index).toString();
+        return ((Integer)smsMessagesList.size()).toString();
 
     }
 

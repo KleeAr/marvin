@@ -2,6 +2,7 @@ package ar.com.klee.marvin.voiceControl.handlers;
 
 import android.content.Context;
 import android.os.Build;
+import android.os.Handler;
 import android.telephony.SmsManager;
 
 import ar.com.klee.marvin.activities.CameraActivity;
@@ -46,9 +47,21 @@ public class LeerUltimoSMSHandler extends CommandHandler{
     //PRONUNCIA COMANDO Y SE LEE EL MENSAJE
     public CommandHandlerContext stepOne(CommandHandlerContext context){
 
-        getTextToSpeech().speakText(context.getObject(ACTIVITY, SMSInboxActivity.class).getLastMessage() + ". ¿Te gustaría llamar a ese número o responder el mensaje?");
+        String message = context.getObject(ACTIVITY, SMSInboxActivity.class).getLastMessage();
 
-        context.getObject(ACTIVITY, SMSInboxActivity.class).showCallDialog();
+        int delayTime = (message.length()+58)/5 + 1;
+        delayTime = delayTime * 550;
+
+        getTextToSpeech().speakText(message + ". ¿Te gustaría llamar a ese número o responder el mensaje?");
+
+        final CommandHandlerContext c = context;
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                c.getObject(ACTIVITY, SMSInboxActivity.class).showCallDialog();
+            }
+        }, delayTime);
 
         context.put(STEP, 3);
         return context;

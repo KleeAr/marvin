@@ -3,6 +3,7 @@ package ar.com.klee.marvin.voiceControl.handlers;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Handler;
 import android.provider.ContactsContract;
 
 import java.util.ArrayList;
@@ -88,8 +89,21 @@ public class LeerUltimoSMSDeContactoHandler extends CommandHandler{
                     context.put(STEP, 0);
                     return context;
                 }
+
+                int delayTime = (message.length()+58)/5 + 1;
+                delayTime = delayTime * 550;
+
                 getTextToSpeech().speakText( message + ". ¿Te gustaría llamar a ese número o responder el mensaje?");
-                context.getObject(ACTIVITY, SMSInboxActivity.class).showCallDialog();
+
+                final CommandHandlerContext c = context;
+
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        c.getObject(ACTIVITY, SMSInboxActivity.class).showCallDialog();
+                    }
+                }, delayTime);
+
                 context.put(SET_CONTACT, false);
                 context.put(SET_MATCHES, false);
                 context.put(STEP, 3);
@@ -161,8 +175,21 @@ public class LeerUltimoSMSDeContactoHandler extends CommandHandler{
                 context.put(STEP, 0);
                 return context;
             }
+
+            int delayTime = (message.length()+58)/5 + 1;
+            delayTime = delayTime * 550;
+
             getTextToSpeech().speakText( message + ". ¿Te gustaría llamar a ese número o responder el mensaje?");
-            context.getObject(ACTIVITY, SMSInboxActivity.class).showCallDialog();
+
+            final CommandHandlerContext c = context;
+
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    c.getObject(ACTIVITY, SMSInboxActivity.class).showCallDialog();
+                    }
+            }, delayTime);
+
             context.put(SET_CONTACT, false);
             context.put(SET_MATCHES, false);
             context.put(STEP, 3);

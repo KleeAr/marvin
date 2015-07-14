@@ -157,10 +157,10 @@ public class CommandHandlerManager {
             new SacarFotoHandler(textToSpeech, context, this));
 
         commandHandlersSMSInbox = Arrays.asList(new LeerUltimoSMSHandler(textToSpeech, context, this),
-                new CerrarHistorialDeSMSHandler(textToSpeech, context, this),
-                new LeerSMSNumeroHandler(textToSpeech, context, this),
-                new LeerUltimoSMSDeContactoHandler(textToSpeech, context, this),
-                new LeerUltimoSMSDeNumeroHandler(textToSpeech, context, this));
+            new CerrarHistorialDeSMSHandler(textToSpeech, context, this),
+            new LeerSMSNumeroHandler(textToSpeech, context, this),
+            new LeerUltimoSMSDeContactoHandler(textToSpeech, context, this),
+            new LeerUltimoSMSDeNumeroHandler(textToSpeech, context, this));
 
         commandHandlers = new HashMap<>();
 

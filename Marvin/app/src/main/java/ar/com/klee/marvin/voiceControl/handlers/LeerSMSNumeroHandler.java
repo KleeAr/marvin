@@ -1,6 +1,7 @@
 package ar.com.klee.marvin.voiceControl.handlers;
 
 import android.content.Context;
+import android.os.Handler;
 
 import ar.com.klee.marvin.activities.SMSInboxActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
@@ -8,7 +9,9 @@ import ar.com.klee.marvin.voiceControl.TTS;
 
 public class LeerSMSNumeroHandler extends CommandHandler{
 
-    public final String NUMERO = "numero";
+    public static final String NUMERO = "numero";
+    public static final String NUMBER = "NUMBER";
+    public static final String SET_NUMBER = "SET_NUMBER";
 
     public LeerSMSNumeroHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
         super("leer sms número {numero}", textToSpeech, context, commandHandlerManager);
@@ -17,6 +20,11 @@ public class LeerSMSNumeroHandler extends CommandHandler{
     public CommandHandlerContext drive(CommandHandlerContext context){
 
         Integer step = context.getInteger(STEP);
+
+        Boolean setContact = context.getBoolean(SET_NUMBER);
+        if(setContact) {
+            context.put(NUMBER, context.getString(COMMAND));
+        }
 
         switch(step){
 
@@ -38,13 +46,15 @@ public class LeerSMSNumeroHandler extends CommandHandler{
 
     @Override
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
-        // TODO
+        commandHandlerContext.put(NUMBER, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.getString(COMMAND)).get(NUMERO));
+        commandHandlerContext.put(SET_NUMBER, false);
     }
 
     //PRONUNCIA COMANDO Y SE LEE EL MENSAJE
     public CommandHandlerContext stepOne(CommandHandlerContext context){
 
-        String number = getExpressionMatcher().getValuesFromExpression(context.getString(COMMAND)).get(NUMERO);
+        String number = context.getString(NUMBER);
+
         int index;
 
         try{
@@ -59,7 +69,8 @@ public class LeerSMSNumeroHandler extends CommandHandler{
 
             }catch (NumberFormatException e2) {
 
-                getTextToSpeech().speakText("No se indicó un número. Reingresalo");
+                getTextToSpeech().speakText("No se indicó un número. Reingresá sólo el valor numérico");
+                context.put(SET_NUMBER, true);
                 context.put(STEP, 1);
                 return context;
 
@@ -70,16 +81,28 @@ public class LeerSMSNumeroHandler extends CommandHandler{
 
         if(message.length() < 5){
 
-            getTextToSpeech().speakText("El número indicado debe ser mayor a 0 y menor a " + message + ". Reingresalo");
+            getTextToSpeech().speakText("El número indicado debe ser mayor a 0 y menor a " + message + ". Reingresá sólo el valor numérico");
+            context.put(SET_NUMBER, true);
             context.put(STEP, 1);
             return context;
 
         }
 
+        int delayTime = (message.length()+58)/5 + 1;
+        delayTime = delayTime * 550;
+
         getTextToSpeech().speakText(message + ". ¿Te gustaría llamar a ese número o responder el mensaje?");
 
-        context.getObject(ACTIVITY, SMSInboxActivity.class).showCallDialog();
+        final CommandHandlerContext c = context;
 
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                c.getObject(ACTIVITY, SMSInboxActivity.class).showCallDialog();
+            }
+        }, delayTime);
+
+        context.put(SET_NUMBER, false);
         context.put(STEP, 3);
         return context;
     }
