@@ -31,7 +31,7 @@ public class ResponderSMSHandler extends CommandHandler{
             case 5:
                 return stepFive(context);
             case 7:
-                return stepFive(context);
+                return stepSeven(context);
 
         }
         context.put(STEP, 0);

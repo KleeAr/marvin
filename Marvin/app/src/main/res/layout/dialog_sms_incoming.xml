@@ -66,10 +66,11 @@
         android:id="@+id/contenido"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@android:color/black"
-        android:hint="Ingresá mensaje"/>
+        android:hint="Ingresá mensaje"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp" />
 
     <LinearLayout
         android:id="@+id/botonera"

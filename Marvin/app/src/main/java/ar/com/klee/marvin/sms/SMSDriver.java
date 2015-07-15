@@ -310,19 +310,20 @@ public class SMSDriver {
             @Override
             public void onClick(View view)
             {
-                final boolean isListening = STTService.getInstance().getIsListening();
-                STTService.getInstance().setIsListening(false);
+                STTService.getInstance().stopListening();
 
                 customDialog.findViewById(R.id.cancelar).setEnabled(false);
                 customDialog.findViewById(R.id.leer).setEnabled(false);
                 customDialog.findViewById(R.id.responder).setEnabled(false);
 
-                int delay = commandHandlerManager.getTextToSpeech().speakTextWithoutStart(bodySMS.getText().toString());
+                int delay = incomingMensaje.getBodyMessage().length()/5 + 1;
+                delay = delay * 550;
+
+                commandHandlerManager.getTextToSpeech().speakText(bodySMS.getText().toString());
 
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     public void run() {
-                        STTService.getInstance().setIsListening(isListening);
                         customDialog.findViewById(R.id.cancelar).setEnabled(true);
                         customDialog.findViewById(R.id.leer).setEnabled(true);
                         customDialog.findViewById(R.id.responder).setEnabled(true);
@@ -356,7 +357,7 @@ public class SMSDriver {
             public void run() {
                 customDialog.findViewById(R.id.cancelar).setEnabled(true);
                 customDialog.findViewById(R.id.leer).setEnabled(true);
-                customDialog.findViewById(R.id.enviar).setEnabled(true);
+                customDialog.findViewById(R.id.responder).setEnabled(true);
             }
         }, delay);
 
@@ -389,7 +390,7 @@ public class SMSDriver {
         TextView contact = (TextView) customDialog.findViewById(R.id.contact);
         TextView phone = (TextView) customDialog.findViewById(R.id.phone);
 
-        if(incomingMensaje.getContactName()!=null) {
+        if(!incomingMensaje.getContactName().equals(incomingMensaje.getPhoneNumber())) {
             contact.setText(incomingMensaje.getContactName());
             contact.setTypeface(fontBold);
             phone.setText(incomingMensaje.getPhoneNumber());
@@ -400,7 +401,6 @@ public class SMSDriver {
             phone.setText("Número no agendado");
             phone.setTypeface(fontRegular);
         }
-
 
         customDialog.findViewById(R.id.cancelar).setOnClickListener(new View.OnClickListener() {
 
@@ -444,8 +444,7 @@ public class SMSDriver {
             @Override
             public void onClick(View view)
             {
-                final boolean isListening = STTService.getInstance().getIsListening();
-                STTService.getInstance().setIsListening(false);
+                STTService.getInstance().stopListening();
 
                 String smsBody = answer.getText().toString();
 
@@ -457,12 +456,14 @@ public class SMSDriver {
                     customDialog.findViewById(R.id.leer).setEnabled(false);
                     customDialog.findViewById(R.id.enviar).setEnabled(false);
 
-                    int delay = commandHandlerManager.getTextToSpeech().speakTextWithoutStart(smsBody);
+                    int delay = answer.length()/5 + 1;
+                    delay = delay * 550;
+
+                    commandHandlerManager.getTextToSpeech().speakText(smsBody);
 
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         public void run() {
-                            STTService.getInstance().setIsListening(isListening);
                             customDialog.findViewById(R.id.cancelar).setEnabled(true);
                             customDialog.findViewById(R.id.leer).setEnabled(true);
                             customDialog.findViewById(R.id.enviar).setEnabled(true);
