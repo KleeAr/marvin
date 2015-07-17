@@ -1,6 +1,5 @@
-package kleear.phoneapp;
+package ar.com.klee.marvin.call;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -9,56 +8,53 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-/*
-Clase principal para el manejo de gestion de llamadas
- */
+import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
+import ar.com.klee.marvin.voiceControl.STTService;
 
+public class CallDriver {
 
-public class ManagerCall extends Activity {
-
-    private static final String TAG = ManagerCall.class.getSimpleName();
-    private static final int REQUEST_CODE_PICK_CONTACTS = 1;
+    private static final String TAG = CallDriver.class.getSimpleName();
+    public static final int REQUEST_CODE_PICK_CONTACTS = 1;
     private Uri uriContact;
     private String contactID;     // contacts unique ID
     private static EditText editPhone;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_phone);
+    private Dialog actualDialog;
 
-        Button btnCall, btnInbox;
+    private Context context;
+    private CommandHandlerManager commandHandlerManager;
+    private static CallDriver instance;
 
-        btnCall = (Button) findViewById(R.id.btnCall);
-        btnCall.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    public CallDriver(Context context) {
 
-                outgoingCallDialog();
+        this.context = context;
 
-            }
-        });
+    }
 
-        btnInbox = (Button) findViewById(R.id.btnInbox);
-        btnInbox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(), HistorialList.class);
-                startActivity(i);
+    public void initializeCommandHandlerManager(){
+        commandHandlerManager = CommandHandlerManager.getInstance();
+    }
 
+    public static CallDriver getInstance(){
+        if (instance == null) {
+            throw new IllegalStateException("Instance not initialized. Call initializeInstance before calling getInstance");
+        }
+        return instance;
+    }
 
-            }
-        });
-
-
+    public static CallDriver initializeInstance(Context context) {
+        if(instance != null) {
+            throw new IllegalStateException("Instance already initialized");
+        }
+        CallDriver.instance = new CallDriver(context);
+        return instance;
     }
 
 
@@ -66,25 +62,12 @@ public class ManagerCall extends Activity {
     Funciones de busqueda en la lista de contactos
      */
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_CODE_PICK_CONTACTS && resultCode == RESULT_OK) {
-            Log.d(TAG, "Response: " + data.toString());
-            uriContact = data.getData();
-
-            retrieveContactNumber();
-
-
-        }
-    }
-    private void retrieveContactNumber() {
+    public void retrieveContactNumber() {
 
         String number = null;
 
         // getting contacts ID
-        Cursor cursorID = getContentResolver().query(uriContact,
+        Cursor cursorID = context.getContentResolver().query(uriContact,
                 new String[]{ContactsContract.Contacts._ID},
                 null, null, null);
 
@@ -95,10 +78,8 @@ public class ManagerCall extends Activity {
 
         cursorID.close();
 
-        Log.d(TAG, "Contact ID: " + contactID);
-
         // Using the contact ID now we will get contact phone number
-        Cursor cursorPhone = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+        Cursor cursorPhone = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                 new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER},
 
                 ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ? AND " +
@@ -114,13 +95,19 @@ public class ManagerCall extends Activity {
 
         cursorPhone.close();
 
-        Log.d(TAG, "Contact Phone Number: " + number);
         editPhone.setText(number);
+        commandHandlerManager.getCurrentContext().put("SET_NUMBER",true);
+        commandHandlerManager.getCurrentContext().put("STEP",1);
+        commandHandlerManager.setCurrentContext(commandHandlerManager.getCommandHandler().drive(commandHandlerManager.getCommandHandler().createContext(commandHandlerManager.getCurrentContext(), commandHandlerManager.getActivity(), number)));
     }
 
-/*
-Funcion que recibe el nombre de un contacto y devuelve el numero del contacto
- */
+    public void setUriContact(Uri uri){
+        uriContact = uri;
+    }
+
+    /*
+    Funcion que recibe el nombre de un contacto y devuelve el numero del contacto
+     */
     public String getPhoneNumber(Context context, String name) {
         String ret = null;
         String selection = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME+" like'%" + name +"%'";
@@ -137,13 +124,15 @@ Funcion que recibe el nombre de un contacto y devuelve el numero del contacto
     }
 
     public  void outgoingCallDialog(){
-        final Dialog customDialog = new Dialog(this);
+        final Dialog customDialog = new Dialog(commandHandlerManager.getMainActivity());
         customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         customDialog.setCancelable(false);
-        customDialog.setContentView(R.layout.outgoing_call_dialog);
+        customDialog.setContentView(R.layout.dialog_call_outgoing);
         customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        Typeface fontBold = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");
+        actualDialog = customDialog;
+
+        Typeface fontBold = Typeface.createFromAsset(context.getAssets(),"Bariol_Bold.otf");
         TextView toCall = (TextView) customDialog.findViewById(R.id.toCall);
         toCall.setTypeface(fontBold);
 
@@ -156,12 +145,15 @@ Funcion que recibe el nombre de un contacto y devuelve el numero del contacto
             public void onClick(View view){
                 // using native contacts selection
                 // Intent.ACTION_PICK = Pick an item from the data, returning what was selected.
-                startActivityForResult(new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI), REQUEST_CODE_PICK_CONTACTS);
+                STTService.getInstance().stopListening();
+                commandHandlerManager.getMainActivity().startActivityForResult(new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI), REQUEST_CODE_PICK_CONTACTS);
             }
         });
         customDialog.findViewById(R.id.cancelar).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view){
+                commandHandlerManager.setNullCommand();
+                STTService.getInstance().setIsListening(false);
                 customDialog.dismiss();
             }
         });
@@ -171,8 +163,10 @@ Funcion que recibe el nombre de un contacto y devuelve el numero del contacto
             public void onClick(View view)
             {
                 String number = editPhone.getText().toString();
+                commandHandlerManager.setNullCommand();
+                STTService.getInstance().setIsListening(false);
                 Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number));
-                startActivity(intent);
+                commandHandlerManager.getMainActivity().startActivity(intent);
                 customDialog.dismiss();
 
             }
@@ -182,5 +176,25 @@ Funcion que recibe el nombre de un contacto y devuelve el numero del contacto
 
     }
 
+    public void setPhone(String number){
+        editPhone.setText(number);
+    }
 
+    public void closeDialog(){
+        actualDialog.dismiss();
+    }
+
+    public void callNumber(String number){
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number));
+        commandHandlerManager.getMainActivity().startActivity(intent);
+        actualDialog.dismiss();
+    }
+
+    public static boolean isInstanceInitialized() {
+        return instance != null;
+    }
+
+    public static void destroyInstance() {
+        instance = null;
+    }
 }

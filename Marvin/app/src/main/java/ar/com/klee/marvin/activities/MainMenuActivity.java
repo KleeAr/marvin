@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.call.CallDriver;
+import ar.com.klee.marvin.call.CallReceiver;
 import ar.com.klee.marvin.gps.LocationSender;
 import ar.com.klee.marvin.multimedia.music.MusicService;
 import ar.com.klee.marvin.multimedia.video.YouTubeVideo;
@@ -45,6 +47,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     private boolean wasPlaying;
 
     private SMSDriver smsDriver;
+    private CallDriver callDriver;
+    private CallReceiver callReceiver;
 
     private Button bt_play;
     private Button bt_pause;
@@ -76,6 +80,18 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             smsDriver = SMSDriver.getInstance();
         } else {
             smsDriver = SMSDriver.initializeInstance(getApplicationContext());
+        }
+
+        if(CallDriver.isInstanceInitialized()) {
+            callDriver = CallDriver.getInstance();
+        } else {
+            callDriver = CallDriver.initializeInstance(getApplicationContext());
+        }
+
+        if(CallReceiver.isInstanceInitialized()) {
+            callReceiver = CallReceiver.getInstance();
+        } else {
+            callReceiver = CallReceiver.initializeInstance(getApplicationContext());
         }
 
     }
@@ -162,6 +178,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 }else if(notification.equals("Started")){
                     commandHandlerManager = CommandHandlerManager.getInstance();
                     smsDriver.initializeCommandHandlerManager();
+                    callDriver.initializeCommandHandlerManager();
+                    callReceiver.initializeCommandHandlerManager();
                     setCommandHandlerManager();
                 }
 
@@ -497,6 +515,37 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         bt_next.setEnabled(false);
         bt_previous.setEnabled(false);
 
+    }
+
+
+/**************************************
+*************CALL METHODS**************
+*************************************/
+
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == CallDriver.REQUEST_CODE_PICK_CONTACTS && resultCode == RESULT_OK) {
+            callDriver.setUriContact(data.getData());
+            callDriver.retrieveContactNumber();
+        }
+    }
+
+    public void openCallDialog(){
+        callDriver.outgoingCallDialog();
+    }
+
+    public void setCallNumber(String number){
+        callDriver.setPhone(number);
+    }
+
+    public void closeCallDialog(){
+        callDriver.closeDialog();
+    }
+
+    public void callNumber(String number){
+        callDriver.callNumber(number);
     }
 
 }

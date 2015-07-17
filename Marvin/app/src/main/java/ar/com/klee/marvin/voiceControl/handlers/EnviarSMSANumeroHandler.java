@@ -76,7 +76,7 @@ public class EnviarSMSANumeroHandler extends CommandHandler{
             i++;
         }
 
-        getTextToSpeech().speakTextWithNumbers("¿Querés enviar un sms al numero " + contactWithSpaces + "?");
+        getTextToSpeech().speakTextWithNumbers("¿Querés enviar un sms al número " + contactWithSpaces + "?");
         context.getObject(ACTIVITY, MainMenuActivity.class).setNumber(contact);
         context.put(SET_NUMBER, false);
         context.put(STEP, 3);
@@ -101,7 +101,7 @@ public class EnviarSMSANumeroHandler extends CommandHandler{
         }
 
         if(input.equals("no")){
-            getTextToSpeech().speakText("¿A qué numero querés mandarle el sms?");
+            getTextToSpeech().speakText("¿A qué número querés mandarle el sms?");
             context.getObject(ACTIVITY, MainMenuActivity.class).setNumber("");
             context.put(SET_NUMBER, true);
             context.put(STEP, 1);

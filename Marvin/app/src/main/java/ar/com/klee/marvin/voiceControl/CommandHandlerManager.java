@@ -29,6 +29,8 @@ import ar.com.klee.marvin.voiceControl.handlers.LeerSMSNumeroHandler;
 import ar.com.klee.marvin.voiceControl.handlers.LeerUltimoSMSDeContactoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.LeerUltimoSMSDeNumeroHandler;
 import ar.com.klee.marvin.voiceControl.handlers.LeerUltimoSMSHandler;
+import ar.com.klee.marvin.voiceControl.handlers.LlamarAContactoHandler;
+import ar.com.klee.marvin.voiceControl.handlers.LlamarANumeroHandler;
 import ar.com.klee.marvin.voiceControl.handlers.SiguienteInterseccion;
 import ar.com.klee.marvin.voiceControl.handlers.CancelarFotoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CerrarCamaraHandler;
@@ -65,6 +67,7 @@ public class CommandHandlerManager {
     public static final int ACTIVITY_MAIN = 1;
     public static final int ACTIVITY_CAMERA = 2;
     public static final int ACTIVITY_SMS_INBOX = 3;
+    public static final int ACTIVITY_INCOMING_CALL = 4;
     private static CommandHandlerManager instance;
 
     private int currentActivity = ACTIVITY_MAIN;
@@ -134,6 +137,8 @@ public class CommandHandlerManager {
             new EnviarSMSANumeroHandler(textToSpeech, context, this),
             new EnviarWhatsAppHandler(textToSpeech, context, this),
             new EstablecerVolumenHandler(textToSpeech, context, this),
+            new LlamarAContactoHandler(textToSpeech, context, this),
+            new LlamarANumeroHandler(textToSpeech, context, this),
             new PausarMusicaHandler(textToSpeech, context, this),
             new PublicarEnFacebookHandler(textToSpeech, context,this),
             new ReproducirArtistaHandler(textToSpeech, context, this),
