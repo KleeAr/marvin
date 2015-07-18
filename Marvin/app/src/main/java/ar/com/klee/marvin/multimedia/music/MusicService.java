@@ -53,12 +53,14 @@ public class MusicService extends Service {
 
         SharedPreferences sharedPreferences = getSharedPreferences("musicService",Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("song", songs.get(currentSong).get("Title"));
-        editor.putString("artist", songs.get(currentSong).get("Artist"));
-        editor.putInt("duration", currentDuration);
-        editor.putInt("position", currentSong);
-        editor.putBoolean("isRandom", isRandom);
-        editor.commit();
+        if(!songs.isEmpty()) {
+            editor.putString("song", songs.get(currentSong).get("Title"));
+            editor.putString("artist", songs.get(currentSong).get("Artist"));
+            editor.putInt("duration", currentDuration);
+            editor.putInt("position", currentSong);
+            editor.putBoolean("isRandom", isRandom);
+            editor.commit();
+        }
 
         if(mp.isPlaying()) {
             mp.stop();

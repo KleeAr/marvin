@@ -64,7 +64,7 @@ public class PublicarEnFacebookHandler extends CommandHandler{
 
     //PRONUNCIA COMANDO
     public CommandHandlerContext stepOne(CommandHandlerContext currentContext){
-        getTextToSpeech().speakText("¿Querés publicar en el muro " + currentContext.getString(COMMAND) + " ?");
+        getTextToSpeech().speakText("¿Querés publicar en el muro " + currentContext.getString(MESSAGE) + " ?");
         currentContext.put(SET_MESSAGE, false);
         currentContext.put(STEP, 3);
         currentContext.put(FACEBOOK_HASHTAGS, new ArrayList<String>());
@@ -119,6 +119,7 @@ public class PublicarEnFacebookHandler extends CommandHandler{
 
         if(input.equals("no")){
             getTextToSpeech().speakText("Publicando en el muro de Facebook");
+            publishOnFacebook(currentContext);
             currentContext.put(STEP, 0);
             return currentContext;
         }

@@ -15,6 +15,7 @@ public class TTS {
     private TextToSpeech ttsObject;
     private SpeechRecognizer mSpeechRecognizer;
     private Intent mSpeechRecognizerIntent;
+    private boolean firstTime = true;
 
     /* Constructor de la clase TTS
     ** -Inicializa el objeto de la clase TextToSpeech que nos va a permitir reproducir texto
@@ -44,7 +45,12 @@ public class TTS {
     public void speakText(String textToSpeak) {
 
         int delayTime = textToSpeak.length()/5 + 1;
-        delayTime = delayTime * 550;
+        if (firstTime) {
+             delayTime = delayTime * 1500;
+             firstTime = false;
+        } else {
+            delayTime = delayTime * 700;
+        }
 
         // Reproduce el texto
         ttsObject.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH, null);

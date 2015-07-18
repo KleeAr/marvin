@@ -1,6 +1,7 @@
 package ar.com.klee.marvin.social;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -36,6 +37,9 @@ public class FacebookService {
                     @Override
                     public void onCompleted(GraphResponse graphResponse) {
                         Toast.makeText(context, "Tu texto se publicó en facebook", Toast.LENGTH_SHORT).show();
+                        if (graphResponse.getError() != null) {
+                            Log.d("FacebookService", "Error publishing in facebook. " + graphResponse.getError().getErrorMessage() + ". Error code: " + graphResponse.getError().getErrorCode());
+                        }
                     }
                 }).executeAsync();
     }
