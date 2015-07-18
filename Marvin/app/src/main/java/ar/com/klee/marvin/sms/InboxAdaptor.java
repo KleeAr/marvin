@@ -56,14 +56,7 @@ public class InboxAdaptor extends BaseAdapter {
         final Mensaje item = data.get(position);
         contact.setText(item.getContactName());
         mensaje.setText(item.getBodyMessage());
-
-        /*
-         Revisar muestra datos erroneos
-          */
-        Date dateFormat= new Date(item.getDate());
-        SimpleDateFormat format = new SimpleDateFormat("dd-mm-yy HH:mm:ss");
-        String dateText=format.format(dateFormat);
-        date.setText(dateText);
+        date.setText(item.getDate());
 
         return view;
     }

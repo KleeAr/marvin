@@ -15,6 +15,8 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import ar.com.klee.marvin.sms.SMSDriver;
+
 /* Clase STT
 ** -Gestión del pasaje de audio a texto
 */
@@ -23,6 +25,7 @@ public class STTService extends Service {
     protected AudioManager mAudioManager;
     protected SpeechRecognizer mSpeechRecognizer;
     protected Intent mSpeechRecognizerIntent;
+    private static STTService instance;
 
     private CommandHandlerManager commandHandlerManager;
 
@@ -55,7 +58,16 @@ public class STTService extends Service {
         isListening = false;
         mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
 
+        instance = this;
+
         sendResult("Started");
+    }
+
+    public static STTService getInstance() {
+        if (instance == null) {
+            throw new IllegalStateException("Instance not initialized. Call initializeInstance before calling getInstance");
+        }
+        return instance;
     }
 
     @Override
@@ -64,6 +76,13 @@ public class STTService extends Service {
 
         if (mSpeechRecognizer != null)
             mSpeechRecognizer.destroy();
+    }
+
+    public void stopListening(){
+
+        mSpeechRecognizer.stopListening();
+        mSpeechRecognizer.cancel();
+
     }
 
     @Override
@@ -121,6 +140,15 @@ public class STTService extends Service {
             previousListening = isListening;
 
             isListening = commandHandlerManager.detectCommand(text, isListening);
+
+            if(!isListening &&
+                    commandHandlerManager.getCurrentActivity() == CommandHandlerManager.ACTIVITY_MAIN &&
+                    SMSDriver.getInstance().getInboxSize() != 0 &&
+                    commandHandlerManager.getCommandHandler() == null
+                    ){
+
+                SMSDriver.getInstance().displayIncomingSMS();
+            }
 
             if(text != null && text != "") {
                 if (isListening && !previousListening)
@@ -188,6 +216,18 @@ public class STTService extends Service {
         if(message != null)
             intent.putExtra(COPA_MESSAGE, message);
         broadcaster.sendBroadcast(intent);
+
+    }
+
+    public void setIsListening(boolean listening){
+
+        isListening = listening;
+
+    }
+
+    public boolean getIsListening(){
+
+        return isListening;
 
     }
 

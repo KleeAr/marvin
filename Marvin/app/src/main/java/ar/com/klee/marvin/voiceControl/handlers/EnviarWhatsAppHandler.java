@@ -75,7 +75,7 @@ public class EnviarWhatsAppHandler extends CommandHandler{
             return context;
         }
 
-        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debés indicar sí, no o cancelar");
 
         context.put(STEP, 3);
         return context;

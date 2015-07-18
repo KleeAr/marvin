@@ -8,7 +8,9 @@ import android.content.pm.PackageManager;
 import java.util.List;
 import java.util.Map;
 
+import ar.com.klee.marvin.activities.CallHistoryActivity;
 import ar.com.klee.marvin.activities.CameraActivity;
+import ar.com.klee.marvin.activities.SMSInboxActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
@@ -29,6 +31,20 @@ public class AbrirAplicacionHandler extends CommandHandler{
             Intent intent = new Intent(getContext(), CameraActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getTextToSpeech().speakText("Abriendo "+ app);
+            getContext().startActivity(intent);
+            currentContext.put(STEP, 0);
+            return currentContext;
+        }else if(app.equals("historial de sms")) {
+            Intent intent = new Intent(getContext(), SMSInboxActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getTextToSpeech().speakText("Abriendo "+ app);
+            getContext().startActivity(intent);
+            currentContext.put(STEP, 0);
+            return currentContext;
+        }else if(app.equals("historial de llamadas")) {
+            Intent intent = new Intent(getContext(), CallHistoryActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getTextToSpeech().speakText("Abriendo " + app);
             getContext().startActivity(intent);
             currentContext.put(STEP, 0);
             return currentContext;

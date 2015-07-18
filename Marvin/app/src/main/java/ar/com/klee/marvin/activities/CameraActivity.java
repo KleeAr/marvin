@@ -36,6 +36,7 @@ import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.camera.CameraDialog;
 import ar.com.klee.marvin.camera.CameraPreview;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
+import ar.com.klee.marvin.voiceControl.STTService;
 
 public class CameraActivity extends ActionBarActivity {
 
@@ -163,6 +164,13 @@ public class CameraActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onBackPressed(){
+        commandHandlerManager.setNullCommand();
+        STTService.getInstance().setIsListening(false);
+        commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_MAIN, commandHandlerManager.getMainActivity());
+        this.finish();
     }
 
     private int findFrontFacingCamera() {

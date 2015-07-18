@@ -77,7 +77,7 @@ public class GuardarYCompartirFotoHandler extends CommandHandler{
             return context;
         }
 
-        getTextToSpeech().speakText("Debe indicar facebook, twitter o instagram");
+        getTextToSpeech().speakText("Debés indicar facebook, twitter o instagram");
         context.put(STEP, 3);
         return context;
 
@@ -106,7 +106,7 @@ public class GuardarYCompartirFotoHandler extends CommandHandler{
             return context;
         }
 
-        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debés indicar sí, no o cancelar");
 
         context.put(STEP, 4);
         return context;
@@ -134,7 +134,7 @@ public class GuardarYCompartirFotoHandler extends CommandHandler{
             return context;
         }
 
-        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debés indicar sí, no o cancelar");
 
         context.put(STEP, 5);
         return context;
@@ -163,7 +163,7 @@ public class GuardarYCompartirFotoHandler extends CommandHandler{
             return context;
         }
 
-        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debés indicar sí, no o cancelar");
         context.put(STEP, 5);
         return context;
     }

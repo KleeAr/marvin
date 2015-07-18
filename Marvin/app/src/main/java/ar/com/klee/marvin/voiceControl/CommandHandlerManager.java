@@ -22,8 +22,15 @@ import ar.com.klee.marvin.voiceControl.handlers.BajarVolumenHandler;
 import ar.com.klee.marvin.voiceControl.handlers.BarrioHandler;
 import ar.com.klee.marvin.voiceControl.handlers.BuscarDispositivosHandler;
 import ar.com.klee.marvin.voiceControl.handlers.BuscarEnYoutubeHandler;
+import ar.com.klee.marvin.voiceControl.handlers.CerrarHistorialDeSMSHandler;
 import ar.com.klee.marvin.voiceControl.handlers.DireccionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.AnteriorInterseccionHandler;
+import ar.com.klee.marvin.voiceControl.handlers.LeerSMSNumeroHandler;
+import ar.com.klee.marvin.voiceControl.handlers.LeerUltimoSMSDeContactoHandler;
+import ar.com.klee.marvin.voiceControl.handlers.LeerUltimoSMSDeNumeroHandler;
+import ar.com.klee.marvin.voiceControl.handlers.LeerUltimoSMSHandler;
+import ar.com.klee.marvin.voiceControl.handlers.LlamarAContactoHandler;
+import ar.com.klee.marvin.voiceControl.handlers.LlamarANumeroHandler;
 import ar.com.klee.marvin.voiceControl.handlers.SiguienteInterseccion;
 import ar.com.klee.marvin.voiceControl.handlers.CancelarFotoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CerrarCamaraHandler;
@@ -59,6 +66,8 @@ public class CommandHandlerManager {
 
     public static final int ACTIVITY_MAIN = 1;
     public static final int ACTIVITY_CAMERA = 2;
+    public static final int ACTIVITY_SMS_INBOX = 3;
+    public static final int ACTIVITY_INCOMING_CALL = 4;
     private static CommandHandlerManager instance;
 
     private int currentActivity = ACTIVITY_MAIN;
@@ -76,6 +85,7 @@ public class CommandHandlerManager {
     private boolean isPhotoTaken;
     private List<CommandHandler> commandHandlersMainMenu;
     private List<CommandHandler> commandHandlersCamera;
+    private List<CommandHandler> commandHandlersSMSInbox;
     private Map<Integer,List<CommandHandler>> commandHandlers;
     private CommandHandlerContext currentContext;
     private CommandHandler compartirEnFacebookHandler;
@@ -108,7 +118,7 @@ public class CommandHandlerManager {
 
         // Initialize all command handlers
         commandHandlersMainMenu = Arrays.asList(new AbrirAplicacionHandler(textToSpeech, context, this),
-                new BuscarDispositivosHandler(textToSpeech, context, this),
+            new BuscarDispositivosHandler(textToSpeech, context, this),
             new ActivarHotspotHandler(textToSpeech, context, this),
             new ActivarReproduccionAleatoriaHandler(textToSpeech, context, this),
             new AgregarEventoHandler(textToSpeech, context, this),
@@ -127,6 +137,8 @@ public class CommandHandlerManager {
             new EnviarSMSANumeroHandler(textToSpeech, context, this),
             new EnviarWhatsAppHandler(textToSpeech, context, this),
             new EstablecerVolumenHandler(textToSpeech, context, this),
+            new LlamarAContactoHandler(textToSpeech, context, this),
+            new LlamarANumeroHandler(textToSpeech, context, this),
             new PausarMusicaHandler(textToSpeech, context, this),
             new PublicarEnFacebookHandler(textToSpeech, context,this),
             new ReproducirArtistaHandler(textToSpeech, context, this),
@@ -149,10 +161,17 @@ public class CommandHandlerManager {
             new GuardarYCompartirFotoHandler(textToSpeech, context, this),
             new SacarFotoHandler(textToSpeech, context, this));
 
+        commandHandlersSMSInbox = Arrays.asList(new LeerUltimoSMSHandler(textToSpeech, context, this),
+            new CerrarHistorialDeSMSHandler(textToSpeech, context, this),
+            new LeerSMSNumeroHandler(textToSpeech, context, this),
+            new LeerUltimoSMSDeContactoHandler(textToSpeech, context, this),
+            new LeerUltimoSMSDeNumeroHandler(textToSpeech, context, this));
+
         commandHandlers = new HashMap<>();
 
         commandHandlers.put(ACTIVITY_MAIN,commandHandlersMainMenu);
         commandHandlers.put(ACTIVITY_CAMERA,commandHandlersCamera);
+        commandHandlers.put(ACTIVITY_SMS_INBOX,commandHandlersSMSInbox);
 
     }
 
@@ -236,6 +255,12 @@ public class CommandHandlerManager {
 
     }
 
+    public void setCurrentContext(CommandHandlerContext currentContext){
+
+        this.currentContext = currentContext;
+
+    }
+
     public void setIsPhotoTaken(boolean isPhotoTaken){
 
         this.isPhotoTaken = isPhotoTaken;
@@ -273,6 +298,43 @@ public class CommandHandlerManager {
 
         return mainActivity;
 
+    }
+
+    public Context getContext(){
+
+        return context;
+
+    }
+
+    public void setNullCommand(){
+
+        currentCommandHandler = null;
+        currentContext = null;
+
+    }
+
+    public TTS getTextToSpeech(){
+
+        return textToSpeech;
+
+    }
+
+    public CommandHandler getCommandHandler(){
+
+        return currentCommandHandler;
+
+    }
+
+    public int getCurrentActivity(){
+        return currentActivity;
+    }
+
+    public Activity getActivity(){
+        return activity;
+    }
+
+    public CommandHandlerContext getCurrentContext(){
+        return currentContext;
     }
 
     public CommandHandler getCompartirEnFacebookHandler() {

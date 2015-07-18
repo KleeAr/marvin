@@ -95,7 +95,7 @@ public class PublicarEnFacebookHandler extends CommandHandler{
             return currentContext;
         }
 
-        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debés indicar sí, no o cancelar");
         currentContext.put(STEP, 3);
         return currentContext;
 
@@ -123,7 +123,7 @@ public class PublicarEnFacebookHandler extends CommandHandler{
             return currentContext;
         }
 
-        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debés indicar sí, no o cancelar");
 
         currentContext.put(STEP, 5);
         return currentContext;
@@ -166,7 +166,7 @@ public class PublicarEnFacebookHandler extends CommandHandler{
             return currentContext;
         }
 
-        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debés indicar sí, no o cancelar");
 
         currentContext.put(STEP, 9);
         return currentContext;
@@ -196,7 +196,7 @@ public class PublicarEnFacebookHandler extends CommandHandler{
             return currentContext;
         }
 
-        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debés indicar sí, no o cancelar");
 
         currentContext.put(STEP, 11);
         return currentContext;

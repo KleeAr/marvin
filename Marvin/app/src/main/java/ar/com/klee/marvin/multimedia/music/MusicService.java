@@ -57,6 +57,7 @@ public class MusicService extends Service {
         editor.putString("artist", songs.get(currentSong).get("Artist"));
         editor.putInt("duration", currentDuration);
         editor.putInt("position", currentSong);
+        editor.putBoolean("isRandom", isRandom);
         editor.commit();
 
         if(mp.isPlaying()) {
@@ -104,12 +105,16 @@ public class MusicService extends Service {
 
         String song, artist;
         Integer duration, position;
+        boolean random;
 
         SharedPreferences sharedPreferences = getSharedPreferences("musicService", Context.MODE_PRIVATE);
         song = sharedPreferences.getString("song","");
         artist = sharedPreferences.getString("artist","");
         duration = sharedPreferences.getInt("duration", 0);
         position = sharedPreferences.getInt("position",0);
+        random = sharedPreferences.getBoolean("isRandom",false);
+
+        isRandom = random;
 
         if(!song.equals("") && !artist.equals("")) {
             if (!songs.get(position).get("Title").equals(song) || !songs.get(position).get("Artist").equals(artist)){

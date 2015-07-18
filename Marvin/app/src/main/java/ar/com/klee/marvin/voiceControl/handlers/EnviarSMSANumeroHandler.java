@@ -2,17 +2,18 @@ package ar.com.klee.marvin.voiceControl.handlers;
 
 import android.content.Context;
 
+import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 
 public class EnviarSMSANumeroHandler extends CommandHandler{
 
-    public static final String NUMBERO = "numero";
+    public static final String NUMERO = "numero";
     private static final String SET_NUMBER = "SET_NUMBER";
     private static final String NUMBER = "NUMBER";
 
     public EnviarSMSANumeroHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("enviar sms aL {numero}", textToSpeech, context, commandHandlerManager);
+        super("enviar sms al número {numero}", textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){
@@ -42,20 +43,47 @@ public class EnviarSMSANumeroHandler extends CommandHandler{
 
     @Override
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
-        commandHandlerContext.put(NUMBER, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.getString(COMMAND)).get(NUMBERO));
+        commandHandlerContext.put(NUMBER, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.getString(COMMAND)).get(NUMERO));
         commandHandlerContext.put(SET_NUMBER, false);
+
+        commandHandlerContext.getObject(ACTIVITY, MainMenuActivity.class).displaySendSMS();
     }
 
-    //PRONUNCIA NUMBERO
+    //PRONUNCIA NUMERO
     public CommandHandlerContext stepOne(CommandHandlerContext context){
         String contact = context.getString(NUMBER);
-        getTextToSpeech().speakText("¿Querés enviar un sms al numero " + contact + "?");
+
+        contact = contact.replace(" ","");
+
+        try{
+
+            Integer.parseInt(contact);
+
+        }catch (NumberFormatException e){
+
+            getTextToSpeech().speakText("No se indicó un número. Reingresalo");
+            context.put(SET_NUMBER, true);
+            context.put(STEP, 1);
+            return context;
+
+        }
+
+        int i = 1;
+        String contactWithSpaces = "";
+
+        while(i < contact.length()){
+            contactWithSpaces += contact.charAt(i) + " ";
+            i++;
+        }
+
+        getTextToSpeech().speakTextWithNumbers("¿Querés enviar un sms al número " + contactWithSpaces + "?");
+        context.getObject(ACTIVITY, MainMenuActivity.class).setNumber(contact);
         context.put(SET_NUMBER, false);
         context.put(STEP, 3);
         return context;
     }
 
-    //CONFIRMA NUMBERO
+    //CONFIRMA NUMERO
     public CommandHandlerContext stepThree(CommandHandlerContext context){
 
         String input = context.getString(COMMAND);
@@ -67,12 +95,14 @@ public class EnviarSMSANumeroHandler extends CommandHandler{
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando envío");
+            context.getObject(ACTIVITY,MainMenuActivity.class).cancelMessage();
             context.put(STEP, 0);
             return context;
         }
 
         if(input.equals("no")){
-            getTextToSpeech().speakText("¿A qué numero querés mandarle el sms?");
+            getTextToSpeech().speakText("¿A qué número querés mandarle el sms?");
+            context.getObject(ACTIVITY, MainMenuActivity.class).setNumber("");
             context.put(SET_NUMBER, true);
             context.put(STEP, 1);
             return context;
@@ -88,8 +118,14 @@ public class EnviarSMSANumeroHandler extends CommandHandler{
     //INGRESO MENSAJE
     public CommandHandlerContext stepFive(CommandHandlerContext context){
         String input = context.getString(COMMAND);
-        getTextToSpeech().speakText("¿Querés enviar por sms el mensaje " + input + "?");
 
+        Character firstCharacter, newFirstCharacter;
+        firstCharacter = input.charAt(0);
+        newFirstCharacter = Character.toUpperCase(firstCharacter);
+        input = input.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
+
+        getTextToSpeech().speakText("¿Querés enviar por sms el mensaje " + input + "?");
+        context.getObject(ACTIVITY, MainMenuActivity.class).setMessageBody(input);
         context.put(STEP, 7);
         return context;
 
@@ -99,19 +135,21 @@ public class EnviarSMSANumeroHandler extends CommandHandler{
     public CommandHandlerContext stepSeven(CommandHandlerContext context){
         String input = context.getString(COMMAND);
         if(input.equals("si")) {
-            getTextToSpeech().speakText("Enviando sms");
+            getTextToSpeech().speakText(context.getObject(ACTIVITY,MainMenuActivity.class).sendMessage());
             context.put(STEP, 0);
             return context;
         }
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando envío");
+            context.getObject(ACTIVITY,MainMenuActivity.class).cancelMessage();
             context.put(STEP, 0);
             return context;
         }
 
         if(input.equals("no")){
             getTextToSpeech().speakText("¿Qué mensaje querés mandar?");
+            context.getObject(ACTIVITY, MainMenuActivity.class).setMessageBody("");
             context.put(STEP, 5);
             return context;
         }

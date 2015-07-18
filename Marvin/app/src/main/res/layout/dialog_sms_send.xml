@@ -11,8 +11,9 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Para"
-        android:id="@+id/contact" />
+        android:text="Para:"
+        android:id="@+id/contact"
+        android:textColor="@android:color/black" />
 
     <RelativeLayout
         android:orientation="vertical"
@@ -37,18 +38,20 @@
             android:id="@+id/titleMensaje"
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:textColor="@android:color/black" />
 
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:inputType="number"
             android:id="@+id/mobileNumber"
-            android:hint="Ingrese telefono o contacto"
-            android:layout_below="@+id/contact"
+            android:hint="Ingresá número"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_toLeftOf="@+id/imageView"
-            android:layout_toStartOf="@+id/imageView" />
+            android:layout_toStartOf="@+id/imageView"
+            android:textColor="@android:color/black" />
 
     </RelativeLayout>
 
@@ -56,11 +59,13 @@
         android:id="@+id/smsBody"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="20dp"
+        android:inputType="textMultiLine"
+        android:maxLines="3"
+        android:scrollbars="vertical"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@android:color/black"
         android:layout_weight="4.58"
-        android:hint="Escribir mensaje" />
+        android:hint="Ingresá mensaje" />
 
     <LinearLayout
         android:id="@+id/botonera"

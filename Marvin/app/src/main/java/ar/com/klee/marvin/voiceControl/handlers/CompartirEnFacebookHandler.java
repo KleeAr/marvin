@@ -77,7 +77,7 @@ public class CompartirEnFacebookHandler extends CommandHandler{
             return context.put(STEP, 1);
         }
 
-        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debés indicar sí, no o cancelar");
 
         return context.put(STEP, 3);
 
@@ -103,7 +103,7 @@ public class CompartirEnFacebookHandler extends CommandHandler{
             return context.put(STEP, 0);
         }
 
-        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debés indicar sí, no o cancelar");
 
         return context.put(STEP, 5);
     }
@@ -140,7 +140,7 @@ public class CompartirEnFacebookHandler extends CommandHandler{
             return context.put(STEP, 7);
         }
 
-        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debés indicar sí, no o cancelar");
 
         return context.put(STEP, 9);
 
@@ -162,7 +162,7 @@ public class CompartirEnFacebookHandler extends CommandHandler{
             context.getObject(ACTIVITY, CameraActivity.class).shareInFacebook();
             return context.put(STEP, 0);
         }
-        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debés indicar sí, no o cancelar");
         return context.put(STEP, 11);
     }
 
