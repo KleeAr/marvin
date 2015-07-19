@@ -69,4 +69,20 @@
         android:layout_alignTop="@+id/bt_play"
         android:layout_centerHorizontal="true"
         android:onClick="startPauseMusic" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/song"
+        android:layout_below="@+id/bt_previous"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/artist"
+        android:layout_below="@+id/song"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

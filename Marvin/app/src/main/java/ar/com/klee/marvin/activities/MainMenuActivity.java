@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -55,6 +56,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     private Button bt_next;
     private Button bt_previous;
 
+    private TextView tv_song;
+    private TextView tv_artist;
+
     private ServiceConnection mConnection;
 
     @Override
@@ -70,6 +74,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         bt_play.setVisibility(View.VISIBLE);
         bt_pause.setVisibility(View.INVISIBLE);
+
+        tv_song = (TextView)findViewById(R.id.song);
+        tv_artist = (TextView)findViewById(R.id.artist);
 
         initializeMusicService();
         initializeSTTService();
@@ -211,11 +218,13 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
                     notification = notification.replace("SONG_TITLE ","");
                     Log.d("TITLE",notification);
+                    tv_song.setText(notification);
 
                 }else if(notification.startsWith("SONG_ARTIST ")) {
 
                     notification = notification.replace("SONG_ARTIST ","");
                     Log.d("ARTIST", notification);
+                    tv_artist.setText(notification);
 
                 }
             }
