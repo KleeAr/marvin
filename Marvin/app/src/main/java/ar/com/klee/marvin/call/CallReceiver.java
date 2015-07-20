@@ -14,7 +14,6 @@ import ar.com.klee.marvin.activities.IncomingCallActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
 import ar.com.klee.marvin.voiceControl.handlers.ResponderLlamadaHandler;
-import ar.com.klee.marvin.voiceControl.handlers.ResponderSMSHandler;
 
 /*
 Servicio que se activa cuando se produce un cambio en el estado del telefono

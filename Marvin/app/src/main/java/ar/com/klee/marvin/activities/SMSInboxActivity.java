@@ -16,7 +16,6 @@ import android.os.Bundle;
 
 import android.os.Handler;
 import android.telephony.SmsManager;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -37,9 +36,7 @@ import ar.com.klee.marvin.sms.Mensaje;
 import ar.com.klee.marvin.sms.SMSDriver;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
-import ar.com.klee.marvin.voiceControl.handlers.LeerSMSNumeroHandler;
-import ar.com.klee.marvin.voiceControl.handlers.LeerUltimoSMSHandler;
-import ar.com.klee.marvin.voiceControl.handlers.ResponderSMSHandler;
+import ar.com.klee.marvin.voiceControl.handlers.smsInbox.LeerSMSNumeroHandler;
 
 public class SMSInboxActivity extends Activity {
 
@@ -244,10 +241,12 @@ public class SMSInboxActivity extends Activity {
         final Dialog customDialog = new Dialog(this);
         customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         customDialog.setCancelable(false);
-        customDialog.setContentView(R.layout.dialog_sms_inbox);
+        customDialog.setContentView(R.layout.dialog_inbox);
         customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         actualDialog = customDialog;
+
+        Typeface fontBold = Typeface.createFromAsset(getAssets(),"Bariol_Regular.otf");
 
         TextView notifiacion = (TextView) customDialog.findViewById(R.id.textView);
         notifiacion.setText("¿Querés realizar alguna acción con el contacto " + mensaje.getContactName() +"?");
@@ -266,7 +265,7 @@ public class SMSInboxActivity extends Activity {
             @Override
             public void onClick(View view) {
                 STTService.getInstance().stopListening();
-                commandHandlerManager.setCurrentContext(commandHandlerManager.getCommandHandler().drive(commandHandlerManager.getCommandHandler().createContext(commandHandlerManager.getCurrentContext(), commandHandlerManager.getActivity(), "responder")));
+                commandHandlerManager.setCurrentContext(commandHandlerManager.getCommandHandler().drive(commandHandlerManager.getCommandHandler().createContext(commandHandlerManager.getCurrentContext(), commandHandlerManager.getActivity(), "enviar sms")));
             }
         });
         customDialog.findViewById(R.id.llamar).setOnClickListener(new View.OnClickListener() {

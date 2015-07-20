@@ -1,29 +1,28 @@
-package ar.com.klee.marvin.voiceControl.handlers;
+package ar.com.klee.marvin.voiceControl.handlers.smsInbox;
 
-import android.content.ContentResolver;
 import android.content.Context;
-import android.database.Cursor;
-import android.provider.ContactsContract;
+import android.os.Build;
+import android.os.Handler;
+import android.telephony.SmsManager;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
+import ar.com.klee.marvin.activities.CameraActivity;
 import ar.com.klee.marvin.activities.MainMenuActivity;
+import ar.com.klee.marvin.activities.SMSInboxActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 
-public class ResponderSMSHandler extends CommandHandler {
+public class LeerUltimoSMSHandler extends CommandHandler {
 
-    public ResponderSMSHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("responder sms", textToSpeech, context, commandHandlerManager);
+    public LeerUltimoSMSHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
+        super("leer último sms", textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){
 
         Integer step = context.getInteger(STEP);
+
         switch(step){
 
             case 1:
@@ -36,48 +35,78 @@ public class ResponderSMSHandler extends CommandHandler {
                 return stepSeven(context);
 
         }
-        context.put(STEP, 0);
+
+        context.put(STEP,0);
         return context;
 
     }
 
     @Override
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
-
+        // TODO
     }
 
-    //INICIO GENERADO POR EL INCOMING MESSAGE
+    //PRONUNCIA COMANDO Y SE LEE EL MENSAJE
     public CommandHandlerContext stepOne(CommandHandlerContext context){
+
+        String message = context.getObject(ACTIVITY, SMSInboxActivity.class).getLastMessage();
+
+        int delayTime = (message.length()+58)/5 + 1;
+        delayTime = delayTime * 550;
+
+        getTextToSpeech().speakText(message + ". ¿Te gustaría llamar a ese número o enviarle un sms?");
+
+        final CommandHandlerContext c = context;
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                c.getObject(ACTIVITY, SMSInboxActivity.class).showCallDialog();
+            }
+        }, delayTime);
+
         context.put(STEP, 3);
         return context;
     }
 
-    //INDICA SI QUIERE RESPONDER
     public CommandHandlerContext stepThree(CommandHandlerContext context){
 
         String input = context.getString(COMMAND);
         if(input.equals("si")) {
-            getTextToSpeech().speakText("¿Qué le querés responder por sms?");
-            context.getObject(ACTIVITY,MainMenuActivity.class).displayRespondSMS();
+            getTextToSpeech().speakText("¿Querés llamar o enviar sms?");
+            context.put(STEP, 3);
+            return context;
+        }
+
+        if(input.equals("llamar")) {
+            getTextToSpeech().speakText("Realizando llamada");
+            context.getObject(ACTIVITY, SMSInboxActivity.class).call();
+            context.put(STEP, 0);
+            return context;
+        }
+
+        if(input.equals("enviar sms")) {
+            getTextToSpeech().speakText("¿Qué mensaje le querés mandar?");
+            context.getObject(ACTIVITY,SMSInboxActivity.class).respond();
             context.put(STEP, 5);
             return context;
         }
 
         if(input.equals("cancelar")) {
-            getTextToSpeech().speakText("Cancelando respuesta");
-            context.getObject(ACTIVITY,MainMenuActivity.class).cancelMessage();
+            getTextToSpeech().speakText("No se responderá");
+            context.getObject(ACTIVITY,SMSInboxActivity.class).cancelDialog();
             context.put(STEP, 0);
             return context;
         }
 
         if(input.equals("no")){
-            getTextToSpeech().speakText("Cancelando respuesta");
-            context.getObject(ACTIVITY,MainMenuActivity.class).cancelMessage();
+            getTextToSpeech().speakText("No se responderá");
+            context.getObject(ACTIVITY, SMSInboxActivity.class).cancelDialog();
             context.put(STEP, 0);
             return context;
         }
 
-        getTextToSpeech().speakText("Debe indicar sí, no o cancelar");
+        getTextToSpeech().speakText("Debés indicar llamar, enviar sms o cancelar");
 
         context.put(STEP, 3);
         return context;
@@ -93,7 +122,7 @@ public class ResponderSMSHandler extends CommandHandler {
         newFirstCharacter = Character.toUpperCase(firstCharacter);
         input = input.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
 
-        context.getObject(ACTIVITY, MainMenuActivity.class).setAnswer(input);
+        context.getObject(ACTIVITY, SMSInboxActivity.class).setAnswer(input);
         getTextToSpeech().speakText("¿Querés responder el mensaje " + input + "?");
         context.put(STEP, 7);
         return context;
@@ -103,21 +132,21 @@ public class ResponderSMSHandler extends CommandHandler {
     public CommandHandlerContext stepSeven(CommandHandlerContext context){
         String input = context.getString(COMMAND);
         if(input.equals("si")) {
-            getTextToSpeech().speakText(context.getObject(ACTIVITY,MainMenuActivity.class).respondMessage());
+            getTextToSpeech().speakText(context.getObject(ACTIVITY,SMSInboxActivity.class).respondMessage());
             context.put(STEP, 0);
             return context;
         }
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando envío");
-            context.getObject(ACTIVITY,MainMenuActivity.class).cancelMessage();
+            context.getObject(ACTIVITY,SMSInboxActivity.class).cancelDialog();
             context.put(STEP, 0);
             return context;
         }
 
         if(input.equals("no")){
             getTextToSpeech().speakText("¿Qué mensaje querés responder?");
-            context.getObject(ACTIVITY, MainMenuActivity.class).setAnswer("");
+            context.getObject(ACTIVITY, SMSInboxActivity.class).setAnswer("");
             context.put(STEP, 5);
             return context;
         }
@@ -129,4 +158,3 @@ public class ResponderSMSHandler extends CommandHandler {
     }
 
 }
-

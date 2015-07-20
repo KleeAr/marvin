@@ -4,10 +4,19 @@ import java.util.Date;
 
 public class Call {
 
+    private String contactName;
     private String numberPhone;
     private String type;
-    private Date date;
+    private String date;
     private String duration;
+
+    public String getContactName() {
+        return contactName;
+    }
+
+    public void setContactName(String contactName) {
+        this.contactName = contactName;
+    }
 
     public String getNumberPhone() {
         return numberPhone;
@@ -25,11 +34,11 @@ public class Call {
         this.type = type;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

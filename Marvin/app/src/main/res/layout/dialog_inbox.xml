@@ -10,10 +10,11 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
-        android:id="@+id/toCall"
-        android:layout_gravity="center_horizontal" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/responseHeader"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@android:color/black"
+        android:textAlignment="gravity" />
 
     <ImageView
         android:layout_width="50dp"
@@ -21,7 +22,9 @@
         android:id="@+id/imageView2"
         android:layout_weight="1.62"
         android:src="@drawable/marvin"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp" />
 
     <LinearLayout
         android:id="@+id/botonera"
@@ -45,7 +48,7 @@
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
             android:background="@drawable/dialog_button_selector"
-            android:text="Responder"
+            android:text="Enviar SMS"
             android:textColor="@android:color/white" />
 
         <Button

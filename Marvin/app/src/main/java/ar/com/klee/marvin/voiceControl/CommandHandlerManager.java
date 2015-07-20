@@ -13,54 +13,59 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ar.com.klee.marvin.voiceControl.handlers.AbrirAplicacionHandler;
-import ar.com.klee.marvin.voiceControl.handlers.ActivarHotspotHandler;
-import ar.com.klee.marvin.voiceControl.handlers.ActivarReproduccionAleatoriaHandler;
-import ar.com.klee.marvin.voiceControl.handlers.AgregarEventoHandler;
-import ar.com.klee.marvin.voiceControl.handlers.AnteriorCancionHandler;
-import ar.com.klee.marvin.voiceControl.handlers.BajarVolumenHandler;
-import ar.com.klee.marvin.voiceControl.handlers.BarrioHandler;
+import ar.com.klee.marvin.voiceControl.handlers.callHistory.CerrarHistorialDeLlamadasHandler;
+import ar.com.klee.marvin.voiceControl.handlers.callHistory.ConsultarRegistroNumeroHandler;
+import ar.com.klee.marvin.voiceControl.handlers.callHistory.ConsultarUltimoRegistroDeContactoHandler;
+import ar.com.klee.marvin.voiceControl.handlers.callHistory.ConsultarUltimoRegistroDeNumeroHandler;
+import ar.com.klee.marvin.voiceControl.handlers.callHistory.ConsultarUltimoRegistroHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.AbrirAplicacionHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.ActivarHotspotHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.ActivarReproduccionAleatoriaHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.AgregarEventoHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.AnteriorCancionHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.BajarVolumenHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.BarrioHandler;
 import ar.com.klee.marvin.voiceControl.handlers.BuscarDispositivosHandler;
-import ar.com.klee.marvin.voiceControl.handlers.BuscarEnYoutubeHandler;
-import ar.com.klee.marvin.voiceControl.handlers.CerrarHistorialDeSMSHandler;
-import ar.com.klee.marvin.voiceControl.handlers.DireccionHandler;
-import ar.com.klee.marvin.voiceControl.handlers.AnteriorInterseccionHandler;
-import ar.com.klee.marvin.voiceControl.handlers.LeerSMSNumeroHandler;
-import ar.com.klee.marvin.voiceControl.handlers.LeerUltimoSMSDeContactoHandler;
-import ar.com.klee.marvin.voiceControl.handlers.LeerUltimoSMSDeNumeroHandler;
-import ar.com.klee.marvin.voiceControl.handlers.LeerUltimoSMSHandler;
-import ar.com.klee.marvin.voiceControl.handlers.LlamarAContactoHandler;
-import ar.com.klee.marvin.voiceControl.handlers.LlamarANumeroHandler;
-import ar.com.klee.marvin.voiceControl.handlers.SiguienteInterseccion;
-import ar.com.klee.marvin.voiceControl.handlers.CancelarFotoHandler;
-import ar.com.klee.marvin.voiceControl.handlers.CerrarCamaraHandler;
-import ar.com.klee.marvin.voiceControl.handlers.CerrarSesionHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.BuscarEnYoutubeHandler;
+import ar.com.klee.marvin.voiceControl.handlers.smsInbox.CerrarHistorialDeSMSHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.DireccionHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.AnteriorInterseccionHandler;
+import ar.com.klee.marvin.voiceControl.handlers.smsInbox.LeerSMSNumeroHandler;
+import ar.com.klee.marvin.voiceControl.handlers.smsInbox.LeerUltimoSMSDeContactoHandler;
+import ar.com.klee.marvin.voiceControl.handlers.smsInbox.LeerUltimoSMSDeNumeroHandler;
+import ar.com.klee.marvin.voiceControl.handlers.smsInbox.LeerUltimoSMSHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.LlamarAContactoHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.LlamarANumeroHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.SiguienteInterseccion;
+import ar.com.klee.marvin.voiceControl.handlers.camera.CancelarFotoHandler;
+import ar.com.klee.marvin.voiceControl.handlers.camera.CerrarCamaraHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.CerrarSesionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
 import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
-import ar.com.klee.marvin.voiceControl.handlers.CompartirEnFacebookHandler;
-import ar.com.klee.marvin.voiceControl.handlers.CompartirEnInstagramHandler;
-import ar.com.klee.marvin.voiceControl.handlers.CompartirEnTwitterHandler;
-import ar.com.klee.marvin.voiceControl.handlers.CompartirFotoHandler;
-import ar.com.klee.marvin.voiceControl.handlers.DesactivarHotspotHandler;
-import ar.com.klee.marvin.voiceControl.handlers.DesactivarReproduccionAleatoriaHandler;
-import ar.com.klee.marvin.voiceControl.handlers.DetenerReproduccionHandler;
-import ar.com.klee.marvin.voiceControl.handlers.EnviarMailAContactoHandler;
-import ar.com.klee.marvin.voiceControl.handlers.EnviarSMSAContactoHandler;
-import ar.com.klee.marvin.voiceControl.handlers.EnviarSMSANumeroHandler;
-import ar.com.klee.marvin.voiceControl.handlers.EnviarWhatsAppHandler;
-import ar.com.klee.marvin.voiceControl.handlers.EstablecerVolumenHandler;
-import ar.com.klee.marvin.voiceControl.handlers.GuardarFotoHandler;
-import ar.com.klee.marvin.voiceControl.handlers.GuardarYCompartirFotoHandler;
-import ar.com.klee.marvin.voiceControl.handlers.PausarMusicaHandler;
-import ar.com.klee.marvin.voiceControl.handlers.PublicarEnFacebookHandler;
-import ar.com.klee.marvin.voiceControl.handlers.ReproducirArtistaHandler;
-import ar.com.klee.marvin.voiceControl.handlers.ReproducirCancionHandler;
-import ar.com.klee.marvin.voiceControl.handlers.ReproducirMusicaHandler;
-import ar.com.klee.marvin.voiceControl.handlers.SMSDeEmergenciaHandler;
-import ar.com.klee.marvin.voiceControl.handlers.SacarFotoHandler;
-import ar.com.klee.marvin.voiceControl.handlers.SiguienteCancionHandler;
-import ar.com.klee.marvin.voiceControl.handlers.SubirVolumenHandler;
-import ar.com.klee.marvin.voiceControl.handlers.TwittearHandler;
+import ar.com.klee.marvin.voiceControl.handlers.camera.CompartirEnFacebookHandler;
+import ar.com.klee.marvin.voiceControl.handlers.camera.CompartirEnInstagramHandler;
+import ar.com.klee.marvin.voiceControl.handlers.camera.CompartirEnTwitterHandler;
+import ar.com.klee.marvin.voiceControl.handlers.camera.CompartirFotoHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.DesactivarHotspotHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.DesactivarReproduccionAleatoriaHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.DetenerReproduccionHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.EnviarMailAContactoHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.EnviarSMSAContactoHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.EnviarSMSANumeroHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.EnviarWhatsAppHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.EstablecerVolumenHandler;
+import ar.com.klee.marvin.voiceControl.handlers.camera.GuardarFotoHandler;
+import ar.com.klee.marvin.voiceControl.handlers.camera.GuardarYCompartirFotoHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.PausarMusicaHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.PublicarEnFacebookHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.ReproducirArtistaHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.ReproducirCancionHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.ReproducirMusicaHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.SMSDeEmergenciaHandler;
+import ar.com.klee.marvin.voiceControl.handlers.camera.SacarFotoHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.SiguienteCancionHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.SubirVolumenHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.TwittearHandler;
 
 public class CommandHandlerManager {
 
@@ -68,6 +73,7 @@ public class CommandHandlerManager {
     public static final int ACTIVITY_CAMERA = 2;
     public static final int ACTIVITY_SMS_INBOX = 3;
     public static final int ACTIVITY_INCOMING_CALL = 4;
+    public static final int ACTIVITY_CALL_HISTORY = 5;
     private static CommandHandlerManager instance;
 
     private int currentActivity = ACTIVITY_MAIN;
@@ -86,6 +92,7 @@ public class CommandHandlerManager {
     private List<CommandHandler> commandHandlersMainMenu;
     private List<CommandHandler> commandHandlersCamera;
     private List<CommandHandler> commandHandlersSMSInbox;
+    private List<CommandHandler> commandHandlersCallHistory;
     private Map<Integer,List<CommandHandler>> commandHandlers;
     private CommandHandlerContext currentContext;
     private CommandHandler compartirEnFacebookHandler;
@@ -167,11 +174,18 @@ public class CommandHandlerManager {
             new LeerUltimoSMSDeContactoHandler(textToSpeech, context, this),
             new LeerUltimoSMSDeNumeroHandler(textToSpeech, context, this));
 
+        commandHandlersCallHistory = Arrays.asList(new ConsultarUltimoRegistroHandler(textToSpeech, context, this),
+                new CerrarHistorialDeLlamadasHandler(textToSpeech, context, this),
+                new ConsultarRegistroNumeroHandler(textToSpeech, context, this),
+                new ConsultarUltimoRegistroDeContactoHandler(textToSpeech, context, this),
+                new ConsultarUltimoRegistroDeNumeroHandler(textToSpeech, context, this));
+
         commandHandlers = new HashMap<>();
 
         commandHandlers.put(ACTIVITY_MAIN,commandHandlersMainMenu);
         commandHandlers.put(ACTIVITY_CAMERA,commandHandlersCamera);
         commandHandlers.put(ACTIVITY_SMS_INBOX,commandHandlersSMSInbox);
+        commandHandlers.put(ACTIVITY_CALL_HISTORY,commandHandlersCallHistory);
 
     }
 

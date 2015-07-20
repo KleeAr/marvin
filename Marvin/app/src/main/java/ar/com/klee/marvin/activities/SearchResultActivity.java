@@ -3,18 +3,14 @@ package ar.com.klee.marvin.activities;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ar.com.klee.marvin.R;
-import ar.com.klee.marvin.YouTubePlayerActivity;
 import ar.com.klee.marvin.multimedia.video.YouTubeVideo;
 import ar.com.klee.marvin.multimedia.video.adapter.YouTubeListAdapter;
 

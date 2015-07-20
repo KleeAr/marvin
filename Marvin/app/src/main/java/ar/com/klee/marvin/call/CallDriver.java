@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
@@ -174,6 +175,41 @@ public class CallDriver {
 
         customDialog.show();
 
+    }
+
+    /*
+Funcion que permite buscar el nombre de un contacto
+Retorna un string con el nombre
+*/
+    public static String getContactName(Context context, final String phoneNumber){
+        Uri uri;
+        String[] projection;
+
+        if (Build.VERSION.SDK_INT >= 5)
+        {
+            uri = Uri.parse("content://com.android.contacts/phone_lookup");
+            projection = new String[] { "display_name" };
+        }
+        else
+        {
+            uri = Uri.parse("content://contacts/phones/filter");
+            projection = new String[] { "name" };
+        }
+
+        uri = Uri.withAppendedPath(uri, Uri.encode(phoneNumber));
+        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+
+        String contactName = phoneNumber;
+
+        if (cursor.moveToFirst())
+        {
+            contactName = cursor.getString(0);
+
+        }
+
+        cursor.close();
+
+        return contactName;
     }
 
     public void setPhone(String number){

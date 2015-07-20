@@ -16,11 +16,11 @@ import ar.com.klee.marvin.R;
 
 
 /*
-* Clase utilizada para adaptar los items de la lista de mensajes entrantes
+* Clase utilizada para adaptar los items de la lista de calls
  */
 public class HistoryAdapter extends ArrayAdapter<Call> {
     private Activity activity;
-    private List<Call> llamadas;
+    private List<Call> calls;
     private int row;
     private Call objCall;
 
@@ -29,7 +29,7 @@ public class HistoryAdapter extends ArrayAdapter<Call> {
 
         this.activity = act;
         this.row = row;
-        this.llamadas = items;
+        this.calls = items;
 
     }
 
@@ -47,26 +47,25 @@ public class HistoryAdapter extends ArrayAdapter<Call> {
             holder = (ViewHolder) view.getTag();
         }
 
-        if ((llamadas == null) || ((position + 1) > llamadas.size()))
+        if ((calls == null) || ((position + 1) > calls.size()))
             return view;
 
-        objCall = llamadas.get(position);
+        objCall = calls.get(position);
+
 
         holder.numberPhone = (TextView) view.findViewById(R.id.numberPhone);
         holder.type = (TextView) view.findViewById(R.id.type);
         holder.date = (TextView) view.findViewById(R.id.date);
         holder.duration = (TextView) view.findViewById(R.id.duration);
 
-
-        if (holder.numberPhone != null && null != objCall.getNumberPhone()&& objCall.getNumberPhone().trim().length() > 0) {
-            holder.numberPhone.setText(Html.fromHtml(objCall.getNumberPhone()));
+        if (holder.numberPhone != null && null != objCall.getContactName() && objCall.getContactName().trim().length() > 0) {
+            holder.numberPhone.setText(Html.fromHtml(objCall.getContactName()));
         }
         if (holder.type != null && null != objCall.getType()&& objCall.getType().trim().length() > 0) {
             holder.type.setText(Html.fromHtml(objCall.getType()));
         }
         if (holder.date != null && null != objCall.getDate()) {
-            String stringDate = DateFormat.getDateTimeInstance().format(objCall.getDate());
-            holder.date.setText(Html.fromHtml(stringDate));
+            holder.date.setText(Html.fromHtml(objCall.getDate()));
         }
         if (holder.duration != null && null != objCall.getDuration()&& objCall.getDuration().trim().length() > 0) {
             int num,hor,min,seg;

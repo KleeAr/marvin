@@ -6,8 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+
 import java.util.List;
 
 import ar.com.klee.marvin.R;
@@ -46,7 +45,7 @@ public class InboxAdaptor extends BaseAdapter {
 
         if(view == null){
             LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = vi.inflate(R.layout.custom_row_inbox_layout, null);
+            view = vi.inflate(R.layout.row_sms_inbox, null);
         }
 
         TextView contact = (TextView) view.findViewById(R.id.textContact);
