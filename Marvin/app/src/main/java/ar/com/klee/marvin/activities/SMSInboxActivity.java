@@ -275,6 +275,7 @@ public class SMSInboxActivity extends Activity {
             {
                 customDialog.dismiss();
                 STTService.getInstance().setIsListening(false);
+                STTService.getInstance().stopListening();
                 commandHandlerManager.setNullCommand();
                 //lanza un intent con el numero del contacto
                 Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + mensaje.getPhoneNumber()));

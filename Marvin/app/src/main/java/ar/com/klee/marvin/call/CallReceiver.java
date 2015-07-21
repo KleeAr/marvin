@@ -121,6 +121,19 @@ public class CallReceiver extends BroadcastReceiver {
         }
     }
 
+    protected void onOutgoingCallEnded(Context ctx, String number, Date start, Date end) {
+        long diffInMs = end.getTime() - timeCall;
+        long diffInSec = TimeUnit.MILLISECONDS.toSeconds(diffInMs);
+        commandHandlerManager.getTextToSpeech().speakText(" ");
+        //hay que agregar a la pregunta de si no es contacto la duracion de los segundos. Valor a definir
+        if (!Contact.isContact(ctx, savedNumber)) {
+            Toast.makeText(ctx, "no es contacto", Toast.LENGTH_LONG).show();
+            //ejecutar comandos de voz para preguntarle el nombre y el email
+            //Llamar addNewContact para guardar al nuevo contacto
+
+        }
+    }
+
     protected void onMissedCall(Context ctx, String number, Date start) {
     }
 
@@ -147,16 +160,22 @@ public class CallReceiver extends BroadcastReceiver {
 
                 if (lastState != TelephonyManager.CALL_STATE_RINGING) {
                     isIncoming = false;
+                    savedNumber = number;
+                    callStartTime = new Date();
                     //llamada realizada desde el dispositivo
                 }
                 break;
             case TelephonyManager.CALL_STATE_IDLE:
+                AudioManager am2 = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+                am2.setSpeakerphoneOn(false);
                 //Telefono en sin uso- esto puede ser porque termino una llamada o no. Depende del estado previo.
                 if (lastState == TelephonyManager.CALL_STATE_RINGING) {
                     //Sono pero no contesto - llamada perdida
                     onMissedCall(context, number, callStartTime);
                 } else if (isIncoming) {
                     onIncomingCallEnded(context, savedNumber, callStartTime, new Date());
+                } else {
+                    onOutgoingCallEnded(context, savedNumber, callStartTime, new Date());
                 }
 
 

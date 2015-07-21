@@ -66,7 +66,7 @@ public class LlamarANumeroHandler extends CommandHandler {
 
         }
 
-        int i = 1;
+        int i = 0;
         String contactWithSpaces = "";
 
         while(i < contact.length()){
@@ -74,7 +74,7 @@ public class LlamarANumeroHandler extends CommandHandler {
             i++;
         }
 
-        getTextToSpeech().speakTextWithNumbers("¿Querés llamar al numero " + contactWithSpaces + "?");
+        getTextToSpeech().speakTextWithNumbers("¿Querés llamar al número " + contactWithSpaces + "?");
         context.getObject(ACTIVITY, MainMenuActivity.class).setCallNumber(contact);
         context.put(SET_NUMBER, false);
         context.put(STEP, 3);
@@ -86,9 +86,8 @@ public class LlamarANumeroHandler extends CommandHandler {
 
         String input = context.getString(COMMAND);
         if(input.equals("si")) {
-            getTextToSpeech().speakText("Realizando llamada");
             context.getObject(ACTIVITY,MainMenuActivity.class).callNumber(context.getString(NUMBER));
-            context.put(STEP, 5);
+            context.put(STEP, 0);
             return context;
         }
 

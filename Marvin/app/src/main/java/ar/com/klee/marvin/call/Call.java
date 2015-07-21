@@ -9,6 +9,7 @@ public class Call {
     private String type;
     private String date;
     private String duration;
+    private Date unformattedDate;
 
     public String getContactName() {
         return contactName;
@@ -32,6 +33,14 @@ public class Call {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Date getUnformattedDate() {
+        return unformattedDate;
+    }
+
+    public void setUnformattedDate(Date unformattedDate) {
+        this.unformattedDate = unformattedDate;
     }
 
     public String getDate() {

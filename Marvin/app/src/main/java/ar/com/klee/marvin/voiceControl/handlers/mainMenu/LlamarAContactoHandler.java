@@ -158,7 +158,6 @@ public class LlamarAContactoHandler extends CommandHandler {
 
         String input = context.getString(COMMAND);
         if(input.equals("si")) {
-            getTextToSpeech().speakText("Realizando llamada");
             context.getObject(ACTIVITY,MainMenuActivity.class).callNumber(context.getString(NUMBER));
             context.put(STEP, 0);
             return context;

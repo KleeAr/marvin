@@ -39,7 +39,8 @@
         android:layout_height="wrap_content"
         android:inputType="phone"
         android:ems="10"
-        android:id="@+id/editPhone" />
+        android:id="@+id/editPhone"
+        android:textColor="#FF000000" />
 
     <LinearLayout
         android:id="@+id/botonera"

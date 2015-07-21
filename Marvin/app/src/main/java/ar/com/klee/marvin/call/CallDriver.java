@@ -147,7 +147,7 @@ public class CallDriver {
                 // using native contacts selection
                 // Intent.ACTION_PICK = Pick an item from the data, returning what was selected.
                 STTService.getInstance().stopListening();
-                commandHandlerManager.getMainActivity().startActivityForResult(new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI), REQUEST_CODE_PICK_CONTACTS);
+                commandHandlerManager.getMainActivity().startActivityForResult(new Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI), REQUEST_CODE_PICK_CONTACTS);
             }
         });
         customDialog.findViewById(R.id.cancelar).setOnClickListener(new View.OnClickListener() {
@@ -166,6 +166,7 @@ public class CallDriver {
                 String number = editPhone.getText().toString();
                 commandHandlerManager.setNullCommand();
                 STTService.getInstance().setIsListening(false);
+                STTService.getInstance().stopListening();
                 Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number));
                 commandHandlerManager.getMainActivity().startActivity(intent);
                 customDialog.dismiss();
@@ -221,6 +222,7 @@ Retorna un string con el nombre
     }
 
     public void callNumber(String number){
+        STTService.getInstance().stopListening();
         Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number));
         commandHandlerManager.getMainActivity().startActivity(intent);
         actualDialog.dismiss();

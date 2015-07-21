@@ -100,6 +100,7 @@ public class CallHistoryActivity extends Activity implements AdapterView.OnItemC
             objCall.setNumberPhone(phNumber);
             objCall.setDuration(callDuration);
             objCall.setDate(formattedDate);
+            objCall.setUnformattedDate(callDayTime);
             objCall.setType(dir);
             callList.add(objCall); //se agrega el objeto a la lista
 
@@ -114,7 +115,7 @@ public class CallHistoryActivity extends Activity implements AdapterView.OnItemC
             Collections.sort(callList, new Comparator<Call>() {
                 @Override
                 public int compare(Call lhs, Call rhs) {
-                    return rhs.getDate().compareTo(lhs.getDate());
+                    return rhs.getUnformattedDate().compareTo(lhs.getUnformattedDate());
                 }
             });
 
@@ -140,8 +141,8 @@ public class CallHistoryActivity extends Activity implements AdapterView.OnItemC
         position++;
 
         commandHandlerManager.setNullCommand();
-        STTService.getInstance().setIsListening(true);
         STTService.getInstance().stopListening();
+        STTService.getInstance().setIsListening(true);
         commandHandlerManager.setCurrentCommandHandler(new ConsultarRegistroNumeroHandler(commandHandlerManager.getTextToSpeech(), commandHandlerManager.getContext(), commandHandlerManager));
         commandHandlerManager.setCurrentContext(commandHandlerManager.getCommandHandler().drive(commandHandlerManager.getCommandHandler().createContext(commandHandlerManager.getCurrentContext(), commandHandlerManager.getActivity(), "consultar registro número " + ((Integer)position).toString())));
     }
@@ -153,10 +154,26 @@ public class CallHistoryActivity extends Activity implements AdapterView.OnItemC
 
         String type = lastCall.getType();
 
+        String contact = lastCall.getContactName();
+        String contactWithSpaces = contact;
+
+        if(contact.equals(lastCall.getNumberPhone())) {
+            int j = 0;
+            contactWithSpaces = "";
+
+            while(j < contact.length()){
+                if(j%2 == 0)
+                    contactWithSpaces += contact.charAt(j) + " ";
+                else
+                    contactWithSpaces += contact.charAt(j);
+                j++;
+            }
+        }
+
         if(type.equals("Entrante") || type.equals("Perdida"))
-            toSpeak += "Llamada " + lastCall.getType() + " de " + lastCall.getContactName() + " el ";
+            toSpeak += "Llamada " + lastCall.getType() + " de " + contactWithSpaces + " el ";
         else
-            toSpeak += "Llamada " + lastCall.getType() + " a " + lastCall.getContactName() + " el ";
+            toSpeak += "Llamada " + lastCall.getType() + " a " + contactWithSpaces + " el ";
 
         String date = lastCall.getDate();
         StringTokenizer stringTokenizer = new StringTokenizer(date);
@@ -229,10 +246,23 @@ public class CallHistoryActivity extends Activity implements AdapterView.OnItemC
 
                 String type = selectedCall.getType();
 
+                String contactWithSpaces = "";
+
+                int j = 0;
+                contactWithSpaces = "";
+
+                while(j < number.length()){
+                    if(j%2 == 0)
+                        contactWithSpaces += number.charAt(j) + " ";
+                    else
+                        contactWithSpaces += number.charAt(j);
+                    j++;
+                }
+
                 if(type.equals("Entrante") || type.equals("Perdida"))
-                    toSpeak += "Llamada " + selectedCall.getType() + " de " + selectedCall.getContactName() + " el ";
+                    toSpeak += "Llamada " + selectedCall.getType() + " de " + contactWithSpaces + " el ";
                 else
-                    toSpeak += "Llamada " + selectedCall.getType() + " a " + selectedCall.getContactName() + " el ";
+                    toSpeak += "Llamada " + selectedCall.getType() + " a " + contactWithSpaces + " el ";
 
                 String date = selectedCall.getDate();
                 StringTokenizer stringTokenizer = new StringTokenizer(date);
@@ -261,11 +291,26 @@ public class CallHistoryActivity extends Activity implements AdapterView.OnItemC
             String toSpeak = "";
 
             String type = selectedCall.getType();
+            String contact = selectedCall.getContactName();
+            String contactWithSpaces = contact;
+
+            if(contact.equals(selectedCall.getNumberPhone())) {
+                int j = 0;
+                contactWithSpaces = "";
+
+                while(j < contact.length()){
+                    if(j%2 == 0)
+                        contactWithSpaces += contact.charAt(j) + " ";
+                    else
+                        contactWithSpaces += contact.charAt(j);
+                    j++;
+                }
+            }
 
             if(type.equals("Entrante") || type.equals("Perdida"))
-                toSpeak += "Llamada " + selectedCall.getType() + " de " + selectedCall.getContactName() + " el ";
+                toSpeak += "Llamada " + selectedCall.getType() + " de " + contactWithSpaces + " el ";
             else
-                toSpeak += "Llamada " + selectedCall.getType() + " a " + selectedCall.getContactName() + " el ";
+                toSpeak += "Llamada " + selectedCall.getType() + " a " + contactWithSpaces + " el ";
 
             String date = selectedCall.getDate();
             StringTokenizer stringTokenizer = new StringTokenizer(date);
@@ -333,6 +378,7 @@ public class CallHistoryActivity extends Activity implements AdapterView.OnItemC
             {
                 customDialog.dismiss();
                 STTService.getInstance().setIsListening(false);
+                STTService.getInstance().stopListening();
                 commandHandlerManager.setNullCommand();
                 //lanza un intent con el numero del contacto
                 Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + call.getNumberPhone()));

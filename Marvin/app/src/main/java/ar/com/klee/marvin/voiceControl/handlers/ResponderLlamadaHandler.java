@@ -45,7 +45,6 @@ public class ResponderLlamadaHandler extends CommandHandler{
 
         String input = context.getString(COMMAND);
         if(input.equals("atender")) {
-            getTextToSpeech().speakText("Atendiendo llamada");
             context.getObject(ACTIVITY,IncomingCallActivity.class).acceptCall();
             context.put(STEP, 0);
             return context;
