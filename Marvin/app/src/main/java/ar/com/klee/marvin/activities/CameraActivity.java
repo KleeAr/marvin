@@ -1,24 +1,32 @@
 package ar.com.klee.marvin.activities;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.PictureCallback;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -33,7 +41,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import ar.com.klee.marvin.R;
-import ar.com.klee.marvin.camera.CameraDialog;
 import ar.com.klee.marvin.camera.CameraPreview;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
@@ -52,7 +59,6 @@ public class CameraActivity extends ActionBarActivity {
     private TextView buttonInfo;
 
     private CommandHandlerManager commandHandlerManager;
-    private CameraDialog cameraDialog;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -347,6 +353,7 @@ public class CameraActivity extends ActionBarActivity {
         }
 
         mPreview.refreshCamera(mCamera);
+        commandHandlerManager.setIsPhotoTaken(false);
 
         save.setVisibility(View.INVISIBLE);
         saveAndShare.setVisibility(View.INVISIBLE);
@@ -359,8 +366,7 @@ public class CameraActivity extends ActionBarActivity {
 
     public void share(){
 
-        cameraDialog = new CameraDialog(this, mPreview, mCamera);
-        cameraDialog.show();
+        openShareDialog();
 
         save.setVisibility(View.INVISIBLE);
         saveAndShare.setVisibility(View.INVISIBLE);
@@ -385,8 +391,7 @@ public class CameraActivity extends ActionBarActivity {
         } catch (IOException e) {
         }
 
-        cameraDialog = new CameraDialog(this, mPreview, mCamera);
-        cameraDialog.show();
+        openShareDialog();
 
         save.setVisibility(View.INVISIBLE);
         saveAndShare.setVisibility(View.INVISIBLE);
@@ -399,19 +404,19 @@ public class CameraActivity extends ActionBarActivity {
 
     public void shareInFacebook(){
 
-        cameraDialog.facebook();
+        //TODO cameraDialog.facebook();
 
     }
 
     public void shareInTwitter(){
 
-        cameraDialog.twitter();
+        //TODO cameraDialog.twitter();
 
     }
 
     public void shareInInstagram(){
 
-        cameraDialog.instagram();
+        //TODO cameraDialog.instagram();
 
     }
 
@@ -419,12 +424,50 @@ public class CameraActivity extends ActionBarActivity {
 
         mPreview.refreshCamera(mCamera);
 
+        commandHandlerManager.setIsPhotoTaken(false);
+
         save.setVisibility(View.INVISIBLE);
         saveAndShare.setVisibility(View.INVISIBLE);
         share.setVisibility(View.INVISIBLE);
         cancel.setVisibility(View.INVISIBLE);
         capture.setVisibility(View.VISIBLE);
         buttonInfo.setVisibility(View.INVISIBLE);
+
+    }
+
+    public  void openShareDialog(){
+        final Dialog customDialog = new Dialog(this);
+        customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        customDialog.setCancelable(true);
+        customDialog.setContentView(R.layout.dialog_camera);
+        customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        customDialog.findViewById(R.id.facebook).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view){
+
+
+
+            }
+        });
+        customDialog.findViewById(R.id.twitter).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view){
+
+
+
+            }
+        });
+        customDialog.findViewById(R.id.instagram).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view){
+
+
+
+            }
+        });
+
+        customDialog.show();
 
     }
 

@@ -77,6 +77,16 @@ public class AgregarEventoHandler extends CommandHandler {
 
         getTextToSpeech().speakText("¿Querés agregar al calendario el evento " + context.getString(EVENT) + "?");
 
+        String textToPublish = context.getString(EVENT);
+
+        Character firstCharacter, newFirstCharacter;
+
+        firstCharacter = textToPublish.charAt(0);
+        newFirstCharacter = Character.toUpperCase(firstCharacter);
+        textToPublish = textToPublish.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
+
+        context.put(EVENT, textToPublish);
+
         context.put(SET_EVENT, false);
         context.put(STEP, 3);
         return context;

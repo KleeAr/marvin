@@ -95,12 +95,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             callDriver = CallDriver.initializeInstance(getApplicationContext());
         }
 
-        if(CallReceiver.isInstanceInitialized()) {
-            callReceiver = CallReceiver.getInstance();
-        } else {
-            callReceiver = CallReceiver.initializeInstance(getApplicationContext());
-        }
-
     }
 
     @Override
@@ -186,7 +180,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     commandHandlerManager = CommandHandlerManager.getInstance();
                     smsDriver.initializeCommandHandlerManager();
                     callDriver.initializeCommandHandlerManager();
-                    callReceiver.initializeCommandHandlerManager();
                     setCommandHandlerManager();
                 }
 
@@ -535,9 +528,12 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        STTService.getInstance().stopListening();
+
         if (requestCode == CallDriver.REQUEST_CODE_PICK_CONTACTS && resultCode == RESULT_OK) {
             callDriver.setUriContact(data.getData());
             callDriver.retrieveContactNumber();
+
         }
     }
 

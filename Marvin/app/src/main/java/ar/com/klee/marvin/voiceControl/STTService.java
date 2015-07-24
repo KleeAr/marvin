@@ -32,6 +32,8 @@ public class STTService extends Service {
     private boolean isListening;
     private boolean previousListening;
 
+    private boolean sttState;
+
     LocalBroadcastManager broadcaster;
     public static final String COPA_RESULT = "com.controlj.copame.backend.COPAService.REQUEST_PROCESSED";
     public static final String COPA_MESSAGE = "com.controlj.copame.backend.COPAService.COPA_MSG";
@@ -56,6 +58,7 @@ public class STTService extends Service {
         broadcaster = LocalBroadcastManager.getInstance(this);
 
         isListening = false;
+        sttState = true;
         mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
 
         instance = this;
@@ -80,9 +83,11 @@ public class STTService extends Service {
 
     public void stopListening(){
 
-        mSpeechRecognizer.stopListening();
-        mSpeechRecognizer.cancel();
-
+        if(sttState) {
+            mSpeechRecognizer.stopListening();
+            mSpeechRecognizer.cancel();
+            sttState = false;
+        }
     }
 
     @Override
@@ -111,6 +116,7 @@ public class STTService extends Service {
         public void onError(int error){
 
             mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
+            sttState = true;
 
         }
 
@@ -133,6 +139,8 @@ public class STTService extends Service {
 
         @Override
         public void onResults(Bundle results){
+
+            sttState = false;
 
             ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
             String text = matches.get(0);
@@ -228,6 +236,12 @@ public class STTService extends Service {
     public boolean getIsListening(){
 
         return isListening;
+
+    }
+
+    public void setState(boolean state){
+
+        sttState = state;
 
     }
 

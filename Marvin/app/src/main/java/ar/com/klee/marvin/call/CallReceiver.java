@@ -11,8 +11,10 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import ar.com.klee.marvin.activities.IncomingCallActivity;
+import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
+import ar.com.klee.marvin.voiceControl.handlers.AgendarContactoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.ResponderLlamadaHandler;
 
 /*
@@ -27,32 +29,7 @@ public class CallReceiver extends BroadcastReceiver {
     private static String savedNumber;
     private static long timeCall; //calculo los segundos hablados en la llamada
 
-    private static CallReceiver instance;
-    private Context context;
-    private CommandHandlerManager commandHandlerManager;
-
-    public CallReceiver(Context context){
-        this.context = context;
-    }
-
-    public void initializeCommandHandlerManager(){
-        commandHandlerManager = CommandHandlerManager.getInstance();
-    }
-
-    public static CallReceiver getInstance(){
-        if (instance == null) {
-            throw new IllegalStateException("Instance not initialized. Call initializeInstance before calling getInstance");
-        }
-        return instance;
-    }
-
-    public static CallReceiver initializeInstance(Context context) {
-        if(instance != null) {
-            throw new IllegalStateException("Instance already initialized");
-        }
-        CallReceiver.instance = new CallReceiver(context);
-        return instance;
-    }
+    private CommandHandlerManager commandHandlerManager = CommandHandlerManager.getInstance();
 
     public void onReceive(Context context, Intent intent) {
 
@@ -114,23 +91,37 @@ public class CallReceiver extends BroadcastReceiver {
         long diffInSec = TimeUnit.MILLISECONDS.toSeconds(diffInMs);
         //hay que agregar a la pregunta de si no es contacto la duracion de los segundos. Valor a definir
         if (!Contact.isContact(ctx, savedNumber)) {
-            Toast.makeText(ctx, "no es contacto", Toast.LENGTH_LONG).show();
-            //ejecutar comandos de voz para preguntarle el nombre y el email
-            //Llamar addNewContact para guardar al nuevo contacto
 
+            STTService.getInstance().setIsListening(true);
+            STTService.getInstance().stopListening();
+            if (commandHandlerManager.getCurrentActivity() == CommandHandlerManager.ACTIVITY_MAIN)
+                ((MainMenuActivity) commandHandlerManager.getMainActivity()).setButtonsDisabled();
+            commandHandlerManager.setCurrentCommandHandler(new AgendarContactoHandler(commandHandlerManager.getTextToSpeech(), commandHandlerManager.getContext(), commandHandlerManager));
+            commandHandlerManager.setCurrentContext(commandHandlerManager.getCommandHandler().drive(commandHandlerManager.getCommandHandler().createContext(commandHandlerManager.getCurrentContext(), commandHandlerManager.getActivity(), "agendar contacto " + savedNumber)));
+
+        }else {
+            commandHandlerManager.getTextToSpeech().speakText("Número ocupado");
         }
     }
 
     protected void onOutgoingCallEnded(Context ctx, String number, Date start, Date end) {
         long diffInMs = end.getTime() - timeCall;
         long diffInSec = TimeUnit.MILLISECONDS.toSeconds(diffInMs);
-        commandHandlerManager.getTextToSpeech().speakText(" ");
-        //hay que agregar a la pregunta de si no es contacto la duracion de los segundos. Valor a definir
-        if (!Contact.isContact(ctx, savedNumber)) {
-            Toast.makeText(ctx, "no es contacto", Toast.LENGTH_LONG).show();
-            //ejecutar comandos de voz para preguntarle el nombre y el email
-            //Llamar addNewContact para guardar al nuevo contacto
 
+        if(diffInSec > 5) {
+            //hay que agregar a la pregunta de si no es contacto la duracion de los segundos. Valor a definir
+            if (!Contact.isContact(ctx, savedNumber)) {
+
+                STTService.getInstance().setIsListening(true);
+                STTService.getInstance().stopListening();
+                if (commandHandlerManager.getCurrentActivity() == CommandHandlerManager.ACTIVITY_MAIN)
+                    ((MainMenuActivity) commandHandlerManager.getMainActivity()).setButtonsDisabled();
+                commandHandlerManager.setCurrentCommandHandler(new AgendarContactoHandler(commandHandlerManager.getTextToSpeech(), commandHandlerManager.getContext(), commandHandlerManager));
+                commandHandlerManager.setCurrentContext(commandHandlerManager.getCommandHandler().drive(commandHandlerManager.getCommandHandler().createContext(commandHandlerManager.getCurrentContext(), commandHandlerManager.getActivity(), "agendar contacto " + savedNumber)));
+
+            }
+        }else {
+            commandHandlerManager.getTextToSpeech().speakText("Número ocupado");
         }
     }
 
@@ -143,6 +134,7 @@ public class CallReceiver extends BroadcastReceiver {
             return;
         }
         switch (state) {
+
             case TelephonyManager.CALL_STATE_RINGING:
                 isIncoming = true;
                 callStartTime = new Date();
@@ -184,13 +176,5 @@ public class CallReceiver extends BroadcastReceiver {
         lastState = state;
     }
 
-
-    public static boolean isInstanceInitialized() {
-        return instance != null;
-    }
-
-    public static void destroyInstance() {
-        instance = null;
-    }
 
 }

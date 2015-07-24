@@ -111,8 +111,6 @@ public class IntersectionSender {
 
                 i++;
 
-                Log.d("RIGHT", nextRight);
-                Log.d("LEFT",nextLeft);
             }
 
             if(nextLeft.equals(""))

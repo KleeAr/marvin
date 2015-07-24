@@ -52,6 +52,8 @@ public class TTS {
             delayTime = delayTime * 700;
         }
 
+        STTService.getInstance().stopListening();
+
         // Reproduce el texto
         ttsObject.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH, null);
 
@@ -60,6 +62,7 @@ public class TTS {
         handler.postDelayed(new Runnable() {
             public void run() {
                 mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
+                STTService.getInstance().setState(true);
             }
         }, delayTime);
 
@@ -70,6 +73,8 @@ public class TTS {
         int delayTime = textToSpeak.length()/5 + 1;
         delayTime = delayTime * 900;
 
+        STTService.getInstance().stopListening();
+
         // Reproduce el texto
         ttsObject.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH, null);
 
@@ -78,12 +83,15 @@ public class TTS {
         handler.postDelayed(new Runnable() {
             public void run() {
                 mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
+                STTService.getInstance().setState(true);
             }
         }, delayTime);
 
     }
 
     public int speakTextWithoutStart(String textToSpeak){
+
+        STTService.getInstance().stopListening();
 
         ttsObject.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH, null);
 

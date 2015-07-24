@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.ContactsContract;
+import android.telephony.PhoneNumberUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -17,6 +18,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
 
@@ -26,7 +28,7 @@ public class CallDriver {
     public static final int REQUEST_CODE_PICK_CONTACTS = 1;
     private Uri uriContact;
     private String contactID;     // contacts unique ID
-    private static EditText editPhone;
+    private EditText editPhone;
     private Dialog actualDialog;
 
     private Context context;
@@ -65,42 +67,65 @@ public class CallDriver {
 
     public void retrieveContactNumber() {
 
-        String number = null;
+        Cursor cursor;  // Cursor object
+        String mime;    // MIME type
+        int dataIdx;    // Index of DATA1 column
+        int mimeIdx;    // Index of MIMETYPE column
+        int nameIdx;    // Index of DISPLAY_NAME column
+        String name = "";
+        String number = "";
 
-        // getting contacts ID
-        Cursor cursorID = context.getContentResolver().query(uriContact,
-                new String[]{ContactsContract.Contacts._ID},
+        // Get the name
+        cursor = context.getContentResolver().query(uriContact,
+                new String[] { ContactsContract.Contacts.DISPLAY_NAME },
                 null, null, null);
+        if (cursor.moveToFirst()) {
+            nameIdx = cursor.getColumnIndex(
+                    ContactsContract.Contacts.DISPLAY_NAME);
+            name = cursor.getString(nameIdx);
 
-        if (cursorID.moveToFirst()) {
+            // Set up the projection
+            String[] projection = {
+                    ContactsContract.Data.DISPLAY_NAME,
+                    ContactsContract.Contacts.Data.DATA1,
+                    ContactsContract.Contacts.Data.MIMETYPE };
 
-            contactID = cursorID.getString(cursorID.getColumnIndex(ContactsContract.Contacts._ID));
+            // Query ContactsContract.Data
+            cursor = context.getContentResolver().query(
+                    ContactsContract.Data.CONTENT_URI, projection,
+                    ContactsContract.Data.DISPLAY_NAME + " = ?",
+                    new String[] { name },
+                    null);
+
+            if (cursor.moveToFirst()) {
+                // Get the indexes of the MIME type and data
+                mimeIdx = cursor.getColumnIndex(
+                        ContactsContract.Contacts.Data.MIMETYPE);
+                dataIdx = cursor.getColumnIndex(
+                        ContactsContract.Contacts.Data.DATA1);
+
+                // Match the data to the MIME type, store in variables
+                do {
+                    mime = cursor.getString(mimeIdx);
+                    if (ContactsContract.CommonDataKinds.Phone
+                            .CONTENT_ITEM_TYPE.equalsIgnoreCase(mime)) {
+                        number = cursor.getString(dataIdx);
+                        number = PhoneNumberUtils.formatNumber(number);
+                    }
+                } while (cursor.moveToNext());
+            }
         }
 
-        cursorID.close();
 
-        // Using the contact ID now we will get contact phone number
-        Cursor cursorPhone = context.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER},
-
-                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ? AND " +
-                        ContactsContract.CommonDataKinds.Phone.TYPE + " = " +
-                        ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE,
-
-                new String[]{contactID},
-                null);
-
-        if (cursorPhone.moveToFirst()) {
-            number = cursorPhone.getString(cursorPhone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-        }
-
-        cursorPhone.close();
-
+        STTService.getInstance().stopListening();
         editPhone.setText(number);
         commandHandlerManager.getCurrentContext().put("SET_NUMBER",true);
-        commandHandlerManager.getCurrentContext().put("STEP",1);
-        commandHandlerManager.setCurrentContext(commandHandlerManager.getCommandHandler().drive(commandHandlerManager.getCommandHandler().createContext(commandHandlerManager.getCurrentContext(), commandHandlerManager.getActivity(), number)));
+        commandHandlerManager.getCurrentContext().put("SET_CONTACT",true);
+        commandHandlerManager.getCurrentContext().put("STEP",3);
+        commandHandlerManager.getTextToSpeech().speakText("¿Querés llamar al contacto seleccionado?");
     }
+
+
 
     public void setUriContact(Uri uri){
         uriContact = uri;
@@ -147,14 +172,16 @@ public class CallDriver {
                 // using native contacts selection
                 // Intent.ACTION_PICK = Pick an item from the data, returning what was selected.
                 STTService.getInstance().stopListening();
+
                 commandHandlerManager.getMainActivity().startActivityForResult(new Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI), REQUEST_CODE_PICK_CONTACTS);
             }
         });
         customDialog.findViewById(R.id.cancelar).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view){
-                commandHandlerManager.setNullCommand();
                 STTService.getInstance().setIsListening(false);
+                commandHandlerManager.setNullCommand();
+                ((MainMenuActivity)commandHandlerManager.getMainActivity()).setButtonsEnabled();
                 customDialog.dismiss();
             }
         });
