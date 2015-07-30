@@ -35,6 +35,8 @@ public class CallDriver {
     private CommandHandlerManager commandHandlerManager;
     private static CallDriver instance;
 
+    private String lastOutgoingCallNumber;
+
     public CallDriver(Context context) {
 
         this.context = context;
@@ -194,6 +196,7 @@ public class CallDriver {
                 commandHandlerManager.setNullCommand();
                 STTService.getInstance().setIsListening(false);
                 STTService.getInstance().stopListening();
+                lastOutgoingCallNumber = number;
                 Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number));
                 commandHandlerManager.getMainActivity().startActivity(intent);
                 customDialog.dismiss();
@@ -250,9 +253,14 @@ Retorna un string con el nombre
 
     public void callNumber(String number){
         STTService.getInstance().stopListening();
+        lastOutgoingCallNumber = number;
         Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number));
         commandHandlerManager.getMainActivity().startActivity(intent);
         actualDialog.dismiss();
+    }
+
+    public String getLastOutgoingCallNumber(){
+        return lastOutgoingCallNumber;
     }
 
     public static boolean isInstanceInitialized() {

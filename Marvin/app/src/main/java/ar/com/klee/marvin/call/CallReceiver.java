@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.Date;
@@ -28,6 +29,9 @@ public class CallReceiver extends BroadcastReceiver {
     private static Date callStartTime;
     private static String savedNumber;
     private static long timeCall; //calculo los segundos hablados en la llamada
+
+    private final int BUSY = 10;
+    private final int LONG_CALL = 0;
 
     private CommandHandlerManager commandHandlerManager = CommandHandlerManager.getInstance();
 
@@ -90,7 +94,7 @@ public class CallReceiver extends BroadcastReceiver {
         long diffInMs = end.getTime() - timeCall;
         long diffInSec = TimeUnit.MILLISECONDS.toSeconds(diffInMs);
         //hay que agregar a la pregunta de si no es contacto la duracion de los segundos. Valor a definir
-        if (!Contact.isContact(ctx, savedNumber)) {
+        if (diffInSec > LONG_CALL && !Contact.isContact(ctx, savedNumber)) {
 
             STTService.getInstance().setIsListening(true);
             STTService.getInstance().stopListening();
@@ -100,7 +104,7 @@ public class CallReceiver extends BroadcastReceiver {
             commandHandlerManager.setCurrentContext(commandHandlerManager.getCommandHandler().drive(commandHandlerManager.getCommandHandler().createContext(commandHandlerManager.getCurrentContext(), commandHandlerManager.getActivity(), "agendar contacto " + savedNumber)));
 
         }else {
-            commandHandlerManager.getTextToSpeech().speakText("Número ocupado");
+            commandHandlerManager.getTextToSpeech().speakText("Llamada finalizada");
         }
     }
 
@@ -108,9 +112,9 @@ public class CallReceiver extends BroadcastReceiver {
         long diffInMs = end.getTime() - timeCall;
         long diffInSec = TimeUnit.MILLISECONDS.toSeconds(diffInMs);
 
-        if(diffInSec > 5) {
+        if(diffInSec > BUSY) {
             //hay que agregar a la pregunta de si no es contacto la duracion de los segundos. Valor a definir
-            if (!Contact.isContact(ctx, savedNumber)) {
+            if (diffInSec > LONG_CALL && !Contact.isContact(ctx, savedNumber)) {
 
                 STTService.getInstance().setIsListening(true);
                 STTService.getInstance().stopListening();
@@ -118,8 +122,9 @@ public class CallReceiver extends BroadcastReceiver {
                     ((MainMenuActivity) commandHandlerManager.getMainActivity()).setButtonsDisabled();
                 commandHandlerManager.setCurrentCommandHandler(new AgendarContactoHandler(commandHandlerManager.getTextToSpeech(), commandHandlerManager.getContext(), commandHandlerManager));
                 commandHandlerManager.setCurrentContext(commandHandlerManager.getCommandHandler().drive(commandHandlerManager.getCommandHandler().createContext(commandHandlerManager.getCurrentContext(), commandHandlerManager.getActivity(), "agendar contacto " + savedNumber)));
-
             }
+            else
+                commandHandlerManager.getTextToSpeech().speakText("Llamada finalizada");
         }else {
             commandHandlerManager.getTextToSpeech().speakText("Número ocupado");
         }
@@ -130,9 +135,14 @@ public class CallReceiver extends BroadcastReceiver {
 
     public void onCallStateChanged(Context context, int state, String number) {
         if (lastState == state) {
-            //No se producieron cambios
+            //No se produjeron cambios
             return;
         }
+
+        if(!CommandHandlerManager.isInstanceInitialized()){
+            return;
+        }
+
         switch (state) {
 
             case TelephonyManager.CALL_STATE_RINGING:
@@ -152,13 +162,15 @@ public class CallReceiver extends BroadcastReceiver {
 
                 if (lastState != TelephonyManager.CALL_STATE_RINGING) {
                     isIncoming = false;
-                    savedNumber = number;
+                    savedNumber = CallDriver.getInstance().getLastOutgoingCallNumber();
                     callStartTime = new Date();
+                    timeCall = callStartTime.getTime();
                     //llamada realizada desde el dispositivo
                 }
                 break;
             case TelephonyManager.CALL_STATE_IDLE:
                 AudioManager am2 = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+                am2.setMode(AudioManager.MODE_NORMAL);
                 am2.setSpeakerphoneOn(false);
                 //Telefono en sin uso- esto puede ser porque termino una llamada o no. Depende del estado previo.
                 if (lastState == TelephonyManager.CALL_STATE_RINGING) {

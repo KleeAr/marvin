@@ -86,11 +86,15 @@ public class AgendarContactoHandler extends CommandHandler {
     public CommandHandlerContext stepFive(CommandHandlerContext context){
         String input = context.getString(COMMAND);
 
-        Character firstCharacter, newFirstCharacter;
-        firstCharacter = input.charAt(0);
-        newFirstCharacter = Character.toUpperCase(firstCharacter);
-        input = input.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
-        
+        char[] characters = input.toCharArray();
+
+        characters[0] = Character.toUpperCase(characters[0]);
+
+        for (int i = 0; i < characters.length - 2; i++)
+            if (characters[i] == ' ')
+                characters[i + 1] = Character.toUpperCase(characters[i + 1]);
+
+        input = new String(characters);
 
         context.put(CONTACT, input);
         getTextToSpeech().speakText("¿Querés agendar el número con el nombre " + input + "?");
