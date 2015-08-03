@@ -1,41 +1,81 @@
 package ar.com.klee.marvin.activities;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Parcelable;
 import android.speech.SpeechRecognizer;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.SlidingTabLayout;
+import ar.com.klee.marvin.ViewPagerAdpater;
+import ar.com.klee.marvin.applications.Application;
 import ar.com.klee.marvin.call.CallDriver;
 import ar.com.klee.marvin.call.CallReceiver;
+import ar.com.klee.marvin.data.Channel;
+import ar.com.klee.marvin.data.Item;
 import ar.com.klee.marvin.gps.LocationSender;
 import ar.com.klee.marvin.multimedia.music.MusicService;
 import ar.com.klee.marvin.multimedia.video.YouTubeVideo;
+import ar.com.klee.marvin.service.WeatherServiceCallback;
+import ar.com.klee.marvin.service.YahooWeatherService;
 import ar.com.klee.marvin.sms.SMSDriver;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
 
 
-public class MainMenuActivity extends ActionBarActivity implements DelegateTask<List<YouTubeVideo>> {
+public class MainMenuActivity extends ActionBarActivity implements DelegateTask<List<YouTubeVideo>>, WeatherServiceCallback {
+
+
+    public final int CANT_APPLICATION=12; //variable en que se definen la cantidad de aplicaciones disponibles
+    public final int UPDATE_WEATHER=1000000; //cantidad de milisegundos para actualizar el clima
+
+    Toolbar toolbar;
+    ViewPager pager;
+    ViewPagerAdpater adapter;
+    CharSequence Titles[]={"Home","Aplicacion"};
+    int Numboftabs = 2;
+    private long date;
+    public static TextView cityText;
+    public static TextView mainStreet;
+    public static TextView speed;
+
+    private ImageView weatherIconImageView;
+    private TextView temperatureTextView;
+    private YahooWeatherService service;
+    public static Application[] shortcutList; //lista para almacenar las aplicaciones configuradas
+    public static ImageButton[] shortcutButton;
 
     private Intent voiceControlServiceIntent;
     private Intent musicServiceIntent;
@@ -52,10 +92,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     private CallDriver callDriver;
     private CallReceiver callReceiver;
 
-    private Button bt_play;
-    private Button bt_pause;
-    private Button bt_next;
-    private Button bt_previous;
+    private ImageButton bt_play;
+    private ImageButton bt_next;
+    private ImageButton bt_previous;
 
     private TextView tv_song;
     private TextView tv_artist;
@@ -68,13 +107,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         CommandHandlerManager.destroyInstance();
         setContentView(R.layout.activity_main_menu);
 
-        bt_play = (Button) findViewById(R.id.bt_play);
-        bt_pause = (Button) findViewById(R.id.bt_pause);
-        bt_next = (Button) findViewById(R.id.bt_next);
-        bt_previous = (Button) findViewById(R.id.bt_previous);
-
-        bt_play.setVisibility(View.VISIBLE);
-        bt_pause.setVisibility(View.INVISIBLE);
+        bt_play = (ImageButton) findViewById(R.id.bt_play);
+        bt_next = (ImageButton) findViewById(R.id.bt_next);
+        bt_previous = (ImageButton) findViewById(R.id.bt_previous);
 
         tv_song = (TextView)findViewById(R.id.song);
         tv_artist = (TextView)findViewById(R.id.artist);
@@ -83,6 +118,165 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         initializeSTTService();
 
         locationSender = new LocationSender(this);
+
+        ////////////////////////////////////
+
+
+      //  LocationSender locationSender = new LocationSender(this);
+
+        cityText = (TextView)findViewById(R.id.cityText);
+        mainStreet = (TextView)findViewById(R.id.mainStreet);
+
+
+        shortcutList = new Application[CANT_APPLICATION]; //creamos la lista para almacenar los accesos directos
+
+        for (int i = 0; i < CANT_APPLICATION; i++)
+            shortcutList[i] = new Application(null, null, null, false);//inicia los objetos
+
+        shortcutButton = new ImageButton[CANT_APPLICATION]; //creamos la lista para almacenar los botones
+
+
+        // RECUPERAR DATOS
+        // Creamos la instancia de "SharedPreferences" en MODE_PRIVATE
+        SharedPreferences settings = getSharedPreferences("PREFERENCES", 0);
+      /* Esta parte es para validar que se creo un acceso directo
+      if(!settings.getBoolean("IsIconCreated",false)){
+            addShortcut();
+            getSharedPreferences("PREFERENCES", 0).edit().putBoolean("IsIconCreated", true);
+
+        }*/
+        //Se recupera la información en los arrays
+        for(int i=0; i<CANT_APPLICATION;i++){
+            shortcutList[i].setPackageName(settings.getString("ButtonPack" + i, ""));
+            shortcutList[i].setName(settings.getString("ButtonName" + i, ""));
+            shortcutList[i].setConfigured(settings.getBoolean("ButtonConfig" + i, false));
+            try {
+                shortcutList[i].setIcon(getPackageManager().getApplicationIcon(shortcutList[i].getPackageName()));
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        ////////////////////
+
+
+        //definimos los tipos de letra
+        Typeface fBariolBold = Typeface.createFromAsset(getAssets(), "Bariol_Bold.otf");
+        Typeface fBariolRegular = Typeface.createFromAsset(getAssets(), "Bariol_Regular.otf");
+
+        speed = (TextView)findViewById(R.id.speed);
+        speed.setTypeface(fBariolBold);
+        final TextView speedUnit = (TextView)findViewById(R.id.speedUnit);
+        speedUnit.setTypeface(fBariolRegular);
+
+        temperatureTextView = (TextView) findViewById(R.id.temperatureText);
+        temperatureTextView.setTypeface(fBariolRegular);
+
+
+        final TextView digitalClock = (TextView)findViewById(R.id.digitalClock);
+        final TextView weekDay = (TextView)findViewById(R.id.weekDayText);
+        weekDay.setTypeface(fBariolRegular);
+
+        final TextView dateText = (TextView)findViewById(R.id.dateText);
+        dateText.setTypeface(fBariolRegular);
+
+        final TextView anteMeridiem = (TextView)findViewById(R.id.anteMeridiem);
+        date = System.currentTimeMillis();
+
+        final SimpleDateFormat formatTime1 = new SimpleDateFormat("hh:mm");
+        final SimpleDateFormat formatTime2 = new SimpleDateFormat("aa");
+
+        digitalClock.setText(formatTime1.format(date));
+        digitalClock.setTypeface(fBariolBold);
+
+        anteMeridiem.setText(formatTime2.format(date));
+        anteMeridiem.setTypeface(fBariolRegular);
+
+        final SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
+        weekDay.setText(sdf.format(date));//sdf.format(new Date()));
+
+
+        final SimpleDateFormat formatTime3 = new SimpleDateFormat("dd 'de' MMMM");
+        dateText.setText(formatTime3.format(date));
+
+        final SimpleDateFormat dateComplete = new SimpleDateFormat("hh:mm aa");
+
+
+
+        Thread tTime = new Thread() {
+
+            @Override
+            public void run() {
+                try {
+                    while (!isInterrupted()) {
+                        Thread.sleep(999);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // update TextView here!
+                                date = System.currentTimeMillis();
+                                digitalClock.setText(formatTime1.format(date));
+                                anteMeridiem.setText(formatTime2.format(date));
+                                if(dateComplete.format(date).equals("12:00 a.m.")){
+                                    weekDay.setText(sdf.format(date));
+                                    dateText.setText(formatTime3.format(date));
+
+                                }
+                            }
+                        });
+                    }
+                } catch (InterruptedException e) {
+                }
+            }
+        };
+
+        tTime.start();
+
+
+
+        weatherIconImageView = (ImageView) findViewById(R.id.weatherImage);
+        service = new YahooWeatherService(this, getApplicationContext());
+        service.refreshWeather(cityText.getText().toString());
+
+        Thread tWheather = new Thread() {
+
+            @Override
+            public void run() {
+                try {
+                    while (!isInterrupted()) {
+                        Thread.sleep(UPDATE_WEATHER);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // update TextView here!
+                                service.refreshWeather(cityText.getText().toString());
+                            }
+                        });
+                    }
+                } catch (InterruptedException e) {
+                }
+            }
+        };
+
+        tWheather.start();
+
+
+        // Creating The Toolbar and setting it as the Toolbar for the activity
+
+        toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        setSupportActionBar(toolbar);
+
+
+        // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
+        adapter =  new ViewPagerAdpater(getSupportFragmentManager(),Titles,Numboftabs);
+
+        // Assigning ViewPager View and setting the adapter
+        pager = (ViewPager) findViewById(R.id.pager);
+        pager.setAdapter(adapter);
+
+
+
 
         if(SMSDriver.isInstanceInitialized()) {
             smsDriver = SMSDriver.getInstance();
@@ -120,6 +314,30 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         return super.onOptionsItemSelected(item);
     }
 
+
+
+    @Override
+    public void serviceSuccess(Channel channel) {
+
+        Item item = channel.getItem();
+
+        int resourceId = getResources().getIdentifier("drawable/icon_"+item.getCondition().getCode(), null, getPackageName());
+
+        @SuppressWarnings("deprecation")
+        Drawable weatherIconDrawble = getResources().getDrawable(resourceId);
+
+        weatherIconImageView.setImageDrawable(weatherIconDrawble);
+
+        temperatureTextView.setText(item.getCondition().getTemperature() + "\u00B0" + channel.getUnits().getTemperature());
+
+    }
+
+    @Override
+    public void serviceFailure(Exception exception) {
+        Toast.makeText(this, exception.getMessage(), Toast.LENGTH_LONG).show();
+    }
+
+
     public void initializeSTTService(){
 
         // Lanzamos el servicio que controla la ejecución por comandos de voz
@@ -142,7 +360,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                         wasPlaying = false;
 
                     bt_play.setEnabled(false);
-                    bt_pause.setEnabled(false);
                     bt_next.setEnabled(false);
                     bt_previous.setEnabled(false);
 
@@ -154,18 +371,15 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     handler.postDelayed(new Runnable() {
                         public void run() {
                             if(wasPlaying) {
-                                bt_play.setVisibility(View.INVISIBLE);
-                                bt_pause.setVisibility(View.VISIBLE);
+                                bt_play.setImageResource(R.drawable.ic_media_pause);
                                 musicService.startPlaying();
                             }else{
-                                bt_play.setVisibility(View.VISIBLE);
-                                bt_pause.setVisibility(View.INVISIBLE);
+                                bt_play.setImageResource(R.drawable.ic_media_play);
                             }
                         }
                     }, 5000);
 
                     bt_play.setEnabled(true);
-                    bt_pause.setEnabled(true);
                     bt_next.setEnabled(true);
                     bt_previous.setEnabled(true);
 
@@ -258,12 +472,11 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         if(!musicService.isPlaying()) {
             musicService.startPlaying();
-            bt_play.setVisibility(View.INVISIBLE);
-            bt_pause.setVisibility(View.VISIBLE);
+            bt_play.setImageResource(R.drawable.ic_media_pause);
+
         }else{
             musicService.pause();
-            bt_play.setVisibility(View.VISIBLE);
-            bt_pause.setVisibility(View.INVISIBLE);
+            bt_play.setImageResource(R.drawable.ic_media_play);
         }
     }
 
@@ -275,8 +488,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         }
 
         if(!musicService.isPlaying()) {
-            bt_play.setVisibility(View.INVISIBLE);
-            bt_pause.setVisibility(View.VISIBLE);
+            bt_play.setImageResource(R.drawable.ic_media_pause);
         }
 
         musicService.nextSong();
@@ -286,8 +498,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     public void nextSongSet(){
 
         if(!musicService.isPlaying()) {
-            bt_play.setVisibility(View.INVISIBLE);
-            bt_pause.setVisibility(View.VISIBLE);
+            bt_play.setImageResource(R.drawable.ic_media_pause);
         }
 
         wasPlaying = true;
@@ -304,8 +515,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         }
 
         if(!musicService.isPlaying()) {
-            bt_play.setVisibility(View.INVISIBLE);
-            bt_pause.setVisibility(View.VISIBLE);
+            bt_play.setImageResource(R.drawable.ic_media_pause);
         }
 
         musicService.previousSong();
@@ -315,8 +525,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     public void previousSongSet(){
 
         if(!musicService.isPlaying()) {
-            bt_play.setVisibility(View.INVISIBLE);
-            bt_pause.setVisibility(View.VISIBLE);
+            bt_play.setImageResource(R.drawable.ic_media_pause);
         }
 
         wasPlaying = true;
@@ -505,7 +714,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     public void setButtonsEnabled(){
 
         bt_play.setEnabled(true);
-        bt_pause.setEnabled(true);
         bt_next.setEnabled(true);
         bt_previous.setEnabled(true);
 
@@ -514,7 +722,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     public void setButtonsDisabled(){
 
         bt_play.setEnabled(false);
-        bt_pause.setEnabled(false);
         bt_next.setEnabled(false);
         bt_previous.setEnabled(false);
 
@@ -554,6 +761,26 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         callDriver.callNumber(number);
     }
 
+
+
+         /*
+    private void addShortcut() {
+
+        //on Home screen
+        Intent shortcutIntent = new Intent(getApplicationContext(),SplashActivity.class);
+
+        shortcutIntent.setAction(Intent.ACTION_MAIN);
+
+        Intent addIntent = new Intent();
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "marvin");
+        addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,Intent.ShortcutIconResource.fromContext(getApplicationContext(),R.mipmap.ic_launcher));
+        addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+        getApplicationContext().sendBroadcast(addIntent);
+    }
+*/
+
+
     public void activate(final SpeechRecognizer mSpeechRecognizer, final Intent mSpeechRecognizerIntent){
         runOnUiThread(new Runnable() {
 
@@ -567,6 +794,3 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     }
 
 }
-
-
-
