@@ -50,28 +50,48 @@ public class IncomingCallActivity extends Activity {
         textView.setText("Llamada entrante:"+"\n"+ contact);
         textView.setTypeface(fontBold);
 
-        commandHandlerManager.getTextToSpeech().speakText("Tenés una llamada de " + contact + ". Indicá atender o rechazar");
-        commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_INCOMING_CALL, this);
+        try{
 
-        btnAceptar.setOnClickListener(new View.OnClickListener() {
+            Integer.parseInt(contact);
 
-            @Override
-            public void onClick(View view) {
+            String contactWithSpaces = "";
 
-                commandHandlerManager.setCurrentContext(commandHandlerManager.getCommandHandler().drive(commandHandlerManager.getCommandHandler().createContext(commandHandlerManager.getCurrentContext(), commandHandlerManager.getActivity(), "atender")));
+            int i=0;
 
+            while(i < contact.length()){
+                contactWithSpaces += contact.charAt(i) + " ";
+                i++;
             }
-        });
 
-        btnRechazar.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view){
+            contact = contactWithSpaces;
 
-                commandHandlerManager.setCurrentContext(commandHandlerManager.getCommandHandler().drive(commandHandlerManager.getCommandHandler().createContext(commandHandlerManager.getCurrentContext(), commandHandlerManager.getActivity(), "rechazar")));
+        }catch (NumberFormatException e){
 
-            }
-        });
+        }
 
+        finally {
+            commandHandlerManager.getTextToSpeech().speakText("Tenés una llamada de " + contact + ". Indicá atender o rechazar");
+            commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_INCOMING_CALL, this);
+
+            btnAceptar.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View view) {
+
+                    commandHandlerManager.setCurrentContext(commandHandlerManager.getCommandHandler().drive(commandHandlerManager.getCommandHandler().createContext(commandHandlerManager.getCurrentContext(), commandHandlerManager.getActivity(), "atender")));
+
+                }
+            });
+
+            btnRechazar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    commandHandlerManager.setCurrentContext(commandHandlerManager.getCommandHandler().drive(commandHandlerManager.getCommandHandler().createContext(commandHandlerManager.getCurrentContext(), commandHandlerManager.getActivity(), "rechazar")));
+
+                }
+            });
+        }
 
     }
 

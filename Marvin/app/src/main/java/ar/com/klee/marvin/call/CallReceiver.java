@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.os.Handler;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -33,9 +34,11 @@ public class CallReceiver extends BroadcastReceiver {
     private final int BUSY = 10;
     private final int LONG_CALL = 0;
 
-    private CommandHandlerManager commandHandlerManager = CommandHandlerManager.getInstance();
+    private CommandHandlerManager commandHandlerManager;
 
     public void onReceive(Context context, Intent intent) {
+
+
 
         String stateStr = intent.getExtras().getString(TelephonyManager.EXTRA_STATE);
         String number = intent.getExtras().getString(TelephonyManager.EXTRA_INCOMING_NUMBER);
@@ -47,6 +50,12 @@ public class CallReceiver extends BroadcastReceiver {
         } else if (stateStr.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
             state = TelephonyManager.CALL_STATE_RINGING;
         }
+
+        if(!CommandHandlerManager.isInstanceInitialized()){
+            return;
+        }
+
+        commandHandlerManager = CommandHandlerManager.getInstance();
 
         onCallStateChanged(context, state, number);
     }
@@ -73,20 +82,27 @@ public class CallReceiver extends BroadcastReceiver {
                         wait_Time += 100;
                     }
                 } catch (Exception e) {
+
+                    e.printStackTrace();
+
                 } finally {
                 }
+
                 //IncomingCallReciever.this.myContext.startActivity(IncomingCallReciever.this.myIntent);
-                ctx.startActivity(new Intent(ctx, IncomingCallActivity.class).putExtra("number", number)
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));//set
+
+                Intent incomingIntent = new Intent(ctx, IncomingCallActivity.class);
+                incomingIntent.putExtra("number",number);
+                incomingIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                ctx.startActivity(incomingIntent);
 
             }
         };
         thread.setPriority(Thread.MAX_PRIORITY);
         thread.run();
+
         //lanza el activity para aceptar o rechazar la llamada
 
         timeCall = start.getTime();
-
 
     }
 
@@ -139,10 +155,6 @@ public class CallReceiver extends BroadcastReceiver {
             return;
         }
 
-        if(!CommandHandlerManager.isInstanceInitialized()){
-            return;
-        }
-
         switch (state) {
 
             case TelephonyManager.CALL_STATE_RINGING:
@@ -181,7 +193,6 @@ public class CallReceiver extends BroadcastReceiver {
                 } else {
                     onOutgoingCallEnded(context, savedNumber, callStartTime, new Date());
                 }
-
 
                 break;
         }

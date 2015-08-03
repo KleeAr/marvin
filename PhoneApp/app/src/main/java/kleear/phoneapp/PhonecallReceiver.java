@@ -48,7 +48,7 @@ public class PhonecallReceiver extends BroadcastReceiver {
     protected void onIncomingCallStarted(final Context ctx, final String number, Date start) {
         //Hay que crear un nuevo hilo y esperar unos instantes para superponer el activity
         Thread thread = new Thread() {
-            private int sleepTime = 200;
+            private int sleepTime = 2500;
 
             @Override
             public void run() {

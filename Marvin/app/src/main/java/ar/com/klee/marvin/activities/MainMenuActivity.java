@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Parcelable;
+import android.speech.SpeechRecognizer;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -553,4 +554,19 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         callDriver.callNumber(number);
     }
 
+    public void activate(final SpeechRecognizer mSpeechRecognizer, final Intent mSpeechRecognizerIntent){
+        runOnUiThread(new Runnable() {
+
+            public void run() {
+
+                mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
+                STTService.getInstance().setState(true);
+
+            }
+        });
+    }
+
 }
+
+
+

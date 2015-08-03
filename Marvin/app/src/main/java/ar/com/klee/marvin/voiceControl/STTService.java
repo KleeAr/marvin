@@ -5,13 +5,16 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.view.View;
 
 import java.util.ArrayList;
 
@@ -87,6 +90,8 @@ public class STTService extends Service {
             mSpeechRecognizer.stopListening();
             mSpeechRecognizer.cancel();
             sttState = false;
+
+            //Log.d("STT", "stopListening");
         }
     }
 
@@ -99,7 +104,7 @@ public class STTService extends Service {
 
         @Override
         public void onBeginningOfSpeech(){
-            //Log.d(TAG, "onBeginingOfSpeech"); //$NON-NLS-1$
+            //Log.d("STT", "onBeginningOfSpeech");
         }
 
         @Override
@@ -109,31 +114,46 @@ public class STTService extends Service {
 
         @Override
         public void onEndOfSpeech(){
-            //Log.d(TAG, "onEndOfSpeech"); //$NON-NLS-1$
+            //Log.d("STT", "onEndOfSpeech");
         }
 
         @Override
         public void onError(int error){
 
-            mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
-            sttState = true;
+            //Log.d("STT", "onError");
+            //Log.d("STT", getErrorText(error));
+
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+
+                mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
+                sttState = true;
+                //Log.d("STT", "onErrorActivate");
+
+                }
+            }, 1000);
 
         }
 
         @Override
         public void onEvent(int eventType, Bundle params){
 
+            //Log.d("STT", "onEvent");
+
         }
 
         @Override
         public void onPartialResults(Bundle partialResults){
+
+            //Log.d("STT", "onPartialResults");
 
         }
 
         @Override
         public void onReadyForSpeech(Bundle params){
 
-            //Log.d(TAG, "onReadyForSpeech"); //$NON-NLS-1$
+            //Log.d("STT", "onReadyForSpeech");
 
         }
 
@@ -144,6 +164,9 @@ public class STTService extends Service {
 
             ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
             String text = matches.get(0);
+
+            //Log.d("STT", "onResults");
+            //Log.d("STT", text);
 
             previousListening = isListening;
 

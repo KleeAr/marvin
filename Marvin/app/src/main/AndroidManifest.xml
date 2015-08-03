@@ -45,7 +45,7 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.AppCompat.NoActionBar" >
 
-        <receiver android:name=".call.CallReceiver" android:enabled="true">
+        <receiver android:name=".call.CallReceiver" android:enabled="true" >
             <intent-filter android:priority="99999">
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
@@ -60,7 +60,6 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -115,6 +114,14 @@
         <activity
             android:name=".activities.CallHistoryActivity"
             android:label="@string/title_activity_call_history" >
+        </activity>
+        <activity
+            android:name=".activities.IncomingCallActivity"
+            android:label="IncomingCallActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.ANSWER" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
     </application>
 

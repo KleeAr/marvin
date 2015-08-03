@@ -2,10 +2,16 @@ package ar.com.klee.marvin.voiceControl;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Handler;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
+import android.util.Log;
+
+import java.util.HashMap;
 import java.util.Locale;
+
+import ar.com.klee.marvin.activities.MainMenuActivity;
 
 /* Clase TTS
 ** -Gestión del pasaje de textos a audio
@@ -21,20 +27,32 @@ public class TTS {
     ** -Inicializa el objeto de la clase TextToSpeech que nos va a permitir reproducir texto
     ** -param.context: Se le debe pasar el contexto de ejecución
     */
-    public TTS(Context context, SpeechRecognizer mSpeechRecognizer, Intent mSpeechRecognizerIntent) {
+    public TTS(Context context, final SpeechRecognizer mSpeechRecognizer, final Intent mSpeechRecognizerIntent) {
+
+        this.mSpeechRecognizer = mSpeechRecognizer;
+
+        this.mSpeechRecognizerIntent = mSpeechRecognizerIntent;
 
         // Creamos el objeto TextToSpeech que nos va a permitir gestionar la reproduccion de textos
         ttsObject = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
             public void onInit(int status) {
                 if (status != TextToSpeech.ERROR) {
+
                     ttsObject.setLanguage(new Locale("spa", "AR"));
+                    ttsObject.setOnUtteranceCompletedListener(new TextToSpeech.OnUtteranceCompletedListener() {
+
+                        @Override
+                        public void onUtteranceCompleted(String utteranceId) {
+
+                            if (utteranceId.equals("FINISH_SPEAK")) {
+                                ((MainMenuActivity)CommandHandlerManager.getInstance().getMainActivity()).activate(mSpeechRecognizer, mSpeechRecognizerIntent);
+                            }
+
+                        }
+                    });
                 }
             }
         });
-
-        this.mSpeechRecognizer = mSpeechRecognizer;
-
-        this.mSpeechRecognizerIntent = mSpeechRecognizerIntent;
 
     }
 
@@ -44,48 +62,14 @@ public class TTS {
     */
     public void speakText(String textToSpeak) {
 
-        int delayTime = textToSpeak.length()/5 + 1;
-        if (firstTime) {
-             delayTime = delayTime * 1500;
-             firstTime = false;
-        } else {
-            delayTime = delayTime * 700;
-        }
-
         STTService.getInstance().stopListening();
 
-        // Reproduce el texto
-        ttsObject.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH, null);
-
-        // Execute some code after delayTime seconds have passed
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
-                STTService.getInstance().setState(true);
-            }
-        }, delayTime);
-
-    }
-
-    public void speakTextWithNumbers(String textToSpeak) {
-
-        int delayTime = textToSpeak.length()/5 + 1;
-        delayTime = delayTime * 900;
-
-        STTService.getInstance().stopListening();
+        HashMap<String, String> myHashAlarm = new HashMap<String, String>();
+        myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_STREAM, String.valueOf(AudioManager.STREAM_ALARM));
+        myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "FINISH_SPEAK");
 
         // Reproduce el texto
-        ttsObject.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH, null);
-
-        // Execute some code after delayTime seconds have passed
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
-                STTService.getInstance().setState(true);
-            }
-        }, delayTime);
+        ttsObject.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH, myHashAlarm);
 
     }
 

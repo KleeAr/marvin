@@ -4,6 +4,7 @@ import java.io.IOException;
 import android.app.Activity;
 import android.content.Context;
 import android.hardware.Camera;
+import android.os.Build;
 import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
@@ -96,7 +97,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             mCamera.setDisplayOrientation(180);
         }
 
-        mCamera.setParameters(parameters);
+        if(android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN)
+            mCamera.setParameters(parameters);
 
         previewCamera();
     }

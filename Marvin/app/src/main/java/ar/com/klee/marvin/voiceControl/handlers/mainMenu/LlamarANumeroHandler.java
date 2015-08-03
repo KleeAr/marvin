@@ -74,7 +74,7 @@ public class LlamarANumeroHandler extends CommandHandler {
             i++;
         }
 
-        getTextToSpeech().speakTextWithNumbers("¿Querés llamar al número " + contactWithSpaces + "?");
+        getTextToSpeech().speakText("¿Querés llamar al número " + contactWithSpaces + "?");
         context.getObject(ACTIVITY, MainMenuActivity.class).setCallNumber(contact);
         context.put(SET_NUMBER, false);
         context.put(STEP, 3);
