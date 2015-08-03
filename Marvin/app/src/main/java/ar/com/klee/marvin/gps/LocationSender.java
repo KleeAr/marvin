@@ -1,41 +1,25 @@
 package ar.com.klee.marvin.gps;
 
-import android.app.Activity;
-import android.app.Service;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.MediaMetadataRetriever;
-import android.media.MediaPlayer;
-import android.os.Binder;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
-import org.cmc.music.metadata.IMusicMetadata;
-import org.cmc.music.metadata.MusicMetadataSet;
-import org.cmc.music.myid3.MyID3;
-
-import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
-import java.util.Stack;
+
+import ar.com.klee.marvin.activities.MainMenuActivity;
 
 public class LocationSender {
 
     private String address;
     private String town;
+    private String state;
+    private String speed;
 
     private double actualLatitude = 0.0;
     private double actualLongitude = 0.0;
@@ -59,6 +43,8 @@ public class LocationSender {
                 double longitude = location.getLongitude();
                 double latitude = location.getLatitude();
 
+                double velocity = location.getSpeed();
+
                 previousLatitude = actualLatitude;
                 previousLongitude = actualLongitude;
 
@@ -66,6 +52,8 @@ public class LocationSender {
                 actualLongitude = longitude;
 
                 setLocation(latitude, longitude);
+                setSpeed(velocity * 36000 / 1000);
+                updateScreen();
             }
 
             @Override
@@ -108,12 +96,20 @@ public class LocationSender {
                 if (!list.isEmpty()) {
                     Address address = list.get(0);
                     this.address = address.getAddressLine(0);
-                    this.town = address.getAddressLine(1);
+                    this.town = address.getLocality();
+                    this.state = address.getAddressLine(2);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void updateScreen(){
+        MainMenuActivity.cityText.setText(getTown()+", "+getState());
+        MainMenuActivity.mainStreet.setText(getAddress());
+        MainMenuActivity.speed.setText(getSpeed());
+
     }
 
     public String nextStreet(){
@@ -136,6 +132,18 @@ public class LocationSender {
 
         return intersection.findStreet(IntersectionSender.PREVIOUS_STREET);
 
+    }
+
+    public  void setSpeed(double speed){
+        this.speed = String.valueOf((int) speed);
+    }
+
+    public String getSpeed(){
+        return speed;
+    }
+
+    public String getState(){
+        return state;
     }
 
     public String getAddress(){

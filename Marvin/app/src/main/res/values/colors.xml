@@ -5,6 +5,10 @@
     <color name="button_normal">#a3d9d1</color>
     <color name="button_pressed">#ef404a</color>
 
+        <color name="ColorPrimary">#00897B</color>
+        <color name="ColorPrimaryDark">#00695C</color>
+        <color name="tabsScrollColor">#004D40</color>
+
 
 
 </resources>
