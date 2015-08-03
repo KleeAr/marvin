@@ -314,7 +314,13 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         return super.onOptionsItemSelected(item);
     }
 
+    public void onBackPressed(){
+        musicService.onStop();
+        stopService(voiceControlServiceIntent);
+        stopService(musicServiceIntent);
 
+        finish();
+    }
 
     @Override
     public void serviceSuccess(Channel channel) {
@@ -588,16 +594,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         super.onStop();
     }
 
-    // Sale de la aplicación deteniendo el servicio
-    public void exit(View view){
-
-        musicService.onStop();
-        stopService(voiceControlServiceIntent);
-        stopService(musicServiceIntent);
-
-        finish();
-
-    }
 
     public MusicService getMusicService(){
 
@@ -762,6 +758,22 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     }
 
 
+/**************************************
+*************TTS METHOD***************
+*************************************/
+
+    public void activate(final SpeechRecognizer mSpeechRecognizer, final Intent mSpeechRecognizerIntent){
+        runOnUiThread(new Runnable() {
+
+            public void run() {
+
+                mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
+                STTService.getInstance().setState(true);
+
+            }
+        });
+    }
+
 
          /*
     private void addShortcut() {
@@ -779,18 +791,5 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         getApplicationContext().sendBroadcast(addIntent);
     }
 */
-
-
-    public void activate(final SpeechRecognizer mSpeechRecognizer, final Intent mSpeechRecognizerIntent){
-        runOnUiThread(new Runnable() {
-
-            public void run() {
-
-                mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
-                STTService.getInstance().setState(true);
-
-            }
-        });
-    }
 
 }
