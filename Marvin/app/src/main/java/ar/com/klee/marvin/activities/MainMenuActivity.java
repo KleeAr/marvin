@@ -114,6 +114,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         tv_song = (TextView)findViewById(R.id.song);
         tv_artist = (TextView)findViewById(R.id.artist);
 
+        SlidingTabLayout tabs;
+
         initializeMusicService();
         initializeSTTService();
 
@@ -275,6 +277,22 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         pager = (ViewPager) findViewById(R.id.pager);
         pager.setAdapter(adapter);
 
+        // Assiging the Sliding Tab Layout View
+        tabs = (SlidingTabLayout) findViewById(R.id.tabs);
+        tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
+
+        // Setting Custom Color for the Scroll bar indicator of the Tab View
+        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+            @Override
+            public int getIndicatorColor(int position) {
+                return getResources().getColor(R.color.tabsScrollColor);
+            }
+        });
+
+        // Setting the ViewPager For the SlidingTabsLayout
+        tabs.setViewPager(pager);
+
+
 
 
 
@@ -433,6 +451,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     notification = notification.replace("SONG_TITLE ","");
                     Log.d("TITLE",notification);
                     tv_song.setText(notification);
+
 
                 }else if(notification.startsWith("SONG_ARTIST ")) {
 

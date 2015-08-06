@@ -52,7 +52,7 @@ public class LocationSender {
                 actualLongitude = longitude;
 
                 setLocation(latitude, longitude);
-                setSpeed(velocity * 36000 / 1000);
+                setSpeed(velocity);
                 updateScreen();
             }
 
