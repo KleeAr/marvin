@@ -2,8 +2,10 @@ package ar.com.klee.marvin.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 
 @Entity
+@IdClass(TripKey.class)
 public class Trip {
 
 	@Id
