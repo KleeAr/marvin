@@ -19,6 +19,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Parcelable;
 import android.speech.SpeechRecognizer;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
@@ -46,6 +48,7 @@ import ar.com.klee.marvin.call.CallReceiver;
 import ar.com.klee.marvin.data.Channel;
 import ar.com.klee.marvin.data.Item;
 import ar.com.klee.marvin.gps.LocationSender;
+import ar.com.klee.marvin.gps.MapFragment;
 import ar.com.klee.marvin.multimedia.music.MusicService;
 import ar.com.klee.marvin.multimedia.video.YouTubeVideo;
 import ar.com.klee.marvin.service.WeatherServiceCallback;
@@ -65,7 +68,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     ViewPager pager;
     ViewPagerAdpater adapter;
     CharSequence Titles[]={"Home","Aplicacion"};
-    int Numboftabs = 2;
+    int Numboftabs = 3;
     private long date;
     public static TextView cityText;
     public static TextView mainStreet;
@@ -76,6 +79,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     private YahooWeatherService service;
     public static Application[] shortcutList; //lista para almacenar las aplicaciones configuradas
     public static ImageButton[] shortcutButton;
+    public static MapFragment mapFragment;
+    public static boolean isMapCreated = false;
 
     private Intent voiceControlServiceIntent;
     private Intent musicServiceIntent;
@@ -90,7 +95,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     private SMSDriver smsDriver;
     private CallDriver callDriver;
-    private CallReceiver callReceiver;
 
     private ImageButton bt_play;
     private ImageButton bt_next;
@@ -119,7 +123,13 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         initializeMusicService();
         initializeSTTService();
 
-        locationSender = new LocationSender(this);
+        //Crea el mapa
+        if(MapFragment.isInstanceInitialized())
+            mapFragment = MapFragment.getInstance();
+        else
+            mapFragment = new MapFragment();
+
+        locationSender = new LocationSender(this, mapFragment);
 
         ////////////////////////////////////
 
@@ -810,5 +820,13 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         getApplicationContext().sendBroadcast(addIntent);
     }
 */
+
+/**************************************
+ *************MAPS METHODS**************
+ *************************************/
+
+    public FragmentManager getManager(){
+        return getSupportFragmentManager();
+    }
 
 }

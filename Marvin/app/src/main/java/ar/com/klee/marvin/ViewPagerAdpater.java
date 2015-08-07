@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 import ar.com.klee.marvin.activities.Tab1;
 import ar.com.klee.marvin.activities.Tab2;
+import ar.com.klee.marvin.activities.TabMap;
 
 
 public class ViewPagerAdpater extends FragmentStatePagerAdapter {
@@ -33,10 +34,17 @@ public class ViewPagerAdpater extends FragmentStatePagerAdapter {
             Tab1 tab1 = new Tab1();
             return tab1;
         }
-        else             // As we are having 2 tabs if the position is now 0 it must be 1 so we are returning second tab
+        if(position == 1) // As we are having 2 tabs if the position is now 0 it must be 1 so we are returning second tab
         {
             Tab2 tab2 = new Tab2();
             return tab2;
+        }else{
+            TabMap tabMap;
+            if(TabMap.isInstanceInitialized())
+                tabMap = TabMap.getInstance();
+            else
+                tabMap = new TabMap();
+            return tabMap;
         }
 
     }

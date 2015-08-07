@@ -26,13 +26,17 @@ public class LocationSender {
     private double previousLatitude = 0.0;
     private double previousLongitude = 0.0;
 
+    private MapFragment mapFragment;
+    private boolean isFirstLocation = true;
 
     private Context context;
 
-    public LocationSender(Context context){
+    public LocationSender(Context context, MapFragment mf){
         /* Use the LocationManager class to obtain GPS locations */
 
         this.context = context;
+
+        mapFragment = mf;
 
         LocationManager mlocManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         LocationListener locationListener = new LocationListener() {
@@ -54,6 +58,16 @@ public class LocationSender {
                 setLocation(latitude, longitude);
                 setSpeed(velocity);
                 updateScreen();
+
+                if(MainMenuActivity.isMapCreated) {
+                    if (!isFirstLocation)
+                        mapFragment.refreshMap(actualLatitude, actualLongitude, address);
+                    else {
+                        mapFragment.startTrip(actualLatitude, actualLongitude, address);
+                        isFirstLocation = false;
+                    }
+                }
+
             }
 
             @Override
@@ -82,8 +96,8 @@ public class LocationSender {
             }
         };
 
-        mlocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 10, locationListener);
-        mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
+        mlocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
+        mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
 
     }
 
