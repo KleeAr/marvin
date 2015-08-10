@@ -346,7 +346,13 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         musicService.onStop();
         stopService(voiceControlServiceIntent);
         stopService(musicServiceIntent);
+        finish();
+    }
 
+    public void stopServices(){
+        musicService.onStop();
+        stopService(voiceControlServiceIntent);
+        stopService(musicServiceIntent);
         finish();
     }
 
@@ -596,14 +602,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         return musicService.isListEmpty();
 
     }
-
-    public void openCamera(View v){
-
-        Intent intent = new Intent(this, CameraActivity.class );
-        startActivity(intent);
-
-    }
-
 
     // Utilizado por el receptor de parámetros del servicio de comandos de voz
     protected void onStart() {

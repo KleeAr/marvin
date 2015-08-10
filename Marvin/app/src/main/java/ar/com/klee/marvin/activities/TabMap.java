@@ -22,7 +22,7 @@ import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 
 
-public class TabMap extends Fragment implements View.OnClickListener {
+public class TabMap extends Fragment implements View.OnLongClickListener {
 
     private static TabMap instance;
     private View v = null;
@@ -61,9 +61,12 @@ public class TabMap extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public void onClick(View v){
+    public boolean onLongClick(View v) {
 
-        //TODO: ABRIR MAPA
+        Intent intent = new Intent(CommandHandlerManager.getInstance().getContext(), MapActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        CommandHandlerManager.getInstance().getContext().startActivity(intent);
 
+        return false;
     }
 }

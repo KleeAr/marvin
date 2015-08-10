@@ -22,4 +22,5 @@
     <string name="defaultMainStreet">Buscando calle...</string>
     <string name="defaultSpeed">NA</string>
     <string name="title_activity_application_list" />
+    <string name="title_activity_map">MapActivity</string>
 </resources>

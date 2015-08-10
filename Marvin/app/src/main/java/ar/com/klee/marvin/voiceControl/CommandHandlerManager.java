@@ -27,6 +27,10 @@ import ar.com.klee.marvin.voiceControl.handlers.mainMenu.BajarVolumenHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.BarrioHandler;
 import ar.com.klee.marvin.voiceControl.handlers.BuscarDispositivosHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.BuscarEnYoutubeHandler;
+import ar.com.klee.marvin.voiceControl.handlers.map.AumentarZoomHandler;
+import ar.com.klee.marvin.voiceControl.handlers.map.BuscarEnMapaHandler;
+import ar.com.klee.marvin.voiceControl.handlers.map.EstablecerZoomHandler;
+import ar.com.klee.marvin.voiceControl.handlers.map.ReducirZoomHandler;
 import ar.com.klee.marvin.voiceControl.handlers.smsInbox.CerrarHistorialDeSMSHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.DireccionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.AnteriorInterseccionHandler;
@@ -74,6 +78,9 @@ public class CommandHandlerManager {
     public static final int ACTIVITY_SMS_INBOX = 3;
     public static final int ACTIVITY_INCOMING_CALL = 4;
     public static final int ACTIVITY_CALL_HISTORY = 5;
+    public static final int ACTIVITY_MAP = 6;
+    public static final int ACTIVITY_TRIP_HISTORY = 7;
+    public static final int ACTIVITY_PLACES = 8;
     private static CommandHandlerManager instance;
 
     private int currentActivity = ACTIVITY_MAIN;
@@ -93,6 +100,10 @@ public class CommandHandlerManager {
     private List<CommandHandler> commandHandlersCamera;
     private List<CommandHandler> commandHandlersSMSInbox;
     private List<CommandHandler> commandHandlersCallHistory;
+    private List<CommandHandler> commandHandlersMap;
+    private List<CommandHandler> commandHandlersTripHistory;
+    private List<CommandHandler> commandHandlersPlaces;
+
     private Map<Integer,List<CommandHandler>> commandHandlers;
     private CommandHandlerContext currentContext;
     private CommandHandler compartirEnFacebookHandler;
@@ -175,10 +186,19 @@ public class CommandHandlerManager {
             new LeerUltimoSMSDeNumeroHandler(textToSpeech, context, this));
 
         commandHandlersCallHistory = Arrays.asList(new ConsultarUltimoRegistroHandler(textToSpeech, context, this),
-                new CerrarHistorialDeLlamadasHandler(textToSpeech, context, this),
-                new ConsultarRegistroNumeroHandler(textToSpeech, context, this),
-                new ConsultarUltimoRegistroDeContactoHandler(textToSpeech, context, this),
-                new ConsultarUltimoRegistroDeNumeroHandler(textToSpeech, context, this));
+            new CerrarHistorialDeLlamadasHandler(textToSpeech, context, this),
+            new ConsultarRegistroNumeroHandler(textToSpeech, context, this),
+            new ConsultarUltimoRegistroDeContactoHandler(textToSpeech, context, this),
+            new ConsultarUltimoRegistroDeNumeroHandler(textToSpeech, context, this));
+
+        commandHandlersMap = Arrays.asList(new BuscarEnMapaHandler(textToSpeech, context, this),
+            new AumentarZoomHandler(textToSpeech, context, this),
+            new ReducirZoomHandler(textToSpeech, context, this),
+            new EstablecerZoomHandler(textToSpeech, context, this));
+
+        commandHandlersTripHistory = Arrays.asList();
+
+        commandHandlersPlaces = Arrays.asList();
 
         commandHandlers = new HashMap<>();
 
@@ -186,6 +206,9 @@ public class CommandHandlerManager {
         commandHandlers.put(ACTIVITY_CAMERA,commandHandlersCamera);
         commandHandlers.put(ACTIVITY_SMS_INBOX,commandHandlersSMSInbox);
         commandHandlers.put(ACTIVITY_CALL_HISTORY,commandHandlersCallHistory);
+        commandHandlers.put(ACTIVITY_MAP,commandHandlersMap);
+        commandHandlers.put(ACTIVITY_TRIP_HISTORY,commandHandlersTripHistory);
+        commandHandlers.put(ACTIVITY_PLACES,commandHandlersPlaces);
 
     }
 

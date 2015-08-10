@@ -1,7 +1,13 @@
 package ar.com.klee.marvin.voiceControl.handlers.mainMenu;
 
 import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
 
+import java.util.List;
+import java.util.Locale;
+
+import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -21,9 +27,11 @@ public class CerrarSesionHandler extends CommandHandler {
     @Override
     public CommandHandlerContext drive(CommandHandlerContext currentContext) {
 
-        getTextToSpeech().speakText("Cerrando sesión. Adios");
+        getTextToSpeech().speakText("Cerrando sesión");
 
-        //CODIGO PARA CERRAR SESION
+        MainMenuActivity.mapFragment.finishTrip();
+
+        ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).stopServices();
 
         currentContext.put(STEP, 0);
         return currentContext;
