@@ -210,7 +210,7 @@ public class MapFragment extends Fragment {
             if (i > 0)
                 Location.distanceBetween(
                     tripPath.get(i-1).latitude,tripPath.get(i-1).longitude,
-                    tripPath.get(i).latitude,tripPath.get(i).longitude,
+                    lat,lng,
                     results);
 
             polylineLength += results [0];
@@ -301,6 +301,13 @@ public class MapFragment extends Fragment {
 
     }
 
+    public void goToCurrentPosition(){
+
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(tripPath.get(tripPath.size()-1)).zoom(zoom).build();
+        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+    }
+
     public void search(String address, LatLng coordinates){
 
         if(searchMarker != null){
@@ -323,8 +330,10 @@ public class MapFragment extends Fragment {
 
     public void navigate(double lat, double lon){
 
-        final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?" + "saddr=" + -34.683607 + "," + -58.511295 + "&daddr=" + lat + "," + lon));
-        intent.setClassName("com.google.android.apps.maps","com.google.android.maps.MapsActivity");
+        final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?" +
+                "saddr=" + tripPath.get(tripPath.size()-1).latitude + "," + tripPath.get(tripPath.size()-1).longitude +
+                "&daddr=" + lat + "," + lon));
+        intent.setClassName("com.google.android.apps.maps","com.google.andrid.maps.MapsActivity");
         startActivity(intent);
 
     }

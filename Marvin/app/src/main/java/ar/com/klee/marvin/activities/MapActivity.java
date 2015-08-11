@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -87,6 +88,17 @@ public class MapActivity extends ActionBarActivity {
 
     }
 
+    public void zoomIn(View v){
+
+        int zoom = mapFragment.getZoom() + 1;
+
+        if(zoom == 21)
+            zoom = 20;
+
+        mapFragment.setZoom(zoom);
+
+    }
+
     public int zoomOut(){
 
         int zoom = mapFragment.getZoom() - 1;
@@ -100,6 +112,17 @@ public class MapActivity extends ActionBarActivity {
 
     }
 
+    public void zoomOut(View v){
+
+        int zoom = mapFragment.getZoom() - 1;
+
+        if(zoom == 0)
+            zoom = 1;
+
+        mapFragment.setZoom(zoom);
+
+    }
+
     public int setZoom(int zoom){
         mapFragment.setZoom(zoom);
         return zoom;
@@ -107,15 +130,13 @@ public class MapActivity extends ActionBarActivity {
 
     public void currentLocation(){
 
+        mapFragment.goToCurrentPosition();
+
     }
 
-    public void search(View v){
+    public void currentLocation(View v){
 
-        String address = et_search.getText().toString();
-
-        LatLng coordinates = mapFragment.getCoordinates(address);
-
-        mapFragment.search(address,coordinates);
+        mapFragment.goToCurrentPosition();
 
     }
 
@@ -129,4 +150,41 @@ public class MapActivity extends ActionBarActivity {
 
     }
 
+    public void search(View v){
+
+        String address = et_search.getText().toString();
+
+        if(address == ""){
+            Toast.makeText(this, "Ingrese una dirección", Toast.LENGTH_SHORT).show();
+        }
+
+        LatLng coordinates = mapFragment.getCoordinates(address);
+
+        mapFragment.search(address,coordinates);
+
+    }
+
+    public void navigate(String address){
+
+        et_search.setText(address);
+
+        LatLng coordinates = mapFragment.getCoordinates(address);
+
+        mapFragment.navigate(coordinates.latitude, coordinates.longitude);
+
+    }
+
+    public void navigate(View v){
+
+        String address = et_search.getText().toString();
+
+        if(address == ""){
+            Toast.makeText(this, "Ingrese una dirección", Toast.LENGTH_SHORT).show();
+        }
+
+        LatLng coordinates = mapFragment.getCoordinates(address);
+
+        mapFragment.navigate(coordinates.latitude, coordinates.longitude);
+
+    }
 }

@@ -16,18 +16,27 @@
         android:hint="Dirección a Buscar"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_toLeftOf="@+id/bt_search" />
+        android:layout_toLeftOf="@+id/bt_goTo" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ir A"
+        android:id="@+id/bt_goTo"
+        android:layout_above="@+id/mapView"
+        android:layout_toLeftOf="@+id/bt_search"
+        android:layout_toStartOf="@+id/bt_search"
+        android:onClick="navigate" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Buscar"
         android:id="@+id/bt_search"
-        android:layout_alignTop="@+id/et_search"
-        android:layout_alignRight="@+id/mapView"
+        android:onClick="search"
+        android:layout_above="@+id/mapView"
         android:layout_alignEnd="@+id/mapView"
-        android:layout_alignParentTop="true"
-        android:onClick="search" />
+        android:layout_alignRight="@+id/mapView" />
 
     <com.google.android.gms.maps.MapView
         android:id="@+id/mapView"
@@ -35,5 +44,36 @@
         android:layout_height="match_parent"
         class="com.google.android.gms.maps.SupportMapFragment"
         android:layout_below="@+id/et_search" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Actual"
+        android:id="@+id/bt_currentPosition"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:nestedScrollingEnabled="false"
+        android:onClick="currentLocation" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Zoom Out"
+        android:id="@+id/bt_zoomOut"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:onClick="zoomOut" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Zoom In"
+        android:id="@+id/bt_zoomIn"
+        android:layout_above="@+id/bt_zoomOut"
+        android:layout_alignRight="@+id/mapView"
+        android:layout_alignEnd="@+id/mapView"
+        android:onClick="zoomIn" />
 
 </RelativeLayout>

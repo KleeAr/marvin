@@ -29,8 +29,13 @@ import ar.com.klee.marvin.voiceControl.handlers.BuscarDispositivosHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.BuscarEnYoutubeHandler;
 import ar.com.klee.marvin.voiceControl.handlers.map.AumentarZoomHandler;
 import ar.com.klee.marvin.voiceControl.handlers.map.BuscarEnMapaHandler;
+import ar.com.klee.marvin.voiceControl.handlers.map.BuscarSitioHandler;
+import ar.com.klee.marvin.voiceControl.handlers.map.CerrarMapaHandler;
 import ar.com.klee.marvin.voiceControl.handlers.map.EstablecerZoomHandler;
+import ar.com.klee.marvin.voiceControl.handlers.map.IrADireccionHandler;
+import ar.com.klee.marvin.voiceControl.handlers.map.IrASitioHandler;
 import ar.com.klee.marvin.voiceControl.handlers.map.ReducirZoomHandler;
+import ar.com.klee.marvin.voiceControl.handlers.map.UbicacionActualHandler;
 import ar.com.klee.marvin.voiceControl.handlers.smsInbox.CerrarHistorialDeSMSHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.DireccionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.AnteriorInterseccionHandler;
@@ -192,9 +197,14 @@ public class CommandHandlerManager {
             new ConsultarUltimoRegistroDeNumeroHandler(textToSpeech, context, this));
 
         commandHandlersMap = Arrays.asList(new BuscarEnMapaHandler(textToSpeech, context, this),
+            new BuscarSitioHandler(textToSpeech, context, this),
             new AumentarZoomHandler(textToSpeech, context, this),
             new ReducirZoomHandler(textToSpeech, context, this),
-            new EstablecerZoomHandler(textToSpeech, context, this));
+            new EstablecerZoomHandler(textToSpeech, context, this),
+            new UbicacionActualHandler(textToSpeech, context, this),
+            new IrADireccionHandler(textToSpeech, context, this),
+            new IrASitioHandler(textToSpeech, context, this),
+            new CerrarMapaHandler(textToSpeech, context, this));
 
         commandHandlersTripHistory = Arrays.asList();
 

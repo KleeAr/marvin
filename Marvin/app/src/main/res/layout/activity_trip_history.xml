@@ -2,13 +2,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    tools:context="ar.com.klee.marvin.activities.CallHistoryActivity"
-    android:id="@+id/layout_1">
+    tools:context="ar.com.klee.marvin.activities.TripHistoryActivity">
 
     <ListView
-        android:id="@+id/callListView"
+        android:id="@+id/tripListView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="#C0C0C0" />
-</RelativeLayout>
 
+</RelativeLayout>

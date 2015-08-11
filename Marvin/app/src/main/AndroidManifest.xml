@@ -155,6 +155,10 @@
             android:name=".activities.MapActivity"
             android:label="@string/title_activity_map" >
         </activity>
+        <activity
+            android:name=".activities.TripHistoryActivity"
+            android:label="@string/title_activity_trip_history" >
+        </activity>
     </application>
 
 </manifest>
