@@ -14,7 +14,6 @@ import android.os.Handler;
 import android.provider.CallLog;
 import android.os.Bundle;
 import android.telephony.SmsManager;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -36,12 +35,9 @@ import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.call.Call;
 import ar.com.klee.marvin.call.CallDriver;
 import ar.com.klee.marvin.call.HistoryAdapter;
-import ar.com.klee.marvin.sms.Mensaje;
-import ar.com.klee.marvin.sms.SMSDriver;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
 import ar.com.klee.marvin.voiceControl.handlers.callHistory.ConsultarRegistroNumeroHandler;
-import ar.com.klee.marvin.voiceControl.handlers.smsInbox.LeerSMSNumeroHandler;
 
 /*
 * Clase donde se maneja el historial de llamdas a traves de una lista
@@ -107,7 +103,7 @@ public class CallHistoryActivity extends Activity implements AdapterView.OnItemC
         }
         cursorH.close();
 
-        HistoryAdapter objAdapter = new HistoryAdapter(CallHistoryActivity.this, R.layout.activity_historial_item, callList);
+        HistoryAdapter objAdapter = new HistoryAdapter(CallHistoryActivity.this, R.layout.item_call_history, callList);
         callListView.setAdapter(objAdapter);
         callListView.setOnItemClickListener(this);
 

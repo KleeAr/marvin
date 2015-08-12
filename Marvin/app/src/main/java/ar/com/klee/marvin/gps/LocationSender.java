@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Locale;
 
 import ar.com.klee.marvin.activities.MainMenuActivity;
+import ar.com.klee.marvin.activities.TabMap;
 
 public class LocationSender {
 
@@ -27,7 +28,9 @@ public class LocationSender {
     private double previousLongitude = 0.0;
 
     private MapFragment mapFragment;
+    private BiggerMapFragment biggerMapFragment;
     private boolean isFirstLocation = true;
+    private boolean isFirstLocation2 = true;
 
     private Context context;
 
@@ -66,6 +69,20 @@ public class LocationSender {
                         mapFragment.startTrip(actualLatitude, actualLongitude, address);
                         isFirstLocation = false;
                     }
+                }else{
+                    new TabMap();
+                }
+
+                if(BiggerMapFragment.isInstanceInitialized()) {
+                    if (!isFirstLocation2)
+                        biggerMapFragment.refreshMap(actualLatitude, actualLongitude, address);
+                    else {
+                        biggerMapFragment = BiggerMapFragment.getInstance();
+                        biggerMapFragment.startTrip(actualLatitude, actualLongitude, address);
+                        isFirstLocation2 = false;
+                    }
+                }else{
+                    biggerMapFragment = new BiggerMapFragment();
                 }
 
             }

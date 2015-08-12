@@ -38,7 +38,8 @@
         android:textColor="#2F1F1F"
         android:layout_marginLeft="200dp"
         android:layout_marginStart="113dp"
-        android:textAlignment="textEnd">
+        android:textAlignment="textEnd"
+        android:gravity="end">
     </TextView>
 
     <TextView
@@ -51,7 +52,8 @@
         android:layout_alignTop="@+id/date"
         android:layout_alignLeft="@+id/type"
         android:layout_alignStart="@+id/type"
-        android:textAlignment="textEnd">
+        android:textAlignment="textEnd"
+        android:gravity="end">
     </TextView>
 
 

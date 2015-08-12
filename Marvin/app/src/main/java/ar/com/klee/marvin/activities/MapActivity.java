@@ -13,13 +13,14 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.gps.BiggerMapFragment;
 import ar.com.klee.marvin.gps.MapFragment;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
 
 public class MapActivity extends ActionBarActivity {
 
-    private MapFragment mapFragment;
+    private BiggerMapFragment biggerMapFragment;
     private CommandHandlerManager commandHandlerManager;
     private EditText et_search;
 
@@ -28,17 +29,25 @@ public class MapActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
-        mapFragment = MapFragment.getInstance();
+        if(MapFragment.isInstanceInitialized())
+            MapFragment.getInstance().setSearch(true);
+        else
+            new TabMap();
+
+        if(BiggerMapFragment.isInstanceInitialized())
+            biggerMapFragment = BiggerMapFragment.getInstance();
+        else
+            biggerMapFragment = new BiggerMapFragment();
+
         commandHandlerManager = CommandHandlerManager.getInstance();
 
-        if(!mapFragment.isAdded()) {
-            FragmentManager manager = ((MainMenuActivity) commandHandlerManager.getMainActivity()).getManager();
+        if(!biggerMapFragment.isAdded()) {
+            FragmentManager manager = getSupportFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
-            transaction.add(R.id.mapView, mapFragment);
+            biggerMapFragment = new BiggerMapFragment();
+            transaction.add(R.id.biggerMap, biggerMapFragment);
             transaction.commit();
         }
-
-        mapFragment.setSearch(true);
 
         commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_MAP,this);
 
@@ -69,6 +78,10 @@ public class MapActivity extends ActionBarActivity {
     }
 
     public void onBackPressed(){
+
+        if(MapFragment.isInstanceInitialized())
+            MapFragment.getInstance().setSearch(false);
+
         commandHandlerManager.setNullCommand();
         STTService.getInstance().setIsListening(false);
         commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_MAIN, commandHandlerManager.getMainActivity());
@@ -77,12 +90,12 @@ public class MapActivity extends ActionBarActivity {
 
     public int zoomIn(){
 
-        int zoom = mapFragment.getZoom() + 1;
+        int zoom = biggerMapFragment.getZoom() + 1;
 
         if(zoom == 21)
             zoom = 20;
 
-        mapFragment.setZoom(zoom);
+        biggerMapFragment.setZoom(zoom);
 
         return zoom;
 
@@ -90,23 +103,23 @@ public class MapActivity extends ActionBarActivity {
 
     public void zoomIn(View v){
 
-        int zoom = mapFragment.getZoom() + 1;
+        int zoom = biggerMapFragment.getZoom() + 1;
 
         if(zoom == 21)
             zoom = 20;
 
-        mapFragment.setZoom(zoom);
+        biggerMapFragment.setZoom(zoom);
 
     }
 
     public int zoomOut(){
 
-        int zoom = mapFragment.getZoom() - 1;
+        int zoom = biggerMapFragment.getZoom() - 1;
 
         if(zoom == 0)
             zoom = 1;
 
-        mapFragment.setZoom(zoom);
+        biggerMapFragment.setZoom(zoom);
 
         return zoom;
 
@@ -114,29 +127,29 @@ public class MapActivity extends ActionBarActivity {
 
     public void zoomOut(View v){
 
-        int zoom = mapFragment.getZoom() - 1;
+        int zoom = biggerMapFragment.getZoom() - 1;
 
         if(zoom == 0)
             zoom = 1;
 
-        mapFragment.setZoom(zoom);
+        biggerMapFragment.setZoom(zoom);
 
     }
 
     public int setZoom(int zoom){
-        mapFragment.setZoom(zoom);
+        biggerMapFragment.setZoom(zoom);
         return zoom;
     }
 
     public void currentLocation(){
 
-        mapFragment.goToCurrentPosition();
+        biggerMapFragment.goToCurrentPosition();
 
     }
 
     public void currentLocation(View v){
 
-        mapFragment.goToCurrentPosition();
+        biggerMapFragment.goToCurrentPosition();
 
     }
 
@@ -144,9 +157,9 @@ public class MapActivity extends ActionBarActivity {
 
         et_search.setText(address);
 
-        LatLng coordinates = mapFragment.getCoordinates(address);
+        LatLng coordinates = biggerMapFragment.getCoordinates(address);
 
-        mapFragment.search(address,coordinates);
+        biggerMapFragment.search(address,coordinates);
 
     }
 
@@ -158,9 +171,9 @@ public class MapActivity extends ActionBarActivity {
             Toast.makeText(this, "Ingrese una dirección", Toast.LENGTH_SHORT).show();
         }
 
-        LatLng coordinates = mapFragment.getCoordinates(address);
+        LatLng coordinates = biggerMapFragment.getCoordinates(address);
 
-        mapFragment.search(address,coordinates);
+        biggerMapFragment.search(address,coordinates);
 
     }
 
@@ -168,9 +181,9 @@ public class MapActivity extends ActionBarActivity {
 
         et_search.setText(address);
 
-        LatLng coordinates = mapFragment.getCoordinates(address);
+        LatLng coordinates = biggerMapFragment.getCoordinates(address);
 
-        mapFragment.navigate(coordinates.latitude, coordinates.longitude);
+        biggerMapFragment.navigate(coordinates.latitude, coordinates.longitude);
 
     }
 
@@ -182,9 +195,9 @@ public class MapActivity extends ActionBarActivity {
             Toast.makeText(this, "Ingrese una dirección", Toast.LENGTH_SHORT).show();
         }
 
-        LatLng coordinates = mapFragment.getCoordinates(address);
+        LatLng coordinates = biggerMapFragment.getCoordinates(address);
 
-        mapFragment.navigate(coordinates.latitude, coordinates.longitude);
+        biggerMapFragment.navigate(coordinates.latitude, coordinates.longitude);
 
     }
 }

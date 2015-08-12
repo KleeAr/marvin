@@ -1,52 +1,59 @@
 package ar.com.klee.marvin.activities;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.database.Cursor;
-import android.provider.CallLog;
-import android.support.v7.app.ActionBarActivity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
+import com.google.gson.Gson;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.call.Call;
-import ar.com.klee.marvin.call.CallDriver;
 import ar.com.klee.marvin.call.HistoryAdapter;
+import ar.com.klee.marvin.gps.Trip;
+import ar.com.klee.marvin.gps.TripAdapter;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
-import ar.com.klee.marvin.voiceControl.handlers.callHistory.ConsultarRegistroNumeroHandler;
 
 public class TripHistoryActivity extends Activity implements AdapterView.OnItemClickListener {
 
     private ListView tripListView;
-    private List<Call> tripList = new ArrayList<Call>();
+    private List<Trip> tripList = new ArrayList<Trip>();
     private CommandHandlerManager commandHandlerManager;
+
+    private static TripHistoryActivity instance;
+    private Trip chosenTrip;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_trip_history);
 
+        instance = this;
+
         tripListView = (ListView) findViewById(R.id.tripListView);
 
-        //TODO: GET TRIPS
+        SharedPreferences mPrefs = getPreferences(MODE_PRIVATE);
 
-        //tripList.add()
+        int numberOfTrips = mPrefs.getInt("NumberOfTrips",0);
 
-        HistoryAdapter objAdapter = new HistoryAdapter(TripHistoryActivity.this, R.layout.activity_historial_item, tripList);
+        for(Integer i=1; i<=numberOfTrips; i++) {
+            Gson gson = new Gson();
+            String json = mPrefs.getString("Trip"+i.toString(), "");
+            tripList.add(gson.fromJson(json, Trip.class));
+        }
+
+        TripAdapter objAdapter = new TripAdapter(TripHistoryActivity.this, R.layout.item_trip_history, tripList);
         tripListView.setAdapter(objAdapter);
         tripListView.setOnItemClickListener(this);
 
@@ -56,6 +63,13 @@ public class TripHistoryActivity extends Activity implements AdapterView.OnItemC
         commandHandlerManager = CommandHandlerManager.getInstance();
 
         commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_TRIP_HISTORY,this);
+    }
+
+    public static TripHistoryActivity getInstance() {
+        if (instance == null) {
+            throw new IllegalStateException("Instance not initialized. Call initializeInstance before calling getInstance");
+        }
+        return instance;
     }
 
     public void onBackPressed(){
@@ -68,7 +82,11 @@ public class TripHistoryActivity extends Activity implements AdapterView.OnItemC
     @Override
     public void onItemClick(AdapterView<?> listview, View v, int position, long id) {
 
-        
+        chosenTrip = tripList.get(position);
 
+    }
+
+    public Trip getChosenTrip(){
+        return chosenTrip;
     }
 }

@@ -159,6 +159,10 @@
             android:name=".activities.TripHistoryActivity"
             android:label="@string/title_activity_trip_history" >
         </activity>
+        <activity
+            android:name=".activities.TripActivity"
+            android:label="@string/title_activity_trip" >
+        </activity>
     </application>
 
 </manifest>

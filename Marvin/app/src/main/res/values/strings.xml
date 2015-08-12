@@ -24,4 +24,5 @@
     <string name="title_activity_application_list" />
     <string name="title_activity_map">MapActivity</string>
     <string name="title_activity_trip_history">TripHistoryActivity</string>
+    <string name="title_activity_trip">TripActivity</string>
 </resources>

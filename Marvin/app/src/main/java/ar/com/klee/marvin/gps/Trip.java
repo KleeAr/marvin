@@ -3,20 +3,25 @@ package ar.com.klee.marvin.gps;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Date;
+import java.util.List;
 
 public class Trip {
 
     private LatLng beginning;
     private LatLng ending;
+    private String beginningAddress;
+    private String endingAddress;
     private Date startTime;
     private Date finishTime;
     private String distance;
-    private long time;
+    private String time;
     private String averageVelocity;
+    private List<LatLng> tripPath;
 
-    public Trip(double lat, double lon){
+    public Trip(double lat, double lon, String address){
         beginning = new LatLng(lat,lon);
-        finishTime = new Date();
+        startTime = new Date();
+        beginningAddress = address;
     }
 
     public LatLng getBeginning() {
@@ -33,6 +38,22 @@ public class Trip {
 
     public void setEnding(LatLng ending) {
         this.ending = ending;
+    }
+
+    public String getBeginningAddress() {
+        return beginningAddress;
+    }
+
+    public void setBeginningAddress(String beginningAddress) {
+        this.beginningAddress = beginningAddress;
+    }
+
+    public String getEndingAddress() {
+        return endingAddress;
+    }
+
+    public void setEndingAddress(String endingAddress) {
+        this.endingAddress = endingAddress;
     }
 
     public Date getStartTime() {
@@ -59,11 +80,11 @@ public class Trip {
         this.distance = distance;
     }
 
-    public long getTime() {
+    public String getTime() {
         return time;
     }
 
-    public void setTime(long time) {
+    public void setTime(String time) {
         this.time = time;
     }
 
@@ -73,5 +94,36 @@ public class Trip {
 
     public void setAverageVelocity(String averageVelocity) {
         this.averageVelocity = averageVelocity;
+    }
+
+    public List<LatLng> getTripPath() {
+        return tripPath;
+    }
+
+    public void setTripPath(List<LatLng> tripPath) {
+        this.tripPath = tripPath;
+    }
+
+    @Override
+    public String toString() {
+
+        String path = "";
+
+        path += tripPath.get(0).latitude + "," + tripPath.get(0).longitude;
+
+        for(int i=1; i<tripPath.size(); i++){
+            path += ";";
+            path += tripPath.get(i).latitude + "," + tripPath.get(i).longitude;
+        }
+
+        return beginning + ";" +
+                ending + ";" +
+                startTime + ";" +
+                finishTime + ";" +
+                distance + ";" +
+                time + ";" +
+                averageVelocity + "\n" +
+                path
+                ;
     }
 }

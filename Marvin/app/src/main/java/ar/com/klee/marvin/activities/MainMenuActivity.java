@@ -67,8 +67,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     Toolbar toolbar;
     ViewPager pager;
     ViewPagerAdpater adapter;
-    CharSequence Titles[]={"Home","Aplicacion"};
-    int Numboftabs = 3;
+    CharSequence Titles[]={"Home","Aplicacion","Mapa"};
+    int NumbOfTabs = 3;
     private long date;
     public static TextView cityText;
     public static TextView mainStreet;
@@ -281,7 +281,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
 
         // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        adapter =  new ViewPagerAdpater(getSupportFragmentManager(),Titles,Numboftabs);
+        adapter =  new ViewPagerAdpater(getSupportFragmentManager(),Titles,NumbOfTabs);
 
         // Assigning ViewPager View and setting the adapter
         pager = (ViewPager) findViewById(R.id.pager);
@@ -301,10 +301,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         // Setting the ViewPager For the SlidingTabsLayout
         tabs.setViewPager(pager);
-
-
-
-
 
         if(SMSDriver.isInstanceInitialized()) {
             smsDriver = SMSDriver.getInstance();
