@@ -11,7 +11,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class UbicacionActualHandler extends CommandHandler {
 
     public UbicacionActualHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("aumentar zoom", textToSpeech, context, commandHandlerManager);
+        super("ubicación actual", textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

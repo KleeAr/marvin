@@ -16,7 +16,7 @@ public class AumentarZoomHandler extends CommandHandler {
 
     public CommandHandlerContext drive(CommandHandlerContext context){
 
-        getTextToSpeech().speakText("Aumentando zoom. El valor actual es: " + ((MapActivity)getCommandHandlerManager().getActivity()).zoomOut());
+        getTextToSpeech().speakText("Aumentando zoom. El valor actual es: " + ((MapActivity)getCommandHandlerManager().getActivity()).zoomIn());
 
         context.put(STEP, 0);
         return context;

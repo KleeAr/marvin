@@ -118,9 +118,16 @@ public class BiggerMapFragment extends Fragment {
         // adding marker
         googleMap.addMarker(marker);
 
-        if(MapFragment.getInstance().getSearch() && !isSearch) {
-            CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(lat, lon)).zoom(zoom).build();
-            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        if(MapFragment.isInstanceInitialized()) {
+            if (MapFragment.getInstance().getSearch() && !isSearch) {
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(lat, lon)).zoom(zoom).build();
+                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            }
+        }else{
+            if (!isSearch) {
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(lat, lon)).zoom(zoom).build();
+                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            }
         }
 
     }
@@ -129,11 +136,6 @@ public class BiggerMapFragment extends Fragment {
 
         if(lastMarker!=null){
             lastMarker.remove();
-        }
-
-        if(searchMarker != null){
-            searchMarker.remove();
-            searchMarker = null;
         }
 
         lastLatitude = lat;
@@ -148,10 +150,24 @@ public class BiggerMapFragment extends Fragment {
         // adding marker
         lastMarker = googleMap.addMarker(marker);
 
-        if(MapFragment.getInstance().getSearch() && !isSearch) {
-            CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(lat, lon)).zoom(zoom).build();
-            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        if(MapFragment.isInstanceInitialized()) {
+            if(MapFragment.getInstance().getSearch() && !isSearch) {
+
+                if(searchMarker != null){
+                    searchMarker.remove();
+                    searchMarker = null;
+                }
+
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(lat, lon)).zoom(zoom).build();
+                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            }
+        }else{
+            if (!isSearch) {
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(lat, lon)).zoom(zoom).build();
+                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            }
         }
+
     }
 
     public LatLng getCoordinates(String address){
@@ -197,13 +213,10 @@ public class BiggerMapFragment extends Fragment {
         MarkerOptions marker = new MarkerOptions().position(coordinates);
 
         // Changing marker icon
-        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).title("Posición Actual").snippet(address);
+        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)).title("Búsqueda").snippet(address);
 
         // adding marker
         searchMarker = googleMap.addMarker(marker);
-
-        Log.d("SEARCH",address);
-        Log.d("SEARCH",coordinates.toString());
 
         CameraPosition cameraPosition = new CameraPosition.Builder().target(coordinates).zoom(zoom).build();
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -215,14 +228,15 @@ public class BiggerMapFragment extends Fragment {
         final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?" +
                 "saddr=" + lastLatitude + "," + lastLongitude +
                 "&daddr=" + lat + "," + lon));
-        intent.setClassName("com.google.android.apps.maps","com.google.andrid.maps.MapsActivity");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setClassName("com.google.android.apps.maps","com.google.android.maps.MapsActivity");
         startActivity(intent);
 
     }
 
     public void setZoom(int value){
         zoom = value;
-        CameraPosition cameraPosition = new CameraPosition.Builder().zoom(zoom).build();
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(googleMap.getCameraPosition().target).zoom(zoom).build();
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 

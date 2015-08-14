@@ -17,7 +17,7 @@ public class ReducirZoomHandler extends CommandHandler {
 
     public CommandHandlerContext drive(CommandHandlerContext context){
 
-        getTextToSpeech().speakText("Reduciendo zoom. El valor actual es: " + ((MapActivity)getCommandHandlerManager().getActivity()).zoomIn());
+        getTextToSpeech().speakText("Reduciendo zoom. El valor actual es: " + ((MapActivity)getCommandHandlerManager().getActivity()).zoomOut());
 
         context.put(STEP, 0);
         return context;

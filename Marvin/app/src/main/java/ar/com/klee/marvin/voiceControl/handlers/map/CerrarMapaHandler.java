@@ -25,7 +25,8 @@ public class CerrarMapaHandler extends CommandHandler {
 
         getCommandHandlerManager().defineActivity(CommandHandlerManager.ACTIVITY_MAIN, getCommandHandlerManager().getMainActivity());
 
-        MapFragment.getInstance().setSearch(false);
+        if(MapFragment.isInstanceInitialized())
+            MapFragment.getInstance().setSearch(false);
 
         mapActivity.finish();
         context.put(STEP, 0);

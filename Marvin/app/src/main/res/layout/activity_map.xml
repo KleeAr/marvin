@@ -5,12 +5,49 @@
     android:focusableInTouchMode="true"
     tools:context="ar.com.klee.marvin.activities.MapActivity">
 
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/biggerMap"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        class="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_alignParentRight="false"
+        android:layout_alignParentEnd="false" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Actual"
+        android:id="@+id/bt_currentPosition"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:nestedScrollingEnabled="false"
+        android:onClick="currentLocation" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Zoom Out"
+        android:id="@+id/bt_zoomOut"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:onClick="zoomOut" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Zoom In"
+        android:id="@+id/bt_zoomIn"
+        android:layout_above="@+id/bt_zoomOut"
+        android:layout_alignEnd="@+id/mapView"
+        android:onClick="zoomIn"
+        android:layout_alignParentRight="true" />
+
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        tools:context="ar.com.klee.marvin.activities.MapActivity"
-        android:id="@+id/rl_searchBar">
+        android:background="#FFA3D9D1">
 
         <EditText
             android:id="@+id/et_search"
@@ -18,7 +55,7 @@
             android:layout_height="wrap_content"
             android:scrollbars="vertical"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@android:color/black"
+            android:textColor="#FF000000"
             android:hint="Dirección a Buscar"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
@@ -44,56 +81,6 @@
             android:layout_alignParentEnd="true"
             android:layout_marginRight="10dp" />
 
-    </RelativeLayout>
-
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        tools:context="ar.com.klee.marvin.activities.MapActivity"
-        android:layout_below="@+id/rl_searchBar"
-        android:id="@+id/rl_map"
-        android:layout_marginTop="5dp">
-
-        <com.google.android.gms.maps.MapView
-            android:id="@+id/biggerMap"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            class="com.google.android.gms.maps.SupportMapFragment"
-            android:layout_alignParentRight="false"
-            android:layout_alignParentEnd="false" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Actual"
-            android:id="@+id/bt_currentPosition"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:nestedScrollingEnabled="false"
-            android:onClick="currentLocation" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Zoom Out"
-            android:id="@+id/bt_zoomOut"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:onClick="zoomOut" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Zoom In"
-            android:id="@+id/bt_zoomIn"
-            android:layout_above="@+id/bt_zoomOut"
-            android:layout_alignEnd="@+id/mapView"
-            android:onClick="zoomIn"
-            android:layout_alignParentRight="true" />
-
-    </RelativeLayout>
+        </RelativeLayout>
 
 </RelativeLayout>

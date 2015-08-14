@@ -1,5 +1,7 @@
 package ar.com.klee.marvin.activities;
 
+import android.app.Activity;
+import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
@@ -7,6 +9,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -165,10 +168,13 @@ public class MapActivity extends ActionBarActivity {
 
     public void search(View v){
 
+        hideSoftKeyboard(MapActivity.this, v);
+
         String address = et_search.getText().toString();
 
         if(address == ""){
             Toast.makeText(this, "Ingrese una dirección", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         LatLng coordinates = biggerMapFragment.getCoordinates(address);
@@ -189,6 +195,8 @@ public class MapActivity extends ActionBarActivity {
 
     public void navigate(View v){
 
+        hideSoftKeyboard(MapActivity.this, v);
+
         String address = et_search.getText().toString();
 
         if(address == ""){
@@ -199,5 +207,10 @@ public class MapActivity extends ActionBarActivity {
 
         biggerMapFragment.navigate(coordinates.latitude, coordinates.longitude);
 
+    }
+
+    public static void hideSoftKeyboard (Activity activity, View view)    {
+        InputMethodManager imm = (InputMethodManager)activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getApplicationWindowToken(), 0);
     }
 }
