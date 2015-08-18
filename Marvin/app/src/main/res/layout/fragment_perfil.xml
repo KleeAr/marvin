@@ -1,0 +1,130 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.icetea09.demomaterialdesigndrawermenu.CarFragment"
+    android:id="@+id/layout1">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="false"
+        android:orientation="vertical"
+        android:id="@+id/layout2"
+        android:layout_alignParentTop="true">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:focusableInTouchMode="false"
+        android:focusable="false"
+        android:id="@+id/layout_header">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/im_wallpaper"
+            android:scaleType="centerCrop"
+            android:clickable="false"
+            android:src="@drawable/fondo"
+            android:layout_gravity="center_horizontal|top" />
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="false"
+            android:orientation="vertical"
+            android:id="@+id/layout"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:gravity="center_vertical">
+
+
+            <ImageView
+                android:id="@+id/im_perfil"
+                android:layout_width="85dp"
+                android:layout_height="85dp"
+                android:scaleType="centerCrop"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/icon_user" />
+
+            <TextView
+                android:id="@+id/tv_header"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:gravity="center_vertical"
+                android:textSize="16sp"
+                android:text="Anonimo"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp" />
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            tools:context=".MainActivity"
+            android:id="@+id/layout_body">
+
+            <android.support.v7.widget.CardView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                card_view:contentPadding="16dp"
+                card_view:cardElevation="2dp"
+                card_view:cardCornerRadius="5dp"
+                android:id="@+id/cv_email">
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:id="@+id/layout_email">
+
+                    <TextView
+                        style="@style/Base.TextAppearance.AppCompat.Headline"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Email:"
+                        android:id="@+id/tv_title" />
+
+                    <TextView
+                        style="@style/Base.TextAppearance.AppCompat.Body1"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Content here"
+                        android:id="@+id/tv_email" />
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <Button
+                android:id="@+id/btn_close"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:background="#ababab"
+                android:text="Cerrar sesión"
+                android:textColor="#fff"
+                android:textStyle="bold"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+
+</FrameLayout>

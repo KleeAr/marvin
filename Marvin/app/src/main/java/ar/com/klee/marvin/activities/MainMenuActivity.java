@@ -10,28 +10,41 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Parcelable;
 import android.speech.SpeechRecognizer;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +52,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import ar.com.klee.marvin.DrawerMenuAdapter;
+import ar.com.klee.marvin.DrawerMenuItem;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.SlidingTabLayout;
 import ar.com.klee.marvin.ViewPagerAdpater;
@@ -47,6 +62,11 @@ import ar.com.klee.marvin.call.CallDriver;
 import ar.com.klee.marvin.call.CallReceiver;
 import ar.com.klee.marvin.data.Channel;
 import ar.com.klee.marvin.data.Item;
+import ar.com.klee.marvin.fragments.ConfigureAppFragment;
+import ar.com.klee.marvin.fragments.MainMenuFragment;
+import ar.com.klee.marvin.fragments.MisSitiosFragment;
+import ar.com.klee.marvin.fragments.MisViajesFragment;
+import ar.com.klee.marvin.fragments.PerfilFragment;
 import ar.com.klee.marvin.gps.LocationSender;
 import ar.com.klee.marvin.gps.MapFragment;
 import ar.com.klee.marvin.multimedia.music.MusicService;
@@ -58,16 +78,25 @@ import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
 
 
-public class MainMenuActivity extends ActionBarActivity implements DelegateTask<List<YouTubeVideo>>, WeatherServiceCallback {
+public class MainMenuActivity extends ActionBarActivity implements DelegateTask<List<YouTubeVideo>>, WeatherServiceCallback,AdapterView.OnItemClickListener {
 
 
     public final int CANT_APPLICATION=12; //variable en que se definen la cantidad de aplicaciones disponibles
     public final int UPDATE_WEATHER=1000000; //cantidad de milisegundos para actualizar el clima
 
-    Toolbar toolbar;
-    ViewPager pager;
-    ViewPagerAdpater adapter;
-    CharSequence Titles[]={"Home","Aplicacion","Mapa"};
+
+
+    private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private ListView mLvDrawerMenu;
+    private DrawerMenuAdapter mDrawerMenuAdapter;
+
+    private Toolbar toolbar;
+    private SlidingTabLayout tabs;
+
+    private ViewPager pager;
+    private ViewPagerAdpater adapter;
+    private CharSequence Titles[]={"Home","Aplicacion","Mapa"};
     int NumbOfTabs = 3;
     private long date;
     public static TextView cityText;
@@ -110,7 +139,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         super.onCreate(savedInstanceState);
         CommandHandlerManager.destroyInstance();
         setContentView(R.layout.activity_main_menu);
-
+/*
         bt_play = (ImageButton) findViewById(R.id.bt_play);
         bt_next = (ImageButton) findViewById(R.id.bt_next);
         bt_previous = (ImageButton) findViewById(R.id.bt_previous);
@@ -118,7 +147,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         tv_song = (TextView)findViewById(R.id.song);
         tv_artist = (TextView)findViewById(R.id.artist);
 
-        SlidingTabLayout tabs;
+
 
         initializeMusicService();
         initializeSTTService();
@@ -130,10 +159,120 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             mapFragment = new MapFragment();
 
         locationSender = new LocationSender(this, mapFragment);
-
+*/
         ////////////////////////////////////
 
+        toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mLvDrawerMenu = (ListView) findViewById(R.id.lv_drawer_menu);
 
+
+        //extraemos el drawable en un bitmap
+        Drawable originalDrawable = getResources().getDrawable(R.drawable.icon_user);
+        Bitmap originalBitmap = ((BitmapDrawable) originalDrawable).getBitmap();
+
+        if (originalBitmap.getWidth() > originalBitmap.getHeight()){
+            originalBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.getHeight(), originalBitmap.getHeight());
+        }else if (originalBitmap.getWidth() < originalBitmap.getHeight()) {
+            originalBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.getWidth(), originalBitmap.getWidth());
+        }
+
+        //creamos el drawable redondeado
+        RoundedBitmapDrawable roundedDrawable = RoundedBitmapDrawableFactory.create(getResources(), originalBitmap);
+
+        //asignamos el CornerRadius
+        roundedDrawable.setCornerRadius(originalBitmap.getWidth());
+
+
+
+        //Añadimos cabecera general
+
+        View header = getLayoutInflater().inflate(R.layout.drawer_header_menu_item, null);
+        mLvDrawerMenu.addHeaderView(header);
+
+        ImageView imageView = (ImageView) findViewById(R.id.im_perfil);
+        imageView.setImageDrawable(roundedDrawable);
+
+        ShapeDrawable sd = new ShapeDrawable(new OvalShape());
+        sd.setIntrinsicHeight(100);
+        sd.setIntrinsicWidth(100);
+        sd.getPaint().setColor(Color.parseColor("#ffffff"));
+
+        imageView.setBackground(sd);
+
+        List<DrawerMenuItem> menuItems = generateDrawerMenuItems();
+        mDrawerMenuAdapter = new DrawerMenuAdapter(getApplicationContext(), menuItems);
+        mLvDrawerMenu.setAdapter(mDrawerMenuAdapter);
+
+        mLvDrawerMenu.setOnItemClickListener(this);
+
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.app_name, R.string.app_name) {
+            public void onDrawerClosed(View drawerView) {
+
+                // getSupportActionBar().setTitle(mTitle);
+                supportInvalidateOptionsMenu();
+            }
+
+
+
+            public void onDrawerOpened(View drawerView) {
+
+                // getSupportActionBar().setTitle(mTitle);
+                supportInvalidateOptionsMenu();
+            }
+        };
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+        if(savedInstanceState == null){
+            setFragment(0, MainMenuFragment.class);
+        }
+    }
+
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        switch (position){
+            case 0:
+                setFragment(0, PerfilFragment.class);
+                break;
+            case 1:
+                setFragment(1, MainMenuFragment.class);
+                break;
+            case 2:
+                Toast.makeText(getApplicationContext(), "posicion " + position, Toast.LENGTH_SHORT).show();
+                //setFragment(2, ComandosDeVoz.class);
+                break;
+            case 4:
+                setFragment(4, MisViajesFragment.class);
+                break;
+            case 5:
+                setFragment(5, MisSitiosFragment.class);
+                break;
+            case 6:
+                Toast.makeText(getApplicationContext(), "posicion 6" + position, Toast.LENGTH_SHORT).show();
+                //setFragment(5, DondeEstacioneFragment.class);
+                break;
+            case 8:
+                setFragment(8, ConfigureAppFragment.class);
+                break;
+            case 9:
+                Toast.makeText(getApplicationContext(), "posicion 9" + position, Toast.LENGTH_SHORT).show();
+                break;
+            case 10:
+                Toast.makeText(getApplicationContext(), "Saliendo...", Toast.LENGTH_SHORT).show();
+                finish();
+                break;
+            case 11:
+                mDrawerLayout.closeDrawer(mLvDrawerMenu);
+                mLvDrawerMenu.invalidateViews();
+                break;
+        }
+
+
+
+        ////////////////////////////////////////
+
+/*
       //  LocationSender locationSender = new LocationSender(this);
 
         cityText = (TextView)findViewById(R.id.cityText);
@@ -157,6 +296,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             getSharedPreferences("PREFERENCES", 0).edit().putBoolean("IsIconCreated", true);
 
         }*/
+
+        /*
         //Se recupera la información en los arrays
         for(int i=0; i<CANT_APPLICATION;i++){
             shortcutList[i].setPackageName(settings.getString("ButtonPack" + i, ""));
@@ -276,7 +417,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         // Creating The Toolbar and setting it as the Toolbar for the activity
 
-        toolbar = (Toolbar) findViewById(R.id.tool_bar);
+      //borrar  toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
 
 
@@ -313,9 +454,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         } else {
             callDriver = CallDriver.initializeInstance(getApplicationContext());
         }
-
+*/
     }
-
+/*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -337,12 +478,84 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         return super.onOptionsItemSelected(item);
     }
+*/
 
-    public void onBackPressed(){
+
+    @Override
+    public void onBackPressed() {
         musicService.onStop();
         stopService(voiceControlServiceIntent);
         stopService(musicServiceIntent);
         finish();
+
+        if (mDrawerLayout.isDrawerOpen(mLvDrawerMenu)) {
+            mDrawerLayout.closeDrawer(mLvDrawerMenu);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+
+    /**
+     * When using the ActionBarDrawerToggle, you must call it during
+     * onPostCreate() and onConfigurationChanged()...
+     */
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Pass any configuration change to the drawer toggls
+        mDrawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    public void setFragment(int position, Class<? extends Fragment> fragmentClass) {
+        try {
+            Fragment fragment = fragmentClass.newInstance();
+            android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.frame_container, fragment, fragmentClass.getSimpleName());
+            fragmentTransaction.commit();
+
+            mLvDrawerMenu.setItemChecked(position, true);
+            mDrawerLayout.closeDrawer(mLvDrawerMenu);
+            mLvDrawerMenu.invalidateViews();
+        }
+        catch (Exception ex){
+            Log.e("setFragment", ex.getMessage());
+        }
+    }
+
+    private List<DrawerMenuItem> generateDrawerMenuItems() {
+        String[] itemsText = getResources().getStringArray(R.array.nav_drawer_items);
+        TypedArray itemsIcon = getResources().obtainTypedArray(R.array.nav_drawer_icons);
+        List<DrawerMenuItem> result = new ArrayList<DrawerMenuItem>();
+        for (int i = 0; i < itemsText.length; i++) {
+            switch (i){
+                case 2:
+                    DrawerMenuItem item = new DrawerMenuItem();
+                    item.setText("Viajes");
+                    result.add(item);
+                    break;
+                case 5:
+                    DrawerMenuItem item2 = new DrawerMenuItem();
+                    item2.setText("Opciones");
+                    result.add(item2);
+                    break;
+            }
+
+            DrawerMenuItem item = new DrawerMenuItem();
+            item.setText(itemsText[i]);
+            item.setIcon(itemsIcon.getResourceId(i, -1));
+            result.add(item);
+        }
+
+
+        return result;
     }
 
     public void stopServices(){

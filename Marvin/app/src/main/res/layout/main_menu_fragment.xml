@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center_horizontal"
+            android:background="#004d4a"
+            android:layout_weight="0.22">
+
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/streetsView"
+                android:src="@drawable/street_arrows"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:adjustViewBounds="true"
+                android:background="#004d4a" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:layout_below="@+id/streetsView">
+
+                <ar.com.klee.marvin.AutoScaleTextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:text="@string/defaultSpeed"
+                    android:id="@+id/speed"
+                    android:textColor="#FFFFFF"
+                    android:layout_weight="0.35"
+                    android:gravity="end|bottom"
+                    android:textSize="70sp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:text="km/h"
+                    android:id="@+id/speedUnit"
+                    android:textColor="#FFFFFF"
+                    android:gravity="center|start"
+                    android:layout_weight="0.1"
+                    android:textSize="20sp" />
+
+                <ar.com.klee.marvin.AutoScaleTextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:id="@+id/digitalClock"
+                    android:textColor="#ffffff"
+                    android:text="12:00"
+                    android:scaleType="center"
+                    android:padding="0dp"
+                    android:gravity="bottom|end"
+                    android:layout_weight="0.45"
+                    android:textSize="70sp"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="a.m."
+                    android:id="@+id/anteMeridiem"
+                    android:gravity="center|start"
+                    android:textColor="#ffffff"
+                    android:textSize="20sp"
+                    android:layout_weight="0.1" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/defaultMainStreet"
+                android:textSize="18sp"
+                android:id="@+id/mainStreet"
+                android:textColor="#FFFFFF"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentTop="true"
+                android:gravity="center"
+                android:layout_alignBottom="@+id/streetsView" />
+
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="#ef404a"
+            android:id="@+id/layout_medium"
+            android:layout_weight="0.13">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="A definir"
+                android:id="@+id/textView2"
+                android:textColor="#ffffff"
+                android:singleLine="true"
+                android:scrollHorizontally="true"
+                android:paddingLeft="15dip"
+                android:paddingRight="15dip"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:freezesText="true"
+                android:layout_weight="1"
+                android:gravity="center|start" />
+
+        </LinearLayout>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:layout_weight="0.45">
+        </android.support.v4.view.ViewPager>
+
+        <ar.com.klee.marvin.SlidingTabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:elevation="2dp"
+            android:background="@color/ColorPrimary"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:id="@+id/layout_music"
+            android:background="@color/ColorPrimary"
+            android:layout_weight="0.07"
+            android:layout_gravity="bottom">
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/imageView"
+                android:src="@drawable/music"
+                android:layout_weight="0.1" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5">
+
+                <TextView
+                    android:text="A sky Full Of Start12345678123456777            2131"
+                    android:id="@+id/song"
+                    android:layout_weight="0.6"
+                    android:textColor="#ffffff"
+                    android:textSize="20sp"
+                    android:layout_height="0dp"
+                    android:layout_width="fill_parent"
+
+                    android:singleLine="true"
+                    android:ellipsize="marquee"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:scrollHorizontally="true"
+                    android:paddingLeft="15dip"
+                    android:paddingRight="15dip"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:freezesText="true"
+                    android:gravity="center|start" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:text="Cold Play"
+                    android:id="@+id/artist"
+                    android:layout_weight="0.4"
+                    android:textColor="#ffffff"
+                    android:textSize="15sp"
+                    android:gravity="top|center|start" />
+            </LinearLayout>
+
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/bt_previous"
+                android:layout_weight="0.1"
+                android:src="@drawable/ic_media_previous"
+                android:onClick="previousSong" />
+
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/bt_play"
+                android:layout_weight="0.1"
+                android:src="@drawable/ic_media_play"
+                android:onClick="startPauseMusic"/>
+
+            <ImageButton
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/bt_next"
+                android:layout_weight="0.1"
+                android:src="@drawable/ic_media_next"
+                android:onClick="nextSong" />
+
+
+        </LinearLayout>
+
+
+</LinearLayout>

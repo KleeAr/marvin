@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="130dp"
+    android:id="@+id/lyt_container"
+    android:background="@color/gray_background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/lyt_1">
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="10dp"
+            tools:context=".MainActivity"
+            android:background="#ffffff"
+            android:id="@+id/lyt_3">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/lyt_2"
+                android:background="#ffffff"
+                android:layout_weight="0.8"
+                android:orientation="vertical"
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/im_icon"
+                    android:src="@drawable/ic_directions_car_black_36dp"
+                    android:layout_margin="5dp"
+                    android:layout_weight="0.8"
+                    android:layout_gravity="top" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="0,2 km"
+                    android:id="@+id/textView2"
+                    android:layout_weight="0.1"
+                    android:layout_gravity="top|center_horizontal"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="#ffffff"
+                    android:background="#000000"
+                    android:gravity="center"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+
+            <android.support.v7.widget.CardView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                card_view:contentPadding="16dp"
+                card_view:cardElevation="1dp"
+                card_view:cardCornerRadius="1dp"
+                android:id="@+id/re"
+                android:layout_gravity="center"
+                android:layout_weight="0.2">
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:id="@+id/lyt_info">
+
+                    <TextView
+                        style="@style/Base.TextAppearance.AppCompat.Headline"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Hace 15 minutos"
+                        android:id="@+id/textdata"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        style="@style/Base.TextAppearance.AppCompat.Body1"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Desde:"
+                        android:id="@+id/SiteAddress"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        style="@style/Base.TextAppearance.AppCompat.Body1"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Hasta:"
+                        android:id="@+id/textView"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:weightSum="3"
+        android:height="@dimen/list_item_height"
+        android:paddingLeft="@dimen/list_item_padding_sides"
+        android:paddingRight="@dimen/list_item_padding_sides"
+        android:background="@color/gray_background">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:id="@+id/txt_delete"
+            android:gravity="center_vertical"
+            android:text="@string/deleted"
+            android:clickable="false"
+            android:layout_weight="2"
+            android:hapticFeedbackEnabled="true"
+            android:textColor="@android:color/white"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:id="@+id/txt_undo"
+            android:text="@string/undo"
+            android:clickable="false"
+            android:layout_weight="1"
+            android:textColor="@color/yellow"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DADADC"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_gravity="center_horizontal|bottom"></View>
+
+</FrameLayout>

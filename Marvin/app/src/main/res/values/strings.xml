@@ -25,4 +25,45 @@
     <string name="title_activity_map">MapActivity</string>
     <string name="title_activity_trip_history">TripHistoryActivity</string>
     <string name="title_activity_trip">TripActivity</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Contraseña</string>
+    <string name="action_sign_in">Iniciar sesión</string>
+    <string name="invalid_email">Esta dirección de mail es invalida</string>
+    <string name="invalid_password">Contraseña corta</string>
+    <string name="incorrect_password">Contraseña incorrecta</string>
+    <string name="field_required">Campo requerido</string>
+
+    <string name="list_view">List View</string>
+    <string name="recycler_view">Recycler View</string>
+    <string name="deleted">Deleted</string>
+    <string name="undo">UNDO</string>
+
+    <!-- Drawer Menu items -->
+    <string-array name="nav_drawer_items">
+        <item>Principal</item>
+        <item>Comandos de voz</item>
+        <item>Mis viajes</item>
+        <item>Mis sitios</item>
+        <item>¿Donde estacione?</item>
+        <item>Configuración app</item>
+        <item>Terminos y condiciones</item>
+        <item>Salir</item>
+    </string-array>
+
+    <!-- Sliding Menu item icons -->
+    <array name="nav_drawer_icons">
+        <item>@drawable/ic_home</item>
+        <item>@drawable/ic_question_mark</item>
+        <item>@drawable/ic_directions_car_black_36dp</item>
+        <item>@drawable/ic_pin</item>
+        <item>@drawable/ic_sign</item>
+        <item>@drawable/ic_mech_wheel</item>
+        <item>@drawable/ic_info</item>
+        <item>@drawable/ic_power</item>
+
+    </array>
+
+
 </resources>

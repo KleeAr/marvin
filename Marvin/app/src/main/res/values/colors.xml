@@ -4,11 +4,19 @@
 
     <color name="button_normal">#a3d9d1</color>
     <color name="button_pressed">#ef404a</color>
-
+    <color name="accent">#232323</color>
         <color name="ColorPrimary">#00897B</color>
         <color name="ColorPrimaryDark">#00695C</color>
         <color name="tabsScrollColor">#004D40</color>
+    <color name="gray_background">#757575</color>
+    <color name="yellow">#FFBB33</color>
 
+    <color name="list_item_title">#fff</color>
+    <color name="list_background">#303030</color>
+    <color name="list_background_pressed">#992416</color>
+    <color name="list_divider">#272727</color>
+    <color name="counter_text_bg">#626262</color>
+    <color name="counter_text_color">#c5c4c4</color>
 
 
 </resources>

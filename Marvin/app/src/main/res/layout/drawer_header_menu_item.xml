@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="120dp"
+    android:focusableInTouchMode="false">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:id="@+id/imageView"
+        android:scaleType="centerCrop"
+        android:clickable="false"
+        android:src="@drawable/fondo"
+        android:layout_gravity="center_horizontal|top" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Ver tu perfil"
+        android:id="@+id/textView3"
+        android:textColor="#ffffff" />
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="false"
+        android:orientation="vertical"
+        android:id="@+id/layout"
+        android:layout_alignParentTop="true">
+
+
+        <ImageView
+            android:id="@+id/im_perfil"
+            android:layout_width="85dp"
+            android:layout_height="85dp"
+            android:scaleType="centerCrop"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp" />
+
+        <TextView
+            android:id="@+id/header"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:gravity="center_vertical"
+            android:textSize="16sp"
+            android:text="Anonimo"
+            android:layout_gravity="center" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>
