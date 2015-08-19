@@ -2,6 +2,7 @@ package ar.com.klee.marvin.activities;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -19,6 +20,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -43,6 +45,7 @@ import java.util.Date;
 
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.camera.CameraPreview;
+import ar.com.klee.marvin.social.InstagramService;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
 
@@ -58,6 +61,12 @@ public class CameraActivity extends ActionBarActivity {
     private byte[] datos;
     private File pictureFile;
     private TextView buttonInfo;
+
+    private String lastImagePath;
+    private Bitmap lastBitMap;
+    private boolean onlyShare;
+
+    private Dialog currentDialog;
 
     private CommandHandlerManager commandHandlerManager;
 
@@ -297,6 +306,8 @@ public class CameraActivity extends ActionBarActivity {
                 //make a new picture file
                 pictureFile = getOutputMediaFile();
 
+                lastImagePath = pictureFile.getPath();
+
                 if (pictureFile == null) {
                     return;
                 }
@@ -322,8 +333,10 @@ public class CameraActivity extends ActionBarActivity {
                         bm=scaled;
                     }
 
+                    lastBitMap = bm;
+
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    bm.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    bm.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                     datos = stream.toByteArray();
 
                     save.setVisibility(View.VISIBLE);
@@ -353,6 +366,8 @@ public class CameraActivity extends ActionBarActivity {
         } catch (IOException e) {
         }
 
+        onlyShare = false;
+
         mPreview.refreshCamera(mCamera);
         commandHandlerManager.setIsPhotoTaken(false);
 
@@ -366,6 +381,20 @@ public class CameraActivity extends ActionBarActivity {
     }
 
     public void share(){
+
+        try {
+            //write the file
+            FileOutputStream fos = new FileOutputStream(pictureFile);
+            fos.write(datos);
+            fos.close();
+            Toast toast = Toast.makeText(myContext, "Imagen guardada: " + pictureFile.getName(), Toast.LENGTH_LONG);
+            toast.show();
+
+        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
+        }
+
+        onlyShare = true;
 
         openShareDialog();
 
@@ -392,6 +421,8 @@ public class CameraActivity extends ActionBarActivity {
         } catch (IOException e) {
         }
 
+        onlyShare = false;
+
         openShareDialog();
 
         save.setVisibility(View.INVISIBLE);
@@ -403,21 +434,50 @@ public class CameraActivity extends ActionBarActivity {
 
     }
 
-    public void shareInFacebook(){
+    public void shareInFacebook(String text){
 
         //TODO cameraDialog.facebook();
 
+        if(onlyShare){
+
+            File photo = new File(lastImagePath);
+            photo.delete();
+
+        }
+
+        currentDialog.dismiss();
+
     }
 
-    public void shareInTwitter(){
+    public void shareInTwitter(String text){
 
         //TODO cameraDialog.twitter();
 
+        if(onlyShare){
+
+            File photo = new File(lastImagePath);
+            photo.delete();
+
+        }
+
+        currentDialog.dismiss();
+
     }
 
-    public void shareInInstagram(){
+    public void shareInInstagram(String text){
 
-        //TODO cameraDialog.instagram();
+        InstagramService instagramService = new InstagramService(this);
+
+        instagramService.postImageOnInstagram("image/jpeg", text, lastImagePath);
+
+        if(onlyShare){
+
+            File photo = new File(lastImagePath);
+            photo.delete();
+
+        }
+
+        currentDialog.dismiss();
 
     }
 
@@ -436,6 +496,10 @@ public class CameraActivity extends ActionBarActivity {
 
     }
 
+    public void closeDialog(){
+        currentDialog.dismiss();
+    }
+
     public  void openShareDialog(){
         final Dialog customDialog = new Dialog(this);
         customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -443,11 +507,17 @@ public class CameraActivity extends ActionBarActivity {
         customDialog.setContentView(R.layout.dialog_camera);
         customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
+        currentDialog = customDialog;
+
         customDialog.findViewById(R.id.facebook).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view){
 
+                shareInFacebook("");
 
+                STTService.getInstance().setIsListening(false);
+                commandHandlerManager.setNullCommand();
+                customDialog.dismiss();
 
             }
         });
@@ -455,7 +525,11 @@ public class CameraActivity extends ActionBarActivity {
             @Override
             public void onClick(View view){
 
+                shareInTwitter("");
 
+                STTService.getInstance().setIsListening(false);
+                commandHandlerManager.setNullCommand();
+                customDialog.dismiss();
 
             }
         });
@@ -463,9 +537,37 @@ public class CameraActivity extends ActionBarActivity {
             @Override
             public void onClick(View view){
 
+                shareInInstagram("");
 
+                STTService.getInstance().setIsListening(false);
+                commandHandlerManager.setNullCommand();
+                customDialog.dismiss();
 
             }
+        });
+
+        customDialog.setOnKeyListener(new Dialog.OnKeyListener() {
+
+            @Override
+            public boolean onKey(DialogInterface arg0, int keyCode,
+                                 KeyEvent event) {
+
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+                    if(onlyShare){
+
+                        File photo = new File(lastImagePath);
+                        photo.delete();
+
+                    }
+
+                    STTService.getInstance().setIsListening(false);
+                    commandHandlerManager.setNullCommand();
+                    customDialog.dismiss();
+                }
+                return true;
+            }
+
         });
 
         customDialog.show();

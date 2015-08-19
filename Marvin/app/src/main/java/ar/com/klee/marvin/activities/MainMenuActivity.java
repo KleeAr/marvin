@@ -107,6 +107,18 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         super.onCreate(savedInstanceState);
         CommandHandlerManager.destroyInstance();
         setContentView(R.layout.activity_main_menu);
+<<<<<<< HEAD
+=======
+
+        bt_play = (ImageButton) findViewById(R.id.bt_play);
+        bt_next = (ImageButton) findViewById(R.id.bt_next);
+        bt_previous = (ImageButton) findViewById(R.id.bt_previous);
+
+        tv_song = (TextView)findViewById(R.id.song);
+        tv_artist = (TextView)findViewById(R.id.artist);
+
+
+>>>>>>> origin/master
 
         initializeMusicService();
         initializeSTTService();
@@ -245,6 +257,43 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
       //  LocationSender locationSender = new LocationSender(this);
 
         cityText = (TextView)findViewById(R.id.cityText);
+<<<<<<< HEAD
+=======
+        mainStreet = (TextView)findViewById(R.id.mainStreet);
+
+
+        shortcutList = new Application[CANT_APPLICATION]; //creamos la lista para almacenar los accesos directos
+
+        for (int i = 0; i < CANT_APPLICATION; i++)
+            shortcutList[i] = new Application(null, null, null, false);//inicia los objetos
+
+        shortcutButton = new ImageButton[CANT_APPLICATION]; //creamos la lista para almacenar los botones
+
+
+        // RECUPERAR DATOS
+        // Creamos la instancia de "SharedPreferences" en MODE_PRIVATE
+        SharedPreferences settings = getSharedPreferences("PREFERENCES", 0);
+      /* Esta parte es para validar que se creo un acceso directo
+      if(!settings.getBoolean("IsIconCreated",false)){
+            addShortcut();
+            getSharedPreferences("PREFERENCES", 0).edit().putBoolean("IsIconCreated", true);
+
+        }*/
+
+
+        //Se recupera la información en los arrays
+        for(int i=0; i<CANT_APPLICATION;i++){
+            shortcutList[i].setPackageName(settings.getString("ButtonPack" + i, ""));
+            shortcutList[i].setName(settings.getString("ButtonName" + i, ""));
+            shortcutList[i].setConfigured(settings.getBoolean("ButtonConfig" + i, false));
+            try {
+                shortcutList[i].setIcon(getPackageManager().getApplicationIcon(shortcutList[i].getPackageName()));
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+
+        }
+>>>>>>> origin/master
 
         ////////////////////
 
@@ -846,8 +895,18 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         });
     }
 
+    /**************************************
+ *************MAPS METHODS**************
+ *************************************/
 
-         /*
+    public FragmentManager getManager(){
+        return getSupportFragmentManager();
+    }
+
+
+
+
+             /*
     private void addShortcut() {
 
         //on Home screen
@@ -864,6 +923,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     }
 */
 
+<<<<<<< HEAD
 /**************************************
  *************MAPS METHODS**************
  *************************************/
@@ -889,4 +949,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     }
 
+=======
+>>>>>>> origin/master
 }

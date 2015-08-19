@@ -8,4 +8,5 @@ import ar.com.klee.marvin.model.User;
 @Repository
 public interface UserRepository extends CrudRepository<User, Long> {
 
+	User findByEmail(String email);
 }

@@ -37,8 +37,8 @@ import ar.com.klee.marvin.R;
 public class LoginActivity extends ActionBarActivity {
 
     // Note: Your consumer key and secret should be obfuscated in your source code before shipping.
-    private static final String TWITTER_KEY = "IsfPZw7I4i4NCZaFxM9BZX4Qi";
-    private static final String TWITTER_SECRET = "aPnfZPsetWBwJ7E42RF0MMwsVL361hBu92ey1JwzkMcrNGedWE";
+    public static final String TWITTER_KEY = "IsfPZw7I4i4NCZaFxM9BZX4Qi";
+    public static final String TWITTER_SECRET = "aPnfZPsetWBwJ7E42RF0MMwsVL361hBu92ey1JwzkMcrNGedWE";
 
     private CallbackManager callbackManager = CallbackManager.Factory.create();
 

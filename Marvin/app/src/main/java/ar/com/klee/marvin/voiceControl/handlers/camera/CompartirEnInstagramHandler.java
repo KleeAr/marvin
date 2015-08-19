@@ -4,6 +4,7 @@ import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import ar.com.klee.marvin.activities.CameraActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
@@ -20,6 +21,7 @@ public class CompartirEnInstagramHandler extends CommandHandler {
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){
+
         if(context.getBoolean(SET_MESSAGE)) {
             context.put(MESSAGE, context.getString(COMMAND));
         }
@@ -75,6 +77,7 @@ public class CompartirEnInstagramHandler extends CommandHandler {
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando publicación");
+            context.getObject(ACTIVITY, CameraActivity.class).closeDialog();
             context.put(STEP, 0);
             return context;
         }
@@ -103,6 +106,7 @@ public class CompartirEnInstagramHandler extends CommandHandler {
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando publicación");
+            context.getObject(ACTIVITY, CameraActivity.class).closeDialog();
             context.put(STEP, 0);
             return context;
         }
@@ -110,7 +114,7 @@ public class CompartirEnInstagramHandler extends CommandHandler {
         if(input.equals("no")){
             getTextToSpeech().speakText("Publicando la foto en Instagram");
             CameraActivity cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
-            cameraActivity.shareInInstagram();
+            cameraActivity.shareInInstagram(context.getString(MESSAGE));
             context.put(STEP, 0);
             return context;
         }
@@ -123,12 +127,12 @@ public class CompartirEnInstagramHandler extends CommandHandler {
     }
 
     //INGRESA HASHTAG
-    @SuppressWarnings("unchecked")
     public CommandHandlerContext stepSeven(CommandHandlerContext context){
         String input = context.getString(COMMAND);
         getTextToSpeech().speakText("¿Querés agregar el hashtag "+input+" junto a la foto?");
         List<String> hashtags = context.getList(INSTAGRAM_HASHTAG, String.class);
         hashtags.add(input);
+        context.put(INSTAGRAM_HASHTAG, hashtags);
         context.put(STEP, 9);
         return context;
 
@@ -145,6 +149,7 @@ public class CompartirEnInstagramHandler extends CommandHandler {
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando publicación");
+            context.getObject(ACTIVITY, CameraActivity.class).closeDialog();
             context.put(STEP, 0);
             return context;
         }
@@ -153,6 +158,7 @@ public class CompartirEnInstagramHandler extends CommandHandler {
             getTextToSpeech().speakText("¿Qué hashtag querés agregar?");
             List<String> hashtags = context.getList(INSTAGRAM_HASHTAG, String.class);
             hashtags.remove(hashtags.size()-1);
+            context.put(INSTAGRAM_HASHTAG, hashtags);
             context.put(STEP, 7);
             return context;
         }
@@ -173,6 +179,7 @@ public class CompartirEnInstagramHandler extends CommandHandler {
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando publicación");
+            context.getObject(ACTIVITY, CameraActivity.class).closeDialog();
             context.put(STEP, 0);
             return context;
         }
@@ -181,7 +188,41 @@ public class CompartirEnInstagramHandler extends CommandHandler {
             getTextToSpeech().speakText("Publicando la foto en Instagram");
 
             CameraActivity cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
-            cameraActivity.shareInInstagram();
+
+            String textToPublish = context.getString(MESSAGE);
+            List<String> hashtags = context.getList(INSTAGRAM_HASHTAG, String.class);
+
+            Character firstCharacter, newFirstCharacter;
+
+            int i=0;
+
+            while(i != hashtags.size()){
+
+                textToPublish = textToPublish + " #";
+
+                String hashtag = hashtags.get(i).toLowerCase();
+
+                String word;
+
+                StringTokenizer stringTokenizer = new StringTokenizer(hashtag);
+
+                while(stringTokenizer.hasMoreTokens()){
+
+                    word = stringTokenizer.nextToken();
+
+                    firstCharacter = word.charAt(0);
+                    newFirstCharacter = Character.toUpperCase(firstCharacter);
+                    word = word.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
+
+                    textToPublish = textToPublish + word;
+
+                }
+
+                i++;
+
+            }
+
+            cameraActivity.shareInInstagram(textToPublish);
 
             context.put(STEP, 0);
             return context;
