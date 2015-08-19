@@ -1,9 +1,11 @@
 package ar.com.klee.marvin.voiceControl.handlers.camera;
 
 import android.content.Context;
+import android.support.v4.media.session.MediaSessionCompatApi14;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import ar.com.klee.marvin.activities.CameraActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
@@ -48,9 +50,7 @@ public class CompartirEnFacebookHandler extends CommandHandler {
 
     @Override
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
-        commandHandlerContext.put("HASHTAGS", new ArrayList<String>());
-        commandHandlerContext.put("TAGGED", new ArrayList<String>());
-        // TODO
+        commandHandlerContext.put(FACEBOOK_HASHTAG, new ArrayList<String>());
     }
 
     //PRONUNCIA MENSAJE
@@ -71,6 +71,7 @@ public class CompartirEnFacebookHandler extends CommandHandler {
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando publicación");
+            context.getObject(ACTIVITY, CameraActivity.class).closeDialog();
             return context.put(STEP, 0);
         }
 
@@ -95,13 +96,14 @@ public class CompartirEnFacebookHandler extends CommandHandler {
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando publicación");
+            context.getObject(ACTIVITY, CameraActivity.class).closeDialog();
             return context.put(STEP, 0);
         }
 
         if(input.equals("no")){
             getTextToSpeech().speakText("Publicando en el muro de Facebook");
 
-            context.getObject(ACTIVITY, CameraActivity.class).shareInFacebook();
+            context.getObject(ACTIVITY, CameraActivity.class).shareInFacebook(context.getString(MESSAGE));
             return context.put(STEP, 0);
         }
 
@@ -116,7 +118,7 @@ public class CompartirEnFacebookHandler extends CommandHandler {
         String hashtag = context.getString(COMMAND);
         getTextToSpeech().speakText("¿Querés agregar el hashtag " + hashtag + "?");
 
-        context.getList(FACEBOOK_HASHTAG, String.class).add(hashtag);
+        context.put(FACEBOOK_HASHTAG, context.getList(FACEBOOK_HASHTAG, String.class).add(hashtag));
 
         return context.put(STEP, 9);
 
@@ -132,6 +134,7 @@ public class CompartirEnFacebookHandler extends CommandHandler {
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando publicación");
+            context.getObject(ACTIVITY, CameraActivity.class).closeDialog();
             return context.put(STEP, 0);
         }
 
@@ -139,6 +142,7 @@ public class CompartirEnFacebookHandler extends CommandHandler {
             getTextToSpeech().speakText("¿Qué hashtag querés agregar?");
             List<String> hashtags = context.getList(FACEBOOK_HASHTAG, String.class);
             hashtags.remove(hashtags.size()-1);
+            context.put(FACEBOOK_HASHTAG, hashtags);
             return context.put(STEP, 7);
         }
 
@@ -157,11 +161,46 @@ public class CompartirEnFacebookHandler extends CommandHandler {
         }
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando publicación");
+            context.getObject(ACTIVITY, CameraActivity.class).closeDialog();
             return context.put(STEP, 0);
         }
         if(input.equals("no")){
             getTextToSpeech().speakText("Publicando en el muro de Facebook");
-            context.getObject(ACTIVITY, CameraActivity.class).shareInFacebook();
+
+            String textToPublish = context.getString(MESSAGE);
+            List<String> hashtags = context.getList(FACEBOOK_HASHTAG, String.class);
+
+            Character firstCharacter, newFirstCharacter;
+
+            int i=0;
+
+            while(i != hashtags.size()){
+
+                textToPublish = textToPublish + " #";
+
+                String hashtag = hashtags.get(i).toLowerCase();
+
+                String word;
+
+                StringTokenizer stringTokenizer = new StringTokenizer(hashtag);
+
+                while(stringTokenizer.hasMoreTokens()){
+
+                    word = stringTokenizer.nextToken();
+
+                    firstCharacter = word.charAt(0);
+                    newFirstCharacter = Character.toUpperCase(firstCharacter);
+                    word = word.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
+
+                    textToPublish = textToPublish + word;
+
+                }
+
+                i++;
+
+            }
+
+            context.getObject(ACTIVITY, CameraActivity.class).shareInFacebook(textToPublish);
             return context.put(STEP, 0);
         }
         getTextToSpeech().speakText("Debés indicar sí, no o cancelar");

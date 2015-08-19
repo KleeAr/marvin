@@ -139,7 +139,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         super.onCreate(savedInstanceState);
         CommandHandlerManager.destroyInstance();
         setContentView(R.layout.activity_main_menu);
-/*
+
         bt_play = (ImageButton) findViewById(R.id.bt_play);
         bt_next = (ImageButton) findViewById(R.id.bt_next);
         bt_previous = (ImageButton) findViewById(R.id.bt_previous);
@@ -159,7 +159,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             mapFragment = new MapFragment();
 
         locationSender = new LocationSender(this, mapFragment);
-*/
+
         ////////////////////////////////////
 
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
@@ -272,7 +272,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         ////////////////////////////////////////
 
-/*
+
       //  LocationSender locationSender = new LocationSender(this);
 
         cityText = (TextView)findViewById(R.id.cityText);
@@ -297,7 +297,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         }*/
 
-        /*
+
         //Se recupera la información en los arrays
         for(int i=0; i<CANT_APPLICATION;i++){
             shortcutList[i].setPackageName(settings.getString("ButtonPack" + i, ""));
@@ -454,7 +454,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         } else {
             callDriver = CallDriver.initializeInstance(getApplicationContext());
         }
-*/
+
     }
 /*
     @Override
@@ -1010,8 +1010,18 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         });
     }
 
+    /**************************************
+ *************MAPS METHODS**************
+ *************************************/
 
-         /*
+    public FragmentManager getManager(){
+        return getSupportFragmentManager();
+    }
+
+
+
+
+             /*
     private void addShortcut() {
 
         //on Home screen
@@ -1027,13 +1037,5 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         getApplicationContext().sendBroadcast(addIntent);
     }
 */
-
-/**************************************
- *************MAPS METHODS**************
- *************************************/
-
-    public FragmentManager getManager(){
-        return getSupportFragmentManager();
-    }
 
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import ar.com.klee.marvin.activities.CameraActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
@@ -71,6 +72,7 @@ public class CompartirEnTwitterHandler extends CommandHandler {
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando publicación");
+            context.getObject(ACTIVITY, CameraActivity.class).closeDialog();
             context.put(STEP, 9);
             return context;
         }
@@ -99,6 +101,7 @@ public class CompartirEnTwitterHandler extends CommandHandler {
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando publicación");
+            context.getObject(ACTIVITY, CameraActivity.class).closeDialog();
             context.put(STEP, 0);
             return context;
         }
@@ -106,7 +109,7 @@ public class CompartirEnTwitterHandler extends CommandHandler {
         if(input.equals("no")){
             getTextToSpeech().speakText("Publicando la foto en Twitter");
             CameraActivity cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
-            cameraActivity.shareInTwitter();
+            cameraActivity.shareInTwitter(context.getString(MESSAGE));
             context.put(STEP, 0);
             return context;
         }
@@ -124,6 +127,7 @@ public class CompartirEnTwitterHandler extends CommandHandler {
         getTextToSpeech().speakText("¿Querés agregar el hashtag "+input+" junto a la foto?");
         List<String> hashtags = context.getList(TWITTER_HASHTAG, String.class);
         hashtags.add(input);
+        context.put(TWITTER_HASHTAG, hashtags);
         context.put(STEP, 9);
         return context;
     }
@@ -139,6 +143,7 @@ public class CompartirEnTwitterHandler extends CommandHandler {
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando publicación");
+            context.getObject(ACTIVITY, CameraActivity.class).closeDialog();
             context.put(STEP, 0);
             return context;
         }
@@ -147,6 +152,7 @@ public class CompartirEnTwitterHandler extends CommandHandler {
             getTextToSpeech().speakText("¿Qué hashtag querés agregar?");
             List<String> hashtags = context.getList(TWITTER_HASHTAG, String.class);
             hashtags.remove(hashtags.size() - 1);
+            context.put(TWITTER_HASHTAG, hashtags);
             context.put(STEP, 7);
             return context;
         }
@@ -168,6 +174,7 @@ public class CompartirEnTwitterHandler extends CommandHandler {
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando publicación");
+            context.getObject(ACTIVITY, CameraActivity.class).closeDialog();
             context.put(STEP, 0);
             return context;
         }
@@ -176,7 +183,41 @@ public class CompartirEnTwitterHandler extends CommandHandler {
             getTextToSpeech().speakText("Publicando la foto en Twitter");
 
             CameraActivity cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
-            cameraActivity.shareInTwitter();
+
+            String textToPublish = context.getString(MESSAGE);
+            List<String> hashtags = context.getList(TWITTER_HASHTAG, String.class);
+
+            Character firstCharacter, newFirstCharacter;
+
+            int i=0;
+
+            while(i != hashtags.size()){
+
+                textToPublish = textToPublish + " #";
+
+                String hashtag = hashtags.get(i).toLowerCase();
+
+                String word;
+
+                StringTokenizer stringTokenizer = new StringTokenizer(hashtag);
+
+                while(stringTokenizer.hasMoreTokens()){
+
+                    word = stringTokenizer.nextToken();
+
+                    firstCharacter = word.charAt(0);
+                    newFirstCharacter = Character.toUpperCase(firstCharacter);
+                    word = word.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
+
+                    textToPublish = textToPublish + word;
+
+                }
+
+                i++;
+
+            }
+
+            cameraActivity.shareInTwitter(textToPublish);
 
             context.put(STEP, 0);
             return context;
