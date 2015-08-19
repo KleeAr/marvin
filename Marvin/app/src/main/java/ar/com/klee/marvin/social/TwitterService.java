@@ -3,8 +3,16 @@ package ar.com.klee.marvin.social;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterAuthToken;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.models.Tweet;
+
+import java.io.File;
+
+import ar.com.klee.marvin.activities.LoginActivity;
+import twitter4j.StatusUpdate;
+import twitter4j.TwitterFactory;
+import twitter4j.auth.AccessToken;
 
 /**
  *
@@ -16,9 +24,10 @@ public class TwitterService {
 
 
     private static TwitterService instance;
+    private twitter4j.Twitter twitter;
 
     private TwitterService() {
-
+        twitter = TwitterFactory.getSingleton();
     }
 
     public static TwitterService getInstance() {
@@ -40,5 +49,18 @@ public class TwitterService {
                 throw new RuntimeException("Tu tweet no pudo ser enviado", e);
             }
         });
+    }
+
+    public void postTweet(String textToTweet, File image) {
+        twitter.setOAuthConsumer(LoginActivity.TWITTER_KEY, LoginActivity.TWITTER_SECRET);
+        TwitterAuthToken authToken = Twitter.getSessionManager().getActiveSession().getAuthToken();
+        twitter.setOAuthAccessToken(new AccessToken(authToken.token, authToken.secret));
+        try {
+            StatusUpdate update = new StatusUpdate(textToTweet);
+            update.setMedia(image);
+            twitter.updateStatus(update);
+        } catch (twitter4j.TwitterException e) {
+            throw new RuntimeException("Tu tweet no pudo ser enviado", e);
+        }
     }
 }

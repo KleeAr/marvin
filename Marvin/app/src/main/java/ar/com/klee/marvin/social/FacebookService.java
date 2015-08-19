@@ -1,13 +1,19 @@
 package ar.com.klee.marvin.social;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
+import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.share.ShareApi;
+import com.facebook.share.Sharer;
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,5 +48,30 @@ public class FacebookService {
                         }
                     }
                 }).executeAsync();
+    }
+
+    public void postImage(Bitmap image) {
+        SharePhoto photo = new SharePhoto.Builder()
+                .setBitmap(image)
+                .build();
+        SharePhotoContent content = new SharePhotoContent.Builder()
+                .addPhoto(photo)
+                .build();
+        ShareApi.share(content, new FacebookCallback<Sharer.Result>() {
+            @Override
+            public void onSuccess(Sharer.Result result) {
+                Toast.makeText(context, "image posted on facebook", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException e) {
+                Log.e("Facebook Service", "Error while sharing your photo", e);
+            }
+        });
     }
 }
