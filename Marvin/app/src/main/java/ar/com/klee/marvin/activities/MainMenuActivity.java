@@ -1,15 +1,11 @@
 package ar.com.klee.marvin.activities;
 
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -19,7 +15,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -31,35 +26,25 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import ar.com.klee.marvin.DrawerMenuAdapter;
 import ar.com.klee.marvin.DrawerMenuItem;
 import ar.com.klee.marvin.R;
-import ar.com.klee.marvin.SlidingTabLayout;
-import ar.com.klee.marvin.ViewPagerAdpater;
-import ar.com.klee.marvin.applications.Application;
 import ar.com.klee.marvin.call.CallDriver;
-import ar.com.klee.marvin.call.CallReceiver;
 import ar.com.klee.marvin.data.Channel;
 import ar.com.klee.marvin.data.Item;
 import ar.com.klee.marvin.fragments.ConfigureAppFragment;
@@ -81,33 +66,22 @@ import ar.com.klee.marvin.voiceControl.STTService;
 public class MainMenuActivity extends ActionBarActivity implements DelegateTask<List<YouTubeVideo>>, WeatherServiceCallback,AdapterView.OnItemClickListener {
 
 
-    public final int CANT_APPLICATION=12; //variable en que se definen la cantidad de aplicaciones disponibles
     public final int UPDATE_WEATHER=1000000; //cantidad de milisegundos para actualizar el clima
 
-
+    public static MainMenuFragment mainMenuFragment;
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private ListView mLvDrawerMenu;
     private DrawerMenuAdapter mDrawerMenuAdapter;
-
     private Toolbar toolbar;
-    private SlidingTabLayout tabs;
 
-    private ViewPager pager;
-    private ViewPagerAdpater adapter;
-    private CharSequence Titles[]={"Home","Aplicacion","Mapa"};
-    int NumbOfTabs = 3;
-    private long date;
     public static TextView cityText;
-    public static TextView mainStreet;
-    public static TextView speed;
 
     private ImageView weatherIconImageView;
     private TextView temperatureTextView;
     private YahooWeatherService service;
-    public static Application[] shortcutList; //lista para almacenar las aplicaciones configuradas
-    public static ImageButton[] shortcutButton;
+
     public static MapFragment mapFragment;
     public static boolean isMapCreated = false;
 
@@ -125,32 +99,24 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     private SMSDriver smsDriver;
     private CallDriver callDriver;
 
-    private ImageButton bt_play;
-    private ImageButton bt_next;
-    private ImageButton bt_previous;
-
-    private TextView tv_song;
-    private TextView tv_artist;
-
     private ServiceConnection mConnection;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         CommandHandlerManager.destroyInstance();
         setContentView(R.layout.activity_main_menu);
-/*
-        bt_play = (ImageButton) findViewById(R.id.bt_play);
-        bt_next = (ImageButton) findViewById(R.id.bt_next);
-        bt_previous = (ImageButton) findViewById(R.id.bt_previous);
-
-        tv_song = (TextView)findViewById(R.id.song);
-        tv_artist = (TextView)findViewById(R.id.artist);
-
-
 
         initializeMusicService();
         initializeSTTService();
+
+        //Crea el mainMenu
+        if(MainMenuFragment.isInstanceInitialized())
+            mainMenuFragment = MainMenuFragment.getInstance();
+        else
+            mainMenuFragment = new MainMenuFragment();
+
 
         //Crea el mapa
         if(MapFragment.isInstanceInitialized())
@@ -159,13 +125,16 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             mapFragment = new MapFragment();
 
         locationSender = new LocationSender(this, mapFragment);
-*/
+
         ////////////////////////////////////
 
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mLvDrawerMenu = (ListView) findViewById(R.id.lv_drawer_menu);
 
+        /*
+        * Redondeo de la imagen de usuario del menu deslizable
+        */
 
         //extraemos el drawable en un bitmap
         Drawable originalDrawable = getResources().getDrawable(R.drawable.icon_user);
@@ -272,44 +241,10 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         ////////////////////////////////////////
 
-/*
+
       //  LocationSender locationSender = new LocationSender(this);
 
         cityText = (TextView)findViewById(R.id.cityText);
-        mainStreet = (TextView)findViewById(R.id.mainStreet);
-
-
-        shortcutList = new Application[CANT_APPLICATION]; //creamos la lista para almacenar los accesos directos
-
-        for (int i = 0; i < CANT_APPLICATION; i++)
-            shortcutList[i] = new Application(null, null, null, false);//inicia los objetos
-
-        shortcutButton = new ImageButton[CANT_APPLICATION]; //creamos la lista para almacenar los botones
-
-
-        // RECUPERAR DATOS
-        // Creamos la instancia de "SharedPreferences" en MODE_PRIVATE
-        SharedPreferences settings = getSharedPreferences("PREFERENCES", 0);
-      /* Esta parte es para validar que se creo un acceso directo
-      if(!settings.getBoolean("IsIconCreated",false)){
-            addShortcut();
-            getSharedPreferences("PREFERENCES", 0).edit().putBoolean("IsIconCreated", true);
-
-        }*/
-
-        /*
-        //Se recupera la información en los arrays
-        for(int i=0; i<CANT_APPLICATION;i++){
-            shortcutList[i].setPackageName(settings.getString("ButtonPack" + i, ""));
-            shortcutList[i].setName(settings.getString("ButtonName" + i, ""));
-            shortcutList[i].setConfigured(settings.getBoolean("ButtonConfig" + i, false));
-            try {
-                shortcutList[i].setIcon(getPackageManager().getApplicationIcon(shortcutList[i].getPackageName()));
-            } catch (PackageManager.NameNotFoundException e) {
-                e.printStackTrace();
-            }
-
-        }
 
         ////////////////////
 
@@ -318,73 +253,11 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         Typeface fBariolBold = Typeface.createFromAsset(getAssets(), "Bariol_Bold.otf");
         Typeface fBariolRegular = Typeface.createFromAsset(getAssets(), "Bariol_Regular.otf");
 
-        speed = (TextView)findViewById(R.id.speed);
-        speed.setTypeface(fBariolBold);
-        final TextView speedUnit = (TextView)findViewById(R.id.speedUnit);
-        speedUnit.setTypeface(fBariolRegular);
 
         temperatureTextView = (TextView) findViewById(R.id.temperatureText);
         temperatureTextView.setTypeface(fBariolRegular);
 
 
-        final TextView digitalClock = (TextView)findViewById(R.id.digitalClock);
-        final TextView weekDay = (TextView)findViewById(R.id.weekDayText);
-        weekDay.setTypeface(fBariolRegular);
-
-        final TextView dateText = (TextView)findViewById(R.id.dateText);
-        dateText.setTypeface(fBariolRegular);
-
-        final TextView anteMeridiem = (TextView)findViewById(R.id.anteMeridiem);
-        date = System.currentTimeMillis();
-
-        final SimpleDateFormat formatTime1 = new SimpleDateFormat("hh:mm");
-        final SimpleDateFormat formatTime2 = new SimpleDateFormat("aa");
-
-        digitalClock.setText(formatTime1.format(date));
-        digitalClock.setTypeface(fBariolBold);
-
-        anteMeridiem.setText(formatTime2.format(date));
-        anteMeridiem.setTypeface(fBariolRegular);
-
-        final SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
-        weekDay.setText(sdf.format(date));//sdf.format(new Date()));
-
-
-        final SimpleDateFormat formatTime3 = new SimpleDateFormat("dd 'de' MMMM");
-        dateText.setText(formatTime3.format(date));
-
-        final SimpleDateFormat dateComplete = new SimpleDateFormat("hh:mm aa");
-
-
-
-        Thread tTime = new Thread() {
-
-            @Override
-            public void run() {
-                try {
-                    while (!isInterrupted()) {
-                        Thread.sleep(999);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                // update TextView here!
-                                date = System.currentTimeMillis();
-                                digitalClock.setText(formatTime1.format(date));
-                                anteMeridiem.setText(formatTime2.format(date));
-                                if(dateComplete.format(date).equals("12:00 a.m.")){
-                                    weekDay.setText(sdf.format(date));
-                                    dateText.setText(formatTime3.format(date));
-
-                                }
-                            }
-                        });
-                    }
-                } catch (InterruptedException e) {
-                }
-            }
-        };
-
-        tTime.start();
 
 
 
@@ -415,33 +288,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         tWheather.start();
 
 
-        // Creating The Toolbar and setting it as the Toolbar for the activity
-
-      //borrar  toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        // Setting it as the Toolbar for the activity
         setSupportActionBar(toolbar);
 
-
-        // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        adapter =  new ViewPagerAdpater(getSupportFragmentManager(),Titles,NumbOfTabs);
-
-        // Assigning ViewPager View and setting the adapter
-        pager = (ViewPager) findViewById(R.id.pager);
-        pager.setAdapter(adapter);
-
-        // Assiging the Sliding Tab Layout View
-        tabs = (SlidingTabLayout) findViewById(R.id.tabs);
-        tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
-
-        // Setting Custom Color for the Scroll bar indicator of the Tab View
-        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
-            @Override
-            public int getIndicatorColor(int position) {
-                return getResources().getColor(R.color.tabsScrollColor);
-            }
-        });
-
-        // Setting the ViewPager For the SlidingTabsLayout
-        tabs.setViewPager(pager);
 
         if(SMSDriver.isInstanceInitialized()) {
             smsDriver = SMSDriver.getInstance();
@@ -454,9 +303,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         } else {
             callDriver = CallDriver.initializeInstance(getApplicationContext());
         }
-*/
+
     }
-/*
+/*NO es becesario por ahora dejarlo, por las dudas
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -488,6 +337,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         stopService(musicServiceIntent);
         finish();
 
+        //Leo: agregue esta parte por el menu
         if (mDrawerLayout.isDrawerOpen(mLvDrawerMenu)) {
             mDrawerLayout.closeDrawer(mLvDrawerMenu);
         } else {
@@ -608,9 +458,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     }else
                         wasPlaying = false;
 
-                    bt_play.setEnabled(false);
-                    bt_next.setEnabled(false);
-                    bt_previous.setEnabled(false);
+                    MainMenuFragment.bt_play.setEnabled(false);
+                    MainMenuFragment.bt_next.setEnabled(false);
+                    MainMenuFragment.bt_previous.setEnabled(false);
 
                     // ACTIVAR PANTALLA DE MARVIN
 
@@ -620,17 +470,17 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     handler.postDelayed(new Runnable() {
                         public void run() {
                             if(wasPlaying) {
-                                bt_play.setImageResource(R.drawable.ic_media_pause);
+                                MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
                                 musicService.startPlaying();
                             }else{
-                                bt_play.setImageResource(R.drawable.ic_media_play);
+                                MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_play);
                             }
                         }
                     }, 5000);
 
-                    bt_play.setEnabled(true);
-                    bt_next.setEnabled(true);
-                    bt_previous.setEnabled(true);
+                    MainMenuFragment.bt_play.setEnabled(true);
+                    MainMenuFragment.bt_next.setEnabled(true);
+                    MainMenuFragment.bt_previous.setEnabled(true);
 
                     // CERRAR PANTALLA DE MARVIN
 
@@ -675,14 +525,14 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
                     notification = notification.replace("SONG_TITLE ","");
                     Log.d("TITLE",notification);
-                    tv_song.setText(notification);
+                    MainMenuFragment.tv_song.setText(notification);
 
 
                 }else if(notification.startsWith("SONG_ARTIST ")) {
 
                     notification = notification.replace("SONG_ARTIST ","");
                     Log.d("ARTIST", notification);
-                    tv_artist.setText(notification);
+                    MainMenuFragment.tv_artist.setText(notification);
 
                 }
             }
@@ -722,11 +572,11 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         if(!musicService.isPlaying()) {
             musicService.startPlaying();
-            bt_play.setImageResource(R.drawable.ic_media_pause);
+            MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
 
         }else{
             musicService.pause();
-            bt_play.setImageResource(R.drawable.ic_media_play);
+            MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_play);
         }
     }
 
@@ -738,7 +588,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         }
 
         if(!musicService.isPlaying()) {
-            bt_play.setImageResource(R.drawable.ic_media_pause);
+            MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
         }
 
         musicService.nextSong();
@@ -748,7 +598,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     public void nextSongSet(){
 
         if(!musicService.isPlaying()) {
-            bt_play.setImageResource(R.drawable.ic_media_pause);
+            MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
         }
 
         wasPlaying = true;
@@ -756,7 +606,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         musicService.nextSongSet();
 
     }
-    
+
     public void previousSong(View view){
 
         if(musicService.isListEmpty()){
@@ -765,7 +615,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         }
 
         if(!musicService.isPlaying()) {
-            bt_play.setImageResource(R.drawable.ic_media_pause);
+            MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
         }
 
         musicService.previousSong();
@@ -775,7 +625,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     public void previousSongSet(){
 
         if(!musicService.isPlaying()) {
-            bt_play.setImageResource(R.drawable.ic_media_pause);
+            MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
         }
 
         wasPlaying = true;
@@ -943,21 +793,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     }
 
-    public void setButtonsEnabled(){
 
-        bt_play.setEnabled(true);
-        bt_next.setEnabled(true);
-        bt_previous.setEnabled(true);
-
-    }
-
-    public void setButtonsDisabled(){
-
-        bt_play.setEnabled(false);
-        bt_next.setEnabled(false);
-        bt_previous.setEnabled(false);
-
-    }
 
 
 /**************************************
@@ -1034,6 +870,23 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     public FragmentManager getManager(){
         return getSupportFragmentManager();
+    }
+
+
+    public void setButtonsEnabled(){
+
+        MainMenuFragment.bt_play.setEnabled(true);
+        MainMenuFragment.bt_next.setEnabled(true);
+        MainMenuFragment.bt_previous.setEnabled(true);
+
+    }
+
+    public void setButtonsDisabled(){
+
+        MainMenuFragment.bt_play.setEnabled(false);
+        MainMenuFragment.bt_next.setEnabled(false);
+        MainMenuFragment.bt_previous.setEnabled(false);
+
     }
 
 }

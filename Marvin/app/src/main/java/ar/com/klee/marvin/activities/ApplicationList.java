@@ -18,6 +18,7 @@ import java.util.List;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.applications.Application;
 import ar.com.klee.marvin.applications.ApplicationAdapter;
+import ar.com.klee.marvin.fragments.MainMenuFragment;
 
 
 public class ApplicationList extends Activity {
@@ -65,16 +66,16 @@ public class ApplicationList extends Activity {
                 Application app=(Application) parent.getAdapter().getItem(position); //recupera el objeto en la posición deseada
 
                 //Setea los valores del boton
-                MainMenuActivity.shortcutList[buttonClick].setPackageName(app.getPackageName());
-                MainMenuActivity.shortcutList[buttonClick].setName(app.getName());
-                MainMenuActivity.shortcutList[buttonClick].setIcon(app.getIcon());
-                MainMenuActivity.shortcutList[buttonClick].setConfigured(true);
+                MainMenuFragment.shortcutList[buttonClick].setPackageName(app.getPackageName());
+                MainMenuFragment.shortcutList[buttonClick].setName(app.getName());
+                MainMenuFragment.shortcutList[buttonClick].setIcon(app.getIcon());
+                MainMenuFragment.shortcutList[buttonClick].setConfigured(true);
 
                // Toast.makeText(getApplicationContext(), Tab1.shortcutList[buttonClick].getName()+buttonClick, Toast.LENGTH_SHORT).show();
 
 
-                MainMenuActivity.shortcutButton[buttonClick].setImageDrawable(app.getIcon());
-                MainMenuActivity.shortcutButton[buttonClick].setBackgroundColor(Color.WHITE);
+                MainMenuFragment.shortcutButton[buttonClick].setImageDrawable(app.getIcon());
+                MainMenuFragment.shortcutButton[buttonClick].setBackgroundColor(Color.WHITE);
 
                 // Creamos la instancia de "SharedPreferences"
                 // Y también la "SharedPreferences.Editor"

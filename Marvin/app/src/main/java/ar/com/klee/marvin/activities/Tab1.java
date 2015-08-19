@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.fragments.MainMenuFragment;
 
 
 public class Tab1 extends Fragment implements View.OnClickListener, View.OnLongClickListener {
@@ -25,33 +26,33 @@ public class Tab1 extends Fragment implements View.OnClickListener, View.OnLongC
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.tab_1, container, false);
 
-        MainMenuActivity.shortcutButton[0] = (ImageButton) v.findViewById(R.id.imageButton1);
-        MainMenuActivity.shortcutButton[1] = (ImageButton) v.findViewById(R.id.imageButton2);
-        MainMenuActivity.shortcutButton[2] = (ImageButton) v.findViewById(R.id.imageButton3);
-        MainMenuActivity.shortcutButton[3] = (ImageButton) v.findViewById(R.id.imageButton4);
-        MainMenuActivity.shortcutButton[4] = (ImageButton) v.findViewById(R.id.imageButton5);
-        MainMenuActivity.shortcutButton[5] = (ImageButton) v.findViewById(R.id.imageButton6);
+        MainMenuFragment.shortcutButton[0] = (ImageButton) v.findViewById(R.id.imageButton1);
+        MainMenuFragment.shortcutButton[1] = (ImageButton) v.findViewById(R.id.imageButton2);
+        MainMenuFragment.shortcutButton[2] = (ImageButton) v.findViewById(R.id.imageButton3);
+        MainMenuFragment.shortcutButton[3] = (ImageButton) v.findViewById(R.id.imageButton4);
+        MainMenuFragment.shortcutButton[4] = (ImageButton) v.findViewById(R.id.imageButton5);
+        MainMenuFragment.shortcutButton[5] = (ImageButton) v.findViewById(R.id.imageButton6);
         //re-establece la imagen de los botones que estan configurados
         for (int i=0; i<6;i++)
-            if(MainMenuActivity.shortcutList[i].isConfigured()){
-                MainMenuActivity.shortcutButton[i].setBackgroundColor(Color.WHITE);
-                MainMenuActivity.shortcutButton[i].setImageDrawable(MainMenuActivity.shortcutList[i].getIcon());
+            if(MainMenuFragment.shortcutList[i].isConfigured()){
+                MainMenuFragment.shortcutButton[i].setBackgroundColor(Color.WHITE);
+                MainMenuFragment.shortcutButton[i].setImageDrawable(MainMenuFragment.shortcutList[i].getIcon());
 
             }
 
-        MainMenuActivity.shortcutButton[0].setOnClickListener(this);
-        MainMenuActivity.shortcutButton[1].setOnClickListener(this);
-        MainMenuActivity.shortcutButton[2].setOnClickListener(this);
-        MainMenuActivity.shortcutButton[3].setOnClickListener(this);
-        MainMenuActivity.shortcutButton[4].setOnClickListener(this);
-        MainMenuActivity.shortcutButton[5].setOnClickListener(this);
+        MainMenuFragment.shortcutButton[0].setOnClickListener(this);
+        MainMenuFragment.shortcutButton[1].setOnClickListener(this);
+        MainMenuFragment.shortcutButton[2].setOnClickListener(this);
+        MainMenuFragment.shortcutButton[3].setOnClickListener(this);
+        MainMenuFragment.shortcutButton[4].setOnClickListener(this);
+        MainMenuFragment.shortcutButton[5].setOnClickListener(this);
 
-        MainMenuActivity.shortcutButton[0].setOnLongClickListener(this);
-        MainMenuActivity.shortcutButton[1].setOnLongClickListener(this);
-        MainMenuActivity.shortcutButton[2].setOnLongClickListener(this);
-        MainMenuActivity.shortcutButton[3].setOnLongClickListener(this);
-        MainMenuActivity.shortcutButton[4].setOnLongClickListener(this);
-        MainMenuActivity.shortcutButton[5].setOnLongClickListener(this);
+        MainMenuFragment.shortcutButton[0].setOnLongClickListener(this);
+        MainMenuFragment.shortcutButton[1].setOnLongClickListener(this);
+        MainMenuFragment.shortcutButton[2].setOnLongClickListener(this);
+        MainMenuFragment.shortcutButton[3].setOnLongClickListener(this);
+        MainMenuFragment.shortcutButton[4].setOnLongClickListener(this);
+        MainMenuFragment.shortcutButton[5].setOnLongClickListener(this);
 
         return v;
 
@@ -84,13 +85,13 @@ public class Tab1 extends Fragment implements View.OnClickListener, View.OnLongC
                 index = 5;
                 break;
         }
-                if (!MainMenuActivity.shortcutList[index].isConfigured()) {
+                if (!MainMenuFragment.shortcutList[index].isConfigured()) {
                     //Si el boton no esta configurado lanza el listado de apps instaladas
                     Intent i = new Intent(getActivity().getApplicationContext(), ApplicationList.class);
                     i.putExtra("buttonClick", index);
                     startActivity(i);
                 } else//sino lanza la aplicación seteada
-                    startNewActivity(getActivity().getApplicationContext(), MainMenuActivity.shortcutList[index].getPackageName());
+                    startNewActivity(getActivity().getApplicationContext(), MainMenuFragment.shortcutList[index].getPackageName());
 
     }
     @Override
@@ -121,7 +122,7 @@ public class Tab1 extends Fragment implements View.OnClickListener, View.OnLongC
                 index = 5;
                 break;
         }
-        if (MainMenuActivity.shortcutList[index].isConfigured())
+        if (MainMenuFragment.shortcutList[index].isConfigured())
             multipleChoiceDialog(index);
         else
             addApplicationDialog(index);
@@ -140,9 +141,9 @@ public class Tab1 extends Fragment implements View.OnClickListener, View.OnLongC
                     startActivity(i);
                 } else {
                     //borra la memoria del boton
-                    MainMenuActivity.shortcutList[buttonNumber].setConfigured(false);
-                    MainMenuActivity.shortcutButton[buttonNumber].setBackgroundColor(Color.parseColor("#a3d9d1"));
-                    MainMenuActivity.shortcutButton[buttonNumber].setImageResource(R.drawable.marvin);
+                    MainMenuFragment.shortcutList[buttonNumber].setConfigured(false);
+                    MainMenuFragment.shortcutButton[buttonNumber].setBackgroundColor(Color.parseColor("#a3d9d1"));
+                    MainMenuFragment.shortcutButton[buttonNumber].setImageResource(R.drawable.marvin);
 
                     // Creamos la instancia de "SharedPreferences"
                     // Y también la "SharedPreferences.Editor"

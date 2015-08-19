@@ -14,6 +14,7 @@ import java.util.Locale;
 
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.activities.TabMap;
+import ar.com.klee.marvin.fragments.MainMenuFragment;
 
 public class LocationSender {
 
@@ -138,8 +139,8 @@ public class LocationSender {
 
     public void updateScreen(){
         MainMenuActivity.cityText.setText(getTown()+", "+getState());
-        MainMenuActivity.mainStreet.setText(getAddress());
-        MainMenuActivity.speed.setText(getSpeed());
+        MainMenuFragment.mainStreet.setText(getAddress());
+        MainMenuFragment.speed.setText(getSpeed());
 
     }
 
