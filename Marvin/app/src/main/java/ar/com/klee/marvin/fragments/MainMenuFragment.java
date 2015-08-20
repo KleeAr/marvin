@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,9 @@ import java.text.SimpleDateFormat;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.SlidingTabLayout;
 import ar.com.klee.marvin.ViewPagerAdpater;
+import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.applications.Application;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 
 public class MainMenuFragment extends Fragment {
 
@@ -59,8 +62,6 @@ public class MainMenuFragment extends Fragment {
 
         mainStreet = (TextView)v.findViewById(R.id.mainStreet);
 
-
-
         bt_play = (ImageButton) v.findViewById(R.id.bt_play);
         bt_next = (ImageButton) v.findViewById(R.id.bt_next);
         bt_previous = (ImageButton) v.findViewById(R.id.bt_previous);
@@ -96,7 +97,7 @@ public class MainMenuFragment extends Fragment {
             try {
                 shortcutList[i].setIcon(getActivity().getPackageManager().getApplicationIcon(shortcutList[i].getPackageName()));
             } catch (PackageManager.NameNotFoundException e) {
-                e.printStackTrace();
+                Log.d("Shortcut","Botón no seteado");
             }
 
         }
@@ -112,14 +113,11 @@ public class MainMenuFragment extends Fragment {
         speedUnit.setTypeface(fBariolRegular);
 
 
-        ///////////////
-
-
         final TextView digitalClock = (TextView)v.findViewById(R.id.digitalClock);
-        final TextView weekDay = (TextView)v.findViewById(R.id.weekDayText);
+        final TextView weekDay = MainMenuActivity.weekDay;
         weekDay.setTypeface(fBariolRegular);
 
-        final TextView dateText = (TextView)v.findViewById(R.id.dateText);
+        final TextView dateText = MainMenuActivity.dateText;
         dateText.setTypeface(fBariolRegular);
 
         final TextView anteMeridiem = (TextView)v.findViewById(R.id.anteMeridiem);
@@ -152,20 +150,22 @@ public class MainMenuFragment extends Fragment {
                 try {
                     while (!isInterrupted()) {
                         Thread.sleep(999);
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                // update TextView here!
-                                date = System.currentTimeMillis();
-                                digitalClock.setText(formatTime1.format(date));
-                                anteMeridiem.setText(formatTime2.format(date));
-                                if (dateComplete.format(date).equals("12:00 a.m.")) {
-                                    weekDay.setText(sdf.format(date));
-                                    dateText.setText(formatTime3.format(date));
+                        if(((MainMenuActivity)CommandHandlerManager.getInstance().getMainActivity()).getActualFragmentPosition() == 1) {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    // update TextView here!
+                                    date = System.currentTimeMillis();
+                                    digitalClock.setText(formatTime1.format(date));
+                                    anteMeridiem.setText(formatTime2.format(date));
+                                    if (dateComplete.format(date).equals("12:00 a.m.")) {
+                                        weekDay.setText(sdf.format(date));
+                                        dateText.setText(formatTime3.format(date));
 
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        }
                     }
                 } catch (InterruptedException e) {
                 }
@@ -173,8 +173,6 @@ public class MainMenuFragment extends Fragment {
         };
 
         tTime.start();
-
-
 
         // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
         adapter =  new ViewPagerAdpater(getActivity().getSupportFragmentManager(),Titles,NumbOfTabs);

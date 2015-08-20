@@ -45,7 +45,9 @@ import java.util.Date;
 
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.camera.CameraPreview;
+import ar.com.klee.marvin.social.FacebookService;
 import ar.com.klee.marvin.social.InstagramService;
+import ar.com.klee.marvin.social.TwitterService;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
 
@@ -436,7 +438,9 @@ public class CameraActivity extends ActionBarActivity {
 
     public void shareInFacebook(String text){
 
-        //TODO cameraDialog.facebook();
+        FacebookService facebookService = new FacebookService(this);
+
+        facebookService.postImage(lastBitMap);
 
         if(onlyShare){
 
@@ -451,7 +455,9 @@ public class CameraActivity extends ActionBarActivity {
 
     public void shareInTwitter(String text){
 
-        //TODO cameraDialog.twitter();
+        TwitterService twitterService = TwitterService.getInstance();
+
+        twitterService.postTweet(text, new File(lastImagePath));
 
         if(onlyShare){
 

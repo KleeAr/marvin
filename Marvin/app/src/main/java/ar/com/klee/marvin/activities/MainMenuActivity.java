@@ -31,6 +31,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -66,7 +68,7 @@ import ar.com.klee.marvin.voiceControl.STTService;
 public class MainMenuActivity extends ActionBarActivity implements DelegateTask<List<YouTubeVideo>>, WeatherServiceCallback,AdapterView.OnItemClickListener {
 
 
-    public final int UPDATE_WEATHER=1000000; //cantidad de milisegundos para actualizar el clima
+    public final int UPDATE_WEATHER = 1000000; //cantidad de milisegundos para actualizar el clima
 
     public static MainMenuFragment mainMenuFragment;
 
@@ -101,42 +103,82 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     private ServiceConnection mConnection;
 
+    public static TextView weekDay;
+    public static TextView dateText;
+
+    private int actualFragmentPosition = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         CommandHandlerManager.destroyInstance();
         setContentView(R.layout.activity_main_menu);
-<<<<<<< HEAD
-=======
-
-        bt_play = (ImageButton) findViewById(R.id.bt_play);
-        bt_next = (ImageButton) findViewById(R.id.bt_next);
-        bt_previous = (ImageButton) findViewById(R.id.bt_previous);
-
-        tv_song = (TextView)findViewById(R.id.song);
-        tv_artist = (TextView)findViewById(R.id.artist);
-
-
->>>>>>> origin/master
 
         initializeMusicService();
         initializeSTTService();
 
         //Crea el mainMenu
-        if(MainMenuFragment.isInstanceInitialized())
+        if (MainMenuFragment.isInstanceInitialized())
             mainMenuFragment = MainMenuFragment.getInstance();
         else
             mainMenuFragment = new MainMenuFragment();
 
+        weekDay = (TextView) findViewById(R.id.weekDayText);
+        dateText = (TextView) findViewById(R.id.dateText);
 
         //Crea el mapa
-        if(MapFragment.isInstanceInitialized())
+        if (MapFragment.isInstanceInitialized())
             mapFragment = MapFragment.getInstance();
         else
             mapFragment = new MapFragment();
 
         locationSender = new LocationSender(this, mapFragment);
+
+        if (SMSDriver.isInstanceInitialized()) {
+            smsDriver = SMSDriver.getInstance();
+        } else {
+            smsDriver = SMSDriver.initializeInstance(getApplicationContext());
+        }
+
+        if (CallDriver.isInstanceInitialized()) {
+            callDriver = CallDriver.getInstance();
+        } else {
+            callDriver = CallDriver.initializeInstance(getApplicationContext());
+        }
+
+        cityText = (TextView) findViewById(R.id.cityText);
+
+        //definimos los tipos de letra
+        Typeface fBariolRegular = Typeface.createFromAsset(getAssets(), "Bariol_Regular.otf");
+
+        temperatureTextView = (TextView) findViewById(R.id.temperatureText);
+        temperatureTextView.setTypeface(fBariolRegular);
+
+        weatherIconImageView = (ImageView) findViewById(R.id.weatherImage);
+        service = new YahooWeatherService(this, getApplicationContext());
+        service.refreshWeather(cityText.getText().toString());
+
+        Thread tWheather = new Thread() {
+
+            @Override
+            public void run() {
+                try {
+                    while (!isInterrupted()) {
+                        Thread.sleep(UPDATE_WEATHER);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // update TextView here!
+                                service.refreshWeather(cityText.getText().toString());
+                            }
+                        });
+                    }
+                } catch (InterruptedException e) {
+                }
+            }
+        };
+
+        tWheather.start();
 
         ////////////////////////////////////
 
@@ -152,9 +194,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         Drawable originalDrawable = getResources().getDrawable(R.drawable.icon_user);
         Bitmap originalBitmap = ((BitmapDrawable) originalDrawable).getBitmap();
 
-        if (originalBitmap.getWidth() > originalBitmap.getHeight()){
+        if (originalBitmap.getWidth() > originalBitmap.getHeight()) {
             originalBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.getHeight(), originalBitmap.getHeight());
-        }else if (originalBitmap.getWidth() < originalBitmap.getHeight()) {
+        } else if (originalBitmap.getWidth() < originalBitmap.getHeight()) {
             originalBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.getWidth(), originalBitmap.getWidth());
         }
 
@@ -163,7 +205,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         //asignamos el CornerRadius
         roundedDrawable.setCornerRadius(originalBitmap.getWidth());
-
 
 
         //Añadimos cabecera general
@@ -195,7 +236,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             }
 
 
-
             public void onDrawerOpened(View drawerView) {
 
                 // getSupportActionBar().setTitle(mTitle);
@@ -204,15 +244,26 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-        if(savedInstanceState == null){
+        if (savedInstanceState == null) {
             setFragment(0, MainMenuFragment.class);
         }
     }
 
+    public int getActualFragmentPosition() {
+        return actualFragmentPosition;
+    }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        switch (position){
+
+        if(actualFragmentPosition == position) {
+            mDrawerLayout.closeDrawer(mLvDrawerMenu);
+            return;
+        }
+
+        actualFragmentPosition = position;
+
+        switch (position) {
             case 0:
                 setFragment(0, PerfilFragment.class);
                 break;
@@ -249,112 +300,10 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 break;
         }
 
-
-
-        ////////////////////////////////////////
-
-
-      //  LocationSender locationSender = new LocationSender(this);
-
-        cityText = (TextView)findViewById(R.id.cityText);
-<<<<<<< HEAD
-=======
-        mainStreet = (TextView)findViewById(R.id.mainStreet);
-
-
-        shortcutList = new Application[CANT_APPLICATION]; //creamos la lista para almacenar los accesos directos
-
-        for (int i = 0; i < CANT_APPLICATION; i++)
-            shortcutList[i] = new Application(null, null, null, false);//inicia los objetos
-
-        shortcutButton = new ImageButton[CANT_APPLICATION]; //creamos la lista para almacenar los botones
-
-
-        // RECUPERAR DATOS
-        // Creamos la instancia de "SharedPreferences" en MODE_PRIVATE
-        SharedPreferences settings = getSharedPreferences("PREFERENCES", 0);
-      /* Esta parte es para validar que se creo un acceso directo
-      if(!settings.getBoolean("IsIconCreated",false)){
-            addShortcut();
-            getSharedPreferences("PREFERENCES", 0).edit().putBoolean("IsIconCreated", true);
-
-        }*/
-
-
-        //Se recupera la información en los arrays
-        for(int i=0; i<CANT_APPLICATION;i++){
-            shortcutList[i].setPackageName(settings.getString("ButtonPack" + i, ""));
-            shortcutList[i].setName(settings.getString("ButtonName" + i, ""));
-            shortcutList[i].setConfigured(settings.getBoolean("ButtonConfig" + i, false));
-            try {
-                shortcutList[i].setIcon(getPackageManager().getApplicationIcon(shortcutList[i].getPackageName()));
-            } catch (PackageManager.NameNotFoundException e) {
-                e.printStackTrace();
-            }
-
-        }
->>>>>>> origin/master
-
-        ////////////////////
-
-
-        //definimos los tipos de letra
-        Typeface fBariolBold = Typeface.createFromAsset(getAssets(), "Bariol_Bold.otf");
-        Typeface fBariolRegular = Typeface.createFromAsset(getAssets(), "Bariol_Regular.otf");
-
-
-        temperatureTextView = (TextView) findViewById(R.id.temperatureText);
-        temperatureTextView.setTypeface(fBariolRegular);
-
-
-
-
-
-        weatherIconImageView = (ImageView) findViewById(R.id.weatherImage);
-        service = new YahooWeatherService(this, getApplicationContext());
-        service.refreshWeather(cityText.getText().toString());
-
-        Thread tWheather = new Thread() {
-
-            @Override
-            public void run() {
-                try {
-                    while (!isInterrupted()) {
-                        Thread.sleep(UPDATE_WEATHER);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                // update TextView here!
-                                service.refreshWeather(cityText.getText().toString());
-                            }
-                        });
-                    }
-                } catch (InterruptedException e) {
-                }
-            }
-        };
-
-        tWheather.start();
-
-
         // Setting it as the Toolbar for the activity
         setSupportActionBar(toolbar);
-
-
-        if(SMSDriver.isInstanceInitialized()) {
-            smsDriver = SMSDriver.getInstance();
-        } else {
-            smsDriver = SMSDriver.initializeInstance(getApplicationContext());
-        }
-
-        if(CallDriver.isInstanceInitialized()) {
-            callDriver = CallDriver.getInstance();
-        } else {
-            callDriver = CallDriver.initializeInstance(getApplicationContext());
-        }
-
     }
-/*NO es becesario por ahora dejarlo, por las dudas
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -376,8 +325,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         return super.onOptionsItemSelected(item);
     }
-*/
-
 
     @Override
     public void onBackPressed() {
@@ -414,7 +361,14 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     public void setFragment(int position, Class<? extends Fragment> fragmentClass) {
         try {
-            Fragment fragment = fragmentClass.newInstance();
+
+            Fragment fragment;
+
+            if(fragmentClass.equals(MainMenuFragment.class) && MainMenuFragment.isInstanceInitialized())
+                fragment = MainMenuFragment.getInstance();
+            else
+                fragment = fragmentClass.newInstance();
+
             android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.frame_container, fragment, fragmentClass.getSimpleName());
@@ -423,8 +377,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             mLvDrawerMenu.setItemChecked(position, true);
             mDrawerLayout.closeDrawer(mLvDrawerMenu);
             mLvDrawerMenu.invalidateViews();
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             Log.e("setFragment", ex.getMessage());
         }
     }
@@ -434,7 +387,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         TypedArray itemsIcon = getResources().obtainTypedArray(R.array.nav_drawer_icons);
         List<DrawerMenuItem> result = new ArrayList<DrawerMenuItem>();
         for (int i = 0; i < itemsText.length; i++) {
-            switch (i){
+            switch (i) {
                 case 2:
                     DrawerMenuItem item = new DrawerMenuItem();
                     item.setText("Viajes");
@@ -457,7 +410,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         return result;
     }
 
-    public void stopServices(){
+    public void stopServices() {
         musicService.onStop();
         stopService(voiceControlServiceIntent);
         stopService(musicServiceIntent);
@@ -469,7 +422,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         Item item = channel.getItem();
 
-        int resourceId = getResources().getIdentifier("drawable/icon_"+item.getCondition().getCode(), null, getPackageName());
+        int resourceId = getResources().getIdentifier("drawable/icon_" + item.getCondition().getCode(), null, getPackageName());
 
         @SuppressWarnings("deprecation")
         Drawable weatherIconDrawble = getResources().getDrawable(resourceId);
@@ -486,10 +439,10 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     }
 
 
-    public void initializeSTTService(){
+    public void initializeSTTService() {
 
         // Lanzamos el servicio que controla la ejecución por comandos de voz
-        voiceControlServiceIntent = new Intent(this,STTService.class);
+        voiceControlServiceIntent = new Intent(this, STTService.class);
         startService(voiceControlServiceIntent);
 
         // Creamos un receptor de parámetros que comunique el Activity con el servicio de voz
@@ -499,12 +452,12 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
                 String notification = intent.getStringExtra(STTService.COPA_MESSAGE);
 
-                if(notification.equals("Marvin")){
+                if (notification.equals("Marvin")) {
 
-                    if(musicService.isPlaying()) {
+                    if (musicService.isPlaying()) {
                         wasPlaying = true;
                         musicService.pause();
-                    }else
+                    } else
                         wasPlaying = false;
 
                     MainMenuFragment.bt_play.setEnabled(false);
@@ -513,15 +466,15 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
                     // ACTIVAR PANTALLA DE MARVIN
 
-                }else if(notification.equals("MarvinFinish")){
+                } else if (notification.equals("MarvinFinish")) {
 
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
                         public void run() {
-                            if(wasPlaying) {
+                            if (wasPlaying) {
                                 MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
                                 musicService.startPlaying();
-                            }else{
+                            } else {
                                 MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_play);
                             }
                         }
@@ -533,13 +486,13 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
                     // CERRAR PANTALLA DE MARVIN
 
-                }else if(notification.startsWith("Command ")){
+                } else if (notification.startsWith("Command ")) {
 
-                    notification = notification.replace("Command ","");
+                    notification = notification.replace("Command ", "");
 
                     //MOSTRAR COMANDO
 
-                }else if(notification.equals("Started")){
+                } else if (notification.equals("Started")) {
                     commandHandlerManager = CommandHandlerManager.getInstance();
                     smsDriver.initializeCommandHandlerManager();
                     callDriver.initializeCommandHandlerManager();
@@ -550,11 +503,11 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         };
     }
 
-    public void initializeMusicService(){
+    public void initializeMusicService() {
 
         mConnection = new ServiceConnection() {
             public void onServiceConnected(ComponentName className, IBinder service) {
-                musicService = ((MusicService.MusicBinder)service).getService();
+                musicService = ((MusicService.MusicBinder) service).getService();
             }
 
             public void onServiceDisconnected(ComponentName className) {
@@ -570,16 +523,16 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
                 String notification = intent.getStringExtra(MusicService.COPA_MESSAGE);
 
-                if(notification.startsWith("SONG_TITLE ")){
+                if (notification.startsWith("SONG_TITLE ")) {
 
-                    notification = notification.replace("SONG_TITLE ","");
-                    Log.d("TITLE",notification);
+                    notification = notification.replace("SONG_TITLE ", "");
+                    Log.d("TITLE", notification);
                     MainMenuFragment.tv_song.setText(notification);
 
 
-                }else if(notification.startsWith("SONG_ARTIST ")) {
+                } else if (notification.startsWith("SONG_ARTIST ")) {
 
-                    notification = notification.replace("SONG_ARTIST ","");
+                    notification = notification.replace("SONG_ARTIST ", "");
                     Log.d("ARTIST", notification);
                     MainMenuFragment.tv_artist.setText(notification);
 
@@ -588,10 +541,12 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         };
     }
 
-    /********** METODOS PARA OBTENER LA INSTANCIA DEL SERVICIO DE MUSICA ***********/
+    /**
+     * ******* METODOS PARA OBTENER LA INSTANCIA DEL SERVICIO DE MUSICA **********
+     */
 
     void doBindService() {
-        musicServiceIntent = new Intent(this,MusicService.class);
+        musicServiceIntent = new Intent(this, MusicService.class);
         startService(musicServiceIntent);
         bindService(musicServiceIntent, mConnection, Context.BIND_AUTO_CREATE);
         mIsBound = true;
@@ -610,33 +565,35 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         doUnbindService();
     }
 
- /***************************************************************************/
+    /**
+     * ***********************************************************************
+     */
 
-    public void startPauseMusic(View view){
+    public void startPauseMusic(View view) {
 
-        if(musicService.isListEmpty()){
+        if (musicService.isListEmpty()) {
             Toast.makeText(this, "No se encontraron canciones en el dispositivo", Toast.LENGTH_LONG).show();
             return;
         }
 
-        if(!musicService.isPlaying()) {
+        if (!musicService.isPlaying()) {
             musicService.startPlaying();
             MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
 
-        }else{
+        } else {
             musicService.pause();
             MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_play);
         }
     }
 
-    public void nextSong(View view){
+    public void nextSong(View view) {
 
-        if(musicService.isListEmpty()){
+        if (musicService.isListEmpty()) {
             Toast.makeText(this, "No se encontraron canciones en el dispositivo", Toast.LENGTH_LONG).show();
             return;
         }
 
-        if(!musicService.isPlaying()) {
+        if (!musicService.isPlaying()) {
             MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
         }
 
@@ -644,9 +601,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     }
 
-    public void nextSongSet(){
+    public void nextSongSet() {
 
-        if(!musicService.isPlaying()) {
+        if (!musicService.isPlaying()) {
             MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
         }
 
@@ -656,14 +613,14 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     }
 
-    public void previousSong(View view){
+    public void previousSong(View view) {
 
-        if(musicService.isListEmpty()){
+        if (musicService.isListEmpty()) {
             Toast.makeText(this, "No se encontraron canciones en el dispositivo", Toast.LENGTH_LONG).show();
             return;
         }
 
-        if(!musicService.isPlaying()) {
+        if (!musicService.isPlaying()) {
             MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
         }
 
@@ -671,9 +628,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     }
 
-    public void previousSongSet(){
+    public void previousSongSet() {
 
-        if(!musicService.isPlaying()) {
+        if (!musicService.isPlaying()) {
             MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
         }
 
@@ -683,7 +640,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     }
 
-    public boolean findArtist(String artist){
+    public boolean findArtist(String artist) {
 
         wasPlaying = true;
 
@@ -691,7 +648,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     }
 
-    public boolean findSong(String song){
+    public boolean findSong(String song) {
 
         wasPlaying = true;
 
@@ -699,13 +656,13 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     }
 
-    public boolean setRandom(boolean random){
+    public boolean setRandom(boolean random) {
 
         return musicService.setRandom(random);
 
     }
 
-    public boolean isListEmpty(){
+    public boolean isListEmpty() {
 
         return musicService.isListEmpty();
 
@@ -730,7 +687,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     }
 
 
-    public MusicService getMusicService(){
+    public MusicService getMusicService() {
 
         return musicService;
 
@@ -744,110 +701,115 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         intent.putExtras(bundle);
         startActivity(intent);
     }
-    public boolean getWasPlaying(){
+
+    public boolean getWasPlaying() {
 
         return wasPlaying;
 
     }
 
-    public void setWasPlaying(boolean was){
+    public void setWasPlaying(boolean was) {
 
         wasPlaying = was;
 
     }
 
-    public void setCommandHandlerManager(){
+    public void setCommandHandlerManager() {
         commandHandlerManager.defineMainActivity(this);
     }
 
-/**************************************
-**********LOCATION METHODS************
-*************************************/
+    /**
+     * ***********************************
+     * *********LOCATION METHODS************
+     * ***********************************
+     */
 
-    public String getAddress(){
+    public String getAddress() {
 
         return locationSender.getAddress();
 
     }
 
-    public String getTown(){
+    public String getTown() {
 
         return locationSender.getTown();
 
     }
 
-    public String nextStreet(){
+    public String nextStreet() {
 
         return locationSender.nextStreet();
 
     }
 
-    public String previousStreet(){
+    public String previousStreet() {
 
         return locationSender.previousStreet();
 
     }
 
-/**************************************
-*************SMS METHODS**************
-*************************************/
+    /**
+     * ***********************************
+     * ************SMS METHODS**************
+     * ***********************************
+     */
 
 
-    public void displaySendSMS(){
+    public void displaySendSMS() {
 
         smsDriver.displaySendSMS();
 
     }
 
-    public void setNumber(String number){
+    public void setNumber(String number) {
 
         smsDriver.setNumber(number);
 
     }
 
-    public void setMessageBody(String message){
+    public void setMessageBody(String message) {
 
         smsDriver.setMessageBody(message);
 
     }
 
-    public String sendMessage(){
+    public String sendMessage() {
 
         return smsDriver.sendMessage();
 
     }
 
-    public void cancelMessage(){
+    public void cancelMessage() {
 
         smsDriver.cancelMessage();
 
     }
 
-    public void displayRespondSMS(){
+    public void displayRespondSMS() {
 
         smsDriver.cancelMessage();
         smsDriver.displayRespuesta();
 
     }
 
-    public void setAnswer(String message){
+    public void setAnswer(String message) {
 
         smsDriver.setAnswer(message);
 
     }
 
-    public String respondMessage(){
+    public String respondMessage() {
 
         return smsDriver.respondMessage();
 
     }
 
 
-
-
-/**************************************
-*************CALL METHODS**************
-*************************************/
+    /**
+     * ***********************************
+     * ************CALL METHODS**************
+     * ***********************************
+     */
 
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -862,28 +824,30 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         }
     }
 
-    public void openCallDialog(){
+    public void openCallDialog() {
         callDriver.outgoingCallDialog();
     }
 
-    public void setCallNumber(String number){
+    public void setCallNumber(String number) {
         callDriver.setPhone(number);
     }
 
-    public void closeCallDialog(){
+    public void closeCallDialog() {
         callDriver.closeDialog();
     }
 
-    public void callNumber(String number){
+    public void callNumber(String number) {
         callDriver.callNumber(number);
     }
 
 
-/**************************************
-*************TTS METHOD***************
-*************************************/
+    /**
+     * ***********************************
+     * ************TTS METHOD***************
+     * ***********************************
+     */
 
-    public void activate(final SpeechRecognizer mSpeechRecognizer, final Intent mSpeechRecognizerIntent){
+    public void activate(final SpeechRecognizer mSpeechRecognizer, final Intent mSpeechRecognizerIntent) {
         runOnUiThread(new Runnable() {
 
             public void run() {
@@ -895,11 +859,13 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         });
     }
 
-    /**************************************
- *************MAPS METHODS**************
- *************************************/
+    /**
+     * ***********************************
+     * ************MAPS METHODS**************
+     * ***********************************
+     */
 
-    public FragmentManager getManager(){
+    public FragmentManager getManager() {
         return getSupportFragmentManager();
     }
 
@@ -923,17 +889,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     }
 */
 
-<<<<<<< HEAD
-/**************************************
- *************MAPS METHODS**************
- *************************************/
 
-    public FragmentManager getManager(){
-        return getSupportFragmentManager();
-    }
-
-
-    public void setButtonsEnabled(){
+    public void setButtonsEnabled() {
 
         MainMenuFragment.bt_play.setEnabled(true);
         MainMenuFragment.bt_next.setEnabled(true);
@@ -941,7 +898,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     }
 
-    public void setButtonsDisabled(){
+    public void setButtonsDisabled() {
 
         MainMenuFragment.bt_play.setEnabled(false);
         MainMenuFragment.bt_next.setEnabled(false);
@@ -949,6 +906,5 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     }
 
-=======
->>>>>>> origin/master
 }
+
