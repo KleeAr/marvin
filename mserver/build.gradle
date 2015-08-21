@@ -13,7 +13,7 @@ apply plugin: 'idea'
 apply plugin: 'spring-boot'
 
 jar {
-    baseName = 'gs-rest-service'
+    baseName = 'marvin-server'
     version =  '0.1.0'
 }
 
@@ -28,6 +28,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
     compile "org.springframework.boot:spring-boot-starter-data-jpa"
     compile("org.springframework.boot:spring-boot-starter-security")
+    compile 'org.springframework.security.oauth:spring-security-oauth2:2.0.7.RELEASE'
     runtime "org.hsqldb:hsqldb"
     testCompile("junit:junit")
 }

@@ -32,7 +32,7 @@ public class UserController {
 		return userRepository.findOne(id);
 	}
 	
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(value ="register", method = RequestMethod.POST)
 	public User save(@RequestBody User user) {
 		return userRepository.save(user);
 	}

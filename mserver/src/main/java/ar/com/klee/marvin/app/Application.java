@@ -29,14 +29,9 @@ public class Application {
 	@EnableWebSecurity
 	public static class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
+		@Autowired
 		private UserDetailsService detailsService;
 		
-		@Autowired
-		public SecurityConfiguration(UserDetailsService detailsService) {
-			super();
-			this.detailsService = detailsService;
-		}
-
 
 		@Override
 		protected void configure(AuthenticationManagerBuilder auth)
@@ -46,9 +41,20 @@ public class Application {
 		
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().anyRequest().fullyAuthenticated();
-		http.httpBasic();
-		http.csrf().disable();
+			http.authorizeRequests().antMatchers("/users/register").permitAll().anyRequest().authenticated();
+			http.httpBasic();
+			http.csrf().disable();
 		}
+
+
+		public UserDetailsService getDetailsService() {
+			return detailsService;
+		}
+
+
+		public void setDetailsService(UserDetailsService detailsService) {
+			this.detailsService = detailsService;
+		}
+		
 	}
 }
