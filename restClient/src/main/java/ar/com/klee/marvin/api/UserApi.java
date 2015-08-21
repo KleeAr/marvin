@@ -11,6 +11,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
+import ar.com.klee.marvin.model.Trip;
 import ar.com.klee.marvin.model.User;
 import ar.com.klee.marvin.model.UserSetting;
 
@@ -70,4 +71,21 @@ public interface UserApi {
 	@Produces("*/*")
 	void deleteSetting(@PathParam("id")Long id, @PathParam("key")String key);
 	
+	@GET
+	@Path("/users/{id}/trips")
+	@Consumes("*/*")
+	@Produces("application/json")
+	void getTrips(@PathParam("id")Long id);
+	
+	@POST
+	@Path("/users/{id}/trips")
+	@Consumes("application/json")
+	@Produces("application/json")
+	Trip createTrip(Trip trip);
+
+	@DELETE
+	@Path("/users/{id}/trips/{name}")
+	@Consumes("*/*")
+	@Produces("*/*")
+	void deleteTrip(@PathParam("id")Long id, @PathParam("name")String name);
 }
