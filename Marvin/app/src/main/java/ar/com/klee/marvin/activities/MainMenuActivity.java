@@ -328,10 +328,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     @Override
     public void onBackPressed() {
-        musicService.onStop();
-        stopService(voiceControlServiceIntent);
-        stopService(musicServiceIntent);
-        finish();
 
         //Leo: agregue esta parte por el menu
         if (mDrawerLayout.isDrawerOpen(mLvDrawerMenu)) {
@@ -339,6 +335,13 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         } else {
             super.onBackPressed();
         }
+
+        MainMenuFragment.getInstance().stopThread();
+
+        musicService.onStop();
+        stopService(voiceControlServiceIntent);
+        stopService(musicServiceIntent);
+        finish();
     }
 
 

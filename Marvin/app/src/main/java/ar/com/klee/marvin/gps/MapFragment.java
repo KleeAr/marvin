@@ -10,6 +10,7 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +54,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
  */
 public class MapFragment extends Fragment {
 
-    private double MIN_TRIP_TIME = 0.05;
+    private double MIN_TRIP_TIME = 0.0;
 
     MapView mMapView;
     private GoogleMap googleMap;
@@ -180,6 +181,9 @@ public class MapFragment extends Fragment {
             searchMarker = null;
         }
 
+        if(tripPath.size()<1)
+            return;
+
         LatLng coordinates = tripPath.get(tripPath.size()-1);
 
         trip.setEnding(coordinates);
@@ -269,6 +273,8 @@ public class MapFragment extends Fragment {
         captureScreen();
 
         if(hourWithDecimals > MIN_TRIP_TIME) {
+
+            Log.d("TRIP","Entró");
 
             //TODO Guardar en Historial. Consultar si supera el tiempo mínimo de viaje
 

@@ -66,8 +66,6 @@ public class CompartirFotoHandler extends CommandHandler {
 
         String input = context.getString(COMMAND);
 
-        Log.d("FOTO",input);
-
         if(input.equals("facebook")) {
             getTextToSpeech().speakText("Compartiendo foto en Facebook. ¿Querés agregar un mensaje?");
             context.put(STEP, 4);

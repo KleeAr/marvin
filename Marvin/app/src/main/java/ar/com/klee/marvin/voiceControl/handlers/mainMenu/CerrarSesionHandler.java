@@ -9,6 +9,7 @@ import java.util.Locale;
 
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
+import ar.com.klee.marvin.fragments.MainMenuFragment;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
@@ -30,6 +31,8 @@ public class CerrarSesionHandler extends CommandHandler {
         getTextToSpeech().speakText("Cerrando sesión");
 
         MainMenuActivity.mapFragment.finishTrip();
+
+        MainMenuFragment.getInstance().stopThread();
 
         ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).stopServices();
 

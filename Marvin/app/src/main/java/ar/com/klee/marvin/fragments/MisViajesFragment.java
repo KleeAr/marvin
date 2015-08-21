@@ -1,24 +1,32 @@
 package ar.com.klee.marvin.fragments;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.hudomju.swipe.OnItemClickListener;
 import com.hudomju.swipe.SwipeToDismissTouchListener;
 import com.hudomju.swipe.SwipeableItemClickListener;
 import com.hudomju.swipe.adapter.RecyclerViewAdapter;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.activities.MainMenuActivity;
+import ar.com.klee.marvin.gps.Trip;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
@@ -82,13 +90,29 @@ public class MisViajesFragment extends Fragment {
 
     static class MyBaseAdapter extends RecyclerView.Adapter<MyBaseAdapter.MyViewHolder> {
 
-        private static final int SIZE = 10;
+        private List<Trip> tripList = new ArrayList<Trip>();
 
-        private final List<String> mDataSet = new ArrayList<>();
+        private MainMenuActivity mainMenuActivity;
 
         MyBaseAdapter() {
-            for (int i = 0; i < SIZE; i++)
-                mDataSet.add(i, "Hace " + i + " minutos");
+
+            mainMenuActivity = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
+
+            SharedPreferences mPrefs = mainMenuActivity.getPreferences(mainMenuActivity.MODE_PRIVATE);
+
+            int numberOfTrips = mPrefs.getInt("NumberOfTrips",0);
+
+            for(Integer i=1; i<=numberOfTrips; i++) {
+                Gson gson = new Gson();
+                String json = mPrefs.getString("Trip"+i.toString(), "");
+                tripList.add(gson.fromJson(json, Trip.class));
+            }
+
+            if(tripList.size()==0)
+                Toast.makeText(mainMenuActivity, "Historial de Viajes Vacío", Toast.LENGTH_SHORT).show();
+
+            CommandHandlerManager.getInstance().defineActivity(CommandHandlerManager.ACTIVITY_TRIP_HISTORY, mainMenuActivity);
+
         }
 
         @Override
@@ -98,25 +122,41 @@ public class MisViajesFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(MyViewHolder holder, int position) {
-            holder.dataTextView.setText(mDataSet.get(position));
+            holder.distance.setText(tripList.get(position).getDistance() + " km");
+            holder.beginningAddress.setText("Desde: " + tripList.get(position).getBeginningAddress());
+            holder.endingAddress.setText("Hasta: " + tripList.get(position).getEndingAddress());
+
+            String formattedDate = new SimpleDateFormat("dd/MM/yyyy - HH:mm").format(tripList.get(position).getStartTime());
+            holder.beginningTime.setText(formattedDate);
+
+            Log.d("INIC",formattedDate);
+
+            formattedDate = new SimpleDateFormat("dd/MM/yyyy - HH:mm").format(tripList.get(position).getFinishTime());
+            holder.endingTime.setText(formattedDate);
+
+            Log.d("END",formattedDate);
         }
 
         @Override
         public int getItemCount() {
-            return mDataSet.size();
+            return tripList.size();
         }
 
         public void remove(int position) {
-            mDataSet.remove(position);
+            tripList.remove(position);
             notifyItemRemoved(position);
         }
 
         static class MyViewHolder extends RecyclerView.ViewHolder {
 
-            TextView dataTextView;
+            TextView distance, beginningAddress, endingAddress, beginningTime, endingTime;
             MyViewHolder(View view) {
                 super(view);
-                dataTextView = ((TextView) view.findViewById(R.id.textdata));
+                distance = ((TextView) view.findViewById(R.id.distance));
+                beginningAddress = ((TextView) view.findViewById(R.id.beginningAddress));
+                endingAddress = ((TextView) view.findViewById(R.id.endingAddress));
+                beginningTime = ((TextView) view.findViewById(R.id.beginningTime));
+                endingTime = ((TextView) view.findViewById(R.id.endingTime));
             }
         }
     }

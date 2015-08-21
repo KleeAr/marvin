@@ -45,6 +45,8 @@ public class MainMenuFragment extends Fragment {
     private CharSequence Titles[]={"Home","Aplicacion","Mapa"};
     int NumbOfTabs = 3;
 
+    private Thread tTime = null;
+
 
     public MainMenuFragment() {
         // Required empty public constructor
@@ -141,16 +143,14 @@ public class MainMenuFragment extends Fragment {
 
         final SimpleDateFormat dateComplete = new SimpleDateFormat("hh:mm aa");
 
-
-
-        Thread tTime = new Thread() {
+        tTime = new Thread() {
 
             @Override
             public void run() {
                 try {
                     while (!isInterrupted()) {
                         Thread.sleep(999);
-                        if(((MainMenuActivity)CommandHandlerManager.getInstance().getMainActivity()).getActualFragmentPosition() == 1) {
+                        if(!isInterrupted() && ((MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity()).getActualFragmentPosition() == 1) {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -214,6 +214,9 @@ public class MainMenuFragment extends Fragment {
         return instance != null;
     }
 
+    public void stopThread(){
+        tTime.interrupt();
+    }
 
 
 }
