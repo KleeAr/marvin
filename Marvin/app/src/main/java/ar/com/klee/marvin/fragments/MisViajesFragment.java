@@ -129,12 +129,8 @@ public class MisViajesFragment extends Fragment {
             String formattedDate = new SimpleDateFormat("dd/MM/yyyy - HH:mm").format(tripList.get(position).getStartTime());
             holder.beginningTime.setText(formattedDate);
 
-            Log.d("INIC",formattedDate);
-
             formattedDate = new SimpleDateFormat("dd/MM/yyyy - HH:mm").format(tripList.get(position).getFinishTime());
             holder.endingTime.setText(formattedDate);
-
-            Log.d("END",formattedDate);
         }
 
         @Override

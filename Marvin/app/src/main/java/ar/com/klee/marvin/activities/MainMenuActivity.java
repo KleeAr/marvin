@@ -42,6 +42,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import ar.com.klee.marvin.DrawerMenuAdapter;
 import ar.com.klee.marvin.DrawerMenuItem;
@@ -107,6 +108,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     public static TextView dateText;
 
     private int actualFragmentPosition = 1;
+    private Stack<Integer> previousMenus = new Stack();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,8 +182,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         tWheather.start();
 
-        ////////////////////////////////////
-
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mLvDrawerMenu = (ListView) findViewById(R.id.lv_drawer_menu);
@@ -244,9 +244,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-        if (savedInstanceState == null) {
-            setFragment(0, MainMenuFragment.class);
-        }
     }
 
     public int getActualFragmentPosition() {
@@ -260,6 +257,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             mDrawerLayout.closeDrawer(mLvDrawerMenu);
             return;
         }
+
+        previousMenus.push(actualFragmentPosition);
 
         actualFragmentPosition = position;
 
@@ -305,29 +304,55 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_menu_principal, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onBackPressed() {
+
+        if(!previousMenus.empty()){
+
+            int position = previousMenus.pop();
+
+            actualFragmentPosition = position;
+
+            switch (position) {
+                case 0:
+                    setFragment(0, PerfilFragment.class);
+                    break;
+                case 1:
+                    setFragment(1, MainMenuFragment.class);
+                    break;
+                case 2:
+                    Toast.makeText(getApplicationContext(), "posicion " + position, Toast.LENGTH_SHORT).show();
+                    //setFragment(2, ComandosDeVoz.class);
+                    break;
+                case 4:
+                    setFragment(4, MisViajesFragment.class);
+                    break;
+                case 5:
+                    setFragment(5, MisSitiosFragment.class);
+                    break;
+                case 6:
+                    Toast.makeText(getApplicationContext(), "posicion 6" + position, Toast.LENGTH_SHORT).show();
+                    //setFragment(5, DondeEstacioneFragment.class);
+                    break;
+                case 8:
+                    setFragment(8, ConfigureAppFragment.class);
+                    break;
+                case 9:
+                    Toast.makeText(getApplicationContext(), "posicion 9" + position, Toast.LENGTH_SHORT).show();
+                    break;
+                case 10:
+                    Toast.makeText(getApplicationContext(), "Saliendo...", Toast.LENGTH_SHORT).show();
+                    finish();
+                    break;
+                case 11:
+                    mDrawerLayout.closeDrawer(mLvDrawerMenu);
+                    mLvDrawerMenu.invalidateViews();
+                    break;
+            }
+
+            setSupportActionBar(toolbar);
+
+            return;
+        }
 
         //Leo: agregue esta parte por el menu
         if (mDrawerLayout.isDrawerOpen(mLvDrawerMenu)) {
@@ -344,7 +369,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         finish();
     }
 
-
     /**
      * When using the ActionBarDrawerToggle, you must call it during
      * onPostCreate() and onConfigurationChanged()...
@@ -352,7 +376,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        mDrawerToggle.syncState();
+        if(mDrawerToggle != null)
+            mDrawerToggle.syncState();
     }
 
     @Override
@@ -500,10 +525,16 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     smsDriver.initializeCommandHandlerManager();
                     callDriver.initializeCommandHandlerManager();
                     setCommandHandlerManager();
+                    initializeFragmentManager();
                 }
 
             }
         };
+    }
+
+    public void initializeFragmentManager(){
+        Log.d("PASO1","Instance OK");
+        setFragment(0, MainMenuFragment.class);
     }
 
     public void initializeMusicService() {

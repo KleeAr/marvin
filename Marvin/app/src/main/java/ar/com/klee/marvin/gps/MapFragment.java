@@ -274,8 +274,6 @@ public class MapFragment extends Fragment {
 
         if(hourWithDecimals > MIN_TRIP_TIME) {
 
-            Log.d("TRIP","Entró");
-
             //TODO Guardar en Historial. Consultar si supera el tiempo mínimo de viaje
 
             MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();

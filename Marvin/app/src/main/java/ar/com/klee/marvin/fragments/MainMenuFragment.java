@@ -148,6 +148,7 @@ public class MainMenuFragment extends Fragment {
             @Override
             public void run() {
                 try {
+                    Log.d("PASO2","CommandHandlerManager");
                     while (!isInterrupted()) {
                         Thread.sleep(999);
                         if(!isInterrupted() && ((MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity()).getActualFragmentPosition() == 1) {
