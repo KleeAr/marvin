@@ -25,7 +25,8 @@
             android:layout_gravity="center"
             android:background="#a3d9d1"
             android:layout_margin="2dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:src="@mipmap/ic_add_circle_white_48dp" />
 
         <ImageButton
             android:layout_width="0dp"
@@ -37,7 +38,8 @@
             android:layout_gravity="center"
             android:background="#a3d9d1"
             android:layout_margin="2dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:src="@mipmap/ic_add_circle_white_48dp" />
 
         <ImageButton
             android:layout_width="0dp"
@@ -49,7 +51,8 @@
             android:layout_gravity="center"
             android:background="#a3d9d1"
             android:layout_margin="2dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:src="@mipmap/ic_add_circle_white_48dp" />
     </LinearLayout>
 
 
@@ -72,7 +75,8 @@
             android:layout_gravity="center"
             android:background="#a3d9d1"
             android:layout_margin="2dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:src="@mipmap/ic_add_circle_white_48dp" />
 
         <ImageButton
             android:layout_width="0dp"
@@ -84,7 +88,8 @@
             android:layout_gravity="center"
             android:background="#a3d9d1"
             android:layout_margin="2dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:src="@mipmap/ic_add_circle_white_48dp" />
 
         <ImageButton
             android:layout_width="0dp"
@@ -96,7 +101,8 @@
             android:layout_gravity="center"
             android:background="#a3d9d1"
             android:layout_margin="2dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:src="@mipmap/ic_add_circle_white_48dp" />
     </LinearLayout>
 
 
