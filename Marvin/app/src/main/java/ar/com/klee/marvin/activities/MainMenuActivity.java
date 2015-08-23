@@ -259,6 +259,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         if(actualFragmentPosition == position) {
             mDrawerLayout.closeDrawer(mLvDrawerMenu);
+            mLvDrawerMenu.invalidateViews();
             return;
         }
 
@@ -294,7 +295,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 Toast.makeText(getApplicationContext(), "posicion 9" + position, Toast.LENGTH_SHORT).show();
                 break;
             case 10:
-                Toast.makeText(getApplicationContext(), "Saliendo...", Toast.LENGTH_SHORT).show();
+                MainMenuActivity.mapFragment.finishTrip();
+                MainMenuFragment.getInstance().stopThread();
+                stopServices();
                 finish();
                 break;
             case 11:
@@ -351,7 +354,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     Toast.makeText(getApplicationContext(), "posicion 9" + position, Toast.LENGTH_SHORT).show();
                     break;
                 case 10:
-                    Toast.makeText(getApplicationContext(), "Saliendo...", Toast.LENGTH_SHORT).show();
+                    MainMenuActivity.mapFragment.finishTrip();
+                    MainMenuFragment.getInstance().stopThread();
+                    stopServices();
                     finish();
                     break;
                 case 11:
@@ -367,8 +372,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
 
 
-        MainMenuFragment.getInstance().stopThread();
+        mapFragment.finishTrip();
 
+        MainMenuFragment.getInstance().stopThread();
         musicService.onStop();
         stopService(voiceControlServiceIntent);
         stopService(musicServiceIntent);
@@ -539,7 +545,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     }
 
     public void initializeFragmentManager(){
-        Log.d("PASO1","Instance OK");
         setFragment(0, MainMenuFragment.class);
     }
 
@@ -619,10 +624,11 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         if (!musicService.isPlaying()) {
             musicService.startPlaying();
             MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
-
         } else {
             musicService.pause();
             MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_play);
+            MainMenuFragment.tv_song.setText("Reproducción Pausada");
+            MainMenuFragment.tv_artist.setText("");
         }
     }
 

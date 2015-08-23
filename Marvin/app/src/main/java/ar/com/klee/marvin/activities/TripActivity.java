@@ -1,6 +1,7 @@
 package ar.com.klee.marvin.activities;
 
 import android.app.Activity;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -10,14 +11,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.fragments.MisViajesFragment;
 import ar.com.klee.marvin.gps.Trip;
 import ar.com.klee.marvin.gps.TripMap;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 
-public class TripActivity extends Activity {
+public class TripActivity extends ActionBarActivity {
 
-    TripMap fragment;
-    Trip trip;
+    private TripMap fragment;
+    private Trip trip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,12 +28,19 @@ public class TripActivity extends Activity {
 
         addMap();
 
-        trip = TripHistoryActivity.getInstance().getChosenTrip();
+        trip = MisViajesFragment.getInstance().getChosenTrip();
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                fragment.setTrip(trip);
+            }
+        }, 1000);
 
     }
 
     public void addMap(){
-        FragmentManager manager = ((MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity()).getManager();
+        FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         fragment = new TripMap();
         transaction.add(R.id.tripMap, fragment);

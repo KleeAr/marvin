@@ -152,11 +152,11 @@
                 android:layout_weight="0.5">
 
                 <TextView
-                    android:text="A sky Full Of Start12345678123456777            2131"
+                    android:text="Reproducción Pausada"
                     android:id="@+id/song"
                     android:layout_weight="0.6"
                     android:textColor="#ffffff"
-                    android:textSize="20sp"
+                    android:textSize="20dp"
                     android:layout_height="0dp"
                     android:layout_width="fill_parent"
 
@@ -174,12 +174,13 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:text="Cold Play"
+                    android:text=""
                     android:id="@+id/artist"
                     android:layout_weight="0.4"
                     android:textColor="#ffffff"
-                    android:textSize="15sp"
-                    android:gravity="top|center|start" />
+                    android:textSize="15dp"
+                    android:gravity="top|center|start"
+                    android:paddingLeft="15dp" />
             </LinearLayout>
 
             <ImageButton

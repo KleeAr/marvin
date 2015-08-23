@@ -12,7 +12,6 @@ import ar.com.klee.marvin.activities.CallHistoryActivity;
 import ar.com.klee.marvin.activities.CameraActivity;
 import ar.com.klee.marvin.activities.MapActivity;
 import ar.com.klee.marvin.activities.SMSInboxActivity;
-import ar.com.klee.marvin.activities.TripHistoryActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
@@ -63,17 +62,15 @@ public class AbrirAplicacionHandler extends CommandHandler {
             currentContext.put(STEP, 0);
             return currentContext;
         }else if(app.equals("mis sitios")) {
-            Intent intent = new Intent(getContext(), MapActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            getTextToSpeech().speakText("Abriendo " + app);
-            getContext().startActivity(intent);
+
+
+
             currentContext.put(STEP, 0);
             return currentContext;
-        }else if(app.equals("historial de viajes")) {
-            Intent intent = new Intent(getContext(), TripHistoryActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            getTextToSpeech().speakText("Abriendo " + app);
-            getContext().startActivity(intent);
+        }else if(app.equals("mis viajes")) {
+
+
+
             currentContext.put(STEP, 0);
             return currentContext;
         }else if(app.equals("marvin")) {

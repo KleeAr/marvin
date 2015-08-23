@@ -4,7 +4,10 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +20,7 @@ import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.SlidingTabLayout;
 import ar.com.klee.marvin.ViewPagerAdpater;
 import ar.com.klee.marvin.activities.MainMenuActivity;
+import ar.com.klee.marvin.activities.TabMap;
 import ar.com.klee.marvin.applications.Application;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 
@@ -59,7 +63,7 @@ public class MainMenuFragment extends Fragment {
         instance = this;
 
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.main_menu_fragment, container, false);
+        View v = inflater.inflate(R.layout.fragment_main_menu, container, false);
 
 
         mainStreet = (TextView)v.findViewById(R.id.mainStreet);
@@ -148,7 +152,6 @@ public class MainMenuFragment extends Fragment {
             @Override
             public void run() {
                 try {
-                    Log.d("PASO2","CommandHandlerManager");
                     while (!isInterrupted()) {
                         Thread.sleep(999);
                         if(!isInterrupted() && ((MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity()).getActualFragmentPosition() == 1) {
@@ -197,7 +200,14 @@ public class MainMenuFragment extends Fragment {
         // Setting the ViewPager For the SlidingTabsLayout
         tabs.setViewPager(pager);
 
+        pager.setCurrentItem(2);
 
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                pager.setCurrentItem(0);
+            }
+        }, 1000);
 
         return v;
     }

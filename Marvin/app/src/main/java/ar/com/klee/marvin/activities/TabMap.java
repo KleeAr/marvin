@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,8 @@ public class TabMap extends Fragment implements View.OnLongClickListener {
 
         if(!MainMenuActivity.mapFragment.isAdded()) {
 
+            MainMenuActivity.isMapCreated = true;
+
             v = inflater.inflate(R.layout.tab_map, container, false);
 
             FragmentManager manager = ((MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity()).getManager();
@@ -52,10 +55,7 @@ public class TabMap extends Fragment implements View.OnLongClickListener {
             transaction.add(R.id.mapView, MainMenuActivity.mapFragment);
             transaction.commit();
 
-            MainMenuActivity.isMapCreated = true;
-
         }
-
         return v;
 
     }
