@@ -143,7 +143,7 @@ public class Tab1 extends Fragment implements View.OnClickListener, View.OnLongC
                     //borra la memoria del boton
                     MainMenuFragment.shortcutList[buttonNumber].setConfigured(false);
                     MainMenuFragment.shortcutButton[buttonNumber].setBackgroundColor(Color.parseColor("#a3d9d1"));
-                    MainMenuFragment.shortcutButton[buttonNumber].setImageResource(R.drawable.marvin);
+                    MainMenuFragment.shortcutButton[buttonNumber].setImageResource(R.mipmap.ic_add_circle_white_48dp);
 
                     // Creamos la instancia de "SharedPreferences"
                     // Y también la "SharedPreferences.Editor"

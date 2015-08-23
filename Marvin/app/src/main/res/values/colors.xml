@@ -5,7 +5,8 @@
     <color name="button_normal">#a3d9d1</color>
     <color name="button_pressed">#ef404a</color>
     <color name="accent">#232323</color>
-        <color name="ColorPrimary">#00897B</color>
+
+    <color name="ColorPrimary">#00897B</color>
         <color name="ColorPrimaryDark">#00695C</color>
         <color name="tabsScrollColor">#004D40</color>
     <color name="gray_background">#757575</color>
@@ -18,5 +19,16 @@
     <color name="counter_text_bg">#626262</color>
     <color name="counter_text_color">#c5c4c4</color>
 
+
+
+    <color name="black">#000000</color>
+    <color name="jet">#222222</color>
+    <color name="oil">#333333</color>
+    <color name="monsoon">#777777</color>
+    <color name="jumbo">#888888</color>
+    <color name="aluminum">#999999</color>
+    <color name="base">#AAAAAA</color>
+    <color name="iron">#CCCCCC</color>
+    <color name="white">#FFFFFF</color>
 
 </resources>

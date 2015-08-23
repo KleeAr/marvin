@@ -386,6 +386,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             mDrawerToggle.syncState();
     }
 
+
+
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);

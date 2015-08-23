@@ -21,6 +21,7 @@
         android:layout_alignParentRight="true"
 
         android:layout_gravity="end|bottom"
-        android:src="@android:drawable/ic_input_add" />
+        android:src="@mipmap/ic_add_white_48dp" />
+
 
 </RelativeLayout>
