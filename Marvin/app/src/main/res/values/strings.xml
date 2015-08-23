@@ -44,7 +44,7 @@
     <string-array name="nav_drawer_items">
         <item>Principal</item>
         <item>Comandos de voz</item>
-        <item>Mis viajes</item>
+        <item>Historial de viajes</item>
         <item>Mis sitios</item>
         <item>¿Donde estacione?</item>
         <item>Configuración app</item>
@@ -54,14 +54,14 @@
 
     <!-- Sliding Menu item icons -->
     <array name="nav_drawer_icons">
-        <item>@drawable/ic_home</item>
-        <item>@drawable/ic_question_mark</item>
-        <item>@drawable/ic_directions_car_black_36dp</item>
-        <item>@drawable/ic_pin</item>
-        <item>@drawable/ic_sign</item>
-        <item>@drawable/ic_mech_wheel</item>
-        <item>@drawable/ic_info</item>
-        <item>@drawable/ic_power</item>
+        <item>@mipmap/ic_home_black_48dp</item>
+        <item>@mipmap/ic_help_black_48dp</item>
+        <item>@mipmap/ic_schedule_black_48dp</item>
+        <item>@mipmap/ic_location_on_black_48dp</item>
+        <item>@mipmap/ic_local_parking_black_48dp</item>
+        <item>@mipmap/ic_info_black_48dp</item>
+        <item>@mipmap/ic_settings_black_48dp</item>
+        <item>@mipmap/ic_cancel_black_48dp</item>
 
     </array>
 

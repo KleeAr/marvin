@@ -244,6 +244,10 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
+        if(savedInstanceState == null){
+            setFragment(0, MisViajesFragment.class);
+        }
+
     }
 
     public int getActualFragmentPosition() {
@@ -306,6 +310,13 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     @Override
     public void onBackPressed() {
 
+        //Leo: agregue esta parte por el menu
+        if (mDrawerLayout.isDrawerOpen(mLvDrawerMenu)) {
+            mDrawerLayout.closeDrawer(mLvDrawerMenu);
+        } else {
+            super.onBackPressed();
+        }
+
         if(!previousMenus.empty()){
 
             int position = previousMenus.pop();
@@ -354,12 +365,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             return;
         }
 
-        //Leo: agregue esta parte por el menu
-        if (mDrawerLayout.isDrawerOpen(mLvDrawerMenu)) {
-            mDrawerLayout.closeDrawer(mLvDrawerMenu);
-        } else {
-            super.onBackPressed();
-        }
+
 
         MainMenuFragment.getInstance().stopThread();
 
