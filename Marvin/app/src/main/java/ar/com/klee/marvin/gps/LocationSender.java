@@ -7,6 +7,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 
 import java.io.IOException;
 import java.util.List;
@@ -63,15 +64,11 @@ public class LocationSender {
                 setSpeed(velocity);
                 updateScreen();
 
-                if(MainMenuActivity.isMapCreated) {
-                    if (!isFirstLocation)
-                        mapFragment.refreshMap(actualLatitude, actualLongitude, address);
-                    else {
-                        mapFragment.startTrip(actualLatitude, actualLongitude, address);
-                        isFirstLocation = false;
-                    }
-                }else{
-                    new TabMap();
+                if (!isFirstLocation){
+                    mapFragment.refreshMap(actualLatitude, actualLongitude, address);
+                }else {
+                    mapFragment.startTrip(actualLatitude, actualLongitude, address);
+                    isFirstLocation = false;
                 }
 
                 if(BiggerMapFragment.isInstanceInitialized()) {

@@ -1,15 +1,14 @@
 package ar.com.klee.marvin.fragments;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,18 +24,22 @@ import java.util.List;
 
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.activities.MainMenuActivity;
+import ar.com.klee.marvin.activities.TripActivity;
 import ar.com.klee.marvin.gps.Trip;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
-
-import static android.widget.Toast.LENGTH_SHORT;
 
 
 public class MisViajesFragment extends Fragment {
 
+    private CommandHandlerManager commandHandlerManager;
+    private Trip chosenTrip;
+    private MyBaseAdapter adapter;
+    private static MisViajesFragment instance;
 
     public MisViajesFragment() {
         // Required empty public constructor
     }
+
 
 
     @Override
@@ -45,6 +48,10 @@ public class MisViajesFragment extends Fragment {
          View v = inflater.inflate(R.layout.fragment_mis_viajes, container, false);
         init((RecyclerView) v.findViewById(R.id.recycler_view));
 
+        instance = this;
+
+        commandHandlerManager = CommandHandlerManager.getInstance();
+        commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_TRIP_HISTORY,commandHandlerManager.getMainActivity());
 
         return v;
     }
@@ -53,7 +60,7 @@ public class MisViajesFragment extends Fragment {
     private void init(RecyclerView recyclerView) {
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
-        final MyBaseAdapter adapter = new MyBaseAdapter();
+        adapter = new MyBaseAdapter();
         recyclerView.setAdapter(adapter);
         final SwipeToDismissTouchListener<RecyclerViewAdapter> touchListener =
                 new SwipeToDismissTouchListener<>(
@@ -82,10 +89,21 @@ public class MisViajesFragment extends Fragment {
                         } else if (view.getId() == R.id.txt_undo) {
                             touchListener.undoPendingDismiss();
                         } else {
-                            Toast.makeText(getActivity(), "Posicion " + position, LENGTH_SHORT).show();
+                            chosenTrip = adapter.getTrip(position);
+                            Intent intent = new Intent(commandHandlerManager.getContext(), TripActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            commandHandlerManager.getContext().startActivity(intent);
                         }
                     }
                 }));
+    }
+
+    public Trip getChosenTrip(){
+        return chosenTrip;
+    }
+
+    public static MisViajesFragment getInstance(){
+        return instance;
     }
 
     static class MyBaseAdapter extends RecyclerView.Adapter<MyBaseAdapter.MyViewHolder> {
@@ -117,7 +135,7 @@ public class MisViajesFragment extends Fragment {
 
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup parent, int position) {
-            return new MyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.mis_viajes_item, parent, false));
+            return new MyViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_mis_viajes, parent, false));
         }
 
         @Override
@@ -141,6 +159,25 @@ public class MisViajesFragment extends Fragment {
         public void remove(int position) {
             tripList.remove(position);
             notifyItemRemoved(position);
+
+            tripList.remove(position);
+
+            MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
+
+            SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
+
+            Integer numberOfTrips = tripList.size()-1;
+
+            SharedPreferences.Editor prefsEditor = mPrefs.edit();
+            Gson gson = new Gson();
+            prefsEditor.putInt("NumberOfTrips",numberOfTrips);
+            Integer i;
+            for(i=0;i<=numberOfTrips;i++) {
+                String json = gson.toJson(tripList.get(i));
+                prefsEditor.putString("Trip" + numberOfTrips.toString(), json);
+            }
+            prefsEditor.commit();
+
         }
 
         static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -154,6 +191,10 @@ public class MisViajesFragment extends Fragment {
                 beginningTime = ((TextView) view.findViewById(R.id.beginningTime));
                 endingTime = ((TextView) view.findViewById(R.id.endingTime));
             }
+        }
+
+        public Trip getTrip(int position){
+            return tripList.get(position);
         }
     }
 

@@ -54,7 +54,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
  */
 public class MapFragment extends Fragment {
 
-    private double MIN_TRIP_TIME = 0.0;
+    private long MIN_TRIP_TIME = 0;
 
     MapView mMapView;
     private GoogleMap googleMap;
@@ -76,6 +76,8 @@ public class MapFragment extends Fragment {
     private String finishAddress = "";
 
     private boolean isSearch = false;
+
+    private boolean startNotSet = true;
 
     private Marker lastMarker = null;
     private Marker searchMarker = null;
@@ -122,21 +124,27 @@ public class MapFragment extends Fragment {
         startLongitude = lon;
         startAddress = address;
 
-        // create marker
-        MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon));
+        if(MainMenuActivity.mapFragment.isAdded()) {
+            // create marker
+            MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon));
 
-        // Changing marker icon
-        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)).title("Partida").snippet(address);
+            // Changing marker icon
+            marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)).title("Partida").snippet(address);
 
-        // adding marker
-        googleMap.addMarker(marker);
+            // adding marker
+            googleMap.addMarker(marker);
 
-        if(!isSearch) {
-            CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(lat, lon)).zoom(zoom).build();
-            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            if (!isSearch) {
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(lat, lon)).zoom(zoom).build();
+                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            }
+
+            startNotSet = false;
         }
 
-        trip = new Trip(lat,lon, address);
+        trip = new Trip(lat, lon, address);
+
+        tripPath.add(new LatLng(lat,lon));
 
     }
 
@@ -144,29 +152,45 @@ public class MapFragment extends Fragment {
 
         tripPath.add(new LatLng(lat,lon));
 
-        if(lastMarker!=null){
-            lastMarker.remove();
-        }
-
-        if(searchMarker != null){
-            searchMarker.remove();
-            searchMarker = null;
-        }
-
-        // create marker
-        MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon));
-
-        // Changing marker icon
-        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).title("Posición Actual").snippet(address);
-
-        // adding marker
-        lastMarker = googleMap.addMarker(marker);
-
         lastAddress = address;
 
-        if(!isSearch) {
-            CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(lat, lon)).zoom(zoom).build();
-            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        if(MainMenuActivity.mapFragment.isAdded()) {
+
+            if(startNotSet){
+
+                MarkerOptions marker = new MarkerOptions().position(new LatLng(startLatitude, startLongitude));
+
+                // Changing marker icon
+                marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)).title("Partida").snippet(address);
+
+                // adding marker
+                googleMap.addMarker(marker);
+
+                startNotSet = false;
+            }
+
+            if (lastMarker != null) {
+                lastMarker.remove();
+            }
+
+            if (searchMarker != null) {
+                searchMarker.remove();
+                searchMarker = null;
+            }
+
+            // create marker
+            MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon));
+
+            // Changing marker icon
+            marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).title("Posición Actual").snippet(address);
+
+            // adding marker
+            lastMarker = googleMap.addMarker(marker);
+
+            if (!isSearch) {
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(lat, lon)).zoom(zoom).build();
+                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            }
         }
     }
 
@@ -181,7 +205,7 @@ public class MapFragment extends Fragment {
             searchMarker = null;
         }
 
-        if(tripPath.size()<1)
+        if(tripPath.size()==0)
             return;
 
         LatLng coordinates = tripPath.get(tripPath.size()-1);
@@ -272,7 +296,7 @@ public class MapFragment extends Fragment {
 
         captureScreen();
 
-        if(hourWithDecimals > MIN_TRIP_TIME) {
+        if(hourWithDecimals >= MIN_TRIP_TIME) {
 
             //TODO Guardar en Historial. Consultar si supera el tiempo mínimo de viaje
 
@@ -318,7 +342,7 @@ public class MapFragment extends Fragment {
                 String timeStamp = new SimpleDateFormat("yyMMdd_HHmmss").format(new Date());
 
                 try {
-                    FileOutputStream out = new FileOutputStream("/sdcard/MARVIN" + finishAddress + "_" + timeStamp + ".png");
+                    FileOutputStream out = new FileOutputStream("/sdcard/MARVIN/" + finishAddress + "_" + timeStamp + ".png");
                     bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
                 } catch (Exception e) {
                     e.printStackTrace();

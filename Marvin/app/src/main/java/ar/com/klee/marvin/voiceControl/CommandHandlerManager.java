@@ -86,6 +86,10 @@ public class CommandHandlerManager {
     public static final int ACTIVITY_MAP = 6;
     public static final int ACTIVITY_TRIP_HISTORY = 7;
     public static final int ACTIVITY_PLACES = 8;
+    public static final int ACTIVITY_PROFILE = 9;
+    public static final int ACTIVITY_HELP = 10;
+    public static final int ACTIVITY_PARKING = 11;
+    public static final int ACTIVITY_SETTINGS = 12;
     private static CommandHandlerManager instance;
 
     private int currentActivity = ACTIVITY_MAIN;
@@ -108,6 +112,10 @@ public class CommandHandlerManager {
     private List<CommandHandler> commandHandlersMap;
     private List<CommandHandler> commandHandlersTripHistory;
     private List<CommandHandler> commandHandlersPlaces;
+    private List<CommandHandler> commandHandlersProfile;
+    private List<CommandHandler> commandHandlersHelp;
+    private List<CommandHandler> commandHandlersParking;
+    private List<CommandHandler> commandHandlersSettings;
 
     private Map<Integer,List<CommandHandler>> commandHandlers;
     private CommandHandlerContext currentContext;
@@ -210,6 +218,14 @@ public class CommandHandlerManager {
 
         commandHandlersPlaces = Arrays.asList();
 
+        commandHandlersProfile = Arrays.asList();
+
+        commandHandlersHelp = Arrays.asList();
+
+        commandHandlersParking = Arrays.asList();
+
+        commandHandlersSettings = Arrays.asList();
+
         commandHandlers = new HashMap<>();
 
         commandHandlers.put(ACTIVITY_MAIN,commandHandlersMainMenu);
@@ -219,6 +235,10 @@ public class CommandHandlerManager {
         commandHandlers.put(ACTIVITY_MAP,commandHandlersMap);
         commandHandlers.put(ACTIVITY_TRIP_HISTORY,commandHandlersTripHistory);
         commandHandlers.put(ACTIVITY_PLACES,commandHandlersPlaces);
+        commandHandlers.put(ACTIVITY_PROFILE,commandHandlersProfile);
+        commandHandlers.put(ACTIVITY_HELP,commandHandlersHelp);
+        commandHandlers.put(ACTIVITY_PARKING,commandHandlersParking);
+        commandHandlers.put(ACTIVITY_SETTINGS,commandHandlersSettings);
 
     }
 

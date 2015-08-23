@@ -1,102 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:layout_height="match_parent"
     tools:context="ar.com.klee.marvin.activities.TripActivity">
-
-    <TextView
-        android:id="@+id/beginningAddress"
-        android:layout_width="400dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
-        android:text="Partida: "
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="#2F1F1F">
-    </TextView>
-
-    <TextView
-        android:id="@+id/endingAddress"
-        android:layout_width="400dp"
-        android:layout_height="wrap_content"
-        android:text="Llegada: "
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="#2F1F1F"
-        android:layout_below="@+id/beginningAddress">
-    </TextView>
-
-    <TextView
-        android:id="@+id/beginningTime"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="Tiempo de Partida"
-        android:textSize="14sp"
-        android:textColor="#2F1F1F"
-        android:layout_marginLeft="400dp"
-        android:layout_marginStart="113dp"
-        android:textAlignment="textEnd"
-        android:gravity="end">
-    </TextView>
-
-    <TextView
-        android:id="@+id/endingTime"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="Tiempo de Llegada"
-        android:textSize="14sp"
-        android:textColor="#2F1F1F"
-        android:layout_marginLeft="400dp"
-        android:layout_marginStart="113dp"
-        android:textAlignment="textEnd"
-        android:gravity="end"
-        android:layout_below="@+id/beginningTime">
-    </TextView>
-
-    <TextView
-        android:id="@+id/velocity"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:text="Velocidad"
-        android:textSize="18sp"
-        android:textColor="#2F1F1F"
-        android:textAlignment="center"
-        android:layout_below="@+id/endingAddress"
-        android:layout_marginTop="10dp"
-        android:gravity="center_horizontal">
-    </TextView>
-
-    <TextView
-        android:id="@+id/time"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:text="Tiempo"
-        android:textSize="18sp"
-        android:textColor="#2F1F1F"
-        android:textAlignment="textEnd"
-        android:layout_marginTop="10dp"
-        android:layout_toRightOf="@+id/velocity"
-        android:layout_below="@+id/endingAddress"
-        android:gravity="center_horizontal">
-    </TextView>
-
-    <TextView
-        android:id="@+id/distance"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:text="Distancia"
-        android:textSize="18sp"
-        android:textColor="#2F1F1F"
-        android:textAlignment="textEnd"
-        android:layout_below="@+id/endingAddress"
-        android:layout_marginTop="10dp"
-        android:layout_toRightOf="@+id/time"
-        android:gravity="center_horizontal">
-    </TextView>
 
     <com.google.android.gms.maps.MapView
         android:id="@+id/tripMap"
@@ -106,27 +11,7 @@
         android:layout_alignParentTop="false"
         android:layout_alignParentLeft="false"
         android:layout_alignParentStart="false"
-        android:layout_alignParentBottom="true"
-        android:layout_below="@+id/time"
-        android:layout_marginTop="20dp"
-        android:layout_alignParentEnd="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Zoom Out"
-        android:id="@+id/bt_zoomOut"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Zoom In"
-        android:id="@+id/bt_zoomIn"
-        android:layout_above="@+id/bt_zoomOut"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="false"
         android:layout_alignParentEnd="true" />
 
     <Button
@@ -134,8 +19,109 @@
         android:layout_height="wrap_content"
         android:text="Share"
         android:id="@+id/bt_share"
+        android:layout_alignParentStart="false"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentRight="false"
+        android:layout_alignParentEnd="true" />
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFA3D9D1">
+
+        <TextView
+            android:id="@+id/beginningAddress"
+            android:layout_width="400dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Partida: "
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:textColor="#2F1F1F">
+        </TextView>
+
+        <TextView
+            android:id="@+id/endingAddress"
+            android:layout_width="400dp"
+            android:layout_height="wrap_content"
+            android:text="Llegada: "
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:textColor="#2F1F1F"
+            android:layout_below="@+id/beginningAddress">
+        </TextView>
+
+        <TextView
+            android:id="@+id/beginningTime"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Tiempo de Partida"
+            android:textSize="14dp"
+            android:textColor="#2F1F1F"
+            android:layout_marginLeft="400dp"
+            android:layout_marginStart="113dp"
+            android:textAlignment="textEnd"
+            android:gravity="end">
+        </TextView>
+
+        <TextView
+            android:id="@+id/endingTime"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Tiempo de Llegada"
+            android:textSize="14dp"
+            android:textColor="#2F1F1F"
+            android:layout_marginLeft="400dp"
+            android:layout_marginStart="113dp"
+            android:textAlignment="textEnd"
+            android:gravity="end"
+            android:layout_below="@+id/beginningTime">
+        </TextView>
+
+        <TextView
+            android:id="@+id/velocity"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="Velocidad"
+            android:textSize="18dp"
+            android:textColor="#2F1F1F"
+            android:textAlignment="center"
+            android:layout_below="@+id/endingAddress"
+            android:layout_marginTop="10dp"
+            android:gravity="center_horizontal">
+        </TextView>
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="Tiempo"
+            android:textSize="18dp"
+            android:textColor="#2F1F1F"
+            android:textAlignment="textEnd"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@+id/velocity"
+            android:layout_below="@+id/endingAddress"
+            android:gravity="center_horizontal">
+        </TextView>
+
+        <TextView
+            android:id="@+id/distance"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="Distancia"
+            android:textSize="18dp"
+            android:textColor="#2F1F1F"
+            android:textAlignment="textEnd"
+            android:layout_below="@+id/endingAddress"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@+id/time"
+            android:gravity="center_horizontal">
+        </TextView>
+
+    </RelativeLayout>
+
 
 </RelativeLayout>
