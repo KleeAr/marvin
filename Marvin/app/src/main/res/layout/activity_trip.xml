@@ -22,7 +22,9 @@
         android:layout_alignParentStart="false"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="false"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:nestedScrollingEnabled="false"
+        android:onClick="share" />
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"

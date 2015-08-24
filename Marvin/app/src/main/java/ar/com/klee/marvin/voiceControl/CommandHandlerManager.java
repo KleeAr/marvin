@@ -90,6 +90,7 @@ public class CommandHandlerManager {
     public static final int ACTIVITY_HELP = 10;
     public static final int ACTIVITY_PARKING = 11;
     public static final int ACTIVITY_SETTINGS = 12;
+    public static final int ACTIVITY_TRIP = 13;
     private static CommandHandlerManager instance;
 
     private int currentActivity = ACTIVITY_MAIN;
@@ -116,6 +117,7 @@ public class CommandHandlerManager {
     private List<CommandHandler> commandHandlersHelp;
     private List<CommandHandler> commandHandlersParking;
     private List<CommandHandler> commandHandlersSettings;
+    private List<CommandHandler> commandHandlersTrip;
 
     private Map<Integer,List<CommandHandler>> commandHandlers;
     private CommandHandlerContext currentContext;
@@ -226,6 +228,8 @@ public class CommandHandlerManager {
 
         commandHandlersSettings = Arrays.asList();
 
+        commandHandlersTrip = Arrays.asList();
+
         commandHandlers = new HashMap<>();
 
         commandHandlers.put(ACTIVITY_MAIN,commandHandlersMainMenu);
@@ -239,6 +243,7 @@ public class CommandHandlerManager {
         commandHandlers.put(ACTIVITY_HELP,commandHandlersHelp);
         commandHandlers.put(ACTIVITY_PARKING,commandHandlersParking);
         commandHandlers.put(ACTIVITY_SETTINGS,commandHandlersSettings);
+        commandHandlers.put(ACTIVITY_TRIP,commandHandlersTrip);
 
     }
 
