@@ -84,16 +84,6 @@ public class TripMap extends Fragment {
 
     }
 
-    public void setZoom(int value){
-        zoom = value;
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(googleMap.getCameraPosition().target).zoom(zoom).build();
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-    }
-
-    public int getZoom(){
-        return zoom;
-    }
-
     @Override
     public void onResume() {
         super.onResume();

@@ -244,10 +244,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-        if(savedInstanceState == null){
-            setFragment(0, MisViajesFragment.class);
-        }
-
     }
 
     public int getActualFragmentPosition() {
