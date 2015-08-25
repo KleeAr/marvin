@@ -296,26 +296,29 @@ public class MapFragment extends Fragment {
 
         captureScreen();
 
+        MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
+        SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = mPrefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(trip.getEnding());
+        prefsEditor.putString("ParkingSite", json);
+
         if(hourWithDecimals >= MIN_TRIP_TIME) {
 
             //TODO Guardar en Historial. Consultar si supera el tiempo mínimo de viaje
-
-            MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
-
-            SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
 
             Integer numberOfTrips = mPrefs.getInt("NumberOfTrips",0);
 
             numberOfTrips++;
 
-            SharedPreferences.Editor prefsEditor = mPrefs.edit();
-            Gson gson = new Gson();
-            String json = gson.toJson(trip);
+            gson = new Gson();
+            json = gson.toJson(trip);
             prefsEditor.putInt("NumberOfTrips",numberOfTrips);
             prefsEditor.putString("Trip"+numberOfTrips.toString(), json);
-            prefsEditor.commit();
 
         }
+
+        prefsEditor.commit();
 
     }
 
@@ -342,8 +345,8 @@ public class MapFragment extends Fragment {
                 String timeStamp = new SimpleDateFormat("yyMMdd_HHmmss").format(new Date());
 
                 try {
-                    FileOutputStream out = new FileOutputStream("/sdcard/MARVIN/" + finishAddress + "_" + timeStamp + ".png");
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+                    FileOutputStream out = new FileOutputStream("/sdcard/MARVIN/" + finishAddress + "_" + timeStamp + ".jpg");
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -353,62 +356,10 @@ public class MapFragment extends Fragment {
         googleMap.snapshot(callback);
     }
 
-    public LatLng getCoordinates(String address){
-
-        Geocoder geocoder = new Geocoder(CommandHandlerManager.getInstance().getActivity());
-        List<Address> addresses = null;
-        try {
-            addresses = geocoder.getFromLocationName(address, 1, -55.0, -73.0, -21.0, -56.0);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Double latitude = 0.0;
-        Double longitude = 0.0;
-
-        if(addresses!=null && addresses.size() > 0) {
-            latitude= addresses.get(0).getLatitude();
-            longitude= addresses.get(0).getLongitude();
-        }
-
-        return new LatLng(latitude,longitude);
-
-    }
-
     public void goToCurrentPosition(){
 
         CameraPosition cameraPosition = new CameraPosition.Builder().target(tripPath.get(tripPath.size()-1)).zoom(zoom).build();
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
-    }
-
-    public void search(String address, LatLng coordinates){
-
-        if(searchMarker != null){
-            searchMarker.remove();
-        }
-
-        // create marker
-        MarkerOptions marker = new MarkerOptions().position(coordinates);
-
-        // Changing marker icon
-        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).title("Posición Actual").snippet(address);
-
-        // adding marker
-        searchMarker = googleMap.addMarker(marker);
-
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(coordinates).zoom(zoom).build();
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
-    }
-
-    public void navigate(double lat, double lon){
-
-        final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?" +
-                "saddr=" + tripPath.get(tripPath.size()-1).latitude + "," + tripPath.get(tripPath.size()-1).longitude +
-                "&daddr=" + lat + "," + lon));
-        intent.setClassName("com.google.android.apps.maps","com.google.andrid.maps.MapsActivity");
-        startActivity(intent);
 
     }
 

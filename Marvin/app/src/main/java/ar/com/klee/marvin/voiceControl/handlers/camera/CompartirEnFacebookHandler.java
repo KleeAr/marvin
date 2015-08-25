@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import ar.com.klee.marvin.activities.CameraActivity;
+import ar.com.klee.marvin.activities.TripActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
@@ -55,7 +56,7 @@ public class CompartirEnFacebookHandler extends CommandHandler {
 
     //PRONUNCIA MENSAJE
     public CommandHandlerContext stepOne(CommandHandlerContext context){
-        getTextToSpeech().speakText("¿Querés publicar el mensaje " + context.getString(MESSAGE) + " junto a la foto?");
+        getTextToSpeech().speakText("¿Querés publicar el mensaje " + context.getString(MESSAGE) + "?");
         context.put(SET_MESSAGE, false);
         return context.put(STEP, 3);
     }
@@ -76,7 +77,7 @@ public class CompartirEnFacebookHandler extends CommandHandler {
         }
 
         if(input.equals("no")){
-            getTextToSpeech().speakText("¿Qué mensaje deseás publicar junto a la foto?");
+            getTextToSpeech().speakText("¿Qué mensaje deseás publicar?");
             return context.put(STEP, 1);
         }
 
@@ -200,7 +201,17 @@ public class CompartirEnFacebookHandler extends CommandHandler {
 
             }
 
-            context.getObject(ACTIVITY, CameraActivity.class).shareInFacebook(textToPublish);
+            CameraActivity cameraActivity = null;
+            TripActivity tripActivity = null;
+
+            if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
+                cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
+                cameraActivity.shareInFacebook(textToPublish);
+            }else{
+                tripActivity = context.getObject(ACTIVITY, TripActivity.class);
+                tripActivity.shareInFacebook(textToPublish);
+            }
+
             return context.put(STEP, 0);
         }
         getTextToSpeech().speakText("Debés indicar sí, no o cancelar");

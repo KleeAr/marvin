@@ -73,6 +73,12 @@ public class AbrirAplicacionHandler extends CommandHandler {
 
             currentContext.put(STEP, 0);
             return currentContext;
+        }else if(app.equals("dónde estacioné")) {
+
+
+
+            currentContext.put(STEP, 0);
+            return currentContext;
         }else if(app.equals("marvin")) {
             getTextToSpeech().speakText("La aplicación " + app + " ya se está ejecutando");
             currentContext.put(STEP, 0);

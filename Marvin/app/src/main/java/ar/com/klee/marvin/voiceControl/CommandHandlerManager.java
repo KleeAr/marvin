@@ -36,6 +36,7 @@ import ar.com.klee.marvin.voiceControl.handlers.map.IrADireccionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.map.IrASitioHandler;
 import ar.com.klee.marvin.voiceControl.handlers.map.ReducirZoomHandler;
 import ar.com.klee.marvin.voiceControl.handlers.map.UbicacionActualHandler;
+import ar.com.klee.marvin.voiceControl.handlers.parking.CerrarDondeEstacioneHandler;
 import ar.com.klee.marvin.voiceControl.handlers.smsInbox.CerrarHistorialDeSMSHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.DireccionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.AnteriorInterseccionHandler;
@@ -75,6 +76,9 @@ import ar.com.klee.marvin.voiceControl.handlers.camera.SacarFotoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.SiguienteCancionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.SubirVolumenHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.TwittearHandler;
+import ar.com.klee.marvin.voiceControl.handlers.trip.CerrarViajeHandler;
+import ar.com.klee.marvin.voiceControl.handlers.trip.CompartirViajeHandler;
+import ar.com.klee.marvin.voiceControl.handlers.tripHistory.CerrarHistorialDeViajesHandler;
 
 public class CommandHandlerManager {
 
@@ -123,7 +127,7 @@ public class CommandHandlerManager {
     private CommandHandlerContext currentContext;
     private CommandHandler compartirEnFacebookHandler;
     private CommandHandler compartirEnTwitterHandler;
-    private CommandHandler compartirInstagramHandler;
+    private CommandHandler compartirEnInstagramHandler;
 
     public static CommandHandlerManager getInstance() {
         if (instance == null) {
@@ -147,7 +151,7 @@ public class CommandHandlerManager {
 
         this.compartirEnTwitterHandler = new CompartirEnTwitterHandler(textToSpeech, context, this);
         this.compartirEnFacebookHandler = new CompartirEnFacebookHandler(textToSpeech, context, this);
-        this.compartirInstagramHandler = new CompartirEnInstagramHandler(textToSpeech, context, this);
+        this.compartirEnInstagramHandler = new CompartirEnInstagramHandler(textToSpeech, context, this);
 
         // Initialize all command handlers
         commandHandlersMainMenu = Arrays.asList(new AbrirAplicacionHandler(textToSpeech, context, this),
@@ -188,7 +192,7 @@ public class CommandHandlerManager {
             new CompartirFotoHandler(textToSpeech, context, this ),
             this.compartirEnFacebookHandler,
             this.compartirEnTwitterHandler,
-            this.compartirInstagramHandler,
+            this.compartirEnInstagramHandler,
             new CompartirFotoHandler(textToSpeech, context, this),
             new GuardarFotoHandler(textToSpeech, context, this),
             new GuardarYCompartirFotoHandler(textToSpeech, context, this),
@@ -216,7 +220,7 @@ public class CommandHandlerManager {
             new IrASitioHandler(textToSpeech, context, this),
             new CerrarMapaHandler(textToSpeech, context, this));
 
-        commandHandlersTripHistory = Arrays.asList();
+        commandHandlersTripHistory = Arrays.asList((CommandHandler)new CerrarHistorialDeViajesHandler(textToSpeech, context, this));
 
         commandHandlersPlaces = Arrays.asList();
 
@@ -224,11 +228,15 @@ public class CommandHandlerManager {
 
         commandHandlersHelp = Arrays.asList();
 
-        commandHandlersParking = Arrays.asList();
+        commandHandlersParking = Arrays.asList((CommandHandler)new CerrarDondeEstacioneHandler(textToSpeech, context, this));
 
         commandHandlersSettings = Arrays.asList();
 
-        commandHandlersTrip = Arrays.asList();
+        commandHandlersTrip = Arrays.asList(new CerrarViajeHandler(textToSpeech, context, this),
+                this.compartirEnFacebookHandler,
+                this.compartirEnTwitterHandler,
+                this.compartirEnInstagramHandler,
+                new CompartirViajeHandler(textToSpeech, context, this));
 
         commandHandlers = new HashMap<>();
 
@@ -427,11 +435,11 @@ public class CommandHandlerManager {
 
 
     public CommandHandler getCompartirInstagramHandler() {
-        return compartirInstagramHandler;
+        return compartirEnInstagramHandler;
     }
 
     public void setCompartirInstagramHandler(CommandHandler compartirInstagramHandler) {
-        this.compartirInstagramHandler = compartirInstagramHandler;
+        this.compartirEnInstagramHandler = compartirEnInstagramHandler;
     }
 
     public static boolean isInstanceInitialized() {

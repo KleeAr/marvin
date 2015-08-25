@@ -51,6 +51,7 @@ import ar.com.klee.marvin.call.CallDriver;
 import ar.com.klee.marvin.data.Channel;
 import ar.com.klee.marvin.data.Item;
 import ar.com.klee.marvin.fragments.ConfigureAppFragment;
+import ar.com.klee.marvin.fragments.DondeEstacioneFragment;
 import ar.com.klee.marvin.fragments.MainMenuFragment;
 import ar.com.klee.marvin.fragments.MisSitiosFragment;
 import ar.com.klee.marvin.fragments.MisViajesFragment;
@@ -281,8 +282,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 setFragment(5, MisSitiosFragment.class);
                 break;
             case 6:
-                Toast.makeText(getApplicationContext(), "posicion 6" + position, Toast.LENGTH_SHORT).show();
-                //setFragment(5, DondeEstacioneFragment.class);
+                setFragment(5, DondeEstacioneFragment.class);
                 break;
             case 8:
                 setFragment(8, ConfigureAppFragment.class);

@@ -1,6 +1,7 @@
 package ar.com.klee.marvin.gps;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,7 +23,15 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.activities.TripActivity;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
+import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
 
 /**
  * A fragment that launches other parts of the demo application.
@@ -31,8 +40,6 @@ public class TripMap extends Fragment {
 
     private MapView mMapView;
     private GoogleMap googleMap;
-
-    private int zoom;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
@@ -83,6 +90,40 @@ public class TripMap extends Fragment {
         googleMap.animateCamera(cu);
 
     }
+
+    public void captureScreen(){
+
+        GoogleMap.SnapshotReadyCallback callback = new GoogleMap.SnapshotReadyCallback(){
+
+            Bitmap bitmap;
+
+            public void onSnapshotReady(Bitmap snapshot) {
+
+                bitmap = snapshot;
+
+                File mediaStorageDir = new File("/sdcard/", "MARVIN");
+
+                //if this "JCGCamera folder does not exist
+                if (!mediaStorageDir.exists()) {
+                    //if you cannot make this folder return
+                    if (!mediaStorageDir.mkdirs()) {
+                        return;
+                    }
+                }
+
+                try {
+                    FileOutputStream out = new FileOutputStream("/sdcard/MARVIN/trip.jpg");
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+                    ((TripActivity)CommandHandlerManager.getInstance().getActivity()).setMapBitmap(bitmap);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        googleMap.snapshot(callback);
+    }
+
 
     @Override
     public void onResume() {

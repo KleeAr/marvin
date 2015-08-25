@@ -40,7 +40,7 @@ public class TripActivity extends ActionBarActivity {
 
     private CommandHandlerManager commandHandlerManager;
     private Dialog currentDialog;
-    private String mapPath;
+    private String mapPath = "/sdcard/MARVIN/trip.png";
     private Bitmap mapBitmap;
 
     @Override
@@ -53,6 +53,8 @@ public class TripActivity extends ActionBarActivity {
         trip = MisViajesFragment.getInstance().getChosenTrip();
 
         commandHandlerManager = CommandHandlerManager.getInstance();
+
+        commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_TRIP,this);
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -114,7 +116,6 @@ public class TripActivity extends ActionBarActivity {
 
                 STTService.getInstance().setIsListening(false);
                 commandHandlerManager.setNullCommand();
-                customDialog.dismiss();
 
             }
         });
@@ -126,7 +127,6 @@ public class TripActivity extends ActionBarActivity {
 
                 STTService.getInstance().setIsListening(false);
                 commandHandlerManager.setNullCommand();
-                customDialog.dismiss();
 
             }
         });
@@ -138,7 +138,6 @@ public class TripActivity extends ActionBarActivity {
 
                 STTService.getInstance().setIsListening(false);
                 commandHandlerManager.setNullCommand();
-                customDialog.dismiss();
 
             }
         });
@@ -166,15 +165,22 @@ public class TripActivity extends ActionBarActivity {
 
     public void shareInFacebook(String text){
 
+        fragment.captureScreen();
+
         FacebookService facebookService = new FacebookService(this);
 
         facebookService.postImage(mapBitmap);
+
+        File photo = new File(mapPath);
+        photo.delete();
 
         currentDialog.dismiss();
 
     }
 
     public void shareInTwitter(String text){
+
+        fragment.captureScreen();
 
         TwitterService twitterService = TwitterService.getInstance();
 
@@ -189,16 +195,21 @@ public class TripActivity extends ActionBarActivity {
 
     public void shareInInstagram(String text){
 
+        fragment.captureScreen();
+
         InstagramService instagramService = new InstagramService(this);
 
         instagramService.postImageOnInstagram("image/jpeg", text, mapPath);
+
+        File photo = new File(mapPath);
+        photo.delete();
 
         currentDialog.dismiss();
 
     }
 
-    public void closeDialog(){
-        currentDialog.dismiss();
+    public void setMapBitmap(Bitmap bitmap){
+        mapBitmap = bitmap;
     }
 
 }

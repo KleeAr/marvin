@@ -26,6 +26,7 @@ import java.util.List;
 import ar.com.klee.marvin.CardAdapter;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.Site;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 
 
 public class MisSitiosFragment extends Fragment {
@@ -34,6 +35,8 @@ public class MisSitiosFragment extends Fragment {
     RecyclerView.LayoutManager mLayoutManager;
     RecyclerView.Adapter mAdapter;
     List<Site> lSites;
+
+    private CommandHandlerManager commandHandlerManager;
 
 
     public MisSitiosFragment() {
@@ -48,6 +51,8 @@ public class MisSitiosFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.site_recycler_view,container, false);
 
+        commandHandlerManager = CommandHandlerManager.getInstance();
+        commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_TRIP_HISTORY,commandHandlerManager.getMainActivity());
 
         lSites = new ArrayList<Site>();
 
@@ -100,9 +105,6 @@ public class MisSitiosFragment extends Fragment {
                     }
                 });
                 builder.show();
-
-
-
 
             }
         });

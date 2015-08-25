@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import ar.com.klee.marvin.activities.CameraActivity;
+import ar.com.klee.marvin.activities.TripActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
@@ -58,7 +59,7 @@ public class CompartirEnInstagramHandler extends CommandHandler {
     public CommandHandlerContext stepOne(CommandHandlerContext context){
         String message = context.getString(MESSAGE);
         context.put(SET_MESSAGE, false);
-        getTextToSpeech().speakText("¿Querés publicar el mensaje " + message + " junto a la foto?");
+        getTextToSpeech().speakText("¿Querés publicar el mensaje " + message + "?");
         context.put(STEP, 3);
         return context;
 
@@ -70,7 +71,7 @@ public class CompartirEnInstagramHandler extends CommandHandler {
         String input = context.getString(COMMAND);
 
         if(input.equals("si")) {
-            getTextToSpeech().speakText("¿Querés agregar un hashtag junto a la foto?");
+            getTextToSpeech().speakText("¿Querés agregar un hashtag?");
             context.put(STEP, 5);
             return context;
         }
@@ -83,7 +84,7 @@ public class CompartirEnInstagramHandler extends CommandHandler {
         }
 
         if(input.equals("no")){
-            getTextToSpeech().speakText("¿Qué mensaje deseás publicar junto a la foto?");
+            getTextToSpeech().speakText("¿Qué mensaje deseás publicar?");
             context.put(STEP, 1);
             return context;
         }
@@ -129,7 +130,7 @@ public class CompartirEnInstagramHandler extends CommandHandler {
     //INGRESA HASHTAG
     public CommandHandlerContext stepSeven(CommandHandlerContext context){
         String input = context.getString(COMMAND);
-        getTextToSpeech().speakText("¿Querés agregar el hashtag "+input+" junto a la foto?");
+        getTextToSpeech().speakText("¿Querés agregar el hashtag "+input+"?");
         List<String> hashtags = context.getList(INSTAGRAM_HASHTAG, String.class);
         hashtags.add(input);
         context.put(INSTAGRAM_HASHTAG, hashtags);
@@ -187,7 +188,14 @@ public class CompartirEnInstagramHandler extends CommandHandler {
         if(input.equals("no")){
             getTextToSpeech().speakText("Publicando la foto en Instagram");
 
-            CameraActivity cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
+            CameraActivity cameraActivity = null;
+            TripActivity tripActivity = null;
+
+            if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
+                cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
+            }else{
+                tripActivity = context.getObject(ACTIVITY, TripActivity.class);
+            }
 
             String textToPublish = context.getString(MESSAGE);
             List<String> hashtags = context.getList(INSTAGRAM_HASHTAG, String.class);
@@ -222,7 +230,11 @@ public class CompartirEnInstagramHandler extends CommandHandler {
 
             }
 
-            cameraActivity.shareInInstagram(textToPublish);
+            if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
+                cameraActivity.shareInInstagram(textToPublish);
+            }else{
+                tripActivity.shareInInstagram(textToPublish);
+            }
 
             context.put(STEP, 0);
             return context;
