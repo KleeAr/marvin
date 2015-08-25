@@ -75,4 +75,8 @@ public abstract class CommandHandler {
     public boolean isSimilar(String command) {
         return getExpressionMatcher().isSimilar(command);
     }
+
+    public void addSpecificContextData(CommandHandlerContext context) {
+        addSpecificCommandContext(context);
+    }
 }
