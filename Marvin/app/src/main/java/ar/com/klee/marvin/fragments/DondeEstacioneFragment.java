@@ -1,40 +1,20 @@
 package ar.com.klee.marvin.fragments;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
-import com.hudomju.swipe.OnItemClickListener;
-import com.hudomju.swipe.SwipeToDismissTouchListener;
-import com.hudomju.swipe.SwipeableItemClickListener;
-import com.hudomju.swipe.adapter.RecyclerViewAdapter;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import ar.com.klee.marvin.CardAdapter;
 import ar.com.klee.marvin.R;
-import ar.com.klee.marvin.Site;
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.gps.ParkingMap;
-import ar.com.klee.marvin.gps.Trip;
-import ar.com.klee.marvin.gps.TripMap;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 
 

@@ -160,8 +160,6 @@ public class MisViajesFragment extends Fragment {
             tripList.remove(position);
             notifyItemRemoved(position);
 
-            tripList.remove(position);
-
             MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
 
             SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);

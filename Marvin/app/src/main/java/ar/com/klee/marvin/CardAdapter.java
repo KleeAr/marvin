@@ -10,20 +10,25 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.List;
+
+import ar.com.klee.marvin.gps.Site;
 
 public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder>  {
 
     List<Site> mItems;
     String siteName, siteAddress;
 
-    public CardAdapter(List<Site> mItems, String siteName, String siteAddress) {
+    public CardAdapter(List<Site> mItems, String siteName, String siteAddress, LatLng coordinates, int image) {
         super();
 
         this.mItems = mItems;
-        Site site = new Site();
+        Site site = new Site(siteName,siteAddress,coordinates,image);
         site.setSiteName(siteName);
-        site.setSiteThumbnail(R.drawable.sample);
+        if(image==0)
+            site.setSiteThumbnail(R.drawable.sample);
         mItems.add(site);
     }
 
