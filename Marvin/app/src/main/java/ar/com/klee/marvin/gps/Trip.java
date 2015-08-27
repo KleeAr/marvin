@@ -16,7 +16,7 @@ public class Trip {
     private String distance;
     private String time;
     private String averageVelocity;
-    private List<LatLng> tripPath;
+    private List<TripStep> tripPath;
 
     public Trip(double lat, double lon, String address){
         beginning = new LatLng(lat,lon);
@@ -96,11 +96,11 @@ public class Trip {
         this.averageVelocity = averageVelocity;
     }
 
-    public List<LatLng> getTripPath() {
+    public List<TripStep> getTripPath() {
         return tripPath;
     }
 
-    public void setTripPath(List<LatLng> tripPath) {
+    public void setTripPath(List<TripStep> tripPath) {
         this.tripPath = tripPath;
     }
 
@@ -109,11 +109,11 @@ public class Trip {
 
         String path = "";
 
-        path += tripPath.get(0).latitude + "," + tripPath.get(0).longitude;
+        path += tripPath.get(0).getCoordinates().latitude + "," + tripPath.get(0).getCoordinates().longitude;
 
         for(int i=1; i<tripPath.size(); i++){
             path += ";";
-            path += tripPath.get(i).latitude + "," + tripPath.get(i).longitude;
+            path += tripPath.get(i).getCoordinates().latitude + "," + tripPath.get(i).getCoordinates().longitude;
         }
 
         return beginning + ";" +

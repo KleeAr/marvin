@@ -29,14 +29,14 @@ import java.util.List;
 import java.util.Locale;
 
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.activities.SiteActivity;
 import ar.com.klee.marvin.activities.TripActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
-import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
 
 /**
  * A fragment that launches other parts of the demo application.
  */
-public class ParkingMap extends Fragment {
+public class SiteMap extends Fragment {
 
     private MapView mMapView;
     private GoogleMap googleMap;
@@ -44,8 +44,8 @@ public class ParkingMap extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         // inflate and return the layout
-        View v = inflater.inflate(R.layout.fragment_donde_estacione, container, false);
-        mMapView = (MapView) v.findViewById(R.id.parkingMap);
+        View v = inflater.inflate(R.layout.activity_site, container, false);
+        mMapView = (MapView) v.findViewById(R.id.siteMap);
         mMapView.onCreate(savedInstanceState);
 
         mMapView.onResume();// needed to get the map to display immediately
@@ -62,27 +62,50 @@ public class ParkingMap extends Fragment {
         return v;
     }
 
-    public void setParkSite(double latitude, double longitude){
+    public void setSite(Site site){
 
-        Geocoder geocoder = new Geocoder(CommandHandlerManager.getInstance().getContext(), Locale.getDefault());
-        List<Address> list = null;
-        try {
-            list = geocoder.getFromLocation(latitude, longitude, 1);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Address address = list.get(0);
-
-        String a = address.getAddressLine(0);
-
-        MarkerOptions marker = new MarkerOptions().position(new LatLng(latitude,longitude));
-        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)).title("Lugar de Estacionamiento").snippet(a);
+        MarkerOptions marker = new MarkerOptions().position(site.getCoordinates());
+        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)).title(site.getSiteName()).snippet(site.getSiteAddress());
         googleMap.addMarker(marker);
 
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(latitude, longitude)).zoom(17).build();
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(site.getCoordinates()).zoom(17).build();
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
     }
+
+    public void captureScreen(){
+
+        GoogleMap.SnapshotReadyCallback callback = new GoogleMap.SnapshotReadyCallback(){
+
+            Bitmap bitmap;
+
+            public void onSnapshotReady(Bitmap snapshot) {
+
+                bitmap = snapshot;
+
+                File mediaStorageDir = new File("/sdcard/", "MARVIN");
+
+                //if this "JCGCamera folder does not exist
+                if (!mediaStorageDir.exists()) {
+                    //if you cannot make this folder return
+                    if (!mediaStorageDir.mkdirs()) {
+                        return;
+                    }
+                }
+
+                try {
+                    FileOutputStream out = new FileOutputStream("/sdcard/MARVIN/site.png");
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+                    ((SiteActivity)CommandHandlerManager.getInstance().getActivity()).setMapBitmap(bitmap);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        googleMap.snapshot(callback);
+    }
+
 
     @Override
     public void onResume() {

@@ -474,7 +474,7 @@ public class CameraActivity extends ActionBarActivity {
 
         InstagramService instagramService = new InstagramService(this);
 
-        instagramService.postImageOnInstagram("image/jpeg", text, lastImagePath);
+        instagramService.postImageOnInstagram("image/png", text, lastImagePath);
 
         if(onlyShare){
 
@@ -612,7 +612,7 @@ public class CameraActivity extends ActionBarActivity {
         String timeStamp = new SimpleDateFormat("yyMMdd_HHmmss").format(new Date());
         File mediaFile;
         //and make a media file:
-        mediaFile = new File(mediaStorageDir.getPath() + File.separator + "MV_" + timeStamp + ".jpg");
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator + "MV_" + timeStamp + ".png");
 
         return mediaFile;
     }

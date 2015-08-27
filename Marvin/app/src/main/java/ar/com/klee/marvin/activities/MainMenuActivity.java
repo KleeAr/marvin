@@ -309,13 +309,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     @Override
     public void onBackPressed() {
 
-        //Leo: agregue esta parte por el menu
-        if (mDrawerLayout.isDrawerOpen(mLvDrawerMenu)) {
-            mDrawerLayout.closeDrawer(mLvDrawerMenu);
-        } else {
-            super.onBackPressed();
-        }
-
         if(!previousMenus.empty()){
 
             int position = previousMenus.pop();
@@ -365,8 +358,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
             return;
         }
-
-
 
         mapFragment.finishTrip();
 

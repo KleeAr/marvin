@@ -68,7 +68,7 @@ public class MapFragment extends Fragment {
     private double startLongitude = 0.0;
     private String startAddress = "";
 
-    private List<LatLng> tripPath = new ArrayList<LatLng>();
+    private List<TripStep> tripPath = new ArrayList<TripStep>();
     private String lastAddress = "";
 
     private double finishLatitude = 0.0;
@@ -144,13 +144,13 @@ public class MapFragment extends Fragment {
 
         trip = new Trip(lat, lon, address);
 
-        tripPath.add(new LatLng(lat,lon));
+        tripPath.add(new TripStep(lat,lon,address));
 
     }
 
     public void refreshMap(double lat, double lon, String address){
 
-        tripPath.add(new LatLng(lat,lon));
+        tripPath.add(new TripStep(lat,lon,address));
 
         lastAddress = address;
 
@@ -208,7 +208,7 @@ public class MapFragment extends Fragment {
         if(tripPath.size()==0)
             return;
 
-        LatLng coordinates = tripPath.get(tripPath.size()-1);
+        LatLng coordinates = tripPath.get(tripPath.size()-1).getCoordinates();
 
         trip.setEnding(coordinates);
         trip.setTripPath(tripPath);
@@ -255,14 +255,15 @@ public class MapFragment extends Fragment {
         long hourWithDecimals = hours + hourDecimals;
 
         double polylineLength = 0;
+
         for (int i = 0; i < tripPath.size(); i++) {
-            double lat = tripPath.get(i).latitude;
-            double lng = tripPath.get(i).longitude;
+            double lat = tripPath.get(i).getCoordinates().latitude;
+            double lng = tripPath.get(i).getCoordinates().longitude;
 
             float[] results = new float[1];
-            if (i > 0)
+            if (i > 0 && tripPath.get(i).getAddress().equals(tripPath.get(i-1).getAddress()))
                 Location.distanceBetween(
-                    tripPath.get(i-1).latitude,tripPath.get(i-1).longitude,
+                    tripPath.get(i-1).getCoordinates().latitude,tripPath.get(i-1).getCoordinates().longitude,
                     lat,lng,
                     results);
 
@@ -279,14 +280,14 @@ public class MapFragment extends Fragment {
 
         PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
         for (int z = 0; z < list.size(); z++) {
-            LatLng point = tripPath.get(z);
+            LatLng point = tripPath.get(z).getCoordinates();
             options.add(point);
         }
         googleMap.addPolyline(options);
 
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        for (LatLng coor : tripPath) {
-            builder.include(coor);
+        for (TripStep coor : tripPath) {
+            builder.include(coor.getCoordinates());
         }
         LatLngBounds bounds = builder.build();
 
@@ -304,8 +305,6 @@ public class MapFragment extends Fragment {
         prefsEditor.putString("ParkingSite", json);
 
         if(hourWithDecimals >= MIN_TRIP_TIME) {
-
-            //TODO Guardar en Historial. Consultar si supera el tiempo mínimo de viaje
 
             Integer numberOfTrips = mPrefs.getInt("NumberOfTrips",0);
 
@@ -342,11 +341,21 @@ public class MapFragment extends Fragment {
                     }
                 }
 
+                mediaStorageDir = new File("/sdcard/MARVIN", "Estacionamiento");
+
+                //if this "JCGCamera folder does not exist
+                if (!mediaStorageDir.exists()) {
+                    //if you cannot make this folder return
+                    if (!mediaStorageDir.mkdirs()) {
+                        return;
+                    }
+                }
+
                 String timeStamp = new SimpleDateFormat("yyMMdd_HHmmss").format(new Date());
 
                 try {
-                    FileOutputStream out = new FileOutputStream("/sdcard/MARVIN/" + finishAddress + "_" + timeStamp + ".jpg");
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+                    FileOutputStream out = new FileOutputStream("/sdcard/MARVIN/Estacionamiento/" + finishAddress + "_" + timeStamp + ".png");
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -358,7 +367,7 @@ public class MapFragment extends Fragment {
 
     public void goToCurrentPosition(){
 
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(tripPath.get(tripPath.size()-1)).zoom(zoom).build();
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(tripPath.get(tripPath.size()-1).getCoordinates()).zoom(zoom).build();
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
     }

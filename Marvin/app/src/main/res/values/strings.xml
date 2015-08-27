@@ -37,7 +37,7 @@
 
     <string name="list_view">List View</string>
     <string name="recycler_view">Recycler View</string>
-    <string name="deleted">Viaje eliminado...</string>
+    <string name="deleted">Eliminar Elemento</string>
     <string name="undo">Deshacer</string>
 
     <!-- Drawer Menu items -->

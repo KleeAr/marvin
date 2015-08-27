@@ -1,0 +1,55 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ar.com.klee.marvin.activities.TripActivity">
+
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/siteMap"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        class="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentEnd="true" />
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/img_thumbnail"
+            android:layout_width="fill_parent"
+            android:layout_height="150dp"
+            android:scaleType="fitXY"/>
+
+        <TextView
+            android:id="@+id/tv_site"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:layout_gravity="bottom"
+            android:gravity="center_vertical"
+            android:background="#757575"
+            android:alpha="0.8"
+            android:textSize="@dimen/abc_text_size_headline_material"
+            android:text="Test"
+            android:layout_alignParentBottom="false"
+            android:layout_alignParentEnd="false"
+            android:layout_alignBottom="@+id/img_thumbnail" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ib_Shared"
+            android:layout_gravity="end|bottom"
+            android:src="@android:drawable/ic_menu_share"
+            android:layout_alignParentRight="true"
+            android:layout_alignBottom="@+id/img_thumbnail" />
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

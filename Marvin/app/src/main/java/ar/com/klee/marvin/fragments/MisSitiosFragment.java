@@ -1,19 +1,26 @@
 package ar.com.klee.marvin.fragments;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputFilter;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,19 +38,33 @@ import com.hudomju.swipe.adapter.RecyclerViewAdapter;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import ar.com.klee.marvin.CardAdapter;
 import ar.com.klee.marvin.R;
@@ -61,7 +82,6 @@ public class MisSitiosFragment extends Fragment {
     List<Site> lSites = new ArrayList<Site>();
 
     private CommandHandlerManager commandHandlerManager;
-
 
     public MisSitiosFragment() {
         // Required empty public constructor
@@ -85,7 +105,9 @@ public class MisSitiosFragment extends Fragment {
 
         int numberOfSites = mPrefs.getInt("NumberOfSites",0);
 
-        for(Integer i=1; i<=numberOfSites; i++) {
+        Integer i;
+
+        for(i=1; i<=numberOfSites; i++) {
             Gson gson = new Gson();
             String json = mPrefs.getString("Site"+i.toString(), "");
             lSites.add(gson.fromJson(json, Site.class));
@@ -94,18 +116,23 @@ public class MisSitiosFragment extends Fragment {
         if(lSites.size()==0)
             Toast.makeText(mainMenuActivity, "No hay sitios guardados", Toast.LENGTH_SHORT).show();
 
+        java.util.Collections.sort(lSites,new SiteComparator());
+
         mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
 
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
+        mAdapter = new CardAdapter(lSites);
+        mRecyclerView.setAdapter(mAdapter);
+
         FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                AlertDialog.Builder builder =new AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
+                final AlertDialog.Builder builder =new AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
                 builder.setCancelable(false);
                 builder.setTitle("Nuevo Sitio Favorito");
 
@@ -128,14 +155,24 @@ public class MisSitiosFragment extends Fragment {
 
                         MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
 
-                        if(siteName.getText().equals("")) {
+                        if(siteName.getText().toString().equals("")) {
                             Toast.makeText(mma, "Debe ingresar un nombre", Toast.LENGTH_SHORT).show();
                             return;
                         }
 
-                        if(siteAddress.getText().equals("")) {
+                        if(siteAddress.getText().toString().equals("")) {
                             Toast.makeText(mma, "Debe ingresar una dirección", Toast.LENGTH_SHORT).show();
                             return;
+                        }
+
+                        int j=0;
+
+                        while(j<lSites.size()){
+                            Site s = lSites.get(j);
+                            if(s.getSiteName().equals(siteName.getText().toString())){
+                                Toast.makeText(mma, "El sitio ya exite", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
                         }
 
                         LatLng coordinates = getCoordinates(siteAddress.getText().toString());
@@ -155,92 +192,78 @@ public class MisSitiosFragment extends Fragment {
 
                         prefsEditor.putInt("NumberOfSites",numberOfSites);
                         prefsEditor.putString("Site" + numberOfSites.toString(), json);
+                        prefsEditor.commit();
 
-                        String xml = "http://cbk0.google.com/cbk?output=xml&hl=x-local&ll=";
-                        xml += ((Double)coordinates.latitude).toString() + ",";
-                        xml += ((Double)coordinates.longitude).toString() + "&it=all";
+                        final ImageGetterTask task = (ImageGetterTask) new ImageGetterTask().execute();
 
-                        String panoId = "";
-                        boolean imageExists = true;
+                        dialog.dismiss();
 
-                        try {
-                            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-                            DocumentBuilder db = null;
-                            db = dbf.newDocumentBuilder();
-                            Document doc = db.parse(new URL(xml).openStream());
-                            Element root = doc.getDocumentElement();
-                            NodeList nodel = root.getChildNodes();
+                        if(task.getImageExists()){
 
-                            int a;
-
-                            for (a = 0; a < nodel.getLength(); a++) {
-                                Node node = nodel.item(a);
-                                if(node instanceof Element) {
-                                    panoId = ((Element)node).getAttribute("pano_id");
-                                    break;
-                                }
-                            }
-
-                            if(a == nodel.getLength())
-                                imageExists = false;
-
-                        } catch (ParserConfigurationException e) {
-                            e.printStackTrace();
-                        } catch (SAXException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-                        if(imageExists) {
-
-                            String url1, url2;
-
-                            url1 = "http://cbk0.google.com/cbk?output=tile&panoid=" + panoId + "&zoom=3&x=4&y=1";
-                            url2 = "http://cbk0.google.com/cbk?output=tile&panoid=" + panoId + "&zoom=3&x=2&y=1";
-
-                            Bitmap img1 = null;
-                            Bitmap img2 = null;
-
-                            try {
-                                img1 = BitmapFactory.decodeStream((InputStream) new URL(url1).getContent());
-                                img2 = BitmapFactory.decodeStream((InputStream) new URL(url2).getContent());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
-                            dialog.dismiss();
-
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
+                            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
                             builder.setCancelable(true);
                             builder.setTitle("Imagen a Mostrar");
 
-                            Context context = getActivity();
-                            LinearLayout layout = new LinearLayout(context);
+                            final Context context = getActivity();
+                            final LinearLayout layout = new LinearLayout(context);
                             layout.setOrientation(LinearLayout.HORIZONTAL);
 
-                            LinearLayout layoutLeft = new LinearLayout(context);
-                            layoutLeft.setOrientation(LinearLayout.VERTICAL);
-
-                            LinearLayout layoutRight = new LinearLayout(context);
-                            layoutRight.setOrientation(LinearLayout.VERTICAL);
-
-                            layout.addView(layoutLeft);
-                            layout.addView(layoutRight);
-
                             final ImageView image1 = new ImageView(context);
-                            image1.setImageBitmap(img1);
-                            layoutLeft.addView(image1);
-
                             final ImageView image2 = new ImageView(context);
-                            image2.setImageBitmap(img2);
-                            layoutRight.addView(image2);
 
-                            builder.setView(layout);
-                            builder.setPositiveButton("Imagen 1", new DialogInterface.OnClickListener() {
+                            Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                public void run() {
+                                    image1.setImageBitmap(task.getImg1());
+                                    layout.addView(image1);
+
+                                    image2.setImageBitmap(task.getImg2());
+                                    layout.addView(image2);
+
+                                    int px = (int) (250 * context.getResources().getDisplayMetrics().density);
+
+                                    image1.getLayoutParams().height = px;
+                                    image1.getLayoutParams().width = px;
+
+                                    image2.getLayoutParams().height = px;
+                                    image2.getLayoutParams().width = px;
+
+                                    builder.setView(layout);
+                                }
+                            }, 3000);
+
+
+                            builder.setNegativeButton("Imagen 1", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
 
-                                    newSite.setSiteThumbnail(image1.getImageAlpha());
+                                    File mediaStorageDir = new File("/sdcard/", "MARVIN");
+
+                                    if (!mediaStorageDir.exists()) {
+                                        if (!mediaStorageDir.mkdirs()) {
+                                            return;
+                                        }
+                                    }
+
+                                    mediaStorageDir = new File("/sdcard/MARVIN", "Sitios");
+
+                                    if (!mediaStorageDir.exists()) {
+                                        if (!mediaStorageDir.mkdirs()) {
+                                            return;
+                                        }
+                                    }
+
+                                    FileOutputStream out = null;
+                                    try {
+                                        out = new FileOutputStream("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                                        task.getImg1().compress(Bitmap.CompressFormat.PNG, 90, out);
+                                    } catch (FileNotFoundException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    newSite.setSiteThumbnail(1);
+                                    newSite.setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                                    lSites.get(lSites.size()-1).setSiteThumbnail(1);
+                                    lSites.get(lSites.size()-1).setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
 
                                     MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
                                     SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
@@ -249,10 +272,11 @@ public class MisSitiosFragment extends Fragment {
                                     String json = gson.toJson(newSite);
                                     Integer numberOfSites = mPrefs.getInt("NumberOfSites",0);
                                     prefsEditor.putString("Site" + numberOfSites.toString(), json);
+                                    prefsEditor.commit();
 
                                     dialog.dismiss();
 
-                                    mAdapter = new CardAdapter(lSites, siteName.getText().toString(), siteAddress.getText().toString(),newSite.getCoordinates(),newSite.getSiteThumbnail());
+                                    mAdapter = new CardAdapter(lSites);
                                     mRecyclerView.setAdapter(mAdapter);
                                 }
                             });
@@ -260,26 +284,92 @@ public class MisSitiosFragment extends Fragment {
                             builder.setPositiveButton("Imagen 2", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
 
-                                    newSite.setSiteThumbnail(image2.getImageAlpha());
+                                    File mediaStorageDir = new File("/sdcard/", "MARVIN");
+
+                                    if (!mediaStorageDir.exists()) {
+                                        if (!mediaStorageDir.mkdirs()) {
+                                            return;
+                                        }
+                                    }
+
+                                    mediaStorageDir = new File("/sdcard/MARVIN", "Sitios");
+
+                                    if (!mediaStorageDir.exists()) {
+                                        if (!mediaStorageDir.mkdirs()) {
+                                            return;
+                                        }
+                                    }
+
+                                    FileOutputStream out = null;
+                                    try {
+                                        out = new FileOutputStream("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                                        task.getImg2().compress(Bitmap.CompressFormat.PNG, 90, out);
+                                    } catch (FileNotFoundException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    newSite.setSiteThumbnail(1);
+                                    newSite.setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                                    lSites.get(lSites.size()-1).setSiteThumbnail(1);
+                                    lSites.get(lSites.size()-1).setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
 
                                     MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
                                     SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
                                     SharedPreferences.Editor prefsEditor = mPrefs.edit();
                                     Gson gson = new Gson();
                                     String json = gson.toJson(newSite);
-                                    Integer numberOfSites = mPrefs.getInt("NumberOfSites",0);
+                                    Integer numberOfSites = mPrefs.getInt("NumberOfSites", 0);
                                     prefsEditor.putString("Site" + numberOfSites.toString(), json);
+                                    prefsEditor.commit();
 
                                     dialog.dismiss();
 
-                                    mAdapter = new CardAdapter(lSites, siteName.getText().toString(), siteAddress.getText().toString(),newSite.getCoordinates(),newSite.getSiteThumbnail());
+                                    mAdapter = new CardAdapter(lSites);
                                     mRecyclerView.setAdapter(mAdapter);
                                 }
                             });
-                            builder.show();
+                            builder.setOnKeyListener(new DialogInterface.OnKeyListener() {
+                                @Override
+                                public boolean onKey (DialogInterface dialog, int keyCode, KeyEvent event) {
+                                    if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP && !event.isCanceled()) {
+
+                                        newSite.setSiteThumbnail(0);
+                                        newSite.setSiteImage(null);
+                                        lSites.get(lSites.size()-1).setSiteThumbnail(0);
+                                        lSites.get(lSites.size()-1).setSiteImage(null);
+
+                                        MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
+                                        SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
+                                        SharedPreferences.Editor prefsEditor = mPrefs.edit();
+                                        Gson gson = new Gson();
+                                        String json = gson.toJson(newSite);
+                                        Integer numberOfSites = mPrefs.getInt("NumberOfSites", 0);
+                                        prefsEditor.putString("Site" + numberOfSites.toString(), json);
+                                        prefsEditor.commit();
+
+                                        dialog.dismiss();
+
+                                        mAdapter = new CardAdapter(lSites);
+                                        mRecyclerView.setAdapter(mAdapter);
+
+                                        dialog.dismiss();
+                                        return true;
+                                    }
+                                    return false;
+                                }
+
+                            });
+
+                            Handler handler2 = new Handler();
+                            handler2.postDelayed(new Runnable() {
+                                public void run() {
+                                    builder.show();
+                                }
+                            }, 3000);
+
                         }
                         else {
-                            mAdapter = new CardAdapter(lSites, siteName.getText().toString(), siteAddress.getText().toString(),coordinates,0);
+                            mAdapter = new CardAdapter(lSites);
                             mRecyclerView.setAdapter(mAdapter);
                         }
                     }
@@ -290,6 +380,7 @@ public class MisSitiosFragment extends Fragment {
                         dialog.dismiss();
                     }
                 });
+
                 builder.show();
 
             }
@@ -307,6 +398,25 @@ public class MisSitiosFragment extends Fragment {
                             @Override
                             public void onDismiss(RecyclerViewAdapter view, int position) {
                                 lSites.remove(position);
+                                MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
+
+                                SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
+
+                                Integer numberOfSites = lSites.size();
+
+                                SharedPreferences.Editor prefsEditor = mPrefs.edit();
+                                Gson gson = new Gson();
+                                prefsEditor.putInt("NumberOfSites",numberOfSites);
+                                Integer i;
+                                for(i=1;i<=numberOfSites;i++) {
+                                    String json = gson.toJson(lSites.get(i-1));
+                                    prefsEditor.putString("Site" + i.toString(), json);
+                                }
+                                prefsEditor.commit();
+
+                                mAdapter = new CardAdapter(lSites);
+                                mRecyclerView.setAdapter(mAdapter);
+
                             }
                         });
         mRecyclerView.setOnTouchListener(touchListener);
@@ -318,25 +428,6 @@ public class MisSitiosFragment extends Fragment {
             public void onItemClick(View view, int position) {
                 if (view.getId() == R.id.txt_delete) {
                     touchListener.processPendingDismisses();
-
-                    lSites.remove(position);
-
-                    MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
-
-                    SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
-
-                    Integer numberOfSites = lSites.size()-1;
-
-                    SharedPreferences.Editor prefsEditor = mPrefs.edit();
-                    Gson gson = new Gson();
-                    prefsEditor.putInt("numberOfSites",numberOfSites);
-                    Integer i;
-                    for(i=0;i<=numberOfSites;i++) {
-                        String json = gson.toJson(lSites.get(i));
-                        prefsEditor.putString("Site" + numberOfSites.toString(), json);
-                    }
-                    prefsEditor.commit();
-
                 } else if (view.getId() == R.id.txt_undo) {
                     touchListener.undoPendingDismiss();
                 }
@@ -367,6 +458,129 @@ public class MisSitiosFragment extends Fragment {
 
         return new LatLng(latitude,longitude);
 
+    }
+
+    class ImageGetterTask extends AsyncTask<Void, Void, Void> {
+
+        private Bitmap img1;
+        private Bitmap img2;
+        private boolean imageExists;
+
+        protected Void doInBackground(Void... params) {
+
+            MainMenuActivity mainMenuActivity;
+
+            mainMenuActivity = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
+
+            SharedPreferences mPrefs = mainMenuActivity.getPreferences(mainMenuActivity.MODE_PRIVATE);
+
+            Integer numberOfSites = mPrefs.getInt("NumberOfSites",0);
+
+            Gson gson = new Gson();
+            String json = mPrefs.getString("Site"+numberOfSites.toString(), "");
+            final Site newSite = gson.fromJson(json, Site.class);
+
+            String xml = "http://cbk0.google.com/cbk?output=xml&hl=x-local&ll=";
+            xml += ((Double)(newSite.getCoordinates().latitude)).toString() + ",";
+            xml += ((Double)(newSite.getCoordinates().longitude)).toString() + "&it=all";
+
+            String panoId = "";
+            imageExists = true;
+
+            try {
+                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                DocumentBuilder db = null;
+                db = dbf.newDocumentBuilder();
+                Document doc = db.parse(new URL(xml).openStream());
+
+                TransformerFactory tf = TransformerFactory.newInstance();
+                Transformer transformer = tf.newTransformer();
+                transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+                StringWriter writer = new StringWriter();
+                transformer.transform(new DOMSource(doc), new StreamResult(writer));
+                String output = writer.getBuffer().toString().replaceAll("\n|\r", "");
+
+                if(output.equals("<panorama/>"))
+                    imageExists = false;
+                else{
+                    int index = output.indexOf("pano_id");
+                    panoId = output.substring(index+9,index+31);
+                }
+
+                if(imageExists) {
+
+                    String url1, url2;
+
+                    url1 = "http://cbk0.google.com/cbk?output=tile&panoid=" + panoId + "&zoom=3&x=4&y=1";
+                    url2 = "http://cbk0.google.com/cbk?output=tile&panoid=" + panoId + "&zoom=3&x=2&y=1";
+
+                    img1 = null;
+                    img2 = null;
+
+                    try {
+                        URL url = new URL(url1);
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                        connection.setDoInput(true);
+                        connection.connect();
+                        InputStream input = connection.getInputStream();
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        img1 = BitmapFactory.decodeStream(input,null,options);
+
+                        if(input!=null)
+                            input.close();
+
+                        URL urlDos = new URL(url2);
+                        HttpURLConnection connection2 = (HttpURLConnection) urlDos.openConnection();
+                        connection2.setDoInput(true);
+                        connection2.connect();
+                        InputStream input2 = connection2.getInputStream();
+                        BitmapFactory.Options options2 = new BitmapFactory.Options();
+                        img2 = BitmapFactory.decodeStream(input2,null,options2);
+
+                        if(input2!=null)
+                            input.close();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+            } catch (ParserConfigurationException e) {
+                e.printStackTrace();
+            } catch (SAXException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (TransformerConfigurationException e) {
+                e.printStackTrace();
+            } catch (TransformerException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+
+        }
+
+        public Bitmap getImg1() {
+            return img1;
+        }
+
+        public Bitmap getImg2() {
+            return img2;
+        }
+
+        public boolean getImageExists() {
+            return imageExists;
+        }
+
+    }
+
+    class SiteComparator implements Comparator<Site> {
+        @Override
+        public int compare(Site a, Site b) {
+            return a.getSiteName().compareToIgnoreCase(b.getSiteName());
+        }
     }
 
 }

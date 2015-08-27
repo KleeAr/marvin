@@ -1,29 +1,31 @@
 package ar.com.klee.marvin.activities;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 
+import ar.com.klee.marvin.CardAdapter;
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.fragments.MisSitiosFragment;
 import ar.com.klee.marvin.fragments.MisViajesFragment;
+import ar.com.klee.marvin.gps.Site;
+import ar.com.klee.marvin.gps.SiteMap;
 import ar.com.klee.marvin.gps.Trip;
 import ar.com.klee.marvin.gps.TripMap;
 import ar.com.klee.marvin.social.FacebookService;
@@ -31,67 +33,55 @@ import ar.com.klee.marvin.social.InstagramService;
 import ar.com.klee.marvin.social.TwitterService;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
-import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
 
-public class TripActivity extends ActionBarActivity {
+public class SiteActivity extends ActionBarActivity {
 
-    private TripMap fragment;
-    private Trip trip;
+    private SiteMap fragment;
+    private Site site;
 
     private CommandHandlerManager commandHandlerManager;
     private Dialog currentDialog;
-    private String mapPath = "/sdcard/MARVIN/trip.png";
+    private String mapPath = "/sdcard/MARVIN/site.png";
     private Bitmap mapBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_trip);
+        setContentView(R.layout.activity_site);
 
         addMap();
 
-        trip = MisViajesFragment.getInstance().getChosenTrip();
+        site = CardAdapter.getInstance().getChosenSite();
 
         commandHandlerManager = CommandHandlerManager.getInstance();
 
-        commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_TRIP,this);
+        commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_SITE,this);
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-                fragment.setTrip(trip);
+                fragment.setSite(site);
             }
         }, 1000);
 
-        TextView beginningAddress, beginningTime, endingAddress, endingTime, distance, velocity, time;
+        TextView tv_site;
+        tv_site = (TextView) findViewById(R.id.tv_site);
+        tv_site.setText(site.getSiteName() + " - " + site.getSiteAddress());
 
-        beginningAddress = (TextView) findViewById(R.id.beginningAddress);
-        beginningTime = (TextView) findViewById(R.id.beginningTime);
-        endingAddress = (TextView) findViewById(R.id.endingAddress);
-        endingTime = (TextView) findViewById(R.id.endingTime);
-        distance = (TextView) findViewById(R.id.distance);
-        velocity = (TextView) findViewById(R.id.velocity);
-        time = (TextView) findViewById(R.id.time);
-
-        beginningAddress.setText(trip.getBeginningAddress());
-        endingAddress.setText(trip.getEndingAddress());
-        distance.setText(trip.getDistance());
-        velocity.setText(trip.getAverageVelocity());
-        time.setText(trip.getTime());
-
-        String formattedDate = new SimpleDateFormat("dd/MM/yyyy - HH:mm").format(trip.getStartTime());
-        beginningTime.setText(formattedDate);
-
-        formattedDate = new SimpleDateFormat("dd/MM/yyyy - HH:mm").format(trip.getFinishTime());
-        endingTime.setText(formattedDate);
+        ImageView imageView = (ImageView)findViewById(R.id.img_thumbnail);
+        File imgFile = new  File("/sdcard/MARVIN/Sitios/" + site.getSiteName() + ".png");
+        if(imgFile.exists()){
+            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+            imageView.setImageBitmap(myBitmap);
+        }
 
     }
 
     public void addMap(){
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        fragment = new TripMap();
-        transaction.add(R.id.tripMap, fragment);
+        fragment = new SiteMap();
+        transaction.add(R.id.siteMap, fragment);
         transaction.commit();
     }
 
@@ -103,7 +93,7 @@ public class TripActivity extends ActionBarActivity {
         final Dialog customDialog = new Dialog(this);
         customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         customDialog.setCancelable(true);
-        customDialog.setContentView(R.layout.dialog_trip);
+        customDialog.setContentView(R.layout.dialog_site);
         customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         currentDialog = customDialog;

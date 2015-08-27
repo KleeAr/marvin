@@ -2,6 +2,7 @@ package ar.com.klee.marvin.fragments;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -51,9 +52,15 @@ public class DondeEstacioneFragment extends Fragment {
 
         Gson gson = new Gson();
         String json = mPrefs.getString("ParkingSite", "");
-        LatLng coordinates = gson.fromJson(json, LatLng.class);
+        final LatLng coordinates = gson.fromJson(json, LatLng.class);
 
-        fragment.setParkSite(coordinates.latitude,coordinates.longitude);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                fragment.setParkSite(coordinates.latitude,coordinates.longitude);
+            }
+        }, 1000);
+
 
         return v;
     }

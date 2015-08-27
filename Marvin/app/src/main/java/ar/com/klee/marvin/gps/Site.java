@@ -10,6 +10,7 @@ public class Site {
     private String siteAddress;
     private LatLng sitecoordinates;
     private int siteThumbnail;
+    private String siteImage;
 
     public Site(String name, String address, LatLng coordinates, int thumbnail){
         siteName = name;
@@ -48,6 +49,14 @@ public class Site {
 
     public void setSiteThumbnail(int siteThumbnail) {
         this.siteThumbnail = siteThumbnail;
+    }
+
+    public String getSiteImage() {
+        return siteImage;
+    }
+
+    public void setSiteImage(String siteImage) {
+        this.siteImage = siteImage;
     }
 }
 

@@ -19,10 +19,10 @@ import ar.com.klee.marvin.fragments.MainMenuFragment;
 
 public class LocationSender {
 
-    private String address;
-    private String town;
-    private String state;
-    private String speed;
+    private String address = "Buscando calle...";
+    private String town = "Buscando ciudad...";
+    private String state = "";
+    private String speed = "NA";
 
     private double actualLatitude = 0.0;
     private double actualLongitude = 0.0;

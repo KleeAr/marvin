@@ -95,6 +95,7 @@ public class CommandHandlerManager {
     public static final int ACTIVITY_PARKING = 11;
     public static final int ACTIVITY_SETTINGS = 12;
     public static final int ACTIVITY_TRIP = 13;
+    public static final int ACTIVITY_SITE = 14;
     private static CommandHandlerManager instance;
 
     private int currentActivity = ACTIVITY_MAIN;
@@ -122,6 +123,7 @@ public class CommandHandlerManager {
     private List<CommandHandler> commandHandlersParking;
     private List<CommandHandler> commandHandlersSettings;
     private List<CommandHandler> commandHandlersTrip;
+    private List<CommandHandler> commandHandlersSite;
 
     private Map<Integer,List<CommandHandler>> commandHandlers;
     private CommandHandlerContext currentContext;
@@ -238,6 +240,8 @@ public class CommandHandlerManager {
                 this.compartirEnInstagramHandler,
                 new CompartirViajeHandler(textToSpeech, context, this));
 
+        commandHandlersSite = Arrays.asList();
+
         commandHandlers = new HashMap<>();
 
         commandHandlers.put(ACTIVITY_MAIN,commandHandlersMainMenu);
@@ -252,6 +256,7 @@ public class CommandHandlerManager {
         commandHandlers.put(ACTIVITY_PARKING,commandHandlersParking);
         commandHandlers.put(ACTIVITY_SETTINGS,commandHandlersSettings);
         commandHandlers.put(ACTIVITY_TRIP,commandHandlersTrip);
+        commandHandlers.put(ACTIVITY_SITE,commandHandlersSite);
 
     }
 

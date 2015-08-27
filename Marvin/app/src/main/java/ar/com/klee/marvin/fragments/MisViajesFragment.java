@@ -120,7 +120,8 @@ public class MisViajesFragment extends Fragment {
 
             int numberOfTrips = mPrefs.getInt("NumberOfTrips",0);
 
-            for(Integer i=1; i<=numberOfTrips; i++) {
+            Integer i;
+            for(i=numberOfTrips;i>=1;i--) {
                 Gson gson = new Gson();
                 String json = mPrefs.getString("Trip"+i.toString(), "");
                 tripList.add(gson.fromJson(json, Trip.class));
@@ -164,15 +165,15 @@ public class MisViajesFragment extends Fragment {
 
             SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
 
-            Integer numberOfTrips = tripList.size()-1;
+            Integer numberOfTrips = tripList.size();
 
             SharedPreferences.Editor prefsEditor = mPrefs.edit();
             Gson gson = new Gson();
             prefsEditor.putInt("NumberOfTrips",numberOfTrips);
             Integer i;
-            for(i=0;i<=numberOfTrips;i++) {
-                String json = gson.toJson(tripList.get(i));
-                prefsEditor.putString("Trip" + numberOfTrips.toString(), json);
+            for(i=numberOfTrips;i>=1;i--) {
+                String json = gson.toJson(tripList.get(numberOfTrips-i));
+                prefsEditor.putString("Trip" + i.toString(), json);
             }
             prefsEditor.commit();
 
