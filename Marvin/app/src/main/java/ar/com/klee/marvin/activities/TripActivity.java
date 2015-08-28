@@ -73,11 +73,11 @@ public class TripActivity extends ActionBarActivity {
         velocity = (TextView) findViewById(R.id.velocity);
         time = (TextView) findViewById(R.id.time);
 
-        beginningAddress.setText(trip.getBeginningAddress());
-        endingAddress.setText(trip.getEndingAddress());
-        distance.setText(trip.getDistance());
-        velocity.setText(trip.getAverageVelocity());
-        time.setText(trip.getTime());
+        beginningAddress.setText("Desde: " + trip.getBeginningAddress());
+        endingAddress.setText("Hasta: " + trip.getEndingAddress());
+        distance.setText("Distancia: " + trip.getDistance() + " kms");
+        velocity.setText("Velocidad: " + trip.getAverageVelocity());
+        time.setText("Tiempo: " + trip.getTime());
 
         String formattedDate = new SimpleDateFormat("dd/MM/yyyy - HH:mm").format(trip.getStartTime());
         beginningTime.setText(formattedDate);
@@ -178,16 +178,26 @@ public class TripActivity extends ActionBarActivity {
 
     }
 
-    public void shareInTwitter(String text){
+    public void shareInTwitter(final String text){
 
         fragment.captureScreen();
 
-        TwitterService twitterService = TwitterService.getInstance();
+        final TwitterService twitterService = TwitterService.getInstance();
 
-        twitterService.postTweet(text, new File(mapPath));
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                twitterService.postTweet(text, new File(mapPath));
+            }
+        }, 1000);
 
-        File photo = new File(mapPath);
-        photo.delete();
+        Handler handler2 = new Handler();
+        handler2.postDelayed(new Runnable() {
+            public void run() {
+                File photo = new File(mapPath);
+                photo.delete();
+            }
+        }, 2000);
 
         currentDialog.dismiss();
 

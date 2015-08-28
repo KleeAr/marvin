@@ -251,6 +251,21 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         return actualFragmentPosition;
     }
 
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                if(mDrawerLayout.isDrawerOpen(mLvDrawerMenu)) {
+                    mDrawerLayout.closeDrawer(mLvDrawerMenu);
+                }
+                else {
+                    mDrawerLayout.openDrawer(mLvDrawerMenu);
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
@@ -379,9 +394,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             mDrawerToggle.syncState();
     }
 
-
-
-
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -394,10 +406,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
             Fragment fragment;
 
-            if(fragmentClass.equals(MainMenuFragment.class) && MainMenuFragment.isInstanceInitialized())
-                fragment = MainMenuFragment.getInstance();
-            else
-                fragment = fragmentClass.newInstance();
+            fragment = fragmentClass.newInstance();
 
             android.support.v4.app.FragmentManager fragmentManager = getSupportFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -408,7 +417,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             mDrawerLayout.closeDrawer(mLvDrawerMenu);
             mLvDrawerMenu.invalidateViews();
         } catch (Exception ex) {
-            Log.e("setFragment", ex.getMessage());
+            ex.printStackTrace();
         }
     }
 
@@ -535,7 +544,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     }
 
     public void initializeFragmentManager(){
-        setFragment(0, MainMenuFragment.class);
+        setFragment(1, MainMenuFragment.class);
     }
 
     public void initializeMusicService() {

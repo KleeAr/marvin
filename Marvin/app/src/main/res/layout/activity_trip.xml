@@ -39,7 +39,8 @@
             android:text="Partida: "
             android:textSize="20dp"
             android:textStyle="bold"
-            android:textColor="#2F1F1F">
+            android:textColor="#2F1F1F"
+            android:layout_marginLeft="5dp">
         </TextView>
 
         <TextView
@@ -50,7 +51,8 @@
             android:textSize="20dp"
             android:textStyle="bold"
             android:textColor="#2F1F1F"
-            android:layout_below="@+id/beginningAddress">
+            android:layout_below="@+id/beginningAddress"
+            android:layout_marginLeft="5dp">
         </TextView>
 
         <TextView
@@ -64,7 +66,8 @@
             android:layout_marginLeft="400dp"
             android:layout_marginStart="113dp"
             android:textAlignment="textEnd"
-            android:gravity="end">
+            android:gravity="end"
+            android:layout_marginRight="5dp">
         </TextView>
 
         <TextView
@@ -79,7 +82,8 @@
             android:layout_marginStart="113dp"
             android:textAlignment="textEnd"
             android:gravity="end"
-            android:layout_below="@+id/beginningTime">
+            android:layout_below="@+id/beginningTime"
+            android:layout_marginRight="5dp">
         </TextView>
 
         <TextView

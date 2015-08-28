@@ -26,7 +26,7 @@ import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 
 public class MainMenuFragment extends Fragment {
 
-    private static MainMenuFragment instance;
+    private static MainMenuFragment instance = null;
     public final int CANT_APPLICATION=12; //variable en que se definen la cantidad de aplicaciones disponibles
 
     private long date;
@@ -51,6 +51,7 @@ public class MainMenuFragment extends Fragment {
 
     private Thread tTime = null;
 
+    private View v;
 
     public MainMenuFragment() {
         // Required empty public constructor
@@ -60,10 +61,8 @@ public class MainMenuFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
 
-        instance = this;
-
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_main_menu, container, false);
+        v = inflater.inflate(R.layout.fragment_main_menu, container, false);
 
 
         mainStreet = (TextView)v.findViewById(R.id.mainStreet);
@@ -172,6 +171,7 @@ public class MainMenuFragment extends Fragment {
                         }
                     }
                 } catch (InterruptedException e) {
+                } catch (NullPointerException e) {
                 }
             }
         };
@@ -200,15 +200,20 @@ public class MainMenuFragment extends Fragment {
         // Setting the ViewPager For the SlidingTabsLayout
         tabs.setViewPager(pager);
 
-        pager.setCurrentItem(2);
+        if(instance == null) {
 
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                pager.setCurrentItem(0);
-            }
-        }, 1000);
+            instance = this;
 
+            pager.setCurrentItem(2);
+
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    pager.setCurrentItem(0);
+                }
+            }, 1000);
+
+        }
         return v;
     }
 
@@ -227,6 +232,7 @@ public class MainMenuFragment extends Fragment {
 
     public void stopThread(){
         tTime.interrupt();
+        instance = null;
     }
 
 

@@ -156,12 +156,12 @@
             android:label="@string/title_activity_map" >
         </activity>
         <activity
-            android:name=".activities.TripHistoryActivity"
-            android:label="@string/title_activity_trip_history" >
-        </activity>
-        <activity
             android:name=".activities.TripActivity"
             android:label="@string/title_activity_trip" >
+        </activity>
+        <activity
+            android:name=".activities.SiteActivity"
+            android:label="@string/title_activity_site" >
         </activity>
         <activity android:name=".activities.SignupActivity"/>
     </application>

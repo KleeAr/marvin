@@ -120,6 +120,19 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp" />
 
+            <com.facebook.login.widget.LoginButton
+                android:id="@+id/login_button"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="5dp" />
+
+            <com.twitter.sdk.android.core.identity.TwitterLoginButton
+                android:id="@+id/twitter_login_button"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="5dp" />
+
         </LinearLayout>
 
 

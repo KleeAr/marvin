@@ -158,25 +158,26 @@ public class MisViajesFragment extends Fragment {
         }
 
         public void remove(int position) {
-            tripList.remove(position);
-            notifyItemRemoved(position);
+            if(tripList.size()!=0) {
+                tripList.remove(position);
+                notifyItemRemoved(position);
 
-            MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
+                MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
 
-            SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
+                SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
 
-            Integer numberOfTrips = tripList.size();
+                Integer numberOfTrips = tripList.size();
 
-            SharedPreferences.Editor prefsEditor = mPrefs.edit();
-            Gson gson = new Gson();
-            prefsEditor.putInt("NumberOfTrips",numberOfTrips);
-            Integer i;
-            for(i=numberOfTrips;i>=1;i--) {
-                String json = gson.toJson(tripList.get(numberOfTrips-i));
-                prefsEditor.putString("Trip" + i.toString(), json);
+                SharedPreferences.Editor prefsEditor = mPrefs.edit();
+                Gson gson = new Gson();
+                prefsEditor.putInt("NumberOfTrips", numberOfTrips);
+                Integer i;
+                for (i = numberOfTrips; i >= 1; i--) {
+                    String json = gson.toJson(tripList.get(numberOfTrips - i));
+                    prefsEditor.putString("Trip" + i.toString(), json);
+                }
+                prefsEditor.commit();
             }
-            prefsEditor.commit();
-
         }
 
         static class MyViewHolder extends RecyclerView.ViewHolder {

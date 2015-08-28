@@ -74,14 +74,14 @@ public class TripMap extends Fragment {
 
         PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
         for (int z = 0; z < trip.getTripPath().size(); z++) {
-            LatLng point = trip.getTripPath().get(z);
+            LatLng point = trip.getTripPath().get(z).getCoordinates();
             options.add(point);
         }
         googleMap.addPolyline(options);
 
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        for (LatLng coor : trip.getTripPath()) {
-            builder.include(coor);
+        for (TripStep coor : trip.getTripPath()) {
+            builder.include(coor.getCoordinates());
         }
         LatLngBounds bounds = builder.build();
 

@@ -244,39 +244,48 @@ public class MapFragment extends Fragment {
 
         Long minutes = TimeUnit.MILLISECONDS.toMinutes(diffInMs);
         Long hours = minutes/60;
-        minutes = minutes - minutes/60;
+        minutes = minutes - hours*60;
         trip.setTime(hours.toString() + " hs. " + minutes.toString() + " min.");
 
-        long hourDecimals = (100 * minutes)/60;
+        float hourDecimals = (100 * minutes)/60;
         while(hourDecimals > 1){
             hourDecimals = hourDecimals/10;
         }
 
-        long hourWithDecimals = hours + hourDecimals;
+        float hourWithDecimals = hours + hourDecimals;
 
         double polylineLength = 0;
+        int lastIndex = 0;
 
         for (int i = 0; i < tripPath.size(); i++) {
             double lat = tripPath.get(i).getCoordinates().latitude;
             double lng = tripPath.get(i).getCoordinates().longitude;
 
             float[] results = new float[1];
-            if (i > 0 && tripPath.get(i).getAddress().equals(tripPath.get(i-1).getAddress()))
+            if (i > 0 && tripPath.get(i).getAddress().equals(tripPath.get(i-1).getAddress())) {
                 Location.distanceBetween(
-                    tripPath.get(i-1).getCoordinates().latitude,tripPath.get(i-1).getCoordinates().longitude,
-                    lat,lng,
-                    results);
-
-            polylineLength += results [0];
+                        tripPath.get(lastIndex).getCoordinates().latitude, tripPath.get(lastIndex).getCoordinates().longitude,
+                        lat, lng,
+                        results);
+                lastIndex = i;
+                polylineLength += results [0];
+            }
         }
 
         polylineLength = polylineLength/1000;
 
         trip.setDistance(String.format("%.2f",polylineLength));
 
+        Log.d("Distance",((Double)polylineLength).toString());
+        Log.d("Hours",((Long)hours).toString());
+        Log.d("Minute",((Float)hourDecimals).toString());
+        Log.d("Time",((Float)hourWithDecimals).toString());
+
         double velocity = polylineLength/hourWithDecimals;
 
         trip.setAverageVelocity(String.format("%.2f",velocity));
+
+        Log.d("Velocity",String.format("%.2f",velocity));
 
         PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
         for (int z = 0; z < list.size(); z++) {
