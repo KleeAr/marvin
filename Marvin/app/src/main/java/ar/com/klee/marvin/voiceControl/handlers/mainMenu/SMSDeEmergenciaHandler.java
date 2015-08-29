@@ -2,6 +2,7 @@ package ar.com.klee.marvin.voiceControl.handlers.mainMenu;
 
 import android.content.Context;
 
+import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -16,9 +17,8 @@ public class SMSDeEmergenciaHandler extends CommandHandler {
 
     public CommandHandlerContext drive(CommandHandlerContext context){
 
-        getTextToSpeech().speakText("Enviando sms de emergencia");
+        getTextToSpeech().speakText(context.getObject(ACTIVITY,MainMenuActivity.class).sendEmergencyMessage());
 
-        //CODIGO PARA LEVANTAR Y ENVIAR EL SMS
         context.put(STEP, 0);
         return context;
 

@@ -1,5 +1,6 @@
 package ar.com.klee.marvin.activities;
 
+import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -38,20 +39,6 @@ import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 import java.security.MessageDigest;
 import java.util.Arrays;
-import android.app.ProgressDialog;
-import android.graphics.Typeface;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-
-import android.content.Intent;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import ar.com.klee.marvin.CardAdapter;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import io.fabric.sdk.android.Fabric;
@@ -59,7 +46,7 @@ import io.fabric.sdk.android.Fabric;
 import ar.com.klee.marvin.R;
 
 
-public class LoginActivity extends  AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     // Note: Your consumer key and secret should be obfuscated in your source code before shipping.
     public static final String TWITTER_KEY = "IsfPZw7I4i4NCZaFxM9BZX4Qi";
@@ -79,9 +66,11 @@ public class LoginActivity extends  AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       // initializeFacebookSdk();
+        initializeFacebookSdk();
+        TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
+        Fabric.with(this, new Twitter(authConfig));
         setContentView(R.layout.activity_login);
-        //initializeTwitterSdk();
+        initializeTwitterSdk();
         ButterKnife.inject(this);
 
 
@@ -152,7 +141,7 @@ public class LoginActivity extends  AppCompatActivity {
                 }, 3000);
     }
 
-
+/*
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_SIGNUP) {
@@ -164,7 +153,7 @@ public class LoginActivity extends  AppCompatActivity {
             }
         }
     }
-
+*/
     @Override
     public void onBackPressed() {
         // Disable going back to the MainActivity
@@ -207,10 +196,9 @@ public class LoginActivity extends  AppCompatActivity {
     //////////////////////////////////////
 
 
-    /*
+
     private void initializeTwitterSdk() {
-        TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
-        Fabric.with(this, new Twitter(authConfig));
+
         TwitterLoginButton loginButton = (TwitterLoginButton) findViewById(R.id.twitter_login_button);
         loginButton.setCallback(new Callback<TwitterSession>() {
             @Override
@@ -225,7 +213,7 @@ public class LoginActivity extends  AppCompatActivity {
             }
         });
     }
-    */
+
 
 
 
@@ -251,7 +239,7 @@ public class LoginActivity extends  AppCompatActivity {
         LoginManager.getInstance().logInWithPublishPermissions(this, Arrays.asList("publish_actions"));
     }
 
-    /*
+
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -262,7 +250,7 @@ public class LoginActivity extends  AppCompatActivity {
         loginButton.onActivityResult(requestCode, resultCode, data);
     }
 
-*/
+
     public static void showHashKey(Context context) {
         try {
             PackageInfo info = context.getPackageManager().getPackageInfo(

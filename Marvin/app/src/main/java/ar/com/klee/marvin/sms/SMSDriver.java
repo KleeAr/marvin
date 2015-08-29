@@ -222,6 +222,22 @@ public class SMSDriver {
         }
     }
 
+    public String sendEmergencyMessage(){
+
+        String smsNumber = "1559734434";
+        String smsBody = "Estoy en problemas";
+        try {
+            SmsManager smsManager = SmsManager.getDefault();
+            smsManager.sendTextMessage(smsNumber, null, smsBody, null, null);
+            if(android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
+                saveInOutbox(smsNumber, smsBody);
+            return "Mensaje de emergencia enviado";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "El mensaje no pudo ser enviado. Reintentá luego";
+        }
+    }
+
 
     public void displayIncomingSMS(){
         final Dialog customDialog = new Dialog(commandHandlerManager.getMainActivity());

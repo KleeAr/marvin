@@ -376,7 +376,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         mapFragment.finishTrip();
 
-        MainMenuFragment.getInstance().stopThread();
+        if(MainMenuFragment.isInstanceInitialized())
+            MainMenuFragment.getInstance().stopThread();
         musicService.onStop();
         stopService(voiceControlServiceIntent);
         stopService(musicServiceIntent);
@@ -821,6 +822,12 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     public String sendMessage() {
 
         return smsDriver.sendMessage();
+
+    }
+
+    public String sendEmergencyMessage() {
+
+        return smsDriver.sendEmergencyMessage();
 
     }
 
