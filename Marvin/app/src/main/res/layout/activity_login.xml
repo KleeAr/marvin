@@ -4,7 +4,7 @@
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
     android:layout_height="match_parent"
-    android:background="#a3d9d1">
+    android:background="#4db6ac">
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="0dp"
@@ -36,7 +36,7 @@
                     android:layout_width="70dp"
                     android:layout_height="70dp"
                     android:id="@+id/imageView3"
-                    android:src="@drawable/marvin_login"
+                    android:src="@drawable/marvin_logo"
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:layout_marginTop="10dp" />
