@@ -275,7 +275,6 @@ public class LoginActivity extends AppCompatActivity {
     public void rememberPassword(){
 
         AlertDialog.Builder builder =new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
-        builder.setCancelable(false);
         builder.setTitle("Recuperar contraseña");
 
         LinearLayout layout = new LinearLayout(this);
@@ -297,6 +296,13 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int whichButton) {
 
                 Toast.makeText(getApplicationContext(),"Enviando...", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+                dialog.dismiss();
 
             }
         });
