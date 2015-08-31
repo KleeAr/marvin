@@ -1,12 +1,11 @@
 package ar.com.klee.marvin.client;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 
 import java.util.List;
 
 import org.junit.Test;
 
-import ar.com.klee.marvin.api.UserApi;
 import ar.com.klee.marvin.model.User;
 
 public class MarvinClientTest {
@@ -17,12 +16,10 @@ public class MarvinClientTest {
 	
 	@Test
 	public void testUsers() {
-		UserApi userApi = client.users();
-		userApi.register(new User(null, "Fede", "Sinopoli", MAIL, PASSWORD));
-		userApi = client.users(MAIL, PASSWORD);
-		List<User> users = userApi.getAll();
-		users = userApi.getAll();
-		users = userApi.getAll();
+		UserApiClient usersApi = client.users();
+//		usersApi.register(new User(null, "Fede", "Sinopoli", MAIL, PASSWORD));
+		usersApi.authenticate(MAIL, PASSWORD);
+		List<User> users = usersApi.getAll();
 		assertFalse(users.isEmpty());
 	}
 
