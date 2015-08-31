@@ -12,9 +12,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Cookie;
-import javax.ws.rs.core.Response;
 
 import ar.com.klee.marvin.model.LoginRequest;
+import ar.com.klee.marvin.model.LoginResponse;
 import ar.com.klee.marvin.model.Trip;
 import ar.com.klee.marvin.model.User;
 import ar.com.klee.marvin.model.UserSetting;
@@ -31,7 +31,7 @@ public interface UserApi {
 	@Path("/users/auth")
 	@Consumes("application/json")
 	@Produces("application/json")
-	Response authenticate(LoginRequest loginRequest);
+	LoginResponse authenticate(LoginRequest loginRequest);
 	
 	@GET
 	@Path("/users")

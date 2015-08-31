@@ -12,14 +12,12 @@ public class MarvinClientTest {
 
 	private static final String PASSWORD = "fede";
 	private static final String MAIL = "fede@gmail.com";
-	MarvinClient client = new MarvinClient();
 	
 	@Test
 	public void testUsers() {
-		UserApiClient usersApi = client.users();
-//		usersApi.register(new User(null, "Fede", "Sinopoli", MAIL, PASSWORD));
-		usersApi.authenticate(MAIL, PASSWORD);
-		List<User> users = usersApi.getAll();
+		Marvin.users().register(new User(null, "Fede", "Sinopoli", MAIL, PASSWORD));
+		Marvin.users().authenticate(MAIL, PASSWORD);
+		List<User> users = Marvin.users().getAll();
 		assertFalse(users.isEmpty());
 	}
 

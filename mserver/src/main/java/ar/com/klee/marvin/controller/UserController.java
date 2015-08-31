@@ -1,5 +1,14 @@
 package ar.com.klee.marvin.controller;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -47,13 +56,14 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "/auth", method = RequestMethod.POST)
-	public LoginResponse authenticate(@RequestBody LoginRequest loginRequest) {
+	public LoginResponse authenticate(@RequestBody LoginRequest loginRequest, HttpSession session) {
 		  Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 		    boolean isAuthenticated = isAuthenticated(authentication);
 		    if (isAuthenticated) {
 		        SecurityContextHolder.getContext().setAuthentication(authentication);
 		    }
-		    return new LoginResponse(userRepository.findByEmail(loginRequest.getEmail()));
+		    
+		    return new LoginResponse(userRepository.findByEmail(loginRequest.getEmail()).getId(), session.getId());
 	}
 	
 	private boolean isAuthenticated(Authentication authentication) {

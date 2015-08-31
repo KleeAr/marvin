@@ -1,24 +1,33 @@
 package ar.com.klee.marvin.representation;
 
-import ar.com.klee.marvin.model.User;
 
 public class LoginResponse {
 
 	private Long userId;
+	private String sessionId;
 
 	public LoginResponse() {
 	}
 	
-	public LoginResponse(User user) {
-		this.userId = user.getId();
+	public LoginResponse(Long userId, String sessionId) {
+		this.userId = userId;
+		this.sessionId = sessionId;
 	}
 
-	protected Long getUserId() {
+	public Long getUserId() {
 		return userId;
 	}
 
-	protected void setUserId(Long userId) {
+	public void setUserId(Long userId) {
 		this.userId = userId;
+	}
+
+	public String getSessionId() {
+		return sessionId;
+	}
+
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
 	}
 
 }
