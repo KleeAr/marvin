@@ -275,6 +275,7 @@ public class LoginActivity extends AppCompatActivity {
     public void rememberPassword(){
 
         AlertDialog.Builder builder =new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+        builder.setCancelable(true);
         builder.setTitle("Recuperar contraseña");
 
         LinearLayout layout = new LinearLayout(this);
