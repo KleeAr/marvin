@@ -91,7 +91,7 @@ public class STTService extends Service {
             mSpeechRecognizer.cancel();
             sttState = false;
 
-            //Log.d("STT", "stopListening");
+            Log.d("STT", "stopListening");
         }
     }
 
@@ -104,7 +104,7 @@ public class STTService extends Service {
 
         @Override
         public void onBeginningOfSpeech(){
-            //Log.d("STT", "onBeginningOfSpeech");
+            Log.d("STT", "onBeginningOfSpeech");
         }
 
         @Override
@@ -114,14 +114,14 @@ public class STTService extends Service {
 
         @Override
         public void onEndOfSpeech(){
-            //Log.d("STT", "onEndOfSpeech");
+            Log.d("STT", "onEndOfSpeech");
         }
 
         @Override
         public void onError(int error){
 
-            //Log.d("STT", "onError");
-            //Log.d("STT", getErrorText(error));
+            Log.d("STT", "onError");
+            Log.d("STT", getErrorText(error));
 
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
@@ -129,7 +129,7 @@ public class STTService extends Service {
 
                 mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
                 sttState = true;
-                //Log.d("STT", "onErrorActivate");
+                Log.d("STT", "onErrorActivate");
 
                 }
             }, 1000);
@@ -139,21 +139,21 @@ public class STTService extends Service {
         @Override
         public void onEvent(int eventType, Bundle params){
 
-            //Log.d("STT", "onEvent");
+            Log.d("STT", "onEvent");
 
         }
 
         @Override
         public void onPartialResults(Bundle partialResults){
 
-            //Log.d("STT", "onPartialResults");
+            Log.d("STT", "onPartialResults");
 
         }
 
         @Override
         public void onReadyForSpeech(Bundle params){
 
-            //Log.d("STT", "onReadyForSpeech");
+            Log.d("STT", "onReadyForSpeech");
 
         }
 
@@ -165,8 +165,8 @@ public class STTService extends Service {
             ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
             String text = matches.get(0);
 
-            //Log.d("STT", "onResults");
-            //Log.d("STT", text);
+            Log.d("STT", "onResults");
+            Log.d("STT", text);
 
             previousListening = isListening;
 

@@ -74,7 +74,6 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -83,7 +82,7 @@
             android:label="@string/title_activity_menu_principal" >
         </activity>
         <activity
-            android:name=".activities.RegistrationActivity"
+            android:name=".activities.SignupActivity"
             android:label="@string/title_activity_registracion" >
         </activity>
         <activity
@@ -91,7 +90,6 @@
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-
         <service
             android:name=".voiceControl.STTService"
             android:label="STT" >
@@ -135,7 +133,6 @@
             android:label="IncomingCallActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.ANSWER" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -163,7 +160,6 @@
             android:name=".activities.SiteActivity"
             android:label="@string/title_activity_site" >
         </activity>
-        <activity android:name=".activities.SignupActivity"/>
     </application>
 
 </manifest>

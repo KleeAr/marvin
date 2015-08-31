@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -27,11 +28,14 @@ public class MusicService extends Service {
 
     private static final String MEDIA_PATH = new String("/sdcard/Music/");
     private List<HashMap<String,String>> songs = new ArrayList<HashMap<String,String>>();
+    private List<Radio> radios;
     private MediaPlayer mp = new MediaPlayer();
     private int currentSong = 0;
     private int currentDuration = 0;
+    private int currentRadio = 0;
     private Stack previousSongs = new Stack();
     private boolean isRandom = false;
+    private boolean isRadio = false;
 
     LocalBroadcastManager broadcaster;
     public static final String COPA_RESULT = "com.controlj.copame.backend.COPAService.REQUEST_PROCESSED";
@@ -43,6 +47,8 @@ public class MusicService extends Service {
         mp.setVolume((float)0.5,(float)0.5);
 
         updateSongList(MEDIA_PATH);
+
+        initializeRadioList();
 
         getSharedPreferences();
 
@@ -59,13 +65,35 @@ public class MusicService extends Service {
             editor.putInt("duration", currentDuration);
             editor.putInt("position", currentSong);
             editor.putBoolean("isRandom", isRandom);
-            editor.commit();
         }
+        editor.putInt("radio",currentRadio);
+        editor.putBoolean("isRadio",isRadio);
+        editor.commit();
 
         if(mp.isPlaying()) {
             mp.stop();
         }
         mp.release();
+    }
+
+    public void initializeRadioList(){
+        radios = Arrays.asList(
+                new Radio("AM 570","ARGENTINA","http://am570.prodera.com.ar:8000"),
+                new Radio("AM 590","CONTINENTAL","http://7309.live.streamtheworld.com/CONTINENTAL_SC?MSWMExt=.mp3 "),
+                new Radio("AM 1020","LT10","http://184.107.240.26:8555/vivo"),
+                new Radio("FM 88.3","R80","http://ded35.server54.net:8010/radio_r80"),
+                new Radio("FM 88.5","VIDA","http://50.7.181.186:8004/ "),
+                new Radio("FM 89.1","MALENA","http://vivo.radioam750.com.ar/vivofm.mp3? "),
+                new Radio("FM 89.9","CON VOS","http://vivo.radioconvos.com.ar/stream?MSWMExt=.mp3"),
+                new Radio("FM 90.3","FM DELTA","http://2283.live.streamtheworld.com/DELTA_903_SC?"),
+                new Radio("FM 93.1","FM LATE","http://streaming.radiolinksmedia.com:8252"),
+                new Radio("FM 95.1","METRO","http://mp3.metroaudio1.stream.avstreaming.net:7200/metro?MSWMExt=.mp3"),
+                new Radio("FM 95.5","IMAGINARIA","http://200.58.118.108:8023/stream?type=.flv"),
+                new Radio("FM 97.9","RADIO CULTURA","http://1351.live.streamtheworld.com/RADIOCULTURA_SC?MSWMExt=.mp3 "),
+                new Radio("FM 101.1","LATINA FM","http://streaming.latina101.com.ar:8080/RadioLatina"),
+                new Radio("FM 104.5","RADIO MARIA","http://50.7.181.186:8004/"),
+                new Radio("FM 105.5","LOS 40 PRINCIPALES","http://69.31.54.140/LOS40_ARGENTINA.mp3?")
+        );
     }
 
     public void updateSongList(String path) {
@@ -115,6 +143,8 @@ public class MusicService extends Service {
         duration = sharedPreferences.getInt("duration", 0);
         position = sharedPreferences.getInt("position",0);
         random = sharedPreferences.getBoolean("isRandom",false);
+        currentRadio = sharedPreferences.getInt("radio",0);
+        isRadio = sharedPreferences.getBoolean("isRadio",false);
 
         isRandom = random;
 
@@ -160,25 +190,43 @@ public class MusicService extends Service {
         }
     }
 
+    public void playRadio(String url){
+        try {
+            sendResult("SONG_TITLE " + radios.get(currentRadio).getName());
+            sendResult("SONG_ARTIST " + radios.get(currentRadio).getFrequence());
+
+            mp.setDataSource(url);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void startPlaying(){
 
-        if(songs.size() == 0) {
-            return;
+        if(!isRadio) {
+            if (songs.size() == 0) {
+                return;
+            }
+            playSong(songs.get(currentSong).get("Path"));
+        }else{
+            playRadio(radios.get(currentRadio).getUrl());
         }
-
-        playSong(songs.get(currentSong).get("Path"));
 
     }
 
     public void pause(){
 
         if(mp.isPlaying()) {
-            currentDuration = mp.getCurrentPosition();
+            if(!isRadio) {
+                currentDuration = mp.getCurrentPosition();
+            }
             mp.pause();
-        }
 
-        sendResult("SONG_TITLE " + " ");
-        sendResult("SONG_ARTIST " + " ");
+        }
 
     }
 
@@ -201,6 +249,14 @@ public class MusicService extends Service {
                 currentSong = 0;
         }
         playSong(songs.get(currentSong).get("Path"));
+    }
+
+    public void nextRadio(){
+
+        currentRadio++;
+        if (currentRadio == radios.size())
+            currentRadio = 0;
+        playRadio(radios.get(currentRadio).getUrl());
     }
 
     public void nextSongSet() {
@@ -234,6 +290,13 @@ public class MusicService extends Service {
         }
 
         playSong(songs.get(currentSong).get("Path"));
+    }
+
+    public void previousRadio(){
+        currentRadio--;
+        if(currentRadio == -1)
+            currentRadio = songs.size()-1;
+        playRadio(radios.get(currentRadio).getUrl());
     }
 
     public void previousSongSet() {
@@ -403,6 +466,10 @@ public class MusicService extends Service {
 
         return mp.isPlaying();
 
+    }
+
+    public boolean getIsRadio(){
+        return  isRadio;
     }
 
     public class MusicBinder extends Binder {

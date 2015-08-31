@@ -616,9 +616,11 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     public void startPauseMusic(View view) {
 
-        if (musicService.isListEmpty()) {
-            Toast.makeText(this, "No se encontraron canciones en el dispositivo", Toast.LENGTH_LONG).show();
-            return;
+        if(!musicService.getIsRadio()) {
+            if (musicService.isListEmpty()) {
+                Toast.makeText(this, "No se encontraron canciones en el dispositivo", Toast.LENGTH_LONG).show();
+                return;
+            }
         }
 
         if (!musicService.isPlaying()) {
@@ -630,20 +632,28 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             MainMenuFragment.tv_song.setText("Reproducción Pausada");
             MainMenuFragment.tv_artist.setText("");
         }
+
     }
 
     public void nextSong(View view) {
 
-        if (musicService.isListEmpty()) {
-            Toast.makeText(this, "No se encontraron canciones en el dispositivo", Toast.LENGTH_LONG).show();
-            return;
-        }
+        if(musicService.getIsRadio()) {
+            if (musicService.isListEmpty()) {
+                Toast.makeText(this, "No se encontraron canciones en el dispositivo", Toast.LENGTH_LONG).show();
+                return;
+            }
 
-        if (!musicService.isPlaying()) {
-            MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
-        }
+            if (!musicService.isPlaying()) {
+                MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
+            }
 
-        musicService.nextSong();
+            musicService.nextSong();
+
+        }else{
+
+            musicService.nextRadio();
+
+        }
 
     }
 
