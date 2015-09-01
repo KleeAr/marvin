@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaMetadataRetriever;
-import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
@@ -24,12 +23,14 @@ import java.util.List;
 import java.util.Random;
 import java.util.Stack;
 
+import wseemann.media.FFmpegMediaPlayer;
+
 public class MusicService extends Service {
 
     private static final String MEDIA_PATH = new String("/sdcard/Music/");
     private List<HashMap<String,String>> songs = new ArrayList<HashMap<String,String>>();
     private List<Radio> radios;
-    private MediaPlayer mp = new MediaPlayer();
+    private FFmpegMediaPlayer mp = new FFmpegMediaPlayer();
     private int currentSong = 0;
     private int currentDuration = 0;
     private int currentRadio = 0;
@@ -80,6 +81,10 @@ public class MusicService extends Service {
         radios = Arrays.asList(
                 new Radio("AM 570","ARGENTINA","http://am570.prodera.com.ar:8000"),
                 new Radio("AM 590","CONTINENTAL","http://7309.live.streamtheworld.com/CONTINENTAL_SC?MSWMExt=.mp3 "),
+                new Radio("AM 630","RIVADAVIA","http://200.110.145.2:8234/live?type=.mp3"),
+                new Radio("AM 710","RADIO 10","rtmp://server1.stweb.tv/radio10//live"),
+                new Radio("AM 790","MITRE","http://buecrplb01.cienradios.com.ar/Mitre790.aac"),
+                new Radio("AM 910","LA RED","http://lsdlrhls-lh.akamaihd.net/i/laredHLS_1@59923/index_1_a-p.m3u8?sd=10&rebase=on"),
                 new Radio("AM 1020","LT10","http://184.107.240.26:8555/vivo"),
                 new Radio("FM 88.3","R80","http://ded35.server54.net:8010/radio_r80"),
                 new Radio("FM 88.5","VIDA","http://50.7.181.186:8004/ "),
@@ -90,9 +95,13 @@ public class MusicService extends Service {
                 new Radio("FM 95.1","METRO","http://mp3.metroaudio1.stream.avstreaming.net:7200/metro?MSWMExt=.mp3"),
                 new Radio("FM 95.5","IMAGINARIA","http://200.58.118.108:8023/stream?type=.flv"),
                 new Radio("FM 97.9","RADIO CULTURA","http://1351.live.streamtheworld.com/RADIOCULTURA_SC?MSWMExt=.mp3 "),
+                new Radio("FM 98.3","MEGA","rtmp://mega983.stweb.tv/mega983//live"),
+                new Radio("FM 99.9","LA 100","http://buecrplb01.cienradios.com.ar/la100.aac"),
                 new Radio("FM 101.1","LATINA FM","http://streaming.latina101.com.ar:8080/RadioLatina"),
+                new Radio("FM 101.5","POP RADIO","rtmp://popradio.stweb.tv/popradio//live"),
                 new Radio("FM 104.5","RADIO MARIA","http://50.7.181.186:8004/"),
-                new Radio("FM 105.5","LOS 40 PRINCIPALES","http://69.31.54.140/LOS40_ARGENTINA.mp3?")
+                new Radio("FM 105.5","LOS 40 PRINCIPALES","http://69.31.54.140/LOS40_ARGENTINA.mp3?"),
+                new Radio("FM 107.9","ESPN RADIO","mms://a183.l1318236841.c13182.l.lm.akamaistream.net/D/183/13182/v0001/reflector:36841")
         );
     }
 
@@ -177,9 +186,9 @@ public class MusicService extends Service {
             mp.start();
 
             // Setup listener so next song starts automatically
-            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            mp.setOnCompletionListener(new FFmpegMediaPlayer.OnCompletionListener() {
 
-                public void onCompletion(MediaPlayer arg0) {
+                public void onCompletion(FFmpegMediaPlayer arg0) {
                     nextSong();
                 }
 

@@ -70,5 +70,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:7.0.0'
     compile 'org.twitter4j:twitter4j-core:[4.0,)'
     compile 'com.jakewharton:butterknife:6.1.0'
-
+    compile files('libs/fmp.jar')
+    compile files('libs/lib.jar')
 }
