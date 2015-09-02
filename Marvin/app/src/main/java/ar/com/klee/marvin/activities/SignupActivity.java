@@ -14,21 +14,21 @@ import android.widget.Toast;
 
 import ar.com.klee.marvin.R;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.Bind;
 
 public class SignupActivity extends AppCompatActivity {
     private static final String TAG = "SignupActivity";
 
-    @InjectView(R.id.input_name) EditText nameText;
-    @InjectView(R.id.input_email) EditText emailText;
-    @InjectView(R.id.input_password) EditText passwordText;
-    @InjectView(R.id.btn_signup) Button signupbutton;
+    @Bind(R.id.input_name) EditText nameText;
+    @Bind(R.id.input_email) EditText emailText;
+    @Bind(R.id.input_password) EditText passwordText;
+    @Bind(R.id.btn_signup) Button signupbutton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
 
         Typeface typeface = Typeface.createFromAsset(getAssets(), "Wisdom Script AJ.otf");
 

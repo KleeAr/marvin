@@ -35,6 +35,8 @@ android {
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
+        // Enabling multidex support.
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -50,7 +52,6 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.android.support:support-v4:22.2.0'
     compile 'com.facebook.android:facebook-android-sdk:4.0.0'
@@ -69,7 +70,7 @@ dependencies {
     compile files('libs/YouTubeAndroidPlayerApi.jar')
     compile 'com.google.android.gms:play-services-maps:7.0.0'
     compile 'org.twitter4j:twitter4j-core:[4.0,)'
-    compile 'com.jakewharton:butterknife:6.1.0'
+    compile files('libs/butterknife-7.0.1.jar')
     compile files('libs/fmp.jar')
     compile files('libs/lib.jar')
 }

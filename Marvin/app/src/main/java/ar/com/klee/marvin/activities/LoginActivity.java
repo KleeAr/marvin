@@ -40,7 +40,7 @@ import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.Bind;
 import io.fabric.sdk.android.Fabric;
 
 import ar.com.klee.marvin.R;
@@ -57,11 +57,11 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_SIGNUP = 0;
 
-    @InjectView(R.id.input_email) EditText emailText;
-    @InjectView(R.id.input_password) EditText passwordText;
-    @InjectView(R.id.btn_login) Button loginButton;
-    @InjectView(R.id.link_signup) TextView signupLink;
-    @InjectView(R.id.link_rememberPassword) TextView rememberPassword;
+    @Bind(R.id.input_email) EditText emailText;
+    @Bind(R.id.input_password) EditText passwordText;
+    @Bind(R.id.btn_login) Button loginButton;
+    @Bind(R.id.link_signup) TextView signupLink;
+    @Bind(R.id.link_rememberPassword) TextView rememberPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
         Fabric.with(this, new Twitter(authConfig));
         setContentView(R.layout.activity_login);
         initializeTwitterSdk();
-        ButterKnife.inject(this);
+    ButterKnife.bind(this);
 
 
             Typeface typeface = Typeface.createFromAsset(getAssets(), "Wisdom Script AJ.otf");
