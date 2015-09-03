@@ -136,14 +136,14 @@
             android:id="@+id/layout_music"
             android:background="@color/ColorPrimary"
             android:layout_weight="0.07"
-            android:layout_gravity="bottom">
+            android:layout_gravity="left|bottom">
 
             <ImageButton
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:id="@+id/bt_radioMusic"
                 android:layout_weight="0.1"
-                android:src="@drawable/ic_media_music"
+                android:src="@mipmap/ic_audiotrack_white_48dp"
                 android:onClick="radioMusic" />
 
             <LinearLayout
@@ -190,7 +190,7 @@
                 android:id="@+id/bt_previous"
                 android:layout_weight="0.1"
                 android:src="@drawable/ic_media_previous"
-                android:onClick="previousSong" />
+                android:onClick="previous" />
 
             <ImageButton
                 android:layout_width="0dp"
@@ -206,7 +206,7 @@
                 android:id="@+id/bt_next"
                 android:layout_weight="0.1"
                 android:src="@drawable/ic_media_next"
-                android:onClick="nextSong" />
+                android:onClick="next" />
 
 
         </LinearLayout>

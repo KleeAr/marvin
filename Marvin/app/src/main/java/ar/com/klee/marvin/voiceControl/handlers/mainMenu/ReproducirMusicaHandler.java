@@ -23,6 +23,12 @@ public class ReproducirMusicaHandler extends CommandHandler {
             if (!context.getObject(ACTIVITY, MainMenuActivity.class).getWasPlaying()) {
                 getTextToSpeech().speakText("Reproduciendo música");
                 context.getObject(ACTIVITY, MainMenuActivity.class).setWasPlaying(true);
+                if(context.getObject(ACTIVITY, MainMenuActivity.class).getMusicService().getIsRadio())
+                    context.getObject(ACTIVITY, MainMenuActivity.class).radioMusic();
+            } else if(context.getObject(ACTIVITY, MainMenuActivity.class).getMusicService().getIsRadio()) {
+                getTextToSpeech().speakText("Reproduciendo música");
+                context.getObject(ACTIVITY, MainMenuActivity.class).setWasPlaying(true);
+                context.getObject(ACTIVITY, MainMenuActivity.class).radioMusic();
             } else
                 getTextToSpeech().speakText("La música ya estaba sonando");
         }

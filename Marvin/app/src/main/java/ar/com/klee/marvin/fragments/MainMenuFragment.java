@@ -1,5 +1,6 @@
 package ar.com.klee.marvin.fragments;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
@@ -35,6 +36,7 @@ public class MainMenuFragment extends Fragment {
     public static ImageButton bt_play;
     public static ImageButton bt_next;
     public static ImageButton bt_previous;
+    public static ImageButton bt_radioMusic;
     public static TextView tv_song;
     public static TextView tv_artist;
 
@@ -64,12 +66,20 @@ public class MainMenuFragment extends Fragment {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_main_menu, container, false);
 
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("musicService", Context.MODE_PRIVATE);
+        boolean isRadio = sharedPreferences.getBoolean("isRadio",false);
 
         mainStreet = (TextView)v.findViewById(R.id.mainStreet);
 
         bt_play = (ImageButton) v.findViewById(R.id.bt_play);
         bt_next = (ImageButton) v.findViewById(R.id.bt_next);
         bt_previous = (ImageButton) v.findViewById(R.id.bt_previous);
+        bt_radioMusic = (ImageButton) v.findViewById(R.id.bt_radioMusic);
+
+        if(isRadio)
+            bt_radioMusic.setImageResource(R.mipmap.ic_radio_white_48dp);
+        else
+            bt_radioMusic.setImageResource(R.mipmap.ic_audiotrack_white_48dp);
 
         tv_song = (TextView)v.findViewById(R.id.song);
         tv_artist = (TextView)v.findViewById(R.id.artist);

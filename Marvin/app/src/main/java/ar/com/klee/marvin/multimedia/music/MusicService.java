@@ -5,9 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaMetadataRetriever;
+import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import org.cmc.music.metadata.IMusicMetadata;
 import org.cmc.music.metadata.MusicMetadataSet;
@@ -30,7 +32,8 @@ public class MusicService extends Service {
     private static final String MEDIA_PATH = new String("/sdcard/Music/");
     private List<HashMap<String,String>> songs = new ArrayList<HashMap<String,String>>();
     private List<Radio> radios;
-    private FFmpegMediaPlayer mp = new FFmpegMediaPlayer();
+    private MediaPlayer mpMusic = new MediaPlayer();
+    private FFmpegMediaPlayer mpRadio = new FFmpegMediaPlayer();
     private int currentSong = 0;
     private int currentDuration = 0;
     private int currentRadio = 0;
@@ -45,7 +48,14 @@ public class MusicService extends Service {
     public void onCreate(){
         super.onCreate();
 
-        mp.setVolume((float)0.5,(float)0.5);
+        mpMusic.setVolume((float) 0.5, (float) 0.5);
+        mpRadio.setVolume((float)0.5,(float)0.5);
+
+        mpRadio.setOnPreparedListener(new FFmpegMediaPlayer.OnPreparedListener() {
+            public void onPrepared(FFmpegMediaPlayer mp) {
+                mp.start();
+            }
+        });
 
         updateSongList(MEDIA_PATH);
 
@@ -63,6 +73,8 @@ public class MusicService extends Service {
         if(!songs.isEmpty()) {
             editor.putString("song", songs.get(currentSong).get("Title"));
             editor.putString("artist", songs.get(currentSong).get("Artist"));
+            if(!isRadio)
+                currentDuration = mpMusic.getCurrentPosition();
             editor.putInt("duration", currentDuration);
             editor.putInt("position", currentSong);
             editor.putBoolean("isRandom", isRandom);
@@ -71,10 +83,15 @@ public class MusicService extends Service {
         editor.putBoolean("isRadio",isRadio);
         editor.commit();
 
-        if(mp.isPlaying()) {
-            mp.stop();
+        if(mpMusic.isPlaying()) {
+            mpMusic.stop();
         }
-        mp.release();
+        mpMusic.release();
+
+        if(mpRadio.isPlaying()) {
+            mpRadio.stop();
+        }
+        mpRadio.release();
     }
 
     public void initializeRadioList(){
@@ -179,19 +196,16 @@ public class MusicService extends Service {
             sendResult("SONG_TITLE " + songs.get(currentSong).get("Title"));
             sendResult("SONG_ARTIST " + songs.get(currentSong).get("Artist"));
 
-            mp.reset();
-            mp.setDataSource(songPath);
-            mp.prepare();
-            mp.seekTo(currentDuration);
-            mp.start();
+            mpMusic.reset();
+            mpMusic.setDataSource(songPath);
+            mpMusic.prepare();
+            mpMusic.seekTo(currentDuration);
+            mpMusic.start();
 
-            // Setup listener so next song starts automatically
-            mp.setOnCompletionListener(new FFmpegMediaPlayer.OnCompletionListener() {
-
-                public void onCompletion(FFmpegMediaPlayer arg0) {
+            mpMusic.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                public void onCompletion(MediaPlayer mp) {
                     nextSong();
                 }
-
             });
 
         } catch (IOException e) {
@@ -204,7 +218,10 @@ public class MusicService extends Service {
             sendResult("SONG_TITLE " + radios.get(currentRadio).getName());
             sendResult("SONG_ARTIST " + radios.get(currentRadio).getFrequence());
 
-            mp.setDataSource(url);
+            mpRadio.reset();
+            mpRadio.setDataSource(url);
+            mpRadio.prepareAsync();
+
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         } catch (IllegalStateException e) {
@@ -229,14 +246,16 @@ public class MusicService extends Service {
 
     public void pause(){
 
-        if(mp.isPlaying()) {
-            if(!isRadio) {
-                currentDuration = mp.getCurrentPosition();
+        if(!isRadio) {
+            if(mpMusic.isPlaying()) {
+                currentDuration = mpMusic.getCurrentPosition();
+                mpMusic.pause();
             }
-            mp.pause();
-
+        }else{
+            if(mpRadio.isPlaying()) {
+                mpRadio.pause();
+            }
         }
-
     }
 
     public void nextSong() {
@@ -262,10 +281,14 @@ public class MusicService extends Service {
 
     public void nextRadio(){
 
+        mpRadio.pause();
+
         currentRadio++;
         if (currentRadio == radios.size())
             currentRadio = 0;
-        playRadio(radios.get(currentRadio).getUrl());
+
+        sendResult("SONG_TITLE " + radios.get(currentRadio).getName());
+        sendResult("SONG_ARTIST " + radios.get(currentRadio).getFrequence());
     }
 
     public void nextSongSet() {
@@ -287,6 +310,14 @@ public class MusicService extends Service {
         }
     }
 
+    public void nextRadioSet() {
+
+        currentRadio++;
+        if (currentRadio == songs.size())
+            currentRadio = 0;
+
+    }
+
     public void previousSong() {
 
         currentDuration = 0;
@@ -302,10 +333,12 @@ public class MusicService extends Service {
     }
 
     public void previousRadio(){
+        mpRadio.pause();
         currentRadio--;
         if(currentRadio == -1)
-            currentRadio = songs.size()-1;
-        playRadio(radios.get(currentRadio).getUrl());
+            currentRadio = radios.size()-1;
+        sendResult("SONG_TITLE " + radios.get(currentRadio).getName());
+        sendResult("SONG_ARTIST " + radios.get(currentRadio).getFrequence());
     }
 
     public void previousSongSet() {
@@ -318,6 +351,12 @@ public class MusicService extends Service {
             if(currentSong == -1)
                 currentSong = songs.size()-1;
         }
+    }
+
+    public void previousRadioSet(){
+        currentRadio--;
+        if(currentRadio == -1)
+            currentRadio = radios.size()-1;
     }
 
     public boolean setRandom(boolean random) {
@@ -471,14 +510,111 @@ public class MusicService extends Service {
 
     }
 
+    public boolean findRadioName(String name){
+
+        int marker = currentRadio + 1;
+
+        name = name.toLowerCase();
+
+        while(marker < radios.size()){
+
+            if(radios.get(marker).getName().toLowerCase().equals(name)){
+
+                currentRadio = marker;
+
+                return true;
+            }
+
+            marker++;
+
+        }
+
+        marker = 0;
+
+        while(marker <= currentRadio){
+
+            if(radios.get(marker).getName().toLowerCase().equals(name)){
+
+                currentRadio = marker;
+
+                return true;
+            }
+
+            marker++;
+
+        }
+
+
+        return false;
+
+    }
+
+    public boolean findRadioFrequence(String frequence){
+
+        int marker = currentRadio + 1;
+
+        frequence = frequence.toLowerCase();
+
+        while(marker < radios.size()){
+
+            if(radios.get(marker).getFrequence().toLowerCase().equals(frequence)){
+
+                currentRadio = marker;
+
+                return true;
+            }
+
+            marker++;
+
+        }
+
+        marker = 0;
+
+        while(marker <= currentRadio){
+
+            if(radios.get(marker).getFrequence().toLowerCase().equals(frequence)){
+
+                currentRadio = marker;
+
+                return true;
+            }
+
+            marker++;
+
+        }
+
+
+        return false;
+
+    }
+
+
     public boolean isPlaying(){
 
-        return mp.isPlaying();
+        if(isRadio)
+            return mpRadio.isPlaying();
+        else
+            return mpMusic.isPlaying();
 
     }
 
     public boolean getIsRadio(){
         return  isRadio;
+    }
+
+    public void setIsRadio(boolean isRadio){
+
+        mpRadio.pause();
+        mpMusic.pause();
+        this.isRadio = isRadio;
+
+        if(!isRadio)
+            startPlaying();
+        else{
+            sendResult("SONG_TITLE " + radios.get(currentRadio).getName());
+            sendResult("SONG_ARTIST " + radios.get(currentRadio).getFrequence());
+        }
+
     }
 
     public class MusicBinder extends Binder {

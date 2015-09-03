@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Parcelable;
+import android.os.PowerManager;
 import android.speech.SpeechRecognizer;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -111,11 +112,17 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     private int actualFragmentPosition = 1;
     private Stack<Integer> previousMenus = new Stack();
 
+    private PowerManager.WakeLock wakeLock;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         CommandHandlerManager.destroyInstance();
         setContentView(R.layout.activity_main_menu);
+
+        PowerManager powerManager = (PowerManager)this.getSystemService(Context.POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "My Lock");
+        wakeLock.acquire();
 
         initializeMusicService();
         initializeSTTService();
@@ -451,6 +458,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     }
 
     public void stopServices() {
+        wakeLock.release();
         musicService.onStop();
         stopService(voiceControlServiceIntent);
         stopService(musicServiceIntent);
@@ -614,6 +622,33 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
      * ***********************************************************************
      */
 
+    public void radioMusic(View view){
+
+        if(musicService.getIsRadio()){
+            MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
+            MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_audiotrack_white_48dp);
+            musicService.setIsRadio(false);
+        }else{
+            MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_play);
+            MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_radio_white_48dp);
+            musicService.setIsRadio(true);
+        }
+
+    }
+
+    public void radioMusic(){
+
+        MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
+        if(musicService.getIsRadio()){
+            MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_audiotrack_white_48dp);
+            musicService.setIsRadio(false);
+        }else{
+            MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_radio_white_48dp);
+            musicService.setIsRadio(true);
+        }
+
+    }
+
     public void startPauseMusic(View view) {
 
         if(!musicService.getIsRadio()) {
@@ -635,9 +670,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     }
 
-    public void nextSong(View view) {
+    public void next(View view) {
 
-        if(musicService.getIsRadio()) {
+        if(!musicService.getIsRadio()) {
             if (musicService.isListEmpty()) {
                 Toast.makeText(this, "No se encontraron canciones en el dispositivo", Toast.LENGTH_LONG).show();
                 return;
@@ -651,64 +686,119 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         }else{
 
+            MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_play);
             musicService.nextRadio();
 
         }
 
     }
 
-    public void nextSongSet() {
+    public void nextSet(String type) {
 
-        if (!musicService.isPlaying()) {
+        if(type.equals("music")) {
+            if (!musicService.isPlaying()) {
+                MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
+            }
+
+            MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_audiotrack_white_48dp);
+            musicService.setIsRadio(false);
+
+            wasPlaying = true;
+
+            musicService.nextSongSet();
+
+        }else{
+
+            MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_radio_white_48dp);
+            musicService.setIsRadio(true);
+
+            wasPlaying = true;
+
             MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
+            musicService.nextRadioSet();
+
         }
-
-        wasPlaying = true;
-
-        musicService.nextSongSet();
 
     }
 
-    public void previousSong(View view) {
+    public void previous(View view) {
 
-        if (musicService.isListEmpty()) {
-            Toast.makeText(this, "No se encontraron canciones en el dispositivo", Toast.LENGTH_LONG).show();
-            return;
+        if(!musicService.getIsRadio()) {
+
+            if (musicService.isListEmpty()) {
+                Toast.makeText(this, "No se encontraron canciones en el dispositivo", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            if (!musicService.isPlaying()) {
+                MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
+            }
+
+            musicService.previousSong();
+
+        }else{
+
+            MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_play);
+            musicService.previousRadio();
         }
-
-        if (!musicService.isPlaying()) {
-            MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
-        }
-
-        musicService.previousSong();
 
     }
 
-    public void previousSongSet() {
+    public void previousSet(String type) {
 
-        if (!musicService.isPlaying()) {
+        if(type.equals("music")) {
+
+            if (!musicService.isPlaying()) {
+                MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
+            }
+
+            MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_audiotrack_white_48dp);
+            musicService.setIsRadio(false);
+
+            wasPlaying = true;
+
+            musicService.previousSongSet();
+
+        }else{
+
+            MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_radio_white_48dp);
+            musicService.setIsRadio(true);
+
+            wasPlaying = true;
+
             MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
+            musicService.previousRadioSet();
+
         }
-
-        wasPlaying = true;
-
-        musicService.previousSongSet();
 
     }
 
     public boolean findArtist(String artist) {
 
         wasPlaying = true;
+        MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_audiotrack_white_48dp);
 
-        return musicService.findArtist(artist);
+        if(musicService.findArtist(artist)){
+            musicService.setIsRadio(false);
+            return true;
+        }
+
+        return false;
+
 
     }
 
     public boolean findSong(String song) {
 
         wasPlaying = true;
+        MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_audiotrack_white_48dp);
 
-        return musicService.findTitle(song);
+        if(musicService.findTitle(song)){
+            musicService.setIsRadio(false);
+            return true;
+        }
+
+        return false;
 
     }
 
@@ -721,6 +811,34 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     public boolean isListEmpty() {
 
         return musicService.isListEmpty();
+
+    }
+
+    public boolean findRadioName(String name){
+
+        wasPlaying = true;
+        MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_radio_white_48dp);
+
+        if(musicService.findRadioName(name)){
+            musicService.setIsRadio(true);
+            return true;
+        }
+
+        return false;
+
+    }
+
+    public boolean findRadioFrequence(String frequence){
+
+        wasPlaying = true;
+        MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_radio_white_48dp);
+
+        if(musicService.findRadioFrequence(frequence)){
+            musicService.setIsRadio(true);
+            return true;
+        }
+
+        return false;
 
     }
 

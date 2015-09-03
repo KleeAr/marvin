@@ -23,10 +23,15 @@ import ar.com.klee.marvin.voiceControl.handlers.mainMenu.ActivarHotspotHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.ActivarReproduccionAleatoriaHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.AgregarEventoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.AnteriorCancionHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.AnteriorRadioHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.BajarVolumenHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.BarrioHandler;
 import ar.com.klee.marvin.voiceControl.handlers.BuscarDispositivosHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.BuscarEnYoutubeHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.ReproducirEstacionHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.ReproducirFrecuenciaHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.ReproducirRadioHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.SiguienteRadioHandler;
 import ar.com.klee.marvin.voiceControl.handlers.map.AumentarZoomHandler;
 import ar.com.klee.marvin.voiceControl.handlers.map.BuscarEnMapaHandler;
 import ar.com.klee.marvin.voiceControl.handlers.map.BuscarSitioHandler;
@@ -162,6 +167,7 @@ public class CommandHandlerManager {
             new ActivarReproduccionAleatoriaHandler(textToSpeech, context, this),
             new AgregarEventoHandler(textToSpeech, context, this),
             new AnteriorCancionHandler(textToSpeech, context, this),
+            new AnteriorRadioHandler(textToSpeech, context, this),
             new AnteriorInterseccionHandler(textToSpeech, context, this),
             new BajarVolumenHandler(textToSpeech, context, this),
             new BarrioHandler(textToSpeech, context, this),
@@ -182,8 +188,12 @@ public class CommandHandlerManager {
             new PublicarEnFacebookHandler(textToSpeech, context,this),
             new ReproducirArtistaHandler(textToSpeech, context, this),
             new ReproducirCancionHandler(textToSpeech, context, this),
+            new ReproducirEstacionHandler(textToSpeech, context, this),
+            new ReproducirFrecuenciaHandler(textToSpeech, context, this),
             new ReproducirMusicaHandler(textToSpeech, context, this),
+            new ReproducirRadioHandler(textToSpeech, context, this),
             new SiguienteCancionHandler(textToSpeech, context, this),
+            new SiguienteRadioHandler(textToSpeech, context, this),
             new SiguienteInterseccion(textToSpeech, context, this),
             new SMSDeEmergenciaHandler(textToSpeech, context, this),
             new SubirVolumenHandler(textToSpeech, context, this),

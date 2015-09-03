@@ -22,7 +22,7 @@ public class SiguienteCancionHandler extends CommandHandler {
             getTextToSpeech().speakText("No se han encontrado canciones en el dispositivo");
         }else {
             getTextToSpeech().speakText("Pasando a la siguiente canción");
-            context.getObject(ACTIVITY, MainMenuActivity.class).nextSongSet();
+            context.getObject(ACTIVITY, MainMenuActivity.class).nextSet("music");
         }
 
         context.put(STEP, 0);

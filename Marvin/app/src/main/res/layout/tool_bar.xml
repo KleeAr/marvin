@@ -33,6 +33,7 @@
                     android:id="@+id/weekDayText"
                     android:textColor="#00ffff"
                     android:textSize="15sp"
+                    android:textStyle="bold"
                     android:layout_weight="0.5"
                     android:gravity="bottom|start" />
 

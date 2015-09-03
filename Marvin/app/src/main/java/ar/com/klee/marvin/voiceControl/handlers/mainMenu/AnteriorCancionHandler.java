@@ -23,7 +23,7 @@ public class AnteriorCancionHandler extends CommandHandler {
             getTextToSpeech().speakText("No se han encontrado canciones en el dispositivo");
         }else {
             getTextToSpeech().speakText("Volviendo a la canción anterior");
-            context.getObject(ACTIVITY, MainMenuActivity.class).previousSongSet();
+            context.getObject(ACTIVITY, MainMenuActivity.class).previousSet("music");
         }
 
         context.put(STEP, 0);

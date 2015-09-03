@@ -16,11 +16,11 @@
 
 
     <string name="city_name_default">Buscando ciudad...</string>
-    <string name="day_default_text">viernes</string>
-    <string name="date_default_text">14 de mayo</string>
+    <string name="day_default_text"></string>
+    <string name="date_default_text"></string>
     <string name="default_temperature">°C</string>
     <string name="defaultMainStreet">Buscando calle...</string>
-    <string name="defaultSpeed">NA</string>
+    <string name="defaultSpeed">0</string>
     <string name="title_activity_application_list" />
     <string name="title_activity_map">MapActivity</string>
     <string name="title_activity_trip">TripActivity</string>
