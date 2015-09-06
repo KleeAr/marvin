@@ -4,6 +4,7 @@ import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -64,6 +65,7 @@ public class LoginActivity extends AppCompatActivity {
     @Bind(R.id.link_signup) TextView signupLink;
     @Bind(R.id.link_rememberPassword) TextView rememberPassword;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +75,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         initializeTwitterSdk();
     ButterKnife.bind(this);
+
 
 
             Typeface typeface = Typeface.createFromAsset(getAssets(), "Wisdom Script AJ.otf");

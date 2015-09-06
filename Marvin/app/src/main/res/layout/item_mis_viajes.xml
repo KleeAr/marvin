@@ -39,7 +39,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/im_icon"
-                    android:src="@drawable/ic_directions_car_black_36dp"
+                    android:src="@mipmap/ic_directions_car_white_48dp"
                     android:layout_margin="5dp"
                     android:layout_weight="0.8"
                     android:layout_gravity="top" />

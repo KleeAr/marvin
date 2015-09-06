@@ -47,20 +47,20 @@
         <item>Historial de viajes</item>
         <item>Mis sitios</item>
         <item>¿Donde estacione?</item>
-        <item>Configuración app</item>
-        <item>Terminos y condiciones</item>
+        <item>Ajustes</item>
+        <item>Ayuda</item>
         <item>Salir</item>
     </string-array>
 
     <!-- Sliding Menu item icons -->
     <array name="nav_drawer_icons">
         <item>@mipmap/ic_home_black_48dp</item>
-        <item>@mipmap/ic_help_black_48dp</item>
+        <item>@mipmap/ic_volume_up_black_48dp</item>
         <item>@mipmap/ic_schedule_black_48dp</item>
         <item>@mipmap/ic_location_on_black_48dp</item>
         <item>@mipmap/ic_local_parking_black_48dp</item>
-        <item>@mipmap/ic_info_black_48dp</item>
         <item>@mipmap/ic_settings_black_48dp</item>
+        <item>@mipmap/ic_help_black_48dp</item>
         <item>@mipmap/ic_cancel_black_48dp</item>
 
     </array>
