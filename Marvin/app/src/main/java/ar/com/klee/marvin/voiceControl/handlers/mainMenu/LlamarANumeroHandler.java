@@ -86,7 +86,7 @@ public class LlamarANumeroHandler extends CommandHandler {
     public CommandHandlerContext stepThree(CommandHandlerContext context){
 
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             context.getObject(ACTIVITY,MainMenuActivity.class).callNumber(context.getString(NUMBER));
             context.put(STEP, 0);
             return context;

@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.voiceControl.handlers.callHistory.CerrarHistorialDeLlamadasHandler;
 import ar.com.klee.marvin.voiceControl.handlers.callHistory.ConsultarRegistroNumeroHandler;
 import ar.com.klee.marvin.voiceControl.handlers.callHistory.ConsultarUltimoRegistroDeContactoHandler;
@@ -107,6 +108,8 @@ public class CommandHandlerManager {
     private int currentStep = 0;
     private int errorCounter = 0;
     private CommandHandler currentCommandHandler;
+    private SpeechRecognizer mSpeechRecognizer;
+    private Intent mSpeechRecognizerIntent;
 
     private TTS textToSpeech;
 
@@ -122,7 +125,7 @@ public class CommandHandlerManager {
     private List<CommandHandler> commandHandlersCallHistory;
     private List<CommandHandler> commandHandlersMap;
     private List<CommandHandler> commandHandlersTripHistory;
-    private List<CommandHandler> commandHandlersPlaces;
+    private List<CommandHandler> commandHandlersMySites;
     private List<CommandHandler> commandHandlersProfile;
     private List<CommandHandler> commandHandlersHelp;
     private List<CommandHandler> commandHandlersParking;
@@ -152,6 +155,9 @@ public class CommandHandlerManager {
     }
 
     private CommandHandlerManager(Context context, SpeechRecognizer mSpeechRecognizer, Intent mSpeechRecognizerIntent){
+
+        this.mSpeechRecognizer = mSpeechRecognizer;
+        this.mSpeechRecognizerIntent = mSpeechRecognizerIntent;
 
         textToSpeech = new TTS(context, mSpeechRecognizer, mSpeechRecognizerIntent);
         this.context = context;
@@ -234,7 +240,7 @@ public class CommandHandlerManager {
 
         commandHandlersTripHistory = Arrays.asList((CommandHandler)new CerrarHistorialDeViajesHandler(textToSpeech, context, this));
 
-        commandHandlersPlaces = Arrays.asList();
+        commandHandlersMySites = Arrays.asList();
 
         commandHandlersProfile = Arrays.asList();
 
@@ -260,7 +266,7 @@ public class CommandHandlerManager {
         commandHandlers.put(ACTIVITY_CALL_HISTORY,commandHandlersCallHistory);
         commandHandlers.put(ACTIVITY_MAP,commandHandlersMap);
         commandHandlers.put(ACTIVITY_TRIP_HISTORY,commandHandlersTripHistory);
-        commandHandlers.put(ACTIVITY_PLACES,commandHandlersPlaces);
+        commandHandlers.put(ACTIVITY_PLACES,commandHandlersMySites);
         commandHandlers.put(ACTIVITY_PROFILE,commandHandlersProfile);
         commandHandlers.put(ACTIVITY_HELP,commandHandlersHelp);
         commandHandlers.put(ACTIVITY_PARKING,commandHandlersParking);
@@ -284,7 +290,7 @@ public class CommandHandlerManager {
 
             }
 
-            textToSpeech.speakText(" ");
+            ((MainMenuActivity) mainActivity).activate(mSpeechRecognizer, mSpeechRecognizerIntent);
 
             return false;
 

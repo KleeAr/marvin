@@ -164,7 +164,7 @@ public class EnviarSMSAContactoHandler extends CommandHandler {
     public CommandHandlerContext stepThree(CommandHandlerContext context){
 
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getTextToSpeech().speakText("¿Qué mensaje le querés mandar por sms?");
             context.put(STEP, 5);
             return context;
@@ -210,7 +210,7 @@ public class EnviarSMSAContactoHandler extends CommandHandler {
     //CONFIRMACION DE MENSAJE
     public CommandHandlerContext stepSeven(CommandHandlerContext context){
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getTextToSpeech().speakText(context.getObject(ACTIVITY,MainMenuActivity.class).sendMessage());
             context.put(STEP, 0);
             return context;

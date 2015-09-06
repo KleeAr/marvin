@@ -76,7 +76,7 @@ public class TripActivity extends ActionBarActivity {
         beginningAddress.setText("Desde: " + trip.getBeginningAddress());
         endingAddress.setText("Hasta: " + trip.getEndingAddress());
         distance.setText("Distancia: " + trip.getDistance() + " kms");
-        velocity.setText("Velocidad: " + trip.getAverageVelocity());
+        velocity.setText("Velocidad: " + trip.getAverageVelocity() + " km/h");
         time.setText("Tiempo: " + trip.getTime());
 
         String formattedDate = new SimpleDateFormat("dd/MM/yyyy - HH:mm").format(trip.getStartTime());
@@ -165,20 +165,47 @@ public class TripActivity extends ActionBarActivity {
 
     public void shareInFacebook(String text){
 
+        if(!text.equals("")){
+            Character firstCharacter, newFirstCharacter;
+
+            firstCharacter = text.charAt(0);
+            newFirstCharacter = Character.toUpperCase(firstCharacter);
+            text = text.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
+
+        }
+
+        currentDialog.dismiss();
+
         fragment.captureScreen();
 
         FacebookService facebookService = new FacebookService(this);
 
         facebookService.postImage(mapBitmap, text);
 
-        File photo = new File(mapPath);
-        photo.delete();
-
-        currentDialog.dismiss();
+        Handler handler2 = new Handler();
+        handler2.postDelayed(new Runnable() {
+            public void run() {
+                File photo = new File(mapPath);
+                photo.delete();
+            }
+        }, 3000);
 
     }
 
-    public void shareInTwitter(final String text){
+    public void shareInTwitter(String text){
+
+        if(!text.equals("")){
+            Character firstCharacter, newFirstCharacter;
+
+            firstCharacter = text.charAt(0);
+            newFirstCharacter = Character.toUpperCase(firstCharacter);
+            text = text.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
+
+        }
+
+        final String textToPublish = text;
+
+        currentDialog.dismiss();
 
         fragment.captureScreen();
 
@@ -187,7 +214,7 @@ public class TripActivity extends ActionBarActivity {
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-                twitterService.postTweet(text, new File(mapPath));
+                twitterService.postTweet(textToPublish, new File(mapPath));
             }
         }, 1000);
 
@@ -197,24 +224,43 @@ public class TripActivity extends ActionBarActivity {
                 File photo = new File(mapPath);
                 photo.delete();
             }
-        }, 2000);
-
-        currentDialog.dismiss();
+        }, 3000);
 
     }
 
     public void shareInInstagram(String text){
 
-        fragment.captureScreen();
+        if(!text.equals("")){
+            Character firstCharacter, newFirstCharacter;
 
-        InstagramService instagramService = new InstagramService(this);
+            firstCharacter = text.charAt(0);
+            newFirstCharacter = Character.toUpperCase(firstCharacter);
+            text = text.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
 
-        instagramService.postImageOnInstagram("image/png", text, mapPath);
+        }
 
-        File photo = new File(mapPath);
-        photo.delete();
+        final String textToPublish = text;
 
         currentDialog.dismiss();
+
+        fragment.captureScreen();
+
+        final InstagramService instagramService = new InstagramService(this);
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                instagramService.postImageOnInstagram("image/png", textToPublish, mapPath);
+            }
+        }, 1000);
+
+        Handler handler2 = new Handler();
+        handler2.postDelayed(new Runnable() {
+            public void run() {
+                File photo = new File(mapPath);
+                photo.delete();
+            }
+        }, 3000);
 
     }
 

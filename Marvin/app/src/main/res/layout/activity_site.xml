@@ -40,16 +40,16 @@
             android:layout_alignParentEnd="false"
             android:layout_alignBottom="@+id/img_thumbnail" />
 
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/ib_Shared"
-            android:layout_gravity="end|bottom"
-            android:src="@android:drawable/ic_menu_share"
-            android:layout_alignParentRight="true"
-            android:layout_alignBottom="@+id/img_thumbnail" />
-
     </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/bt_shareSite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="end|bottom"
+        android:src="@drawable/abc_ic_menu_share_mtrl_alpha"/>
 
 
 </RelativeLayout>

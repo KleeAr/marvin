@@ -75,13 +75,11 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder>  {
 
         public ImageView imgThumbnail;
         public TextView tvSite;
-        public ImageButton ibShared;
 
         public ViewHolder(final View itemView) {
             super(itemView);
             imgThumbnail = (ImageView)itemView.findViewById(R.id.img_thumbnail);
             tvSite = (TextView)itemView.findViewById(R.id.tv_site);
-            ibShared = (ImageButton)itemView.findViewById(R.id.ib_Shared);
 
             tvSite.setOnClickListener(new View.OnClickListener() {
 
@@ -96,13 +94,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder>  {
                 }
             });
 
-            ibShared.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(itemView.getContext(), "Compartir", Toast.LENGTH_SHORT).show();
-
-                }
-            });
         }
     }
 

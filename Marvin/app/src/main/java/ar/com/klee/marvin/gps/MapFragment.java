@@ -55,6 +55,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
 public class MapFragment extends Fragment {
 
     private long MIN_TRIP_TIME = 0;
+    private long MIN_TRIP_DISTANCE = 0;
 
     MapView mMapView;
     private GoogleMap googleMap;
@@ -150,7 +151,17 @@ public class MapFragment extends Fragment {
 
     public void refreshMap(double lat, double lon, String address){
 
-        tripPath.add(new TripStep(lat,lon,address));
+        if(tripPath.size()==0)
+            tripPath.add(new TripStep(lat,lon,address));
+        else{
+            float[] distance = new float[1];
+            Location.distanceBetween(
+                    tripPath.get(tripPath.size()-1).getCoordinates().latitude, tripPath.get(tripPath.size()-1).getCoordinates().longitude,
+                    lat, lon,
+                    distance);
+            if(distance[0] > 10)
+                return;
+        }
 
         lastAddress = address;
 
@@ -277,43 +288,31 @@ public class MapFragment extends Fragment {
         trip.setDistance(String.format("%.2f",polylineLength));
 
         Log.d("Distance",((Double)polylineLength).toString());
-        Log.d("Hours",((Long)hours).toString());
+        Log.d("Hours",hours.toString());
         Log.d("Minute",((Float)hourDecimals).toString());
         Log.d("Time",((Float)hourWithDecimals).toString());
 
-        double velocity = polylineLength/hourWithDecimals;
+        double velocity;
+
+        if(hourWithDecimals == 0.0)
+            velocity = 0.0;
+        else
+            velocity = polylineLength/hourWithDecimals;
 
         trip.setAverageVelocity(String.format("%.2f",velocity));
 
         Log.d("Velocity",String.format("%.2f",velocity));
 
-        PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
-        for (int z = 0; z < list.size(); z++) {
-            LatLng point = tripPath.get(z).getCoordinates();
-            options.add(point);
-        }
-        googleMap.addPolyline(options);
-
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        for (TripStep coor : tripPath) {
-            builder.include(coor.getCoordinates());
-        }
-        LatLngBounds bounds = builder.build();
-
-        int padding = 3; // offset from edges of the map in pixels
-        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-        googleMap.moveCamera(cu);
-
         captureScreen();
 
-        MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
-        SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
-        SharedPreferences.Editor prefsEditor = mPrefs.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(trip.getEnding());
-        prefsEditor.putString("ParkingSite", json);
+        if(hourWithDecimals >= MIN_TRIP_TIME && polylineLength >= MIN_TRIP_DISTANCE) {
 
-        if(hourWithDecimals >= MIN_TRIP_TIME) {
+            MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
+            SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
+            SharedPreferences.Editor prefsEditor = mPrefs.edit();
+            Gson gson = new Gson();
+            String json = gson.toJson(trip.getEnding());
+            prefsEditor.putString("ParkingSite", json);
 
             Integer numberOfTrips = mPrefs.getInt("NumberOfTrips",0);
 
@@ -324,9 +323,9 @@ public class MapFragment extends Fragment {
             prefsEditor.putInt("NumberOfTrips",numberOfTrips);
             prefsEditor.putString("Trip"+numberOfTrips.toString(), json);
 
-        }
+            prefsEditor.commit();
 
-        prefsEditor.commit();
+        }
 
     }
 
@@ -334,11 +333,7 @@ public class MapFragment extends Fragment {
     {
         GoogleMap.SnapshotReadyCallback callback = new GoogleMap.SnapshotReadyCallback(){
 
-            Bitmap bitmap;
-
             public void onSnapshotReady(Bitmap snapshot) {
-
-                bitmap = snapshot;
 
                 File mediaStorageDir = new File("/sdcard/", "MARVIN");
 
@@ -360,11 +355,15 @@ public class MapFragment extends Fragment {
                     }
                 }
 
+                for(File file: mediaStorageDir.listFiles()) file.delete();
+
                 String timeStamp = new SimpleDateFormat("yyMMdd_HHmmss").format(new Date());
 
                 try {
                     FileOutputStream out = new FileOutputStream("/sdcard/MARVIN/Estacionamiento/" + finishAddress + "_" + timeStamp + ".png");
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+                    snapshot.compress(Bitmap.CompressFormat.PNG, 90, out);
+                    out.flush();
+                    out.close();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -386,16 +385,6 @@ public class MapFragment extends Fragment {
     }
 
     public boolean getSearch() {return isSearch;}
-
-    public void setZoom(int value){
-        zoom = value;
-        CameraPosition cameraPosition = new CameraPosition.Builder().zoom(zoom).build();
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-    }
-
-    public int getZoom(){
-        return zoom;
-    }
 
     @Override
     public void onResume() {

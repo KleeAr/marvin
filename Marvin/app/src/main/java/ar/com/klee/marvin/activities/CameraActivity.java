@@ -17,6 +17,7 @@ import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.PictureCallback;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -87,8 +88,6 @@ public class CameraActivity extends ActionBarActivity {
 
         Typeface font = Typeface.createFromAsset(getAssets(), "Bariol_Bold.otf");
         buttonInfo.setTypeface(font);
-
-
 
         save.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
@@ -389,8 +388,6 @@ public class CameraActivity extends ActionBarActivity {
             FileOutputStream fos = new FileOutputStream(pictureFile);
             fos.write(datos);
             fos.close();
-            Toast toast = Toast.makeText(myContext, "Imagen guardada: " + pictureFile.getName(), Toast.LENGTH_LONG);
-            toast.show();
 
         } catch (FileNotFoundException e) {
         } catch (IOException e) {
@@ -399,13 +396,6 @@ public class CameraActivity extends ActionBarActivity {
         onlyShare = true;
 
         openShareDialog();
-
-        save.setVisibility(View.INVISIBLE);
-        saveAndShare.setVisibility(View.INVISIBLE);
-        share.setVisibility(View.INVISIBLE);
-        cancel.setVisibility(View.INVISIBLE);
-        capture.setVisibility(View.VISIBLE);
-        buttonInfo.setVisibility(View.INVISIBLE);
 
     }
 
@@ -438,52 +428,124 @@ public class CameraActivity extends ActionBarActivity {
 
     public void shareInFacebook(String text){
 
-        FacebookService facebookService = new FacebookService(this);
+        if(!text.equals("")){
+            Character firstCharacter, newFirstCharacter;
 
-        facebookService.postImage(lastBitMap, text);
-
-        if(onlyShare){
-
-            File photo = new File(lastImagePath);
-            photo.delete();
+            firstCharacter = text.charAt(0);
+            newFirstCharacter = Character.toUpperCase(firstCharacter);
+            text = text.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
 
         }
 
         currentDialog.dismiss();
+
+        FacebookService facebookService = new FacebookService(this);
+
+        facebookService.postImage(lastBitMap, text);
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                if(onlyShare){
+
+                    File photo = new File(lastImagePath);
+                    photo.delete();
+
+                }
+
+                save.setVisibility(View.INVISIBLE);
+                saveAndShare.setVisibility(View.INVISIBLE);
+                share.setVisibility(View.INVISIBLE);
+                cancel.setVisibility(View.INVISIBLE);
+                capture.setVisibility(View.VISIBLE);
+                buttonInfo.setVisibility(View.INVISIBLE);
+
+                mPreview.refreshCamera(mCamera);
+
+            }
+        }, 3000);
 
     }
 
     public void shareInTwitter(String text){
 
-        TwitterService twitterService = TwitterService.getInstance();
+        if(!text.equals("")){
+            Character firstCharacter, newFirstCharacter;
 
-        twitterService.postTweet(text, new File(lastImagePath));
-
-        if(onlyShare){
-
-            File photo = new File(lastImagePath);
-            photo.delete();
+            firstCharacter = text.charAt(0);
+            newFirstCharacter = Character.toUpperCase(firstCharacter);
+            text = text.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
 
         }
 
         currentDialog.dismiss();
+
+        TwitterService twitterService = TwitterService.getInstance();
+
+        twitterService.postTweet(text, new File(lastImagePath));
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                if(onlyShare){
+
+                    File photo = new File(lastImagePath);
+                    photo.delete();
+
+                }
+
+                save.setVisibility(View.INVISIBLE);
+                saveAndShare.setVisibility(View.INVISIBLE);
+                share.setVisibility(View.INVISIBLE);
+                cancel.setVisibility(View.INVISIBLE);
+                capture.setVisibility(View.VISIBLE);
+                buttonInfo.setVisibility(View.INVISIBLE);
+
+                mPreview.refreshCamera(mCamera);
+
+            }
+        }, 3000);
 
     }
 
     public void shareInInstagram(String text){
 
-        InstagramService instagramService = new InstagramService(this);
+        if(!text.equals("")){
+            Character firstCharacter, newFirstCharacter;
 
-        instagramService.postImageOnInstagram("image/png", text, lastImagePath);
-
-        if(onlyShare){
-
-            File photo = new File(lastImagePath);
-            photo.delete();
+            firstCharacter = text.charAt(0);
+            newFirstCharacter = Character.toUpperCase(firstCharacter);
+            text = text.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
 
         }
 
         currentDialog.dismiss();
+
+        InstagramService instagramService = new InstagramService(this);
+
+        instagramService.postImageOnInstagram("image/png", text, lastImagePath);
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                if(onlyShare){
+
+                    File photo = new File(lastImagePath);
+                    photo.delete();
+
+                }
+
+                save.setVisibility(View.INVISIBLE);
+                saveAndShare.setVisibility(View.INVISIBLE);
+                share.setVisibility(View.INVISIBLE);
+                cancel.setVisibility(View.INVISIBLE);
+                capture.setVisibility(View.VISIBLE);
+                buttonInfo.setVisibility(View.INVISIBLE);
+
+                mPreview.refreshCamera(mCamera);
+
+            }
+        }, 3000);
 
     }
 
@@ -566,6 +628,15 @@ public class CameraActivity extends ActionBarActivity {
                         photo.delete();
 
                     }
+
+                    save.setVisibility(View.INVISIBLE);
+                    saveAndShare.setVisibility(View.INVISIBLE);
+                    share.setVisibility(View.INVISIBLE);
+                    cancel.setVisibility(View.INVISIBLE);
+                    capture.setVisibility(View.VISIBLE);
+                    buttonInfo.setVisibility(View.INVISIBLE);
+
+                    mPreview.refreshCamera(mCamera);
 
                     STTService.getInstance().setIsListening(false);
                     commandHandlerManager.setNullCommand();

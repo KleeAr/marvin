@@ -79,7 +79,7 @@ public class PublicarEnFacebookHandler extends CommandHandler {
 
         String input = currentContext.getString(COMMAND);
 
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getTextToSpeech().speakText("¿Querés agregar un hashtag?");
             currentContext.put(STEP, 5);
             return currentContext;
@@ -108,7 +108,7 @@ public class PublicarEnFacebookHandler extends CommandHandler {
     public CommandHandlerContext stepFive(CommandHandlerContext currentContext){
 
         String input = currentContext.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getTextToSpeech().speakText("¿Qué hashtag querés agregar?");
             currentContext.put(STEP, 7);
             return currentContext;
@@ -149,7 +149,7 @@ public class PublicarEnFacebookHandler extends CommandHandler {
     public CommandHandlerContext stepNine(CommandHandlerContext currentContext){
 
         String input = currentContext.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getTextToSpeech().speakText("¿Querés agregar otro hashtag?");
             currentContext.put(STEP, 11);
             return currentContext;
@@ -181,7 +181,7 @@ public class PublicarEnFacebookHandler extends CommandHandler {
     public CommandHandlerContext stepEleven(CommandHandlerContext currentContext){
 
         String input = currentContext.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getTextToSpeech().speakText("¿Qué hashtag querés agregar?");
             currentContext.put(STEP, 7);
             return currentContext;

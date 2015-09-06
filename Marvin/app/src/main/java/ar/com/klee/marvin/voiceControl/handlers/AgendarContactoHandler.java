@@ -58,7 +58,7 @@ public class AgendarContactoHandler extends CommandHandler {
     public CommandHandlerContext stepThree(CommandHandlerContext context){
 
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getTextToSpeech().speakText("¿Con qué nombre querés agendar el contacto?");
             context.put(STEP, 5);
             return context;
@@ -106,7 +106,7 @@ public class AgendarContactoHandler extends CommandHandler {
     //CONFIRMACION DE MENSAJE
     public CommandHandlerContext stepSeven(CommandHandlerContext context) {
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getTextToSpeech().speakText("Agendando contacto");
             Contact contact = new Contact(context.getString(CONTACT),context.getString(NUMBER),"");
             try {

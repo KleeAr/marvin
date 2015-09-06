@@ -167,7 +167,7 @@ public class EnviarMailAContactoHandler extends CommandHandler {
     //CONFIRMA CONTACTO
     public CommandHandlerContext stepThree(CommandHandlerContext context){
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getTextToSpeech().speakText("¿Qué mensaje le querés mandar por mail?");
             context.put(STEP, 5);
             return context;
@@ -205,7 +205,7 @@ public class EnviarMailAContactoHandler extends CommandHandler {
     //CONFIRMACION DE MENSAJE
     public CommandHandlerContext stepSeven(CommandHandlerContext context){
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getTextToSpeech().speakText("¿Deseás agregar un asunto?");
             context.put(STEP, 9);
             return context;
@@ -229,7 +229,7 @@ public class EnviarMailAContactoHandler extends CommandHandler {
     //INDICA SI QUIERE AGREGAR ASUNTO
     public CommandHandlerContext stepNine(CommandHandlerContext context){
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getTextToSpeech().speakText("¿Qué asunto deseás agregar?");
             return context.put(STEP, 11);
         }
@@ -261,7 +261,7 @@ public class EnviarMailAContactoHandler extends CommandHandler {
     //CONFIRMA ASUNTO
     public CommandHandlerContext stepThirteen(CommandHandlerContext context){
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getTextToSpeech().speakText("Configurando mail. Seleccioná con qué cuenta querés enviarlo.");
             sendMail(context);
             return context.put(STEP, 0);

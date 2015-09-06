@@ -98,7 +98,7 @@ public class AgregarEventoHandler extends CommandHandler {
     public CommandHandlerContext stepThree(CommandHandlerContext context){
 
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getTextToSpeech().speakText("¿En qué fecha es el evento?");
             context.put(STEP, 5);
             return context;
@@ -229,7 +229,7 @@ public class AgregarEventoHandler extends CommandHandler {
     //CONFIRMA FECHA
     public CommandHandlerContext stepSeven(CommandHandlerContext context) {
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getTextToSpeech().speakText("¿A qué hora es el evento?");
             context.put(STEP, 9);
             return context;
@@ -379,7 +379,7 @@ public class AgregarEventoHandler extends CommandHandler {
     //CONFIRMA HORA
     public CommandHandlerContext stepEleven(CommandHandlerContext context){
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getTextToSpeech().speakText("Agregando evento en el calendario");
             createGoogleCalendarEvent(context);
             context.put(STEP, 0);

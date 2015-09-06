@@ -41,6 +41,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.twitter.sdk.android.core.models.User;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -49,6 +51,7 @@ import ar.com.klee.marvin.DrawerMenuAdapter;
 import ar.com.klee.marvin.DrawerMenuItem;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.call.CallDriver;
+import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.data.Channel;
 import ar.com.klee.marvin.data.Item;
 import ar.com.klee.marvin.fragments.ConfigureAppFragment;
@@ -126,6 +129,10 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         initializeMusicService();
         initializeSTTService();
+        if(!UserConfig.isInstanceInitialized())
+            UserConfig.initializeInstance();
+
+        UserConfig configuration = UserConfig.getInstance();
 
         //Crea el mainMenu
         if (MainMenuFragment.isInstanceInitialized())
@@ -381,14 +388,22 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             return;
         }
 
-        mapFragment.finishTrip();
+        MainMenuFragment.getInstance().setItem(2);
 
-        if(MainMenuFragment.isInstanceInitialized())
-            MainMenuFragment.getInstance().stopThread();
-        musicService.onStop();
-        stopService(voiceControlServiceIntent);
-        stopService(musicServiceIntent);
-        finish();
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                mapFragment.finishTrip();
+
+                if(MainMenuFragment.isInstanceInitialized())
+                    MainMenuFragment.getInstance().stopThread();
+                musicService.onStop();
+                stopService(voiceControlServiceIntent);
+                stopService(musicServiceIntent);
+                finish();
+            }
+        }, 1000);
+
     }
 
     /**

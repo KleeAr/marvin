@@ -56,7 +56,7 @@ public class ResponderSMSHandler extends CommandHandler {
     public CommandHandlerContext stepThree(CommandHandlerContext context){
 
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getTextToSpeech().speakText("¿Qué le querés responder por sms?");
             context.getObject(ACTIVITY,MainMenuActivity.class).displayRespondSMS();
             context.put(STEP, 5);
@@ -102,7 +102,7 @@ public class ResponderSMSHandler extends CommandHandler {
     //CONFIRMACION DE MENSAJE
     public CommandHandlerContext stepSeven(CommandHandlerContext context){
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getTextToSpeech().speakText(context.getObject(ACTIVITY,MainMenuActivity.class).respondMessage());
             context.put(STEP, 0);
             return context;

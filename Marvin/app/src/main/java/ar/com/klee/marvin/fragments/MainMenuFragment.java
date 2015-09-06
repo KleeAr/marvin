@@ -245,5 +245,11 @@ public class MainMenuFragment extends Fragment {
         instance = null;
     }
 
+    public void setItem(int item){
+        if(pager==null)
+            Log.d("PAGER","NULL");
+        pager.setCurrentItem(item);
+    }
+
 
 }

@@ -70,7 +70,7 @@ public class TwittearHandler extends CommandHandler {
     //CONFIRMA MENSAJE
     public CommandHandlerContext stepThree(CommandHandlerContext context){
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getTextToSpeech().speakText("¿Querés agregar un hashtag junto al mensaje?");
             context.put(STEP, 5);
             return context;
@@ -99,7 +99,7 @@ public class TwittearHandler extends CommandHandler {
     //INDICA SI SE QUIERE AGREGAR UN HASHTAG
     public CommandHandlerContext stepFive(CommandHandlerContext context){
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getTextToSpeech().speakText("¿Qué hashtag querés agregar?");
             context.put(STEP, 7);
             return context;
@@ -138,7 +138,7 @@ public class TwittearHandler extends CommandHandler {
     //CONFIRMA HASHTAG
     public CommandHandlerContext stepNine(CommandHandlerContext context){
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getTextToSpeech().speakText("¿Querés agregar otro hashtag?");
             context.put(STEP, 11);
             return context;
@@ -168,7 +168,7 @@ public class TwittearHandler extends CommandHandler {
     //INDICA SI SE QUIERE AGREGAR OTRO HASHTAG
     public CommandHandlerContext stepEleven(CommandHandlerContext context){
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getTextToSpeech().speakText("¿Qué hashtag querés agregar?");
             context.put(STEP, 7);
             return context;

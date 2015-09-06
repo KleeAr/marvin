@@ -1,5 +1,7 @@
 package ar.com.klee.marvin.social;
 
+import android.os.AsyncTask;
+
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
@@ -22,9 +24,11 @@ import twitter4j.auth.AccessToken;
  */
 public class TwitterService {
 
-
     private static TwitterService instance;
     private twitter4j.Twitter twitter;
+
+    private String text;
+    private File image;
 
     private TwitterService() {
         twitter = TwitterFactory.getSingleton();
@@ -52,15 +56,43 @@ public class TwitterService {
     }
 
     public void postTweet(String textToTweet, File image) {
+
+        text = textToTweet;
+        this.image = image;
+
         twitter.setOAuthConsumer(LoginActivity.TWITTER_KEY, LoginActivity.TWITTER_SECRET);
         TwitterAuthToken authToken = Twitter.getSessionManager().getActiveSession().getAuthToken();
         twitter.setOAuthAccessToken(new AccessToken(authToken.token, authToken.secret));
-        try {
-            StatusUpdate update = new StatusUpdate(textToTweet);
-            update.setMedia(image);
-            twitter.updateStatus(update);
-        } catch (twitter4j.TwitterException e) {
-            throw new RuntimeException("Tu tweet no pudo ser enviado", e);
+
+        new AsyncCaller().execute();
+    }
+
+    private class AsyncCaller extends AsyncTask<Void, Void, Void>
+    {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
         }
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            try {
+                StatusUpdate update = new StatusUpdate(text);
+                update.setMedia(image);
+                twitter.updateStatus(update);
+            } catch (twitter4j.TwitterException e) {
+                throw new RuntimeException("Tu tweet no pudo ser enviado", e);
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+
+        }
+
     }
 }

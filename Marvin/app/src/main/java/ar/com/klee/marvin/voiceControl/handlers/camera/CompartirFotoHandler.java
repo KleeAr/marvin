@@ -92,7 +92,7 @@ public class CompartirFotoHandler extends CommandHandler {
     public CommandHandlerContext facebook(CommandHandlerContext context){
 
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getCommandHandlerManager().setCurrentCommandHandler(getCommandHandlerManager().getCompartirEnFacebookHandler());
             getCommandHandlerManager().getCommandHandler().addSpecificContextData(context);
             getTextToSpeech().speakText("¿Qué mensaje querés agregar?");
@@ -120,7 +120,7 @@ public class CompartirFotoHandler extends CommandHandler {
 
     public CommandHandlerContext twitter(CommandHandlerContext context){
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getCommandHandlerManager().setCurrentCommandHandler(getCommandHandlerManager().getCompartirEnTwitterHandler());
             getCommandHandlerManager().getCommandHandler().addSpecificContextData(context);
             getTextToSpeech().speakText("¿Qué mensaje querés agregar?");
@@ -149,7 +149,7 @@ public class CompartirFotoHandler extends CommandHandler {
     public CommandHandlerContext instagram(CommandHandlerContext context){
         String input = context.getString(COMMAND);
 
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getCommandHandlerManager().setCurrentCommandHandler(getCommandHandlerManager().getCompartirInstagramHandler());
             getCommandHandlerManager().getCommandHandler().addSpecificContextData(context);
             getTextToSpeech().speakText("¿Qué mensaje querés agregar?");
