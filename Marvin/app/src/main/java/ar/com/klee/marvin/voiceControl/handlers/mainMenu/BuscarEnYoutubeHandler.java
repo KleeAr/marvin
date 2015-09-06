@@ -2,6 +2,8 @@ package ar.com.klee.marvin.voiceControl.handlers.mainMenu;
 
 import android.content.Context;
 
+import java.util.Arrays;
+
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.multimedia.video.YouTubeService;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
@@ -17,7 +19,7 @@ public class BuscarEnYoutubeHandler extends CommandHandler {
     YouTubeService youTubeService = new YouTubeService();
 
     public BuscarEnYoutubeHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("buscar en youtube {query}", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("buscar en youtube {query}", "buscar video en youtube {query}"), textToSpeech, context, commandHandlerManager);
     }
 
     @Override
