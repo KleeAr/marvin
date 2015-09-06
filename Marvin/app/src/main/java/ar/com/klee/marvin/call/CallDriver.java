@@ -2,6 +2,7 @@ package ar.com.klee.marvin.call;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -10,11 +11,16 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.ContactsContract;
+import android.support.v7.app.AlertDialog;
 import android.telephony.PhoneNumberUtils;
+import android.text.InputFilter;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import ar.com.klee.marvin.R;
@@ -152,25 +158,23 @@ public class CallDriver {
     }
 
     public  void outgoingCallDialog(){
-        final Dialog customDialog = new Dialog(commandHandlerManager.getMainActivity());
-        customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        customDialog.setCancelable(false);
-        customDialog.setContentView(R.layout.dialog_call_outgoing);
-        customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        actualDialog = customDialog;
+        AlertDialog.Builder builder =new AlertDialog.Builder(commandHandlerManager.getMainActivity(), R.style.AppCompatAlertDialogStyle);
+        builder.setCancelable(true);
+        builder.setTitle("Llamar a:");
+        builder.setIcon(R.drawable.marvin);
 
-        Typeface fontBold = Typeface.createFromAsset(context.getAssets(),"Bariol_Bold.otf");
-        TextView toCall = (TextView) customDialog.findViewById(R.id.toCall);
-        toCall.setTypeface(fontBold);
+        LinearLayout layout = new LinearLayout(commandHandlerManager.getMainActivity());
+        layout.setOrientation(LinearLayout.VERTICAL);
 
-        editPhone = (EditText) customDialog.findViewById(R.id.editPhone);
-        editPhone.setTypeface(fontBold);
-
-
-        customDialog.findViewById(R.id.btnAgenda).setOnClickListener(new View.OnClickListener() {
+        final Button buttonAgenda = new Button(commandHandlerManager.getMainActivity());
+        buttonAgenda.setBackgroundResource(R.mipmap.ic_contact_phone_black_48dp);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(50, 50);
+        params.gravity = Gravity.CENTER;
+        buttonAgenda.setLayoutParams(params);
+        buttonAgenda.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view){
+            public void onClick(View v) {
                 // using native contacts selection
                 // Intent.ACTION_PICK = Pick an item from the data, returning what was selected.
                 STTService.getInstance().stopListening();
@@ -178,20 +182,20 @@ public class CallDriver {
                 commandHandlerManager.getMainActivity().startActivityForResult(new Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI), REQUEST_CODE_PICK_CONTACTS);
             }
         });
-        customDialog.findViewById(R.id.cancelar).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view){
-                STTService.getInstance().setIsListening(false);
-                commandHandlerManager.setNullCommand();
-                ((MainMenuActivity)commandHandlerManager.getMainActivity()).setButtonsEnabled();
-                customDialog.dismiss();
-            }
-        });
-        customDialog.findViewById(R.id.llamar).setOnClickListener(new View.OnClickListener() {
+        layout.addView(buttonAgenda);
 
-            @Override
-            public void onClick(View view)
-            {
+
+
+        final EditText editPhone = new EditText(commandHandlerManager.getMainActivity());
+        editPhone.setHint("Ingresar telefono o contacto");
+        editPhone.setFilters(new InputFilter[] { new InputFilter.LengthFilter(30) });
+        layout.addView(editPhone);
+
+
+
+
+        builder.setPositiveButton("Llamar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
                 String number = editPhone.getText().toString();
                 commandHandlerManager.setNullCommand();
                 STTService.getInstance().setIsListening(false);
@@ -199,12 +203,20 @@ public class CallDriver {
                 lastOutgoingCallNumber = number;
                 Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number));
                 commandHandlerManager.getMainActivity().startActivity(intent);
-                customDialog.dismiss();
-
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                STTService.getInstance().setIsListening(false);
+                commandHandlerManager.setNullCommand();
+                ((MainMenuActivity)commandHandlerManager.getMainActivity()).setButtonsEnabled();
+                dialog.dismiss();
             }
         });
 
-        customDialog.show();
+
+        builder.show();
 
     }
 

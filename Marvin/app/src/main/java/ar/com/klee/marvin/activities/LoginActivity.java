@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -277,6 +278,7 @@ public class LoginActivity extends AppCompatActivity {
         AlertDialog.Builder builder =new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
         builder.setCancelable(true);
         builder.setTitle("Recuperar contraseña");
+        builder.setIcon(R.drawable.marvin);
 
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
@@ -288,7 +290,6 @@ public class LoginActivity extends AppCompatActivity {
 
         final EditText siteAddress = new EditText(this);
         siteAddress.setHint("Email");
-
         layout.addView(siteAddress);
 
         builder.setView(layout);

@@ -22,6 +22,7 @@ public class SignupActivity extends AppCompatActivity {
     @Bind(R.id.input_name) EditText nameText;
     @Bind(R.id.input_email) EditText emailText;
     @Bind(R.id.input_password) EditText passwordText;
+    @Bind(R.id.repeat_password) EditText repeatPasswordText;
     @Bind(R.id.btn_signup) Button signupbutton;
 
     @Override
@@ -97,6 +98,7 @@ public class SignupActivity extends AppCompatActivity {
         String name = nameText.getText().toString();
         String email = emailText.getText().toString();
         String password = passwordText.getText().toString();
+        String repeatPassword = repeatPasswordText.getText().toString();
 
         if (name.isEmpty() || name.length() < 3) {
             nameText.setError("Debe tener al menos 3 caracteres");
@@ -117,6 +119,13 @@ public class SignupActivity extends AppCompatActivity {
             valid = false;
         } else {
             passwordText.setError(null);
+        }
+
+        if (repeatPassword.isEmpty() || password.equals(repeatPassword)) {
+            repeatPasswordText.setError("Contraseña incorrecta");
+            valid = false;
+        } else {
+            repeatPasswordText.setError(null);
         }
 
         return valid;
