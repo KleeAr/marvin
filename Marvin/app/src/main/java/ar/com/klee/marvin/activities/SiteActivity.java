@@ -159,7 +159,7 @@ public class SiteActivity extends ActionBarActivity {
 
         FacebookService facebookService = new FacebookService(this);
 
-        facebookService.postImage(mapBitmap);
+        facebookService.postImage(mapBitmap, text);
 
         File photo = new File(mapPath);
         photo.delete();

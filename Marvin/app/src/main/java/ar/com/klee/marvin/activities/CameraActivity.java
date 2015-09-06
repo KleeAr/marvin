@@ -440,7 +440,7 @@ public class CameraActivity extends ActionBarActivity {
 
         FacebookService facebookService = new FacebookService(this);
 
-        facebookService.postImage(lastBitMap);
+        facebookService.postImage(lastBitMap, text);
 
         if(onlyShare){
 
