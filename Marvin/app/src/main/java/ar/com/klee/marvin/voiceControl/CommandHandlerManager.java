@@ -327,7 +327,7 @@ public class CommandHandlerManager {
         if(suggestedHandler == null) {
             return "";
         }
-        return suggestedHandler.getSuggestion();
+        return suggestedHandler.getSuggestion(command);
     }
 
     public void wrongCommand(String suggestion){

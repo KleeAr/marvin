@@ -36,6 +36,7 @@ public class ReproducirArtistaHandler extends CommandHandler {
 
     @Override
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
-        commandHandlerContext.put(ARTIST, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.getString(COMMAND)).get(ARTISTA));
+        String command = commandHandlerContext.getString(COMMAND);
+        commandHandlerContext.put(ARTIST, getExpressionMatcher(command).getValuesFromExpression(command).get(ARTISTA));
     }
 }

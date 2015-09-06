@@ -53,7 +53,8 @@ public class GuardarSitioHandler extends CommandHandler {
 
     @Override
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
-        commandHandlerContext.put(SITE, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.getString(COMMAND)).get(CONTACTO));
+        String command = commandHandlerContext.getString(COMMAND);
+        commandHandlerContext.put(SITE, getExpressionMatcher(command).getValuesFromExpression(command).get(CONTACTO));
         commandHandlerContext.put(SET_SITE, false);
     }
 

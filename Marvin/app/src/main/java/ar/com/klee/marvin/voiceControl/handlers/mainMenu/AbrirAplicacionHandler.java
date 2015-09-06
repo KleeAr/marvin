@@ -27,7 +27,8 @@ public class AbrirAplicacionHandler extends CommandHandler {
 
     public CommandHandlerContext drive(CommandHandlerContext currentContext){
 
-        Map<String, String> values = getExpressionMatcher().getValuesFromExpression(currentContext.getString(COMMAND));
+        String command = currentContext.getString(COMMAND);
+        Map<String, String> values = getExpressionMatcher(command).getValuesFromExpression(command);
 
         String app = values.get("aplicacion");
 

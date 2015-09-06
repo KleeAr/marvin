@@ -57,7 +57,8 @@ public class EnviarSMSAContactoHandler extends CommandHandler {
 
     @Override
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
-        commandHandlerContext.put(CONTACT, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.getString(COMMAND)).get(CONTACTO));
+        String command = commandHandlerContext.getString(COMMAND);
+        commandHandlerContext.put(CONTACT, getExpressionMatcher(command).getValuesFromExpression(command).get(CONTACTO));
         commandHandlerContext.put(SET_CONTACT, false);
         commandHandlerContext.put(NUMBER, "");
         commandHandlerContext.put(SET_MATCHES, false);

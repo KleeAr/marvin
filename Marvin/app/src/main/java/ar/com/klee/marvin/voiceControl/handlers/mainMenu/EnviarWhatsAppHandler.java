@@ -40,7 +40,8 @@ public class EnviarWhatsAppHandler extends CommandHandler {
     @Override
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
         commandHandlerContext.put(SET_MESSAGE, false);
-        commandHandlerContext.put(MESSAGE, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.getString(COMMAND)).get(MENSAJE));
+        String command = commandHandlerContext.getString(COMMAND);
+        commandHandlerContext.put(MESSAGE, getExpressionMatcher(command).getValuesFromExpression(command).get(MENSAJE));
     }
 
     //PRONUNCIA MENSAJE

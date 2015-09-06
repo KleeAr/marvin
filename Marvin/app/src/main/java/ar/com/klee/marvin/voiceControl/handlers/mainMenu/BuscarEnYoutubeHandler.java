@@ -22,7 +22,8 @@ public class BuscarEnYoutubeHandler extends CommandHandler {
 
     @Override
     public CommandHandlerContext drive(CommandHandlerContext currentContext) {
-        String query = getExpressionMatcher().getValuesFromExpression(currentContext.getString(COMMAND)).get("query");
+        String command = currentContext.getString(COMMAND);
+        String query = getExpressionMatcher(command).getValuesFromExpression(command).get("query");
         getTextToSpeech().speakText("Buscando videos en youtube");
         youTubeService.searchVideos(query, currentContext.getObject(ACTIVITY, MainMenuActivity.class));
         currentContext.put(STEP, 0);

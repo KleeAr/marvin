@@ -41,7 +41,8 @@ public class LlamarANumeroHandler extends CommandHandler {
 
     @Override
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
-        commandHandlerContext.put(NUMBER, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.getString(COMMAND)).get(NUMERO));
+        String command = commandHandlerContext.getString(COMMAND);
+        commandHandlerContext.put(NUMBER, getExpressionMatcher(command).getValuesFromExpression(command).get(NUMERO));
         commandHandlerContext.put(SET_NUMBER, false);
 
         commandHandlerContext.getObject(ACTIVITY, MainMenuActivity.class).openCallDialog();

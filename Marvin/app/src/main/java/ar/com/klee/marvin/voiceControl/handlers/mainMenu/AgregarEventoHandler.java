@@ -68,7 +68,8 @@ public class AgregarEventoHandler extends CommandHandler {
 
     @Override
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
-        commandHandlerContext.put(EVENT, getExpressionMatcher().getValuesFromExpression(commandHandlerContext.getString(COMMAND)).get("evento"));
+        String command = commandHandlerContext.getString(COMMAND);
+        commandHandlerContext.put(EVENT, getExpressionMatcher(command).getValuesFromExpression(command).get("evento"));
         commandHandlerContext.put(SET_EVENT, false);
     }
 

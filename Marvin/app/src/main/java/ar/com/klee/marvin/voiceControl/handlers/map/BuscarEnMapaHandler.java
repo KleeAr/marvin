@@ -19,7 +19,8 @@ public class BuscarEnMapaHandler extends CommandHandler {
 
     public CommandHandlerContext drive(CommandHandlerContext context){
 
-        Map<String, String> values = getExpressionMatcher().getValuesFromExpression(context.getString(COMMAND));
+        String command = context.getString(COMMAND);
+        Map<String, String> values = getExpressionMatcher(command).getValuesFromExpression(command);
         String address = values.get("direccion");
 
         getCommandHandlerManager().getTextToSpeech().speakText("Buscando la dirección " + address);
