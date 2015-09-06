@@ -52,10 +52,10 @@ public class FacebookService {
 
     public void postImage(Bitmap image, String textToPublish) {
         SharePhoto photo = new SharePhoto.Builder()
-                .setBitmap(image)
+                .setBitmap(image).setCaption(textToPublish)
                 .build();
         SharePhotoContent content = new SharePhotoContent.Builder()
-                .addPhoto(photo).setRef(textToPublish)
+                .addPhoto(photo)
                 .build();
         ShareApi.share(content, new FacebookCallback<Sharer.Result>() {
             @Override
