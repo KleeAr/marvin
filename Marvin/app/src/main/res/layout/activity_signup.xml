@@ -9,7 +9,8 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        android:layout_weight="0.1">
 
         <LinearLayout
             android:orientation="vertical"
@@ -117,4 +118,16 @@
 
         </LinearLayout>
     </ScrollView>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:linksClickable="true"
+        android:text="Leer los Terminos y condiciones"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:id="@+id/link_term" />
+
+
+
 </LinearLayout>
