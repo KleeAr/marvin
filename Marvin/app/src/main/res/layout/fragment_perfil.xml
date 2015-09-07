@@ -124,6 +124,9 @@
                 android:id="@+id/login_button"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
+                android:paddingTop="17dp"
+                android:paddingBottom="17dp"
+                android:textSize="15dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="5dp" />
 
@@ -131,6 +134,7 @@
                 android:id="@+id/twitter_login_button"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
+                android:textSize="15dp"
                 android:layout_marginTop="5dp" />
 
         </LinearLayout>

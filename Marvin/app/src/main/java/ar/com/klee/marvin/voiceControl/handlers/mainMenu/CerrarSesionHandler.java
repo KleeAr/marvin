@@ -3,6 +3,7 @@ package ar.com.klee.marvin.voiceControl.handlers.mainMenu;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.Handler;
 
 import java.util.List;
 import java.util.Locale;
@@ -26,15 +27,24 @@ public class CerrarSesionHandler extends CommandHandler {
     }
 
     @Override
-    public CommandHandlerContext drive(CommandHandlerContext currentContext) {
+    public CommandHandlerContext drive(final CommandHandlerContext currentContext) {
 
         getTextToSpeech().speakText("Cerrando sesión");
 
-        MainMenuActivity.mapFragment.finishTrip();
+        MainMenuFragment.getInstance().setItem(2);
 
-        MainMenuFragment.getInstance().stopThread();
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                if(MainMenuFragment.isInstanceInitialized())
+                    MainMenuFragment.getInstance().stopThread();
+                MainMenuActivity.mapFragment.finishTrip();
 
-        ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).stopServices();
+                MainMenuFragment.getInstance().stopThread();
+
+                ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).stopServices();
+            }
+        }, 1000);
 
         currentContext.put(STEP, 0);
         return currentContext;

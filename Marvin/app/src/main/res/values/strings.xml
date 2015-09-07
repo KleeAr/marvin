@@ -13,6 +13,8 @@
     <string name="title_activity_smsinbox">SMSInboxActivity</string>
     <string name="title_activity_call_history">CallHistoryActivity</string>
 
+    <string name="com_facebook_loginview_log_in_button">Iniciar Sesión de Facebook</string>
+    <string name="com_facebook_loginview_log_out_button">Cerrar Sesión de Facebook</string>
 
 
     <string name="city_name_default">Buscando ciudad...</string>

@@ -51,8 +51,8 @@ import ar.com.klee.marvin.R;
 public class LoginActivity extends AppCompatActivity {
 
     // Note: Your consumer key and secret should be obfuscated in your source code before shipping.
-    public static final String TWITTER_KEY = "IsfPZw7I4i4NCZaFxM9BZX4Qi";
-    public static final String TWITTER_SECRET = "aPnfZPsetWBwJ7E42RF0MMwsVL361hBu92ey1JwzkMcrNGedWE";
+    // public static final String TWITTER_KEY = "IsfPZw7I4i4NCZaFxM9BZX4Qi";
+    //public static final String TWITTER_SECRET = "aPnfZPsetWBwJ7E42RF0MMwsVL361hBu92ey1JwzkMcrNGedWE";
 
     private CallbackManager callbackManager = CallbackManager.Factory.create();
 
@@ -69,46 +69,40 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initializeFacebookSdk();
-        TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
-        Fabric.with(this, new Twitter(authConfig));
+        //initializeFacebookSdk();
+        //TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
+        //Fabric.with(this, new Twitter(authConfig));
         setContentView(R.layout.activity_login);
-        initializeTwitterSdk();
-    ButterKnife.bind(this);
+        //initializeTwitterSdk();
+        ButterKnife.bind(this);
 
+        Typeface typeface = Typeface.createFromAsset(getAssets(), "Wisdom Script AJ.otf");
 
+        TextView text_app = (TextView) findViewById(R.id.textView);
+        text_app.setTypeface(typeface);
 
-            Typeface typeface = Typeface.createFromAsset(getAssets(), "Wisdom Script AJ.otf");
-
-            TextView text_app = (TextView) findViewById(R.id.textView);
-            text_app.setTypeface(typeface);
-
-            rememberPassword.setOnClickListener(new View.OnClickListener() {
-
+        rememberPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 rememberPassword();
             }
         });
 
-            loginButton.setOnClickListener(new View.OnClickListener() {
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                login();
+            }
+        });
 
-                @Override
-                public void onClick(View v) {
-                    login();
-                }
-            });
-
-            signupLink.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    // Start the Signup activity
-                    Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
-                    startActivityForResult(intent, REQUEST_SIGNUP);
-                }
-            });
-
+        signupLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Start the Signup activity
+                Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
+                startActivityForResult(intent, REQUEST_SIGNUP);
+            }
+        });
 
     }
 
@@ -200,7 +194,7 @@ public class LoginActivity extends AppCompatActivity {
     //////////////////////////////////////
 
 
-
+    /*
     private void initializeTwitterSdk() {
 
         TwitterLoginButton loginButton = (TwitterLoginButton) findViewById(R.id.twitter_login_button);
@@ -218,9 +212,9 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    */
 
-
-
+    /*
     private void initializeFacebookSdk() {
         FacebookSdk.sdkInitialize(getApplicationContext());
         showHashKey(getApplicationContext());
@@ -255,6 +249,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
+
     public static void showHashKey(Context context) {
         try {
             PackageInfo info = context.getPackageManager().getPackageInfo(
@@ -268,6 +263,8 @@ public class LoginActivity extends AppCompatActivity {
             Log.v("Exception: ", e.getMessage(), e);
         }
     }
+
+    */
 
     public void logIn(View v){
 

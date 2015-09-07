@@ -75,6 +75,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
 
     public final int UPDATE_WEATHER = 1000000; //cantidad de milisegundos para actualizar el clima
+    public static final String TWITTER_KEY = "IsfPZw7I4i4NCZaFxM9BZX4Qi";
+    public static final String TWITTER_SECRET = "aPnfZPsetWBwJ7E42RF0MMwsVL361hBu92ey1JwzkMcrNGedWE";
 
     public static MainMenuFragment mainMenuFragment;
 
@@ -116,6 +118,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     private Stack<Integer> previousMenus = new Stack();
 
     private PowerManager.WakeLock wakeLock;
+
+    private boolean wasBackPressed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -387,6 +391,11 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
             return;
         }
+
+        if(wasBackPressed)
+            return;
+
+        wasBackPressed = true;
 
         MainMenuFragment.getInstance().setItem(2);
 

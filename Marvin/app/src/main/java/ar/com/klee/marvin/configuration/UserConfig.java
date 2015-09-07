@@ -9,10 +9,14 @@ public class UserConfig {
 
     private static UserConfig instance;
 
+    public static final int ORIENTATION_PORTRAIT = 0;
+    public static final int ORIENTATION_LANDSCAPE = 1;
+
     private Long miniumTripTime; //Guardado en horas
     private Long miniumTripDistance; //Guardado en kilómetros
     private String emergencyNumber; //Número al que enviarle un sms de emergencia
     private String emergencySMS; //Sms de emergencia a enviar
+    private int orientation; //Orientación de la pantalla
 
     public static UserConfig getInstance() {
         if (instance == null) {

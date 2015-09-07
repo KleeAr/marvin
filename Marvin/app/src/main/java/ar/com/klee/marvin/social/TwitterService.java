@@ -12,6 +12,8 @@ import com.twitter.sdk.android.core.models.Tweet;
 import java.io.File;
 
 import ar.com.klee.marvin.activities.LoginActivity;
+import ar.com.klee.marvin.activities.MainMenuActivity;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import twitter4j.StatusUpdate;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
@@ -60,7 +62,9 @@ public class TwitterService {
         text = textToTweet;
         this.image = image;
 
-        twitter.setOAuthConsumer(LoginActivity.TWITTER_KEY, LoginActivity.TWITTER_SECRET);
+        MainMenuActivity activity = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
+
+        twitter.setOAuthConsumer(activity.TWITTER_KEY, activity.TWITTER_SECRET);
         TwitterAuthToken authToken = Twitter.getSessionManager().getActiveSession().getAuthToken();
         twitter.setOAuthAccessToken(new AccessToken(authToken.token, authToken.secret));
 

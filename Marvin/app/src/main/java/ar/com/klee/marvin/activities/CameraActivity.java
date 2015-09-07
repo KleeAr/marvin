@@ -326,6 +326,7 @@ public class CameraActivity extends ActionBarActivity {
                         // Setting post rotate to 90
                         Matrix mtx = new Matrix();
                         mtx.postRotate(270);
+                        mtx.preScale(1.0f, -1.0f);
                         // Rotating Bitmap
                         bm = Bitmap.createBitmap(scaled, 0, 0, w, h, mtx, true);
                     }else{// LANDSCAPE MODE

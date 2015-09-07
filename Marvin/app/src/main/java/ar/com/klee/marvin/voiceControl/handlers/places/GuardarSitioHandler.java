@@ -1,4 +1,4 @@
-package ar.com.klee.marvin.voiceControl.handlers.mainMenu;
+package ar.com.klee.marvin.voiceControl.handlers.places;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -112,7 +112,7 @@ public class GuardarSitioHandler extends CommandHandler {
     public CommandHandlerContext stepSeven(CommandHandlerContext context){
         String input = context.getString(COMMAND);
         if(input.equals("si")) {
-            getTextToSpeech().speakText("Guardando sitio");
+            getTextToSpeech().speakText("Seleccioná la imagen del lugar");
             context.put(STEP, 0);
             return context;
         }
