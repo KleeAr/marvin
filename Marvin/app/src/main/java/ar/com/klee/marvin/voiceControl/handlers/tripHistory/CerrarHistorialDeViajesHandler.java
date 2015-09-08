@@ -2,6 +2,8 @@ package ar.com.klee.marvin.voiceControl.handlers.tripHistory;
 
 import android.content.Context;
 
+import java.util.Arrays;
+
 import ar.com.klee.marvin.activities.MapActivity;
 import ar.com.klee.marvin.gps.MapFragment;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
@@ -13,7 +15,7 @@ public class CerrarHistorialDeViajesHandler extends CommandHandler {
 
 
     public CerrarHistorialDeViajesHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("cerrar historial de viajes", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("cerrar historial de viajes"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

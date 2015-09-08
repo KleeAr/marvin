@@ -39,6 +39,7 @@ public class MainMenuFragment extends Fragment {
     public static ImageButton bt_radioMusic;
     public static TextView tv_song;
     public static TextView tv_artist;
+    public static TextView spokenText;
 
     public static TextView mainStreet;
     public static TextView speed;
@@ -84,6 +85,7 @@ public class MainMenuFragment extends Fragment {
         tv_song = (TextView)v.findViewById(R.id.song);
         tv_artist = (TextView)v.findViewById(R.id.artist);
 
+        spokenText = (TextView) v.findViewById(R.id.spokenText);
 
         shortcutList = new Application[CANT_APPLICATION]; //creamos la lista para almacenar los accesos directos
 
@@ -222,6 +224,11 @@ public class MainMenuFragment extends Fragment {
                     pager.setCurrentItem(0);
                 }
             }, 1000);
+
+        }else{
+
+            CommandHandlerManager commandHandlerManager = CommandHandlerManager.getInstance();
+            commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_MAIN,commandHandlerManager.getMainActivity());
 
         }
         return v;

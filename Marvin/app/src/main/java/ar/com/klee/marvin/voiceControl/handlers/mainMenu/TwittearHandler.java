@@ -3,6 +3,7 @@ package ar.com.klee.marvin.voiceControl.handlers.mainMenu;
 import android.content.Context;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -19,7 +20,7 @@ public class TwittearHandler extends CommandHandler {
     public static final String TWITTER_HASHTAGS = "TWITTER_HASHTAGS";
 
     public TwittearHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("twittear {mensaje}",textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("twittear {mensaje}"),textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

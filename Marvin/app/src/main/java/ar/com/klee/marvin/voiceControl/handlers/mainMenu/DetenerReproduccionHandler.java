@@ -2,6 +2,8 @@ package ar.com.klee.marvin.voiceControl.handlers.mainMenu;
 
 import android.content.Context;
 
+import java.util.Arrays;
+
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -11,7 +13,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class DetenerReproduccionHandler extends CommandHandler {
 
     public DetenerReproduccionHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("detener reproducción", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("detener reproducción"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

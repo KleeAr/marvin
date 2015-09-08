@@ -2,6 +2,8 @@ package ar.com.klee.marvin.voiceControl.handlers.mainMenu;
 
 import android.content.Context;
 
+import java.util.Arrays;
+
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
@@ -13,7 +15,7 @@ public class AnteriorCancionHandler extends CommandHandler {
 
 
     public AnteriorCancionHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager){
-        super("anterior canción", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("anterior canción"), textToSpeech, context, commandHandlerManager);
 
     }
 

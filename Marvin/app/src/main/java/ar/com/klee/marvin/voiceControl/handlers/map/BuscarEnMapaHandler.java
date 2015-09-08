@@ -2,6 +2,7 @@ package ar.com.klee.marvin.voiceControl.handlers.map;
 
 import android.content.Context;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import ar.com.klee.marvin.activities.MainMenuActivity;
@@ -14,7 +15,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class BuscarEnMapaHandler extends CommandHandler {
 
     public BuscarEnMapaHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("buscar en mapa {direccion}", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("buscar en mapa {direccion}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

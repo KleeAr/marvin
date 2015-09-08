@@ -2,6 +2,7 @@ package ar.com.klee.marvin.voiceControl.handlers.mainMenu;
 
 import android.content.Context;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import ar.com.klee.marvin.activities.MainMenuActivity;
@@ -13,7 +14,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class ReproducirCancionHandler extends CommandHandler {
 
     public ReproducirCancionHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("reproducir canción {cancion}", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("reproducir canción {cancion}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

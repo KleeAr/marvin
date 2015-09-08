@@ -3,6 +3,7 @@ package ar.com.klee.marvin.voiceControl.handlers.mainMenu;
 import android.content.Context;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -22,7 +23,7 @@ public class PublicarEnFacebookHandler extends CommandHandler {
 
     public PublicarEnFacebookHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager){
 
-        super("publicar en facebook {mensaje}", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("publicar en facebook {mensaje}"), textToSpeech, context, commandHandlerManager);
         facebookService = new FacebookService(context);
     }
 

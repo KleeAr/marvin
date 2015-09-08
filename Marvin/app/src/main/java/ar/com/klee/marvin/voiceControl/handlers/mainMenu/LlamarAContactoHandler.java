@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.provider.ContactsContract;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -25,7 +26,7 @@ public class LlamarAContactoHandler extends CommandHandler {
     public static final String SET_MATCHES = "SET_MATCHES";
 
     public LlamarAContactoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("llamar a {contacto}", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("llamar a {contacto}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

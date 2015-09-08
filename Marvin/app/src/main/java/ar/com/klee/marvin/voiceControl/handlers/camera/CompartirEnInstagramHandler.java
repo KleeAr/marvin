@@ -3,6 +3,7 @@ package ar.com.klee.marvin.voiceControl.handlers.camera;
 import android.content.Context;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -18,7 +19,7 @@ public class CompartirEnInstagramHandler extends CommandHandler {
     public static final String INSTAGRAM_HASHTAG = "INSTAGRAM_HASHTAG";
 
     public CompartirEnInstagramHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("compartir en instagram", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("compartir en instagram"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

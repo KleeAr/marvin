@@ -123,17 +123,24 @@ public class STTService extends Service {
             Log.d("STT", "onError");
             Log.d("STT", getErrorText(error));
 
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                public void run() {
-
-                mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
-                sttState = true;
-                Log.d("STT", "onErrorActivate");
-
-                }
-            }, 1000);
-
+            if(error != SpeechRecognizer.ERROR_RECOGNIZER_BUSY) {
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
+                        sttState = true;
+                        Log.d("STT", "onErrorActivate");
+                    }
+                }, 1000);
+            }else{
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        sttState = true;
+                        Log.d("STT", "onErrorActivate");
+                    }
+                }, 1000);
+            }
         }
 
         @Override

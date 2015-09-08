@@ -7,6 +7,7 @@ import android.provider.ContactsContract;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -27,7 +28,7 @@ public class EnviarSMSAContactoHandler extends CommandHandler {
     public static final String SET_MATCHES = "SET_MATCHES";
 
     public EnviarSMSAContactoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("enviar sms a {contacto}", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("enviar sms a {contacto}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

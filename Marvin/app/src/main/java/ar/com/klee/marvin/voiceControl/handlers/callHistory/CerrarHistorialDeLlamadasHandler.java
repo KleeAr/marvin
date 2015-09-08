@@ -2,6 +2,8 @@ package ar.com.klee.marvin.voiceControl.handlers.callHistory;
 
 import android.content.Context;
 
+import java.util.Arrays;
+
 import ar.com.klee.marvin.activities.CallHistoryActivity;
 import ar.com.klee.marvin.activities.SMSInboxActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
@@ -13,7 +15,7 @@ public class CerrarHistorialDeLlamadasHandler extends CommandHandler {
 
 
     public CerrarHistorialDeLlamadasHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("cerrar historial de llamadas", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("cerrar historial de llamadas"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

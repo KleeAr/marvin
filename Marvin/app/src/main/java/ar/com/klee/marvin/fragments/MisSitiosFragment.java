@@ -177,6 +177,11 @@ public class MisSitiosFragment extends Fragment {
 
                         LatLng coordinates = getCoordinates(siteAddress.getText().toString());
 
+                        if(coordinates==null){
+                            Toast.makeText(mma, "Dirección no encontrada", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
                         final Site newSite = new Site(siteName.getText().toString(),siteAddress.getText().toString(),coordinates,0);
 
                         lSites.add(newSite);
@@ -397,6 +402,10 @@ public class MisSitiosFragment extends Fragment {
 
                             @Override
                             public void onDismiss(RecyclerViewAdapter view, int position) {
+
+                                File file = new File("/sdcard/MARVIN/Sitios/"+lSites.get(position).getSiteName()+".png");
+                                file.delete();
+
                                 lSites.remove(position);
                                 MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
 
@@ -451,12 +460,15 @@ public class MisSitiosFragment extends Fragment {
         Double latitude = 0.0;
         Double longitude = 0.0;
 
+        LatLng coordinates = null;
+
         if(addresses!=null && addresses.size() > 0) {
             latitude= addresses.get(0).getLatitude();
             longitude= addresses.get(0).getLongitude();
+            coordinates = new LatLng(latitude,longitude);
         }
 
-        return new LatLng(latitude,longitude);
+        return coordinates;
 
     }
 

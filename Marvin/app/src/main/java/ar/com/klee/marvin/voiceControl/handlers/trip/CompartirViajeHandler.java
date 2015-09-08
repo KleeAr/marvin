@@ -2,6 +2,8 @@ package ar.com.klee.marvin.voiceControl.handlers.trip;
 
 import android.content.Context;
 
+import java.util.Arrays;
+
 import ar.com.klee.marvin.activities.CameraActivity;
 import ar.com.klee.marvin.activities.TripActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
@@ -12,7 +14,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class CompartirViajeHandler extends CommandHandler {
 
     public CompartirViajeHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("compartir viaje", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("compartir viaje"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

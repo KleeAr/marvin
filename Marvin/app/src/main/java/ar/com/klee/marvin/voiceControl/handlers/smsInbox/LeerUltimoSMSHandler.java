@@ -5,6 +5,8 @@ import android.os.Build;
 import android.os.Handler;
 import android.telephony.SmsManager;
 
+import java.util.Arrays;
+
 import ar.com.klee.marvin.activities.CameraActivity;
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.activities.SMSInboxActivity;
@@ -16,7 +18,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class LeerUltimoSMSHandler extends CommandHandler {
 
     public LeerUltimoSMSHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("leer último sms", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("leer último sms"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

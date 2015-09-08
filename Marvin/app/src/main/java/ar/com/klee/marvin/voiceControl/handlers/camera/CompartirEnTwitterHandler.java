@@ -3,6 +3,7 @@ package ar.com.klee.marvin.voiceControl.handlers.camera;
 import android.content.Context;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -18,7 +19,7 @@ public class CompartirEnTwitterHandler extends CommandHandler {
     public static final String TWITTER_HASHTAG = "TWITTER_HASHTAG";
 
     public CompartirEnTwitterHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("compartir en twitter", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("compartir en twitter"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

@@ -2,6 +2,8 @@ package ar.com.klee.marvin.voiceControl.handlers.camera;
 
 import android.content.Context;
 
+import java.util.Arrays;
+
 import ar.com.klee.marvin.activities.CameraActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -11,7 +13,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class SacarFotoHandler extends CommandHandler {
 
     public SacarFotoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("sacar foto", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("sacar foto"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

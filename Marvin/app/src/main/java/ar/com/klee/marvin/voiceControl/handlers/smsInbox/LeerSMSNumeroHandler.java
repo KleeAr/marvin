@@ -3,6 +3,8 @@ package ar.com.klee.marvin.voiceControl.handlers.smsInbox;
 import android.content.Context;
 import android.os.Handler;
 
+import java.util.Arrays;
+
 import ar.com.klee.marvin.activities.SMSInboxActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -16,7 +18,7 @@ public class LeerSMSNumeroHandler extends CommandHandler {
     public static final String SET_NUMBER = "SET_NUMBER";
 
     public LeerSMSNumeroHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("leer sms número {numero}", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("leer sms número {numero}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

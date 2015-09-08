@@ -2,6 +2,8 @@ package ar.com.klee.marvin.voiceControl.handlers.map;
 
 import android.content.Context;
 
+import java.util.Arrays;
+
 import ar.com.klee.marvin.activities.MapActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -11,7 +13,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class AumentarZoomHandler extends CommandHandler {
 
     public AumentarZoomHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("aumentar zoom", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("aumentar zoom"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

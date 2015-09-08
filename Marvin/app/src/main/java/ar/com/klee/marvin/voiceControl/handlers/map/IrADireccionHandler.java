@@ -2,6 +2,7 @@ package ar.com.klee.marvin.voiceControl.handlers.map;
 
 import android.content.Context;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import ar.com.klee.marvin.activities.MapActivity;
@@ -13,7 +14,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class IrADireccionHandler extends CommandHandler {
 
     public IrADireccionHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("ir a {direccion}", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("ir a {direccion}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

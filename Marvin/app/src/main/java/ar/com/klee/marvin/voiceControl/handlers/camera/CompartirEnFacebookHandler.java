@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v4.media.session.MediaSessionCompatApi14;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -19,7 +20,7 @@ public class CompartirEnFacebookHandler extends CommandHandler {
     protected static final String FACEBOOK_HASHTAG = "FACEBOOK_HASHTAG";
 
     public CompartirEnFacebookHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("compartir en facebook", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("compartir en facebook"), textToSpeech, context, commandHandlerManager);
     }
 
 

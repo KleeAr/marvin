@@ -2,13 +2,17 @@ package ar.com.klee.marvin.fragments;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +24,7 @@ import com.hudomju.swipe.adapter.RecyclerViewAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import ar.com.klee.marvin.R;
@@ -109,6 +114,9 @@ public class MisViajesFragment extends Fragment {
     static class MyBaseAdapter extends RecyclerView.Adapter<MyBaseAdapter.MyViewHolder> {
 
         private List<Trip> tripList = new ArrayList<Trip>();
+        private List<String> destinationList = new ArrayList<String>();
+        private List<Integer> colourList = Arrays.asList(Color.BLUE,Color.GREEN,Color.RED,Color.GRAY,Color.MAGENTA,Color.CYAN,
+                Color.YELLOW,Color.DKGRAY,Color.LTGRAY);
 
         private MainMenuActivity mainMenuActivity;
 
@@ -150,6 +158,21 @@ public class MisViajesFragment extends Fragment {
 
             formattedDate = new SimpleDateFormat("dd/MM/yyyy - HH:mm").format(tripList.get(position).getFinishTime());
             holder.endingTime.setText(formattedDate);
+
+            int i = 0;
+
+            while(i < destinationList.size()){
+                if(holder.endingAddress.getText().toString().equals(destinationList.get(i))){
+                    break;
+                }
+                i++;
+            }
+
+            if(i == destinationList.size()) {
+                destinationList.add(holder.endingAddress.getText().toString());
+            }
+
+            holder.layoutCar.setBackgroundColor(colourList.get(i%9));
         }
 
         @Override
@@ -180,9 +203,10 @@ public class MisViajesFragment extends Fragment {
             }
         }
 
-        static class MyViewHolder extends RecyclerView.ViewHolder {
+        class MyViewHolder extends RecyclerView.ViewHolder {
 
             TextView distance, beginningAddress, endingAddress, beginningTime, endingTime;
+            LinearLayout layoutCar;
             MyViewHolder(View view) {
                 super(view);
                 distance = ((TextView) view.findViewById(R.id.distance));
@@ -190,6 +214,8 @@ public class MisViajesFragment extends Fragment {
                 endingAddress = ((TextView) view.findViewById(R.id.endingAddress));
                 beginningTime = ((TextView) view.findViewById(R.id.beginningTime));
                 endingTime = ((TextView) view.findViewById(R.id.endingTime));
+                layoutCar= (LinearLayout) view.findViewById(R.id.lyt_2);
+
             }
         }
 
@@ -197,6 +223,5 @@ public class MisViajesFragment extends Fragment {
             return tripList.get(position);
         }
     }
-
 
 }

@@ -94,14 +94,19 @@
             android:layout_height="0dp"
             android:background="#ef404a"
             android:id="@+id/layout_medium"
-            android:layout_weight="0.13">
+            android:layout_weight="0.11">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/micImg" />
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="match_parent"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="A definir"
-                android:id="@+id/textView2"
+                android:text="Hablá, yo escucho..."
+                android:id="@+id/spokenText"
                 android:textColor="#ffffff"
                 android:singleLine="true"
                 android:scrollHorizontally="true"
@@ -122,7 +127,7 @@
             android:layout_weight="0.45">
         </android.support.v4.view.ViewPager>
 
-        <ar.com.klee.marvin.SlidingTabLayout
+    <ar.com.klee.marvin.SlidingTabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="3dp"
@@ -135,7 +140,7 @@
             android:layout_height="0dp"
             android:id="@+id/layout_music"
             android:background="@color/ColorPrimary"
-            android:layout_weight="0.07"
+            android:layout_weight="0.09"
             android:layout_gravity="left|bottom">
 
             <ImageButton

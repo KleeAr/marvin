@@ -17,6 +17,8 @@ public class UserConfig {
     private String emergencyNumber; //Número al que enviarle un sms de emergencia
     private String emergencySMS; //Sms de emergencia a enviar
     private int orientation; //Orientación de la pantalla
+    private boolean openAppWhenStop = false; //Indica si está activada la opción de abrir una app al detenerse
+    private String appToOpenWhenStop; //Indica el nombre de la aplicación a abrir al detenerse
 
     public static UserConfig getInstance() {
         if (instance == null) {

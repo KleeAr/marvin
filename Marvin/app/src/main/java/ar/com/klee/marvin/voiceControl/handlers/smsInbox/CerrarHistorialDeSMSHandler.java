@@ -2,6 +2,8 @@ package ar.com.klee.marvin.voiceControl.handlers.smsInbox;
 
 import android.content.Context;
 
+import java.util.Arrays;
+
 import ar.com.klee.marvin.activities.CameraActivity;
 import ar.com.klee.marvin.activities.SMSInboxActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
@@ -13,7 +15,7 @@ public class CerrarHistorialDeSMSHandler extends CommandHandler {
 
 
     public CerrarHistorialDeSMSHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("cerrar historial de sms", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("cerrar historial de sms"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

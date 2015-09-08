@@ -2,6 +2,8 @@ package ar.com.klee.marvin.voiceControl.handlers.mainMenu;
 
 import android.content.Context;
 
+import java.util.Arrays;
+
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -15,7 +17,7 @@ public class EnviarSMSANumeroHandler extends CommandHandler {
     private static final String NUMBER = "NUMBER";
 
     public EnviarSMSANumeroHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("enviar sms al número {numero}", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("enviar sms al número {numero}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

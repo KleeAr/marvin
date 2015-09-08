@@ -2,6 +2,8 @@ package ar.com.klee.marvin.voiceControl.handlers.mainMenu;
 
 import android.content.Context;
 
+import java.util.Arrays;
+
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -11,7 +13,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class PausarMusicaHandler extends CommandHandler {
 
     public PausarMusicaHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("pausar música", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("pausar música"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

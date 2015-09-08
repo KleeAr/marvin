@@ -2,6 +2,8 @@ package ar.com.klee.marvin.voiceControl.handlers.mainMenu;
 
 import android.content.Context;
 
+import java.util.Arrays;
+
 import ar.com.klee.marvin.social.WhatsAppService;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -15,7 +17,7 @@ public class EnviarWhatsAppHandler extends CommandHandler {
     private final WhatsAppService whatsAppService;
 
     public EnviarWhatsAppHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("enviar whatsapp {mensaje}", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("enviar whatsapp {mensaje}"), textToSpeech, context, commandHandlerManager);
         this.whatsAppService = new WhatsAppService(context);
     }
 

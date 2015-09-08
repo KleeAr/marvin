@@ -2,6 +2,8 @@ package ar.com.klee.marvin.voiceControl.handlers.mainMenu;
 
 import android.content.Context;
 
+import java.util.Arrays;
+
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -15,7 +17,7 @@ public class LlamarANumeroHandler extends CommandHandler {
     private static final String NUMBER = "NUMBER";
 
     public LlamarANumeroHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("llamar al número {numero}", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("llamar al número {numero}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

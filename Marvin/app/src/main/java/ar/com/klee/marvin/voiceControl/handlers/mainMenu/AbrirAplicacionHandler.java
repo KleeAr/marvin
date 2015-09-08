@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +22,7 @@ public class AbrirAplicacionHandler extends CommandHandler {
 
     public AbrirAplicacionHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager){
 
-        super("abrir {aplicacion}", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("abrir {aplicacion}"), textToSpeech, context, commandHandlerManager);
 
     }
 

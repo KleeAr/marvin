@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.provider.ContactsContract;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -23,7 +24,7 @@ public class GuardarSitioHandler extends CommandHandler {
     public static final String SET_SITE = "SET_SITE";
 
     public GuardarSitioHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("guardar sitio {sitio}", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("guardar sitio {sitio}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

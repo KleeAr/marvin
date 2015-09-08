@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.provider.ContactsContract;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class ResponderSMSHandler extends CommandHandler {
 
     public ResponderSMSHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("responder sms", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("responder sms"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

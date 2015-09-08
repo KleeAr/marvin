@@ -2,6 +2,8 @@ package ar.com.klee.marvin.voiceControl.handlers.parking;
 
 import android.content.Context;
 
+import java.util.Arrays;
+
 import ar.com.klee.marvin.activities.TripActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -12,7 +14,7 @@ public class CerrarDondeEstacioneHandler extends CommandHandler {
 
 
     public CerrarDondeEstacioneHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("cerrar dónde estacioné", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("cerrar dónde estacioné"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

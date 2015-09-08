@@ -2,6 +2,8 @@ package ar.com.klee.marvin.voiceControl.handlers.places;
 
 import android.content.Context;
 
+import java.util.Arrays;
+
 import ar.com.klee.marvin.activities.TripActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -12,7 +14,7 @@ public class CerrarMisSitiosHandler extends CommandHandler {
 
 
     public CerrarMisSitiosHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("cerrar mis sitios", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("cerrar mis sitios"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

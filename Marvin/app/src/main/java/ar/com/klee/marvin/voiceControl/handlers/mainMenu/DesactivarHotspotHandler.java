@@ -2,6 +2,8 @@ package ar.com.klee.marvin.voiceControl.handlers.mainMenu;
 
 import android.content.Context;
 
+import java.util.Arrays;
+
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.hotspot.WiFiHotspot;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
@@ -12,7 +14,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class DesactivarHotspotHandler extends CommandHandler {
 
     public DesactivarHotspotHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("desactivar hotspot", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("desactivar hotspot"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

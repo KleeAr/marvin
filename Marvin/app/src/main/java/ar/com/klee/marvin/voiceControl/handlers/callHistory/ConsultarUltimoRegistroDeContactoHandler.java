@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.provider.ContactsContract;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -24,7 +25,7 @@ public class ConsultarUltimoRegistroDeContactoHandler extends CommandHandler {
     public static final String CONTACTO = "contacto";
 
     public ConsultarUltimoRegistroDeContactoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("consultar último registro de {contacto}", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("consultar último registro de {contacto}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

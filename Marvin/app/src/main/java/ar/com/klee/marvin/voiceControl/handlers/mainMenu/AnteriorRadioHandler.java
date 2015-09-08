@@ -2,6 +2,8 @@ package ar.com.klee.marvin.voiceControl.handlers.mainMenu;
 
 import android.content.Context;
 
+import java.util.Arrays;
+
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -12,7 +14,7 @@ public class AnteriorRadioHandler extends CommandHandler {
 
 
     public AnteriorRadioHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager){
-        super("anterior radio", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("anterior radio"), textToSpeech, context, commandHandlerManager);
 
     }
 

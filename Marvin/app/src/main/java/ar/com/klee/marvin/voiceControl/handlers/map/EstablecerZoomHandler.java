@@ -3,6 +3,7 @@ package ar.com.klee.marvin.voiceControl.handlers.map;
 import android.content.Context;
 import android.media.AudioManager;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import ar.com.klee.marvin.activities.MapActivity;
@@ -14,7 +15,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class EstablecerZoomHandler extends CommandHandler {
 
     public EstablecerZoomHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("establecer zoom {zoom}", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("establecer zoom {zoom}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

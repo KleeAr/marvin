@@ -5,6 +5,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.Handler;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -23,7 +24,7 @@ public class CerrarSesionHandler extends CommandHandler {
     private TTS textToSpeech;
 
     public CerrarSesionHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("cerrar sesión", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("cerrar sesión"), textToSpeech, context, commandHandlerManager);
     }
 
     @Override

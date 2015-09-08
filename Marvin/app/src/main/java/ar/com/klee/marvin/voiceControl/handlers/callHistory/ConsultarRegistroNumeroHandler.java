@@ -3,6 +3,8 @@ package ar.com.klee.marvin.voiceControl.handlers.callHistory;
 import android.content.Context;
 import android.os.Handler;
 
+import java.util.Arrays;
+
 import ar.com.klee.marvin.activities.CallHistoryActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -16,7 +18,7 @@ public class ConsultarRegistroNumeroHandler extends CommandHandler {
     public static final String SET_NUMBER = "SET_NUMBER";
 
     public ConsultarRegistroNumeroHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("consultar registro número {numero}", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("consultar registro número {numero}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

@@ -3,6 +3,8 @@ package ar.com.klee.marvin.voiceControl.handlers;
 import android.content.Context;
 import android.content.Intent;
 
+import java.util.Arrays;
+
 import ar.com.klee.marvin.activities.BluetoothActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -13,7 +15,7 @@ import ar.com.klee.marvin.voiceControl.TTS;
 public class BuscarDispositivosHandler extends CommandHandler {
 
     public BuscarDispositivosHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("buscar dispositivos bluetooth", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("buscar dispositivos bluetooth"), textToSpeech, context, commandHandlerManager);
     }
 
     @Override

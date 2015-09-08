@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.OperationApplicationException;
 import android.os.RemoteException;
 
+import java.util.Arrays;
+
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.call.CallReceiver;
 import ar.com.klee.marvin.call.Contact;
@@ -17,7 +19,7 @@ public class AgendarContactoHandler extends CommandHandler {
     public static final String CONTACT = "CONTACT";
 
     public AgendarContactoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("agendar contacto {numero}", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("agendar contacto {numero}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

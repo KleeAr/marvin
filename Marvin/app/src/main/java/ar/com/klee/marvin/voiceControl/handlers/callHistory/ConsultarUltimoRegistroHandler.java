@@ -3,6 +3,8 @@ package ar.com.klee.marvin.voiceControl.handlers.callHistory;
 import android.content.Context;
 import android.os.Handler;
 
+import java.util.Arrays;
+
 import ar.com.klee.marvin.activities.CallHistoryActivity;
 import ar.com.klee.marvin.activities.SMSInboxActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
@@ -13,7 +15,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class ConsultarUltimoRegistroHandler extends CommandHandler {
 
     public ConsultarUltimoRegistroHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("consultar último registro", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("consultar último registro"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

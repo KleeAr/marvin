@@ -2,6 +2,8 @@ package ar.com.klee.marvin.voiceControl.handlers.mainMenu;
 
 import android.content.Context;
 
+import java.util.Arrays;
+
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.expressions.ExpressionMatcher;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
@@ -12,7 +14,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class AnteriorInterseccionHandler extends CommandHandler {
 
     public AnteriorInterseccionHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("anterior intersección",textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("anterior intersección"),textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext currentContext){

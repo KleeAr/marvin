@@ -562,7 +562,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
                     notification = notification.replace("Command ", "");
 
-                    //MOSTRAR COMANDO
+                    MainMenuFragment.spokenText.setText(notification);
 
                 } else if (notification.equals("Started")) {
                     commandHandlerManager = CommandHandlerManager.getInstance();

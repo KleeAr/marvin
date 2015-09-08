@@ -4,6 +4,8 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.util.Log;
 
+import java.util.Arrays;
+
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
@@ -12,7 +14,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class BajarVolumenHandler extends CommandHandler {
 
     public BajarVolumenHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("bajar volumen", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("bajar volumen"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

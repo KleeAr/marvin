@@ -2,6 +2,8 @@ package ar.com.klee.marvin.voiceControl.handlers.map;
 
 import android.content.Context;
 
+import java.util.Arrays;
+
 import ar.com.klee.marvin.activities.CameraActivity;
 import ar.com.klee.marvin.activities.MapActivity;
 import ar.com.klee.marvin.gps.MapFragment;
@@ -14,7 +16,7 @@ public class CerrarMapaHandler extends CommandHandler {
 
 
     public CerrarMapaHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("cerrar mapa", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("cerrar mapa"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

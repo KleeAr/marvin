@@ -36,6 +36,7 @@ public class InstagramService {
             // Add the URI and the caption to the Intent.
             intent.putExtra(Intent.EXTRA_STREAM, uri);
             intent.putExtra(Intent.EXTRA_TEXT, textToPublish);
+            intent.setPackage(info.packageName);
             context.startActivity(intent);
 
         }catch (PackageManager.NameNotFoundException e) {

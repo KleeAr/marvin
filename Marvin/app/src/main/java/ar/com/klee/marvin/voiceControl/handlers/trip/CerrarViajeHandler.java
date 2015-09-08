@@ -2,6 +2,8 @@ package ar.com.klee.marvin.voiceControl.handlers.trip;
 
 import android.content.Context;
 
+import java.util.Arrays;
+
 import ar.com.klee.marvin.activities.CallHistoryActivity;
 import ar.com.klee.marvin.activities.TripActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
@@ -13,7 +15,7 @@ public class CerrarViajeHandler extends CommandHandler {
 
 
     public CerrarViajeHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super("cerrar viaje", textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("cerrar viaje"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){
