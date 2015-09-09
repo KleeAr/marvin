@@ -14,7 +14,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class BarrioHandler extends CommandHandler {
 
     public BarrioHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("barrio"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("barrio","ciudad","pueblo","barrio actual","ciudad actual","pueblo actual"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

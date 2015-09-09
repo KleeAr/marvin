@@ -19,40 +19,40 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
-            android:padding="20dp"
+            android:padding="30dp"
             android:scaleType="fitCenter"
             android:id="@+id/imageButton1"
             android:layout_gravity="center"
             android:background="#a3d9d1"
             android:layout_margin="2dp"
             android:layout_weight="1"
-            android:src="@mipmap/ic_add_circle_white_48dp" />
+            android:src="@drawable/ic_plus" />
 
         <ImageButton
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
-            android:padding="20dp"
+            android:padding="30dp"
             android:scaleType="fitCenter"
             android:id="@+id/imageButton2"
             android:layout_gravity="center"
             android:background="#a3d9d1"
             android:layout_margin="2dp"
             android:layout_weight="1"
-            android:src="@mipmap/ic_add_circle_white_48dp" />
+            android:src="@drawable/ic_plus" />
 
         <ImageButton
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
-            android:padding="20dp"
+            android:padding="30dp"
             android:scaleType="fitCenter"
             android:id="@+id/imageButton3"
             android:layout_gravity="center"
             android:background="#a3d9d1"
             android:layout_margin="2dp"
             android:layout_weight="1"
-            android:src="@mipmap/ic_add_circle_white_48dp" />
+            android:src="@drawable/ic_plus" />
     </LinearLayout>
 
 
@@ -69,40 +69,40 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
-            android:padding="20dp"
+            android:padding="30dp"
             android:scaleType="fitCenter"
             android:id="@+id/imageButton4"
             android:layout_gravity="center"
             android:background="#a3d9d1"
             android:layout_margin="2dp"
             android:layout_weight="1"
-            android:src="@mipmap/ic_add_circle_white_48dp" />
+            android:src="@drawable/ic_plus" />
 
         <ImageButton
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
-            android:padding="20dp"
+            android:padding="30dp"
             android:scaleType="fitCenter"
             android:id="@+id/imageButton5"
             android:layout_gravity="center"
             android:background="#a3d9d1"
             android:layout_margin="2dp"
             android:layout_weight="1"
-            android:src="@mipmap/ic_add_circle_white_48dp" />
+            android:src="@drawable/ic_plus" />
 
         <ImageButton
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
-            android:padding="20dp"
+            android:padding="30dp"
             android:scaleType="fitCenter"
             android:id="@+id/imageButton6"
             android:layout_gravity="center"
             android:background="#a3d9d1"
             android:layout_margin="2dp"
             android:layout_weight="1"
-            android:src="@mipmap/ic_add_circle_white_48dp" />
+            android:src="@drawable/ic_plus" />
     </LinearLayout>
 
 

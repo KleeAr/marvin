@@ -11,8 +11,10 @@ import java.util.Map;
 
 import ar.com.klee.marvin.activities.CallHistoryActivity;
 import ar.com.klee.marvin.activities.CameraActivity;
+import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.activities.MapActivity;
 import ar.com.klee.marvin.activities.SMSInboxActivity;
+import ar.com.klee.marvin.fragments.MisViajesFragment;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
@@ -64,21 +66,15 @@ public class AbrirAplicacionHandler extends CommandHandler {
             currentContext.put(STEP, 0);
             return currentContext;
         }else if(app.equals("mis sitios")) {
-
-
-
+            ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).setFragment(5);
             currentContext.put(STEP, 0);
             return currentContext;
-        }else if(app.equals("mis viajes")) {
-
-
-
+        }else if(app.equals("historial de viajes")) {
+            ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).setFragment(4);
             currentContext.put(STEP, 0);
             return currentContext;
         }else if(app.equals("dónde estacioné")) {
-
-
-
+            ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).setFragment(6);
             currentContext.put(STEP, 0);
             return currentContext;
         }else if(app.equals("marvin")) {

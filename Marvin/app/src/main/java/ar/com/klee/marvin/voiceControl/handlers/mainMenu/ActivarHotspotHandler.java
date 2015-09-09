@@ -15,7 +15,7 @@ public class ActivarHotspotHandler extends CommandHandler {
 
 
     public ActivarHotspotHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager){
-        super(Arrays.asList("activar hotspot"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("activar hotspot","crear hotspot","crear access point"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext currentContext){

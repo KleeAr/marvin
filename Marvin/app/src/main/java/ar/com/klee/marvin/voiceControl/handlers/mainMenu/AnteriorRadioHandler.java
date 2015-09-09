@@ -14,7 +14,7 @@ public class AnteriorRadioHandler extends CommandHandler {
 
 
     public AnteriorRadioHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager){
-        super(Arrays.asList("anterior radio"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("anterior radio","anterior estación","estación anterior","radio anterior"), textToSpeech, context, commandHandlerManager);
 
     }
 

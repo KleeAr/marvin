@@ -31,7 +31,7 @@ public class AgregarEventoHandler extends CommandHandler {
     private CalendarService calendarService;
 
     public AgregarEventoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("agregar evento {evento}"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("agregar evento {evento}","agendar evento {evento}","crear evento {evento}","agendar {evento}"), textToSpeech, context, commandHandlerManager);
         calendarService = new CalendarService(context);
     }
 

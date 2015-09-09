@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -16,7 +17,12 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.fragments.ComandosDeVozFragment;
+import ar.com.klee.marvin.fragments.ConfigureAppFragment;
+import ar.com.klee.marvin.fragments.DondeEstacioneFragment;
 import ar.com.klee.marvin.fragments.MainMenuFragment;
+import ar.com.klee.marvin.fragments.MisSitiosFragment;
+import ar.com.klee.marvin.fragments.MisViajesFragment;
 
 
 public class Tab1 extends Fragment implements View.OnClickListener, View.OnLongClickListener {
@@ -90,9 +96,68 @@ public class Tab1 extends Fragment implements View.OnClickListener, View.OnLongC
                     Intent i = new Intent(getActivity().getApplicationContext(), ApplicationList.class);
                     i.putExtra("buttonClick", index);
                     startActivity(i);
-                } else//sino lanza la aplicación seteada
-                    startNewActivity(getActivity().getApplicationContext(), MainMenuFragment.shortcutList[index].getPackageName());
+                } else {//sino lanza la aplicación seteada
+                    switch (MainMenuFragment.shortcutList[index].getName()) {
+                        case "Marvin - Cámara":
+                            Intent cameraIntent = new Intent(getActivity(), CameraActivity.class);
+                            getActivity().startActivity(cameraIntent);
+                            break;
+                        case "Marvin - Comandos de voz":
+                            ((MainMenuActivity) getActivity()).previousMenus.push(1);
+                            ((MainMenuActivity) getActivity()).actualFragmentPosition = 2;
+                            ((MainMenuActivity)getActivity()).setFragment(2, ComandosDeVozFragment.class);
+                            break;
+                        case "Marvin - Configuración":
+                            ((MainMenuActivity) getActivity()).previousMenus.push(1);
+                            ((MainMenuActivity) getActivity()).actualFragmentPosition = 8;
+                            ((MainMenuActivity)getActivity()).setFragment(8, ConfigureAppFragment.class);
+                            break;
+                        case "Marvin - Dónde estacioné":
+                            ((MainMenuActivity) getActivity()).previousMenus.push(1);
+                            ((MainMenuActivity) getActivity()).actualFragmentPosition = 6;
+                            ((MainMenuActivity)getActivity()).setFragment(6, DondeEstacioneFragment.class);
+                            break;
+                        case "Marvin - Historial de llamadas":
+                            Intent callHistory = new Intent(getActivity(), CallHistoryActivity.class);
+                            getActivity().startActivity(callHistory);
+                            break;
+                        case "Marvin - Historial de sms":
+                            Intent smsInbox = new Intent(getActivity(), SMSInboxActivity.class);
+                            getActivity().startActivity(smsInbox);
+                            break;
+                        case "Marvin - Historial de viajes":
+                            ((MainMenuActivity) getActivity()).previousMenus.push(1);
+                            ((MainMenuActivity) getActivity()).actualFragmentPosition = 4;
+                            ((MainMenuActivity)getActivity()).setFragment(4, MisViajesFragment.class);
+                            break;
+                        case "Marvin - Mapa":
+                            Intent map = new Intent(getActivity(), MapActivity.class);
+                            getActivity().startActivity(map);
+                            break;
+                        case "Marvin - Mis sitios":
+                            ((MainMenuActivity) getActivity()).previousMenus.push(1);
+                            ((MainMenuActivity) getActivity()).actualFragmentPosition = 5;
+                            ((MainMenuActivity)getActivity()).setFragment(5, MisSitiosFragment.class);
+                            break;
+                        case "Marvin - Salir":
+                            MainMenuFragment.getInstance().setItem(2);
+                            Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                public void run() {
+                                    if(MainMenuFragment.isInstanceInitialized())
+                                        MainMenuFragment.getInstance().stopThread();
+                                    MainMenuActivity.mapFragment.finishTrip();
+                                    MainMenuFragment.getInstance().stopThread();
+                                    ((MainMenuActivity)getActivity()).stopServices();
+                                }
+                            }, 1000);
+                            break;
+                        default:
+                            startNewActivity(getActivity().getApplicationContext(), MainMenuFragment.shortcutList[index].getPackageName());
+                            break;
+                    }
 
+                }
     }
     @Override
     public boolean onLongClick(View v) {
@@ -143,7 +208,7 @@ public class Tab1 extends Fragment implements View.OnClickListener, View.OnLongC
                     //borra la memoria del boton
                     MainMenuFragment.shortcutList[buttonNumber].setConfigured(false);
                     MainMenuFragment.shortcutButton[buttonNumber].setBackgroundColor(Color.parseColor("#a3d9d1"));
-                    MainMenuFragment.shortcutButton[buttonNumber].setImageResource(R.mipmap.ic_add_circle_white_48dp);
+                    MainMenuFragment.shortcutButton[buttonNumber].setImageResource(R.drawable.ic_plus);
 
                     // Creamos la instancia de "SharedPreferences"
                     // Y también la "SharedPreferences.Editor"

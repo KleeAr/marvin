@@ -15,7 +15,7 @@ public class AnteriorCancionHandler extends CommandHandler {
 
 
     public AnteriorCancionHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager){
-        super(Arrays.asList("anterior canción"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("anterior canción","canción anterior","canción previa","reproducir anterior canción","reproducir canción anterior","volver a la anterior canción","volver a la canción anterior"), textToSpeech, context, commandHandlerManager);
 
     }
 

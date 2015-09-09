@@ -24,7 +24,7 @@ public class CerrarSesionHandler extends CommandHandler {
     private TTS textToSpeech;
 
     public CerrarSesionHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("cerrar sesión"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("cerrar sesión","salir"), textToSpeech, context, commandHandlerManager);
     }
 
     @Override
@@ -40,9 +40,6 @@ public class CerrarSesionHandler extends CommandHandler {
                 if(MainMenuFragment.isInstanceInitialized())
                     MainMenuFragment.getInstance().stopThread();
                 MainMenuActivity.mapFragment.finishTrip();
-
-                MainMenuFragment.getInstance().stopThread();
-
                 ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).stopServices();
             }
         }, 1000);

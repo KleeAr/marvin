@@ -13,7 +13,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class ActivarReproduccionAleatoriaHandler extends CommandHandler {
 
     public ActivarReproduccionAleatoriaHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("activar reproducción aleatoria"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("activar reproducción aleatoria","activar random"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

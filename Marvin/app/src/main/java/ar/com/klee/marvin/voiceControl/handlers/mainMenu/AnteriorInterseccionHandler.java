@@ -14,7 +14,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class AnteriorInterseccionHandler extends CommandHandler {
 
     public AnteriorInterseccionHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("anterior intersección"),textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("anterior intersección","anterior esquina","intersección anterior","esquina anterior"),textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext currentContext){

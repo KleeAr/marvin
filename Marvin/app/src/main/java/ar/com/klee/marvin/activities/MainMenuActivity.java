@@ -54,6 +54,7 @@ import ar.com.klee.marvin.call.CallDriver;
 import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.data.Channel;
 import ar.com.klee.marvin.data.Item;
+import ar.com.klee.marvin.fragments.ComandosDeVozFragment;
 import ar.com.klee.marvin.fragments.ConfigureAppFragment;
 import ar.com.klee.marvin.fragments.DondeEstacioneFragment;
 import ar.com.klee.marvin.fragments.MainMenuFragment;
@@ -114,8 +115,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     public static TextView weekDay;
     public static TextView dateText;
 
-    private int actualFragmentPosition = 1;
-    private Stack<Integer> previousMenus = new Stack();
+    public int actualFragmentPosition = 1;
+    public Stack<Integer> previousMenus = new Stack();
 
     private PowerManager.WakeLock wakeLock;
 
@@ -315,7 +316,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 setFragment(5, MisSitiosFragment.class);
                 break;
             case 6:
-                setFragment(5, DondeEstacioneFragment.class);
+                setFragment(6, DondeEstacioneFragment.class);
                 break;
             case 8:
                 setFragment(8, ConfigureAppFragment.class);
@@ -325,9 +326,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 break;
             case 10:
                 MainMenuActivity.mapFragment.finishTrip();
-                MainMenuFragment.getInstance().stopThread();
+                if(MainMenuFragment.isInstanceInitialized())
+                    MainMenuFragment.getInstance().stopThread();
                 stopServices();
-                finish();
                 break;
             case 11:
                 mDrawerLayout.closeDrawer(mLvDrawerMenu);
@@ -356,8 +357,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     setFragment(1, MainMenuFragment.class);
                     break;
                 case 2:
-                    Toast.makeText(getApplicationContext(), "posicion " + position, Toast.LENGTH_SHORT).show();
-                    //setFragment(2, ComandosDeVoz.class);
+                    setFragment(2, ComandosDeVozFragment.class);
                     break;
                 case 4:
                     setFragment(4, MisViajesFragment.class);
@@ -366,8 +366,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     setFragment(5, MisSitiosFragment.class);
                     break;
                 case 6:
-                    Toast.makeText(getApplicationContext(), "posicion 6" + position, Toast.LENGTH_SHORT).show();
-                    //setFragment(5, DondeEstacioneFragment.class);
+                    setFragment(6, DondeEstacioneFragment.class);
                     break;
                 case 8:
                     setFragment(8, ConfigureAppFragment.class);
@@ -377,9 +376,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     break;
                 case 10:
                     MainMenuActivity.mapFragment.finishTrip();
-                    MainMenuFragment.getInstance().stopThread();
+                    if(MainMenuFragment.isInstanceInitialized())
+                        MainMenuFragment.getInstance().stopThread();
                     stopServices();
-                    finish();
                     break;
                 case 11:
                     mDrawerLayout.closeDrawer(mLvDrawerMenu);
@@ -403,16 +402,53 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         handler.postDelayed(new Runnable() {
             public void run() {
                 mapFragment.finishTrip();
-
                 if(MainMenuFragment.isInstanceInitialized())
                     MainMenuFragment.getInstance().stopThread();
-                musicService.onStop();
-                stopService(voiceControlServiceIntent);
-                stopService(musicServiceIntent);
-                finish();
+                stopServices();
             }
         }, 1000);
 
+    }
+
+    public void setFragment(int position){
+        switch (position) {
+            case 0:
+                setFragment(0, PerfilFragment.class);
+                break;
+            case 1:
+                setFragment(1, MainMenuFragment.class);
+                break;
+            case 2:
+                Toast.makeText(getApplicationContext(), "posicion " + position, Toast.LENGTH_SHORT).show();
+                //setFragment(2, ComandosDeVoz.class);
+                break;
+            case 4:
+                setFragment(4, MisViajesFragment.class);
+                break;
+            case 5:
+                setFragment(5, MisSitiosFragment.class);
+                break;
+            case 6:
+                setFragment(6, DondeEstacioneFragment.class);
+                break;
+            case 8:
+                setFragment(8, ConfigureAppFragment.class);
+                break;
+            case 9:
+                Toast.makeText(getApplicationContext(), "posicion 9" + position, Toast.LENGTH_SHORT).show();
+                break;
+            case 10:
+                MainMenuActivity.mapFragment.finishTrip();
+                if(MainMenuFragment.isInstanceInitialized())
+                    MainMenuFragment.getInstance().stopThread();
+                stopServices();
+                break;
+            case 11:
+                mDrawerLayout.closeDrawer(mLvDrawerMenu);
+                mLvDrawerMenu.invalidateViews();
+                break;
+        }
+        setSupportActionBar(toolbar);
     }
 
     /**

@@ -54,8 +54,6 @@ public class ApplicationAdapter extends BaseAdapter {
             text.setText(item.name);
             icon.setImageDrawable(item.icon);
 
-
-
             return view;
         }
 }

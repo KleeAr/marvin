@@ -21,6 +21,7 @@ public class SubirVolumenHandler extends CommandHandler {
 
         AudioManager audio = (AudioManager) getCommandHandlerManager().getMainActivity().getSystemService(Context.AUDIO_SERVICE);
         audio.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
+        audio.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
 
         getTextToSpeech().speakText("Subiendo volumen. El valor actual es: " + audio.getStreamVolume(AudioManager.STREAM_MUSIC));
 

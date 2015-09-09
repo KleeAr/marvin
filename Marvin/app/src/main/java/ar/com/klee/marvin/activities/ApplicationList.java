@@ -13,12 +13,15 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.applications.Application;
 import ar.com.klee.marvin.applications.ApplicationAdapter;
 import ar.com.klee.marvin.fragments.MainMenuFragment;
+import ar.com.klee.marvin.gps.Site;
 
 
 public class ApplicationList extends Activity {
@@ -44,6 +47,11 @@ public class ApplicationList extends Activity {
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         final List<Application> appsList = new ArrayList<>();
         final List<ResolveInfo> pkgAppsList = getPackageManager().queryIntentActivities(mainIntent, 0);
+
+        boolean setContacts = false;
+        boolean setGoogle = false;
+        boolean setGoogleApp = false;
+
         for (Object object : pkgAppsList) {
             //Recorrido de la lista de las app instaladas
             ResolveInfo info = (ResolveInfo) object;
@@ -52,9 +60,43 @@ public class ApplicationList extends Activity {
             String packageName  = info.activityInfo.applicationInfo.packageName;
             //String appDir  	= info.activityInfo.applicationInfo.publicSourceDir.toString(); Por ahora no me parece necesario
 
-            Application tmp = new Application(appName,packageName,icon);
-            appsList.add(tmp);
+            if(!appName.equals("Marvin")) {
+                if((!appName.equals("Aplicación Google")||!setGoogleApp)&&(!appName.equals("Google+")||!setGoogle)&&(!appName.equals("Contactos")||!setContacts)) {
+                    Application tmp = new Application(appName, packageName, icon);
+                    appsList.add(tmp);
+                }
+
+                if(appName.equals("Aplicación Google"))
+                    setGoogleApp = true;
+                else if(appName.equals("Google+"))
+                    setGoogle = true;
+                else if(appName.equals("Contactos"))
+                    setContacts = true;
+            }
         }
+
+        List<Application> marvinApps = Arrays.asList(
+                new Application("Marvin - Cámara","ar.com.klee.marvin",getResources().getDrawable(getResources().getIdentifier("drawable/ic_camera",null,getPackageName()))),
+                new Application("Marvin - Comandos de voz","ar.com.klee.marvin",getResources().getDrawable(getResources().getIdentifier("drawable/ic_voice",null,getPackageName()))),
+                new Application("Marvin - Configuración","ar.com.klee.marvin",getResources().getDrawable(getResources().getIdentifier("drawable/ic_configuration",null,getPackageName()))),
+                new Application("Marvin - Dónde estacioné","ar.com.klee.marvin",getResources().getDrawable(getResources().getIdentifier("drawable/ic_parking",null,getPackageName()))),
+                new Application("Marvin - Historial de llamadas","ar.com.klee.marvin",getResources().getDrawable(getResources().getIdentifier("drawable/ic_call_history",null,getPackageName()))),
+                new Application("Marvin - Historial de sms","ar.com.klee.marvin",getResources().getDrawable(getResources().getIdentifier("drawable/ic_sms_history",null,getPackageName()))),
+                new Application("Marvin - Historial de viajes","ar.com.klee.marvin",getResources().getDrawable(getResources().getIdentifier("drawable/ic_clock",null,getPackageName()))),
+                new Application("Marvin - Mapa","ar.com.klee.marvin",getResources().getDrawable(getResources().getIdentifier("drawable/ic_map",null,getPackageName()))),
+                new Application("Marvin - Mis sitios","ar.com.klee.marvin",getResources().getDrawable(getResources().getIdentifier("drawable/ic_places",null,getPackageName()))),
+                new Application("Marvin - Salir","ar.com.klee.marvin",getResources().getDrawable(getResources().getIdentifier("drawable/ic_close",null,getPackageName())))
+        );
+
+        int i = 0;
+
+        while(i<marvinApps.size()){
+            appsList.add(marvinApps.get(i));
+            i++;
+        }
+
+        java.util.Collections.sort(appsList,new AppComparator());
+
         ListView listview = (ListView) findViewById(R.id.listView);
         final ApplicationAdapter adapter = new ApplicationAdapter(this, appsList);
         listview.setAdapter(adapter);
@@ -94,7 +136,11 @@ public class ApplicationList extends Activity {
 
     }
 
-
-
+    class AppComparator implements Comparator<Application> {
+        @Override
+        public int compare(Application a, Application b) {
+            return a.getName().compareToIgnoreCase(b.getName());
+        }
+    }
 
 }

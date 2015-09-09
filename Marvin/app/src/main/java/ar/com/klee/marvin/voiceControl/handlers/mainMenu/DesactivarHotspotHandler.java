@@ -14,7 +14,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class DesactivarHotspotHandler extends CommandHandler {
 
     public DesactivarHotspotHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("desactivar hotspot"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("desactivar hotspot","finalizar hotspot","cancelar hotspot"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

@@ -112,7 +112,41 @@ public class MainMenuFragment extends Fragment {
             shortcutList[i].setName(settings.getString("ButtonName" + i, ""));
             shortcutList[i].setConfigured(settings.getBoolean("ButtonConfig" + i, false));
             try {
-                shortcutList[i].setIcon(getActivity().getPackageManager().getApplicationIcon(shortcutList[i].getPackageName()));
+                switch (shortcutList[i].getName()) {
+                    case "Marvin - Cámara":
+                        shortcutList[i].setIcon(getResources().getDrawable(getResources().getIdentifier("drawable/ic_camera", null,getActivity().getPackageName())));
+                        break;
+                    case "Marvin - Comandos de voz":
+                        shortcutList[i].setIcon(getResources().getDrawable(getResources().getIdentifier("drawable/ic_voice", null, getActivity().getPackageName())));
+                        break;
+                    case "Marvin - Configuración":
+                        shortcutList[i].setIcon(getResources().getDrawable(getResources().getIdentifier("drawable/ic_configuration", null, getActivity().getPackageName())));
+                        break;
+                    case "Marvin - Dónde estacioné":
+                        shortcutList[i].setIcon(getResources().getDrawable(getResources().getIdentifier("drawable/ic_parking", null, getActivity().getPackageName())));
+                        break;
+                    case "Marvin - Historial de llamadas":
+                        shortcutList[i].setIcon(getResources().getDrawable(getResources().getIdentifier("drawable/ic_call_history", null, getActivity().getPackageName())));
+                        break;
+                    case "Marvin - Historial de sms":
+                        shortcutList[i].setIcon(getResources().getDrawable(getResources().getIdentifier("drawable/ic_sms_history", null, getActivity().getPackageName())));
+                        break;
+                    case "Marvin - Historial de viajes":
+                        shortcutList[i].setIcon(getResources().getDrawable(getResources().getIdentifier("drawable/ic_clock", null, getActivity().getPackageName())));
+                        break;
+                    case "Marvin - Mapa":
+                        shortcutList[i].setIcon(getResources().getDrawable(getResources().getIdentifier("drawable/ic_map", null, getActivity().getPackageName())));
+                        break;
+                    case "Marvin - Mis sitios":
+                        shortcutList[i].setIcon(getResources().getDrawable(getResources().getIdentifier("drawable/ic_places", null, getActivity().getPackageName())));
+                        break;
+                    case "Marvin - Salir":
+                        shortcutList[i].setIcon(getResources().getDrawable(getResources().getIdentifier("drawable/ic_close", null, getActivity().getPackageName())));
+                        break;
+                    default:
+                        shortcutList[i].setIcon(getActivity().getPackageManager().getApplicationIcon(shortcutList[i].getPackageName()));
+                        break;
+                }
             } catch (PackageManager.NameNotFoundException e) {
                 Log.d("Shortcut","Botón no seteado");
             }
@@ -253,8 +287,6 @@ public class MainMenuFragment extends Fragment {
     }
 
     public void setItem(int item){
-        if(pager==null)
-            Log.d("PAGER","NULL");
         pager.setCurrentItem(item);
     }
 
