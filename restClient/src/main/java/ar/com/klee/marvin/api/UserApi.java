@@ -40,62 +40,56 @@ public interface UserApi {
 	List<User> getAll(@CookieParam("JSESSIONID")List<Cookie> cookie);
 	
 	@GET
-	@Path("/users/{id}")
+	@Path("/users/me")
 	@Consumes("*/*")
 	@Produces("application/json")
-	List<User> getOne(@PathParam("id")Long id,@CookieParam("JSESSIONID")List<Cookie> cookie);
+	List<User> getOne(@CookieParam("JSESSIONID")List<Cookie> cookie);
 	
 	@PUT
 	@Path("/users")
 	@Consumes("application/json")
 	@Produces("application/json")
 	User update(User user, @CookieParam("JSESSIONID")List<Cookie> cookie);
-
-	@DELETE
-	@Path("/users/{id}")
-	@Consumes("*/*")
-	@Produces("*/*")
-	void delete(@PathParam("id")Long id, @CookieParam("JSESSIONID")List<Cookie> cookie);
 	
 	@GET
-	@Path("/users/{id}/settings")
+	@Path("/users/me/settings")
 	@Consumes("*/*")
 	@Produces("application/json")
-	void getSettings(@PathParam("id")Long id, @CookieParam("JSESSIONID")List<Cookie> cookie);
+	void getSettings(@CookieParam("JSESSIONID")List<Cookie> cookie);
 	
 	@POST
-	@Path("/users/{id}/settings")
+	@Path("/users/me/settings")
 	@Consumes("application/json")
 	@Produces("application/json")
 	UserSetting createSetting(UserSetting setting, @CookieParam("JSESSIONID")List<Cookie> cookie);
 	
 	@PUT
-	@Path("/users/{id}/settings")
+	@Path("/users/me/settings")
 	@Consumes("application/json")
 	@Produces("application/json")
 	UserSetting updateSetting(UserSetting setting, @CookieParam("JSESSIONID")List<Cookie> cookie);
 	
 	@DELETE
-	@Path("/users/{id}/settings/{key}")
+	@Path("/users/me/settings/{key}")
 	@Consumes("*/*")
 	@Produces("*/*")
-	void deleteSetting(@PathParam("id")Long id, @PathParam("key")String key, @CookieParam("JSESSIONID")List<Cookie> cookie);
+	void deleteSetting(@PathParam("key")String key, @CookieParam("JSESSIONID")List<Cookie> cookie);
 	
 	@GET
-	@Path("/users/{id}/trips")
+	@Path("/users/me/trips")
 	@Consumes("*/*")
 	@Produces("application/json")
-	void getTrips(@PathParam("id")Long id, @CookieParam("JSESSIONID")List<Cookie> cookie);
+	void getTrips(@CookieParam("JSESSIONID")List<Cookie> cookie);
 	
 	@POST
-	@Path("/users/{id}/trips")
+	@Path("/users/me/trips")
 	@Consumes("application/json")
 	@Produces("application/json")
 	Trip createTrip(Trip trip, @CookieParam("JSESSIONID")List<Cookie> cookie);
 
 	@DELETE
-	@Path("/users/{id}/trips/{name}")
+	@Path("/users/me/trips/{name}")
 	@Consumes("*/*")
 	@Produces("*/*")
-	void deleteTrip(@PathParam("id")Long id, @PathParam("name")String name, @CookieParam("JSESSIONID")List<Cookie> cookie);
+	void deleteTrip(@PathParam("name")String name, @CookieParam("JSESSIONID")List<Cookie> cookie);
 }

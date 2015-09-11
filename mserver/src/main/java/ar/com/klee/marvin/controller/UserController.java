@@ -1,12 +1,5 @@
 package ar.com.klee.marvin.controller;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +43,11 @@ public class UserController {
 		return userRepository.findOne(id);
 	}
 	
+	@RequestMapping(value = "/me", method = RequestMethod.GET)
+	public User getMe(HttpSession session) {
+		return (User) session.getAttribute("user");
+	}
+	
 	@RequestMapping(value ="/register", method = RequestMethod.POST)
 	public User save(@RequestBody User user) {
 		return userRepository.save(user);
@@ -62,8 +60,9 @@ public class UserController {
 		    if (isAuthenticated) {
 		        SecurityContextHolder.getContext().setAuthentication(authentication);
 		    }
-		    
-		    return new LoginResponse(userRepository.findByEmail(loginRequest.getEmail()).getId(), session.getId());
+		    User user = userRepository.findByEmail(loginRequest.getEmail());
+		    session.setAttribute("user", user);
+			return new LoginResponse(user.getId(), session.getId());
 	}
 	
 	private boolean isAuthenticated(Authentication authentication) {

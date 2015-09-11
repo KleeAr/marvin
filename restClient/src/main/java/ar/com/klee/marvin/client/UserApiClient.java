@@ -1,8 +1,5 @@
 package ar.com.klee.marvin.client;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Cookie;
 
@@ -13,6 +10,9 @@ import ar.com.klee.marvin.model.User;
 
 public class UserApiClient extends AbstractApiClient {
 
+	private SettingApiClient settingsApi;
+	private TripApiClient tripApi;
+	
 	public UserApiClient(Client client) {
 		super(client);
 	}
@@ -33,13 +33,18 @@ public class UserApiClient extends AbstractApiClient {
 		return resourceClient.register(user);
 	}
 
-	public List<User> getAll() {
- 		UserApi resourceClient = getResourceClient();
-		return resourceClient.getAll(Arrays.asList(getMarvinSession()));
+	public SettingApiClient settings() {
+		if(settingsApi == null) {
+			settingsApi = new SettingApiClient(getClient(), getMarvinSession(), getUserId());
+		}
+		return settingsApi;
 	}
 	
-	public SettingApiClient settings() {
-		return new SettingApiClient(getClient(), getMarvinSession(), getUserId());
+	public TripApiClient trips() {
+		if(tripApi == null) {
+			tripApi = new TripApiClient(getClient(), getMarvinSession(), getUserId());
+		}
+		return tripApi;
 	}
 	
 }
