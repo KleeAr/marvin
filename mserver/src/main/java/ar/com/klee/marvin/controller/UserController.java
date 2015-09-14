@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import ar.com.klee.marvin.model.User;
+import ar.com.klee.marvin.model.UserSetting;
 import ar.com.klee.marvin.repository.UserRepository;
+import ar.com.klee.marvin.repository.UserSettingRepository;
 import ar.com.klee.marvin.representation.LoginRequest;
 import ar.com.klee.marvin.representation.LoginResponse;
 
@@ -24,13 +26,15 @@ import ar.com.klee.marvin.representation.LoginResponse;
 public class UserController {
 
 	private UserRepository userRepository;
+	private UserSettingRepository settingRepository;
 	private AuthenticationManager authManager;
 	
 	@Autowired	
-	public UserController(UserRepository userRepository, AuthenticationManager authenticationManager) {
+	public UserController(UserRepository userRepository, AuthenticationManager authenticationManager, UserSettingRepository settingRepository) {
 		super();
 		this.userRepository = userRepository;
 		this.authManager = authenticationManager;
+		this.settingRepository = settingRepository;
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -50,7 +54,9 @@ public class UserController {
 	
 	@RequestMapping(value ="/register", method = RequestMethod.POST)
 	public User save(@RequestBody User user) {
-		return userRepository.save(user);
+		user = userRepository.save(user);
+		settingRepository.save(UserSetting.createDefaultSettings(user));
+		return user;
 	}
 	
 	@RequestMapping(value = "/auth", method = RequestMethod.POST)

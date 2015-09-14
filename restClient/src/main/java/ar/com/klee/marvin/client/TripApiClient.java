@@ -6,7 +6,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Cookie;
 
 import ar.com.klee.marvin.api.UserApi;
-import ar.com.klee.marvin.model.Trip;
+import ar.com.klee.marvin.model.TripRepresentation;
 
 public class TripApiClient extends AbstractApiClient {
 
@@ -14,14 +14,14 @@ public class TripApiClient extends AbstractApiClient {
 		super(client, marvinSession, userId);
 	}
 	
-	public Trip create(String name, String coordenates) {
+	public TripRepresentation create(TripRepresentation trip) {
 		UserApi resourceClient = getResourceClient();
-		return resourceClient.createTrip(new Trip(null, name, coordenates, null), Arrays.asList(getMarvinSession()));
+		return resourceClient.createTrip(trip, Arrays.asList(getMarvinSession()));
 	}
 	
-	public Trip update(String name, String coordenates) {
+	public TripRepresentation update(TripRepresentation trip) {
 		UserApi resourceClient = getResourceClient();
-		return resourceClient.createTrip(new Trip(null, name, coordenates, null), Arrays.asList(getMarvinSession()));
+		return resourceClient.createTrip(trip, Arrays.asList(getMarvinSession()));
 	}
 	
 	public void delete(String name) {

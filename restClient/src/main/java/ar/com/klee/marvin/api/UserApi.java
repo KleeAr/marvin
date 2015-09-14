@@ -15,7 +15,7 @@ import javax.ws.rs.core.Cookie;
 
 import ar.com.klee.marvin.model.LoginRequest;
 import ar.com.klee.marvin.model.LoginResponse;
-import ar.com.klee.marvin.model.Trip;
+import ar.com.klee.marvin.model.TripRepresentation;
 import ar.com.klee.marvin.model.User;
 import ar.com.klee.marvin.model.UserSetting;
 
@@ -85,7 +85,7 @@ public interface UserApi {
 	@Path("/users/me/trips")
 	@Consumes("application/json")
 	@Produces("application/json")
-	Trip createTrip(Trip trip, @CookieParam("JSESSIONID")List<Cookie> cookie);
+	TripRepresentation createTrip(TripRepresentation trip, @CookieParam("JSESSIONID")List<Cookie> cookie);
 
 	@DELETE
 	@Path("/users/me/trips/{name}")

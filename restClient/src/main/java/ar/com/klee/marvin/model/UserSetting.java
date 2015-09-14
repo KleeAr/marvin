@@ -2,44 +2,128 @@ package ar.com.klee.marvin.model;
 
 public class UserSetting {
 
-	private String key;
 	private Long userId;
-	private String value;
+	private Long Id;
+    private Long miniumTripTime; //In hours
+    private Long miniumTripDistance; //in kilometers
+    private String emergencyNumber;
+    private String emergencySMS;
+    private int orientation;
+    private boolean openAppWhenStop = false;
+    private String appToOpenWhenStop;
+    private String hotspotName = "MRVN";
+    private String hotspotPassword = "marvinHotSpot";
 	
 	public UserSetting() {
 		
 	}
-	
-	public UserSetting(String key, Long userId, String value) {
+
+	public UserSetting(Long userId, Long id, Long miniumTripTime, Long miniumTripDistance, String emergencyNumber,
+			String emergencySMS, int orientation, boolean openAppWhenStop, String appToOpenWhenStop, String hotspotName,
+			String hotspotPassword) {
 		super();
-		this.key = key;
 		this.userId = userId;
-		this.value = value;
+		Id = id;
+		this.miniumTripTime = miniumTripTime;
+		this.miniumTripDistance = miniumTripDistance;
+		this.emergencyNumber = emergencyNumber;
+		this.emergencySMS = emergencySMS;
+		this.orientation = orientation;
+		this.openAppWhenStop = openAppWhenStop;
+		this.appToOpenWhenStop = appToOpenWhenStop;
+		this.hotspotName = hotspotName;
+		this.hotspotPassword = hotspotPassword;
 	}
-	
-	public String getKey() {
-		return key;
-	}
-	
-	public void setKey(String key) {
-		this.key = key;
-	}
-	
+
 	public Long getUserId() {
 		return userId;
 	}
-	
+
 	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
-	
-	public String getValue() {
-		return value;
+
+	public Long getId() {
+		return Id;
 	}
-	
-	public void setValue(String value) {
-		this.value = value;
+
+	public void setId(Long id) {
+		Id = id;
 	}
+
+	public Long getMiniumTripTime() {
+		return miniumTripTime;
+	}
+
+	public void setMiniumTripTime(Long miniumTripTime) {
+		this.miniumTripTime = miniumTripTime;
+	}
+
+	public Long getMiniumTripDistance() {
+		return miniumTripDistance;
+	}
+
+	public void setMiniumTripDistance(Long miniumTripDistance) {
+		this.miniumTripDistance = miniumTripDistance;
+	}
+
+	public String getEmergencyNumber() {
+		return emergencyNumber;
+	}
+
+	public void setEmergencyNumber(String emergencyNumber) {
+		this.emergencyNumber = emergencyNumber;
+	}
+
+	public String getEmergencySMS() {
+		return emergencySMS;
+	}
+
+	public void setEmergencySMS(String emergencySMS) {
+		this.emergencySMS = emergencySMS;
+	}
+
+	public int getOrientation() {
+		return orientation;
+	}
+
+	public void setOrientation(int orientation) {
+		this.orientation = orientation;
+	}
+
+	public boolean isOpenAppWhenStop() {
+		return openAppWhenStop;
+	}
+
+	public void setOpenAppWhenStop(boolean openAppWhenStop) {
+		this.openAppWhenStop = openAppWhenStop;
+	}
+
+	public String getAppToOpenWhenStop() {
+		return appToOpenWhenStop;
+	}
+
+	public void setAppToOpenWhenStop(String appToOpenWhenStop) {
+		this.appToOpenWhenStop = appToOpenWhenStop;
+	}
+
+	public String getHotspotName() {
+		return hotspotName;
+	}
+
+	public void setHotspotName(String hotspotName) {
+		this.hotspotName = hotspotName;
+	}
+
+	public String getHotspotPassword() {
+		return hotspotPassword;
+	}
+
+	public void setHotspotPassword(String hotspotPassword) {
+		this.hotspotPassword = hotspotPassword;
+	}
+
+	
 	
 	
 }

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ar.com.klee.marvin.model.User;
 import ar.com.klee.marvin.model.UserSetting;
-import ar.com.klee.marvin.model.UserSettingKey;
 import ar.com.klee.marvin.repository.UserSettingRepository;
 
 @RestController
@@ -40,11 +39,6 @@ public class UserSettingController {
 		return userSettingRepository.save(userSetting);
 	}
 	
-	@RequestMapping(value = "/users/{id}/settings/{key}", method = RequestMethod.DELETE)
-	public void delete(@PathVariable("id")Long userId, @PathVariable("key") String key) {
-		userSettingRepository.delete(new UserSettingKey(key, userId));
-	}
-	
 	@RequestMapping(method = RequestMethod.POST, value = "/users/me/settings")
 	public UserSetting saveMe(@RequestBody UserSetting userSetting, HttpSession session) {
 		User user = (User) session.getAttribute("user");
@@ -57,12 +51,6 @@ public class UserSettingController {
 		User user = (User) session.getAttribute("user");
 		userSetting.setUserId(user.getId());
 		return userSettingRepository.save(userSetting);
-	}
-	
-	@RequestMapping(value = "/users/me/settings/{key}", method = RequestMethod.DELETE)
-	public void deleteMe(@PathVariable("key") String key, HttpSession session) {
-		User user = (User) session.getAttribute("user");
-		userSettingRepository.delete(new UserSettingKey(key, user.getId()));
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/users/me/settings")

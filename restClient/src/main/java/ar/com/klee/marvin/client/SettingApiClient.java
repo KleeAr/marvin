@@ -14,18 +14,9 @@ public class SettingApiClient extends AbstractApiClient {
 		super(client,marvinSession, userId);
 	}
 
-	public UserSetting create(String key, String value) {
+	public UserSetting update(UserSetting settings) {
 		UserApi resourceClient = getResourceClient();
-		return resourceClient.createSetting(new UserSetting(key, null, value), Arrays.asList(getMarvinSession()));
+		return resourceClient.updateSetting(settings, Arrays.asList(getMarvinSession()));
 	}
 	
-	public UserSetting update(String key, String value) {
-		UserApi resourceClient = getResourceClient();
-		return resourceClient.updateSetting(new UserSetting(key, null, value), Arrays.asList(getMarvinSession()));
-	}
-	
-	public void delete(String key) {
-		UserApi resourceClient = getResourceClient();
-		resourceClient.deleteSetting(key, Arrays.asList(getMarvinSession()));
-	}
 }
