@@ -102,7 +102,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     private BroadcastReceiver voiceControlReceiver;
     private BroadcastReceiver musicReceiver;
     private CommandHandlerManager commandHandlerManager;
-    private LocationSender locationSender;
+    public static LocationSender locationSender;
 
     private boolean mIsBound;
     private boolean wasPlaying;
@@ -326,6 +326,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 break;
             case 10:
                 MainMenuActivity.mapFragment.finishTrip();
+                locationSender.stopLocationSender();
                 if(MainMenuFragment.isInstanceInitialized())
                     MainMenuFragment.getInstance().stopThread();
                 stopServices();
@@ -376,6 +377,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     break;
                 case 10:
                     MainMenuActivity.mapFragment.finishTrip();
+                    locationSender.stopLocationSender();
                     if(MainMenuFragment.isInstanceInitialized())
                         MainMenuFragment.getInstance().stopThread();
                     stopServices();
@@ -402,6 +404,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         handler.postDelayed(new Runnable() {
             public void run() {
                 mapFragment.finishTrip();
+                locationSender.stopLocationSender();
                 if(MainMenuFragment.isInstanceInitialized())
                     MainMenuFragment.getInstance().stopThread();
                 stopServices();
@@ -439,6 +442,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 break;
             case 10:
                 MainMenuActivity.mapFragment.finishTrip();
+                locationSender.stopLocationSender();
                 if(MainMenuFragment.isInstanceInitialized())
                     MainMenuFragment.getInstance().stopThread();
                 stopServices();

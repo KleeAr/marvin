@@ -159,9 +159,11 @@ public class MapFragment extends Fragment {
                     tripPath.get(tripPath.size()-1).getCoordinates().latitude, tripPath.get(tripPath.size()-1).getCoordinates().longitude,
                     lat, lon,
                     distance);
-            if(distance[0] > 10)
+            if(distance[0] > 25)
                 return;
         }
+
+        tripPath.add(new TripStep(lat,lon,address));
 
         lastAddress = address;
 
@@ -235,9 +237,11 @@ public class MapFragment extends Fragment {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (!list.isEmpty()) {
+        if (list!= null && !list.isEmpty()) {
             Address address = list.get(0);
             finishAddress = address.getAddressLine(0);
+        }else {
+            finishAddress = tripPath.get(tripPath.size()-1).getAddress();
         }
 
         // create marker
