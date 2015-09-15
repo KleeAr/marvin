@@ -18,7 +18,11 @@ import android.view.View;
 
 import java.util.ArrayList;
 
+import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.sms.SMSDriver;
+import ar.com.klee.marvin.social.NotificationService;
+import ar.com.klee.marvin.voiceControl.handlers.LeerWhatsappHandler;
+import ar.com.klee.marvin.voiceControl.handlers.ResponderSMSHandler;
 
 /* Clase STT
 ** -Gestión del pasaje de audio a texto
@@ -36,6 +40,9 @@ public class STTService extends Service {
     private boolean previousListening;
 
     private boolean sttState;
+
+    public int numberOfWhatsapp = 0;
+    public String whatsAppContact;
 
     LocalBroadcastManager broadcaster;
     public static final String COPA_RESULT = "com.controlj.copame.backend.COPAService.REQUEST_PROCESSED";
@@ -118,7 +125,7 @@ public class STTService extends Service {
         }
 
         @Override
-        public void onError(int error){
+        public void onError(final int error){
 
             //Log.d("STT", "onError");
             //Log.d("STT", getErrorText(error));
@@ -129,6 +136,34 @@ public class STTService extends Service {
                     public void run() {
                         mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
                         sttState = true;
+
+                        if(error == SpeechRecognizer.ERROR_SPEECH_TIMEOUT) {
+                            if (!isListening &&
+                                    commandHandlerManager.getCurrentActivity() == CommandHandlerManager.ACTIVITY_MAIN &&
+                                    SMSDriver.getInstance().getInboxSize() != 0 &&
+                                    commandHandlerManager.getCommandHandler() == null
+                                    ) {
+
+                                SMSDriver.getInstance().displayIncomingSMS();
+                            }
+
+                            if (NotificationService.isInstanceInitialized() &&
+                                    !isListening &&
+                                    commandHandlerManager.getCurrentActivity() == CommandHandlerManager.ACTIVITY_MAIN &&
+                                    NotificationService.instance.checkMessageList() &&
+                                    commandHandlerManager.getCommandHandler() == null
+                                    ) {
+
+                                whatsAppContact = NotificationService.instance.getNextContact();
+                                numberOfWhatsapp = NotificationService.instance.getNumberOfMessages(whatsAppContact);
+
+                                setIsListening(true);
+                                ((MainMenuActivity) commandHandlerManager.getMainActivity()).setButtonsDisabled();
+                                commandHandlerManager.setCurrentCommandHandler(new LeerWhatsappHandler(commandHandlerManager.getTextToSpeech(), commandHandlerManager.getContext(), commandHandlerManager));
+                                commandHandlerManager.setCurrentContext(commandHandlerManager.getCommandHandler().drive(commandHandlerManager.getCommandHandler().createContext(commandHandlerManager.getCurrentContext(), commandHandlerManager.getActivity(), "leer whatsapp")));
+
+                            }
+                        }
                         //Log.d("STT", "onErrorActivate");
                     }
                 }, 1000);
@@ -179,15 +214,6 @@ public class STTService extends Service {
 
             isListening = commandHandlerManager.detectCommand(text, isListening);
 
-            if(!isListening &&
-                    commandHandlerManager.getCurrentActivity() == CommandHandlerManager.ACTIVITY_MAIN &&
-                    SMSDriver.getInstance().getInboxSize() != 0 &&
-                    commandHandlerManager.getCommandHandler() == null
-                    ){
-
-                SMSDriver.getInstance().displayIncomingSMS();
-            }
-
             if(text != null && text != "") {
                 if (isListening && !previousListening)
                     sendResult("Marvin");
@@ -196,6 +222,7 @@ public class STTService extends Service {
                 else if (!isListening && previousListening)
                     sendResult("MarvinFinish");
             }
+
         }
 
         @Override

@@ -723,9 +723,11 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         }
 
         if (!musicService.isPlaying()) {
+            wasPlaying = true;
             musicService.startPlaying();
             MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
         } else {
+            wasPlaying = false;
             musicService.pause();
             MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_play);
             MainMenuFragment.tv_song.setText("Reproducción Pausada");
@@ -746,9 +748,13 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
             }
 
+            wasPlaying = true;
+
             musicService.nextSong();
 
         }else{
+
+            wasPlaying = false;
 
             MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_play);
             musicService.nextRadio();
@@ -798,9 +804,13 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
             }
 
+            wasPlaying = true;
+
             musicService.previousSong();
 
         }else{
+
+            wasPlaying = false;
 
             MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_play);
             musicService.previousRadio();
