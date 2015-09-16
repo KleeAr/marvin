@@ -1,4 +1,4 @@
-package ar.com.klee.marvin.model;
+package ar.com.klee.marvin.client.model;
 
 import java.util.ArrayList;
 import java.util.List;

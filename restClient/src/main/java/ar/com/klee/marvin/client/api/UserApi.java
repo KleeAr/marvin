@@ -1,4 +1,4 @@
-package ar.com.klee.marvin.api;
+package ar.com.klee.marvin.client.api;
 
 import java.util.List;
 
@@ -13,11 +13,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Cookie;
 
-import ar.com.klee.marvin.model.LoginRequest;
-import ar.com.klee.marvin.model.LoginResponse;
-import ar.com.klee.marvin.model.TripRepresentation;
-import ar.com.klee.marvin.model.User;
-import ar.com.klee.marvin.model.UserSetting;
+import ar.com.klee.marvin.client.model.LoginRequest;
+import ar.com.klee.marvin.client.model.LoginResponse;
+import ar.com.klee.marvin.client.model.TripRepresentation;
+import ar.com.klee.marvin.client.model.User;
+import ar.com.klee.marvin.client.model.UserSetting;
 
 public interface UserApi {
 
@@ -55,7 +55,7 @@ public interface UserApi {
 	@Path("/users/me/settings")
 	@Consumes("*/*")
 	@Produces("application/json")
-	void getSettings(@CookieParam("JSESSIONID")List<Cookie> cookie);
+	UserSetting getSettings(@CookieParam("JSESSIONID")List<Cookie> cookie);
 	
 	@POST
 	@Path("/users/me/settings")
@@ -79,7 +79,7 @@ public interface UserApi {
 	@Path("/users/me/trips")
 	@Consumes("*/*")
 	@Produces("application/json")
-	void getTrips(@CookieParam("JSESSIONID")List<Cookie> cookie);
+	List<TripRepresentation> getTrips(@CookieParam("JSESSIONID")List<Cookie> cookie);
 	
 	@POST
 	@Path("/users/me/trips")

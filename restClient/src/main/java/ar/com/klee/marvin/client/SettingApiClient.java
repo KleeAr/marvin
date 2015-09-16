@@ -5,8 +5,8 @@ import java.util.Arrays;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Cookie;
 
-import ar.com.klee.marvin.api.UserApi;
-import ar.com.klee.marvin.model.UserSetting;
+import ar.com.klee.marvin.client.api.UserApi;
+import ar.com.klee.marvin.client.model.UserSetting;
 
 public class SettingApiClient extends AbstractApiClient {
 
@@ -17,6 +17,11 @@ public class SettingApiClient extends AbstractApiClient {
 	public UserSetting update(UserSetting settings) {
 		UserApi resourceClient = getResourceClient();
 		return resourceClient.updateSetting(settings, Arrays.asList(getMarvinSession()));
+	}
+	
+	public UserSetting get() {
+		UserApi resourceClient = getResourceClient();
+		return resourceClient.getSettings(Arrays.asList(getMarvinSession()));
 	}
 	
 }

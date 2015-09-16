@@ -3,10 +3,10 @@ package ar.com.klee.marvin.client;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Cookie;
 
-import ar.com.klee.marvin.api.UserApi;
-import ar.com.klee.marvin.model.LoginRequest;
-import ar.com.klee.marvin.model.LoginResponse;
-import ar.com.klee.marvin.model.User;
+import ar.com.klee.marvin.client.api.UserApi;
+import ar.com.klee.marvin.client.model.LoginRequest;
+import ar.com.klee.marvin.client.model.LoginResponse;
+import ar.com.klee.marvin.client.model.User;
 
 public class UserApiClient extends AbstractApiClient {
 

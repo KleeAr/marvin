@@ -1,4 +1,4 @@
-package ar.com.klee.marvin.model;
+package ar.com.klee.marvin.client.model;
 
 public class User {
 

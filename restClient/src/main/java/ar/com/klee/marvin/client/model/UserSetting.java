@@ -1,9 +1,8 @@
-package ar.com.klee.marvin.model;
+package ar.com.klee.marvin.client.model;
 
 public class UserSetting {
 
 	private Long userId;
-	private Long Id;
     private Long miniumTripTime; //In hours
     private Long miniumTripDistance; //in kilometers
     private String emergencyNumber;
@@ -18,12 +17,11 @@ public class UserSetting {
 		
 	}
 
-	public UserSetting(Long userId, Long id, Long miniumTripTime, Long miniumTripDistance, String emergencyNumber,
+	public UserSetting(Long userId, Long miniumTripTime, Long miniumTripDistance, String emergencyNumber,
 			String emergencySMS, int orientation, boolean openAppWhenStop, String appToOpenWhenStop, String hotspotName,
 			String hotspotPassword) {
 		super();
 		this.userId = userId;
-		Id = id;
 		this.miniumTripTime = miniumTripTime;
 		this.miniumTripDistance = miniumTripDistance;
 		this.emergencyNumber = emergencyNumber;
@@ -41,14 +39,6 @@ public class UserSetting {
 
 	public void setUserId(Long userId) {
 		this.userId = userId;
-	}
-
-	public Long getId() {
-		return Id;
-	}
-
-	public void setId(Long id) {
-		Id = id;
 	}
 
 	public Long getMiniumTripTime() {

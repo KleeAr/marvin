@@ -1,12 +1,13 @@
 package ar.com.klee.marvin.client;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Cookie;
 
-import ar.com.klee.marvin.api.UserApi;
-import ar.com.klee.marvin.model.TripRepresentation;
+import ar.com.klee.marvin.client.api.UserApi;
+import ar.com.klee.marvin.client.model.TripRepresentation;
 
 public class TripApiClient extends AbstractApiClient {
 
@@ -22,6 +23,11 @@ public class TripApiClient extends AbstractApiClient {
 	public TripRepresentation update(TripRepresentation trip) {
 		UserApi resourceClient = getResourceClient();
 		return resourceClient.createTrip(trip, Arrays.asList(getMarvinSession()));
+	}
+	
+	public List<TripRepresentation> get() {
+		UserApi resourceClient = getResourceClient();
+		return resourceClient.getTrips(Arrays.asList(getMarvinSession()));
 	}
 	
 	public void delete(String name) {
