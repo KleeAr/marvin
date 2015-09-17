@@ -54,8 +54,8 @@ public class UserSettingController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/users/me/settings")
-	public Iterable<UserSetting> getAll(HttpSession session) {
+	public UserSetting getAll(HttpSession session) {
 		User user = (User) session.getAttribute("user");
-		return userSettingRepository.findByUserId(user.getId());
+		return userSettingRepository.findByUserId(user.getId()).iterator().next();
 	}
 }
