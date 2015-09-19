@@ -222,6 +222,117 @@ public class MisViajesFragment extends Fragment {
         public Trip getTrip(int position){
             return tripList.get(position);
         }
+
+        public boolean checkTripExistence(String trip){
+
+            if(trip.equals("last")){
+                return tripList.size()!=0;
+            }
+
+            if(trip.startsWith("number - ")){
+                trip = trip.replace("number - ","");
+                return Integer.parseInt(trip) < tripList.size();
+            }
+
+            boolean isBeginnig = true;
+
+            if(trip.startsWith("begin - ")) {
+                trip = trip.replace("begin - ", "");
+                isBeginnig = true;
+            }else if(trip.startsWith("finish - ")) {
+                trip = trip.replace("finish - ", "");
+                isBeginnig = false;
+            }
+
+            int i = 0;
+
+            while(i < tripList.size()){
+
+                if(isBeginnig){
+
+                    if(trip.startsWith(tripList.get(i).getBeginningAddress()))
+                        break;
+
+                }else{
+
+                    if(trip.startsWith(tripList.get(i).getEndingAddress()))
+                        break;
+
+                }
+
+                i++;
+            }
+
+            if(i == tripList.size())
+                return false;
+
+            return true;
+        }
+
+        public Trip openTrip(String trip){
+
+            if(trip.equals("last")){
+                return tripList.get(0);
+            }
+
+            if(trip.startsWith("number - ")){
+                trip = trip.replace("number - ","");
+                return tripList.get(Integer.parseInt(trip));
+            }
+
+            boolean isBeginnig = true;
+
+            if(trip.startsWith("begin - ")) {
+                trip = trip.replace("begin - ", "");
+                isBeginnig = true;
+            }else if(trip.startsWith("finish - ")) {
+                trip = trip.replace("finish - ", "");
+                isBeginnig = false;
+            }
+
+            int i = 0;
+
+            while(i < tripList.size()){
+
+                if(isBeginnig){
+
+                    if(trip.startsWith(tripList.get(i).getBeginningAddress()))
+                        break;
+
+                }else{
+
+                    if(trip.startsWith(tripList.get(i).getEndingAddress()))
+                        break;
+
+                }
+
+                i++;
+            }
+
+            if(i == tripList.size())
+                return null;
+
+            return tripList.get(i);
+        }
+
+    }
+
+    public boolean checkTripExistence(String trip){
+
+        return adapter.checkTripExistence(trip);
+
+    }
+
+    public void openTrip(String trip){
+
+        chosenTrip = adapter.openTrip(trip);
+
+        if(chosenTrip != null) {
+            Intent intent = new Intent(commandHandlerManager.getContext(), TripActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            commandHandlerManager.getContext().startActivity(intent);
+        }
+
     }
 
 }

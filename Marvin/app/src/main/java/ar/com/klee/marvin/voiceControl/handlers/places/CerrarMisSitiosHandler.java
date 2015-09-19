@@ -4,6 +4,7 @@ import android.content.Context;
 
 import java.util.Arrays;
 
+import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.activities.TripActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -21,7 +22,9 @@ public class CerrarMisSitiosHandler extends CommandHandler {
 
         getTextToSpeech().speakText("Cerrando mis sitios");
 
-        getCommandHandlerManager().defineActivity(CommandHandlerManager.ACTIVITY_MAIN, getCommandHandlerManager().getMainActivity());
+        int previousMenu = ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).previousMenus.pop();
+
+        ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).setFragment(previousMenu);
 
         context.put(STEP, 0);
         return context;

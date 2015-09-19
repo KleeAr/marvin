@@ -18,16 +18,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 
-import ar.com.klee.marvin.CardAdapter;
+import ar.com.klee.marvin.gps.CardSiteAdapter;
 import ar.com.klee.marvin.R;
-import ar.com.klee.marvin.fragments.MisSitiosFragment;
-import ar.com.klee.marvin.fragments.MisViajesFragment;
 import ar.com.klee.marvin.gps.Site;
 import ar.com.klee.marvin.gps.SiteMap;
-import ar.com.klee.marvin.gps.Trip;
-import ar.com.klee.marvin.gps.TripMap;
 import ar.com.klee.marvin.social.FacebookService;
 import ar.com.klee.marvin.social.InstagramService;
 import ar.com.klee.marvin.social.TwitterService;
@@ -51,7 +46,7 @@ public class SiteActivity extends ActionBarActivity {
 
         addMap();
 
-        site = CardAdapter.getInstance().getChosenSite();
+        site = CardSiteAdapter.getInstance().getChosenSite();
 
         commandHandlerManager = CommandHandlerManager.getInstance();
 

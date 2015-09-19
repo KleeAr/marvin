@@ -23,7 +23,7 @@ public class PublicarEnFacebookHandler extends CommandHandler {
 
     public PublicarEnFacebookHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager){
 
-        super(Arrays.asList("publicar en facebook {mensaje}"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("publicar en facebook {mensaje}","publicar en muro {mensaje}","publicar en el muro de facebook {mensaje}","postear en facebook {mensaje}","postear en muro {mensaje}","postear en el muro de facebook {mensaje}"), textToSpeech, context, commandHandlerManager);
         facebookService = new FacebookService(context);
     }
 

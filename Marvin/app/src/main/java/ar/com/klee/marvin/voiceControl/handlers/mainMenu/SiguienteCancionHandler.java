@@ -15,7 +15,7 @@ public class SiguienteCancionHandler extends CommandHandler {
 
 
     public SiguienteCancionHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("siguiente canción"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("siguiente canción","canción siguiente","próxima canción","canción posterior","posterior canción","reproducir siguiente canción","reproducir canción siguiente","reproducir próxima canción","reproducir canción posterior","reproducir posterior canción"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

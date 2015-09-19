@@ -14,7 +14,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class ReproducirMusicaHandler extends CommandHandler {
 
     public ReproducirMusicaHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("reproducir música"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("reproducir música","escuchar música"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

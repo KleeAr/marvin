@@ -14,7 +14,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class EstablecerVolumenHandler extends CommandHandler {
 
     public EstablecerVolumenHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("establecer volumen {volumen}"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("establecer volumen {volumen}","definir volumen {volumen}","configurar volumen {volumen}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

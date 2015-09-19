@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import ar.com.klee.marvin.R;
@@ -40,6 +41,7 @@ public class MainMenuFragment extends Fragment {
     public static TextView tv_song;
     public static TextView tv_artist;
     public static TextView spokenText;
+    public static ImageView marvinImage;
 
     public static TextView mainStreet;
     public static TextView speed;
@@ -86,6 +88,8 @@ public class MainMenuFragment extends Fragment {
         tv_artist = (TextView)v.findViewById(R.id.artist);
 
         spokenText = (TextView) v.findViewById(R.id.spokenText);
+
+        marvinImage = (ImageView) v.findViewById(R.id.marvinImage);
 
         shortcutList = new Application[CANT_APPLICATION]; //creamos la lista para almacenar los accesos directos
 

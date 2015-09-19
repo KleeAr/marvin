@@ -13,7 +13,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class ReproducirRadioHandler extends CommandHandler {
 
     public ReproducirRadioHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("reproducir radio"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("reproducir radio","escuchar radio"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

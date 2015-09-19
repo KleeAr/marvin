@@ -20,7 +20,7 @@ public class TwittearHandler extends CommandHandler {
     public static final String TWITTER_HASHTAGS = "TWITTER_HASHTAGS";
 
     public TwittearHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("twittear {mensaje}"),textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("twittear {mensaje}","publicar en twitter {mensaje}","postear en twitter {mensaje}"),textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

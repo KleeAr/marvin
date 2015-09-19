@@ -1,36 +1,30 @@
-package ar.com.klee.marvin;
+package ar.com.klee.marvin.gps;
 
 
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.gms.maps.model.LatLng;
 
 import java.io.File;
 import java.util.List;
 
+import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.activities.SiteActivity;
-import ar.com.klee.marvin.activities.TripActivity;
-import ar.com.klee.marvin.gps.Site;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 
-public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder>  {
+public class CardSiteAdapter extends RecyclerView.Adapter<CardSiteAdapter.ViewHolder>  {
 
     List<Site> mItems;
-    private static CardAdapter instance;
+    private static CardSiteAdapter instance;
     private Site chosenSite;
 
-    public CardAdapter(List<Site> mItems) {
+    public CardSiteAdapter(List<Site> mItems) {
         super();
 
         instance = this;
@@ -97,11 +91,13 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder>  {
         }
     }
 
-    public static CardAdapter getInstance(){
+    public static CardSiteAdapter getInstance(){
         return instance;
     }
 
     public Site getChosenSite() {
         return chosenSite;
     }
+
+    public void setChosenSite(Site site){chosenSite = site;}
 }

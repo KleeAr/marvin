@@ -15,7 +15,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class SiguienteInterseccion extends CommandHandler {
 
     public SiguienteInterseccion(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("siguiente intersección"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("siguiente intersección","intersección siguiente","siguiente esquina","esquina siguiente"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

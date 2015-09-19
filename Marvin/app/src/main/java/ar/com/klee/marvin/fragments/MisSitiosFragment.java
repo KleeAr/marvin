@@ -1,10 +1,9 @@
 package ar.com.klee.marvin.fragments;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
@@ -18,8 +17,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputFilter;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,10 +34,6 @@ import com.hudomju.swipe.SwipeableItemClickListener;
 import com.hudomju.swipe.adapter.RecyclerViewAdapter;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import java.io.File;
@@ -66,16 +59,17 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import ar.com.klee.marvin.CardAdapter;
+import ar.com.klee.marvin.activities.SiteActivity;
+import ar.com.klee.marvin.gps.CardSiteAdapter;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.gps.Site;
-import ar.com.klee.marvin.gps.Trip;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 
 
 public class MisSitiosFragment extends Fragment {
 
+    private static MisSitiosFragment instance = null;
     public static RecyclerView mRecyclerView;
     RecyclerView.LayoutManager mLayoutManager;
     RecyclerView.Adapter mAdapter;
@@ -93,6 +87,8 @@ public class MisSitiosFragment extends Fragment {
         // Inflate the layout for this fragment
 
         View v = inflater.inflate(R.layout.site_recycler_view,container, false);
+
+        instance = this;
 
         commandHandlerManager = CommandHandlerManager.getInstance();
         commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_PLACES,commandHandlerManager.getMainActivity());
@@ -124,7 +120,7 @@ public class MisSitiosFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new CardAdapter(lSites);
+        mAdapter = new CardSiteAdapter(lSites);
         mRecyclerView.setAdapter(mAdapter);
 
         FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fab);
@@ -173,6 +169,7 @@ public class MisSitiosFragment extends Fragment {
                                 Toast.makeText(mma, "El sitio ya exite", Toast.LENGTH_SHORT).show();
                                 return;
                             }
+                            j++;
                         }
 
                         LatLng coordinates = getCoordinates(siteAddress.getText().toString());
@@ -281,7 +278,7 @@ public class MisSitiosFragment extends Fragment {
 
                                     dialog.dismiss();
 
-                                    mAdapter = new CardAdapter(lSites);
+                                    mAdapter = new CardSiteAdapter(lSites);
                                     mRecyclerView.setAdapter(mAdapter);
                                 }
                             });
@@ -329,7 +326,7 @@ public class MisSitiosFragment extends Fragment {
 
                                     dialog.dismiss();
 
-                                    mAdapter = new CardAdapter(lSites);
+                                    mAdapter = new CardSiteAdapter(lSites);
                                     mRecyclerView.setAdapter(mAdapter);
                                 }
                             });
@@ -354,7 +351,7 @@ public class MisSitiosFragment extends Fragment {
 
                                         dialog.dismiss();
 
-                                        mAdapter = new CardAdapter(lSites);
+                                        mAdapter = new CardSiteAdapter(lSites);
                                         mRecyclerView.setAdapter(mAdapter);
 
                                         dialog.dismiss();
@@ -374,7 +371,7 @@ public class MisSitiosFragment extends Fragment {
 
                         }
                         else {
-                            mAdapter = new CardAdapter(lSites);
+                            mAdapter = new CardSiteAdapter(lSites);
                             mRecyclerView.setAdapter(mAdapter);
                         }
                     }
@@ -423,7 +420,7 @@ public class MisSitiosFragment extends Fragment {
                                 }
                                 prefsEditor.commit();
 
-                                mAdapter = new CardAdapter(lSites);
+                                mAdapter = new CardSiteAdapter(lSites);
                                 mRecyclerView.setAdapter(mAdapter);
 
                             }
@@ -586,6 +583,308 @@ public class MisSitiosFragment extends Fragment {
             return imageExists;
         }
 
+    }
+
+    public int addNewSite(String siteAddress, String siteName){
+
+        MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
+
+        int j=0;
+
+        while(j<lSites.size()){
+            Site s = lSites.get(j);
+            if(s.getSiteName().equals(siteName.toString())){
+                return 2;
+            }
+            j++;
+        }
+
+        LatLng coordinates = getCoordinates(siteAddress);
+
+        if(coordinates==null){
+            return 3;
+        }
+
+        final Site newSite = new Site(siteName,siteAddress,coordinates,0);
+
+        lSites.add(newSite);
+
+        SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = mPrefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(newSite);
+
+        Integer numberOfSites = mPrefs.getInt("NumberOfSites",0);
+
+        numberOfSites++;
+
+        prefsEditor.putInt("NumberOfSites",numberOfSites);
+        prefsEditor.putString("Site" + numberOfSites.toString(), json);
+        prefsEditor.commit();
+
+        final ImageGetterTask task = (ImageGetterTask) new ImageGetterTask().execute();
+
+        if(task.getImageExists()) {
+
+            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
+            builder.setCancelable(true);
+            builder.setTitle("Imagen a Mostrar");
+
+            final Context context = getActivity();
+            final LinearLayout layout = new LinearLayout(context);
+            layout.setOrientation(LinearLayout.HORIZONTAL);
+
+            final ImageView image1 = new ImageView(context);
+            final ImageView image2 = new ImageView(context);
+
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    image1.setImageBitmap(task.getImg1());
+                    layout.addView(image1);
+
+                    image2.setImageBitmap(task.getImg2());
+                    layout.addView(image2);
+
+                    int px = (int) (250 * context.getResources().getDisplayMetrics().density);
+
+                    image1.getLayoutParams().height = px;
+                    image1.getLayoutParams().width = px;
+
+                    image2.getLayoutParams().height = px;
+                    image2.getLayoutParams().width = px;
+
+                    builder.setView(layout);
+                }
+            }, 3000);
+
+
+            builder.setNegativeButton("Imagen 1", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+
+                    File mediaStorageDir = new File("/sdcard/", "MARVIN");
+
+                    if (!mediaStorageDir.exists()) {
+                        if (!mediaStorageDir.mkdirs()) {
+                            return;
+                        }
+                    }
+
+                    mediaStorageDir = new File("/sdcard/MARVIN", "Sitios");
+
+                    if (!mediaStorageDir.exists()) {
+                        if (!mediaStorageDir.mkdirs()) {
+                            return;
+                        }
+                    }
+
+                    FileOutputStream out;
+                    try {
+                        out = new FileOutputStream("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                        task.getImg1().compress(Bitmap.CompressFormat.PNG, 90, out);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                    newSite.setSiteThumbnail(1);
+                    newSite.setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                    lSites.get(lSites.size() - 1).setSiteThumbnail(1);
+                    lSites.get(lSites.size() - 1).setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+
+                    MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
+                    SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
+                    SharedPreferences.Editor prefsEditor = mPrefs.edit();
+                    Gson gson = new Gson();
+                    String json = gson.toJson(newSite);
+                    Integer numberOfSites = mPrefs.getInt("NumberOfSites", 0);
+                    prefsEditor.putString("Site" + numberOfSites.toString(), json);
+                    prefsEditor.commit();
+
+                    dialog.dismiss();
+
+                    mAdapter = new CardSiteAdapter(lSites);
+                    mRecyclerView.setAdapter(mAdapter);
+                }
+            });
+
+            builder.setPositiveButton("Imagen 2", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+
+                    File mediaStorageDir = new File("/sdcard/", "MARVIN");
+
+                    if (!mediaStorageDir.exists()) {
+                        if (!mediaStorageDir.mkdirs()) {
+                            return;
+                        }
+                    }
+
+                    mediaStorageDir = new File("/sdcard/MARVIN", "Sitios");
+
+                    if (!mediaStorageDir.exists()) {
+                        if (!mediaStorageDir.mkdirs()) {
+                            return;
+                        }
+                    }
+
+                    FileOutputStream out = null;
+                    try {
+                        out = new FileOutputStream("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                        task.getImg2().compress(Bitmap.CompressFormat.PNG, 90, out);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                    newSite.setSiteThumbnail(1);
+                    newSite.setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                    lSites.get(lSites.size() - 1).setSiteThumbnail(1);
+                    lSites.get(lSites.size() - 1).setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+
+                    MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
+                    SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
+                    SharedPreferences.Editor prefsEditor = mPrefs.edit();
+                    Gson gson = new Gson();
+                    String json = gson.toJson(newSite);
+                    Integer numberOfSites = mPrefs.getInt("NumberOfSites", 0);
+                    prefsEditor.putString("Site" + numberOfSites.toString(), json);
+                    prefsEditor.commit();
+
+                    dialog.dismiss();
+
+                    mAdapter = new CardSiteAdapter(lSites);
+                    mRecyclerView.setAdapter(mAdapter);
+                }
+            });
+            builder.setOnKeyListener(new DialogInterface.OnKeyListener() {
+                @Override
+                public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                    if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP && !event.isCanceled()) {
+
+                        newSite.setSiteThumbnail(0);
+                        newSite.setSiteImage(null);
+                        lSites.get(lSites.size() - 1).setSiteThumbnail(0);
+                        lSites.get(lSites.size() - 1).setSiteImage(null);
+
+                        MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
+                        SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
+                        SharedPreferences.Editor prefsEditor = mPrefs.edit();
+                        Gson gson = new Gson();
+                        String json = gson.toJson(newSite);
+                        Integer numberOfSites = mPrefs.getInt("NumberOfSites", 0);
+                        prefsEditor.putString("Site" + numberOfSites.toString(), json);
+                        prefsEditor.commit();
+
+                        dialog.dismiss();
+
+                        mAdapter = new CardSiteAdapter(lSites);
+                        mRecyclerView.setAdapter(mAdapter);
+
+                        dialog.dismiss();
+                        return true;
+                    }
+                    return false;
+                }
+
+            });
+
+            Handler handler2 = new Handler();
+            handler2.postDelayed(new Runnable() {
+                public void run() {
+                    builder.show();
+                }
+            }, 3000);
+
+            return 1;
+        }
+
+        return 0;
+    }
+
+    public boolean checkSiteExistence(String site){
+
+        int i = 0;
+
+        while(i < lSites.size()){
+
+            if(site.equals(lSites.get(i).getSiteName()))
+                break;
+
+            i++;
+        }
+
+        if(i == lSites.size())
+            return false;
+
+        return true;
+
+    }
+
+    public void openSite(String site){
+
+        int i = 0;
+
+        while(i < lSites.size()){
+
+            if(site.equals(lSites.get(i).getSiteName()))
+                break;
+
+            i++;
+        }
+
+        if(i == lSites.size())
+            return;
+
+        CardSiteAdapter.getInstance().setChosenSite(lSites.get(i));
+        Intent intent = new Intent(commandHandlerManager.getContext(), SiteActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        commandHandlerManager.getContext().startActivity(intent);
+    }
+
+    public void deleteSite(String site){
+
+        int i = 0;
+
+        while(i < lSites.size()){
+
+            if(site.equals(lSites.get(i).getSiteName()))
+                break;
+
+            i++;
+        }
+
+        if(i == lSites.size())
+            return;
+
+        File file = new File("/sdcard/MARVIN/Sitios/"+lSites.get(i).getSiteName()+".png");
+        file.delete();
+
+        lSites.remove(i);
+        MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
+
+        SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
+
+        Integer numberOfSites = lSites.size();
+
+        SharedPreferences.Editor prefsEditor = mPrefs.edit();
+        Gson gson = new Gson();
+        prefsEditor.putInt("NumberOfSites",numberOfSites);
+        Integer j;
+        for(j=1;j<=numberOfSites;j++) {
+            String json = gson.toJson(lSites.get(j-1));
+            prefsEditor.putString("Site" + j.toString(), json);
+        }
+        prefsEditor.commit();
+
+        mAdapter = new CardSiteAdapter(lSites);
+        mRecyclerView.setAdapter(mAdapter);
+
+    }
+
+
+    public static MisSitiosFragment getInstance() {
+        if (instance == null) {
+            throw new IllegalStateException("Instance not initialized. Call initializeInstance before calling getInstance");
+        }
+        return instance;
     }
 
     class SiteComparator implements Comparator<Site> {

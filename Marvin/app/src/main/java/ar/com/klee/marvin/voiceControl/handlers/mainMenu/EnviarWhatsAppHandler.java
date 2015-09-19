@@ -17,7 +17,7 @@ public class EnviarWhatsAppHandler extends CommandHandler {
     private final WhatsAppService whatsAppService;
 
     public EnviarWhatsAppHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("enviar whatsapp {mensaje}"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("enviar whatsapp {mensaje}","enviar por whatsapp {mensaje}","enviar mensaje de whatsapp {mensaje}"), textToSpeech, context, commandHandlerManager);
         this.whatsAppService = new WhatsAppService(context);
     }
 

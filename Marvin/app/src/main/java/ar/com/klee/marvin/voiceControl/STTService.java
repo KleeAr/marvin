@@ -19,6 +19,7 @@ import android.view.View;
 import java.util.ArrayList;
 
 import ar.com.klee.marvin.activities.MainMenuActivity;
+import ar.com.klee.marvin.fragments.MainMenuFragment;
 import ar.com.klee.marvin.sms.SMSDriver;
 import ar.com.klee.marvin.social.NotificationService;
 import ar.com.klee.marvin.voiceControl.handlers.LeerWhatsappHandler;
@@ -138,6 +139,9 @@ public class STTService extends Service {
                         sttState = true;
 
                         if(error == SpeechRecognizer.ERROR_SPEECH_TIMEOUT) {
+
+                            MainMenuFragment.spokenText.setText("Hablá, yo escucho...");
+
                             if (!isListening &&
                                     commandHandlerManager.getCurrentActivity() == CommandHandlerManager.ACTIVITY_MAIN &&
                                     SMSDriver.getInstance().getInboxSize() != 0 &&
@@ -220,7 +224,7 @@ public class STTService extends Service {
                 else if (isListening && previousListening)
                     sendResult("Command " + text);
                 else if (!isListening && previousListening)
-                    sendResult("MarvinFinish");
+                    sendResult("MarvinFinish " + text);
             }
 
         }

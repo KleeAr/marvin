@@ -14,7 +14,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class ReproducirFrecuenciaHandler extends CommandHandler {
 
     public ReproducirFrecuenciaHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("reproducir frecuencia {frecuencia}"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("reproducir frecuencia {frecuencia}","reproducir frecuencia de radio {frecuencia}","escuchar frecuencia {frecuencia}","escuchar frecuencia de radio {frecuencia}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

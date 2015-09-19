@@ -102,6 +102,10 @@ public class LocationSender {
                             actualLatitude, actualLongitude,
                             results);
                     double polylineLength = results[0];
+
+                    if(polylineLength > 100)
+                        return;
+
                     polylineLength = polylineLength / 1000;
 
                     if(hours == 0.0)

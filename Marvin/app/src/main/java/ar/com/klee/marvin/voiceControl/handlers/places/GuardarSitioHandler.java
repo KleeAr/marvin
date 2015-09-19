@@ -19,7 +19,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 
 public class GuardarSitioHandler extends CommandHandler {
 
-    public static final String CONTACTO = "contacto";
+    public static final String SITIO = "sitio";
     public static final String SITE = "SITE";
     public static final String SET_SITE = "SET_SITE";
 
@@ -55,7 +55,7 @@ public class GuardarSitioHandler extends CommandHandler {
     @Override
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
         String command = commandHandlerContext.getString(COMMAND);
-        commandHandlerContext.put(SITE, getExpressionMatcher(command).getValuesFromExpression(command).get(CONTACTO));
+        commandHandlerContext.put(SITE, getExpressionMatcher(command).getValuesFromExpression(command).get(SITIO));
         commandHandlerContext.put(SET_SITE, false);
     }
 
@@ -104,6 +104,8 @@ public class GuardarSitioHandler extends CommandHandler {
     public CommandHandlerContext stepFive(CommandHandlerContext context){
         String input = context.getString(COMMAND);
 
+        context.put("ADDRESS",input);
+
         getTextToSpeech().speakText("¿La dirección es " + input + "?");
         context.put(STEP, 7);
         return context;
@@ -113,7 +115,17 @@ public class GuardarSitioHandler extends CommandHandler {
     public CommandHandlerContext stepSeven(CommandHandlerContext context){
         String input = context.getString(COMMAND);
         if(input.equals("si")) {
-            getTextToSpeech().speakText("Seleccioná la imagen del lugar");
+            int result = ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).addNewSite(context.getString("ADDRESS"),context.getString(SITE));
+            if(result == 0)
+                getTextToSpeech().speakText("Guardando sitio");
+            else if(result == 1)
+                getTextToSpeech().speakText("Seleccioná la imagen del lugar");
+            else if(result == 2)
+                getTextToSpeech().speakText("El sitio ya existe");
+            else if(result == 3)
+                getTextToSpeech().speakText("La dirección indicada es inválida");
+            else
+
             context.put(STEP, 0);
             return context;
         }
