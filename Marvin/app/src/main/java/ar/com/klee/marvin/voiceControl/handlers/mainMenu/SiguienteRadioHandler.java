@@ -14,7 +14,7 @@ public class SiguienteRadioHandler extends CommandHandler {
 
 
     public SiguienteRadioHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("siguiente radio"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("siguiente radio","radio siguiente","próxima radio","radio posterior","posterior radio","reproducir siguiente radio","reproducir radio siguiente","reproducir próxima radio","reproducir radio posterior","reproducir posterior radio"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

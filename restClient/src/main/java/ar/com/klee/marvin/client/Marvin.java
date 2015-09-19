@@ -7,6 +7,8 @@ public class Marvin {
 	
 	private Marvin(){}
 	
+	private static String marvinHost = "localhost";
+	
 	public static UserApiClient userApiClient;
 	
 	public static UserApiClient users() {
@@ -15,6 +17,14 @@ public class Marvin {
 			userApiClient = new UserApiClient(client);
 		}
 		return userApiClient;
+	}
+
+	public static String getMarvinHost() {
+		return marvinHost;
+	}
+
+	public static void setMarvinHost(String marvinHost) {
+		Marvin.marvinHost = marvinHost;
 	}
 	
 }

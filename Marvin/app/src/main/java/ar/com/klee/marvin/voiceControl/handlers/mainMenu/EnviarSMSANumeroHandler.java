@@ -17,7 +17,7 @@ public class EnviarSMSANumeroHandler extends CommandHandler {
     private static final String NUMBER = "NUMBER";
 
     public EnviarSMSANumeroHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("enviar sms al número {numero}"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("enviar sms al número {numero}","enviar sms al {numero}","enviar mensaje al número {numero}","enviar mensaje al {numero}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

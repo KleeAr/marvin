@@ -14,7 +14,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class ReproducirEstacionHandler extends CommandHandler {
 
     public ReproducirEstacionHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("reproducir estación {estacion}"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("reproducir estación {estacion}","reproducir estación de radio {estacion}","reproducir radio {estacion}","escuchar estación {estacion}","escuchar estación de radio {estacion}","escuchar radio {estacion}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

@@ -28,7 +28,7 @@ public class EnviarSMSAContactoHandler extends CommandHandler {
     public static final String SET_MATCHES = "SET_MATCHES";
 
     public EnviarSMSAContactoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("enviar sms a {contacto}"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("enviar sms a {contacto}","enviar mensaje a {contacto}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

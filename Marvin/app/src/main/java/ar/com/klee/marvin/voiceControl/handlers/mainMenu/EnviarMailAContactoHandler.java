@@ -30,7 +30,7 @@ public class EnviarMailAContactoHandler extends CommandHandler {
     private static final String SET_MATCHES = "SET_MATCHES";
 
     public EnviarMailAContactoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("enviar mail a {contacto}"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("enviar mail a {contacto}","enviar correo a {contacto}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

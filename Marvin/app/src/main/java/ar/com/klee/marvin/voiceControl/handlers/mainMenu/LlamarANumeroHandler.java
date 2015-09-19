@@ -17,7 +17,7 @@ public class LlamarANumeroHandler extends CommandHandler {
     private static final String NUMBER = "NUMBER";
 
     public LlamarANumeroHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("llamar al número {numero}"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("llamar al número {numero}","llamar al {numero}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

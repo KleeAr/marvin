@@ -43,6 +43,10 @@ import ar.com.klee.marvin.voiceControl.handlers.map.IrASitioHandler;
 import ar.com.klee.marvin.voiceControl.handlers.map.ReducirZoomHandler;
 import ar.com.klee.marvin.voiceControl.handlers.map.UbicacionActualHandler;
 import ar.com.klee.marvin.voiceControl.handlers.parking.CerrarDondeEstacioneHandler;
+import ar.com.klee.marvin.voiceControl.handlers.places.AbrirSitioHandler;
+import ar.com.klee.marvin.voiceControl.handlers.places.BorrarSitioHandler;
+import ar.com.klee.marvin.voiceControl.handlers.places.CerrarMisSitiosHandler;
+import ar.com.klee.marvin.voiceControl.handlers.places.GuardarSitioHandler;
 import ar.com.klee.marvin.voiceControl.handlers.smsInbox.CerrarHistorialDeSMSHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.DireccionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.AnteriorInterseccionHandler;
@@ -64,7 +68,6 @@ import ar.com.klee.marvin.voiceControl.handlers.camera.CompartirEnTwitterHandler
 import ar.com.klee.marvin.voiceControl.handlers.camera.CompartirFotoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.DesactivarHotspotHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.DesactivarReproduccionAleatoriaHandler;
-import ar.com.klee.marvin.voiceControl.handlers.mainMenu.DetenerReproduccionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.EnviarMailAContactoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.EnviarSMSAContactoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.EnviarSMSANumeroHandler;
@@ -84,6 +87,10 @@ import ar.com.klee.marvin.voiceControl.handlers.mainMenu.SubirVolumenHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.TwittearHandler;
 import ar.com.klee.marvin.voiceControl.handlers.trip.CerrarViajeHandler;
 import ar.com.klee.marvin.voiceControl.handlers.trip.CompartirViajeHandler;
+import ar.com.klee.marvin.voiceControl.handlers.tripHistory.AbrirUltimoViajeHandler;
+import ar.com.klee.marvin.voiceControl.handlers.tripHistory.AbrirViajeDesdeHandler;
+import ar.com.klee.marvin.voiceControl.handlers.tripHistory.AbrirViajeHastaHandler;
+import ar.com.klee.marvin.voiceControl.handlers.tripHistory.AbrirViajeNumeroHandler;
 import ar.com.klee.marvin.voiceControl.handlers.tripHistory.CerrarHistorialDeViajesHandler;
 
 public class CommandHandlerManager {
@@ -181,7 +188,6 @@ public class CommandHandlerManager {
             new CerrarSesionHandler(textToSpeech, context, this),
             new DesactivarHotspotHandler(textToSpeech, context, this),
             new DesactivarReproduccionAleatoriaHandler(textToSpeech, context, this),
-            new DetenerReproduccionHandler(textToSpeech, context, this),
             new DireccionHandler(textToSpeech, context, this),
             new EnviarMailAContactoHandler(textToSpeech, context, this),
             new EnviarSMSAContactoHandler(textToSpeech, context, this),
@@ -238,9 +244,16 @@ public class CommandHandlerManager {
             new IrASitioHandler(textToSpeech, context, this),
             new CerrarMapaHandler(textToSpeech, context, this));
 
-        commandHandlersTripHistory = Arrays.asList((CommandHandler)new CerrarHistorialDeViajesHandler(textToSpeech, context, this));
+        commandHandlersTripHistory = Arrays.asList(new AbrirUltimoViajeHandler(textToSpeech, context, this),
+                new AbrirViajeDesdeHandler(textToSpeech, context, this),
+                new AbrirViajeHastaHandler(textToSpeech, context, this),
+                new AbrirViajeNumeroHandler(textToSpeech, context, this),
+                new CerrarHistorialDeViajesHandler(textToSpeech, context, this));
 
-        commandHandlersMySites = Arrays.asList();
+        commandHandlersMySites = Arrays.asList(new AbrirSitioHandler(textToSpeech, context, this),
+                new BorrarSitioHandler(textToSpeech, context, this),
+                new CerrarMisSitiosHandler(textToSpeech, context, this),
+                new GuardarSitioHandler(textToSpeech, context, this));
 
         commandHandlersProfile = Arrays.asList();
 

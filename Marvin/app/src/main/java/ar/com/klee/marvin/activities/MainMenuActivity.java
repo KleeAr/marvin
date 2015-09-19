@@ -102,7 +102,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     private BroadcastReceiver voiceControlReceiver;
     private BroadcastReceiver musicReceiver;
     private CommandHandlerManager commandHandlerManager;
-    private LocationSender locationSender;
+    public static LocationSender locationSender;
 
     private boolean mIsBound;
     private boolean wasPlaying;
@@ -326,6 +326,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 break;
             case 10:
                 MainMenuActivity.mapFragment.finishTrip();
+                locationSender.stopLocationSender();
                 if(MainMenuFragment.isInstanceInitialized())
                     MainMenuFragment.getInstance().stopThread();
                 stopServices();
@@ -342,6 +343,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     @Override
     public void onBackPressed() {
+
+        commandHandlerManager.setNullCommand();
+        STTService.getInstance().setIsListening(false);
 
         if(!previousMenus.empty()){
 
@@ -376,6 +380,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     break;
                 case 10:
                     MainMenuActivity.mapFragment.finishTrip();
+                    locationSender.stopLocationSender();
                     if(MainMenuFragment.isInstanceInitialized())
                         MainMenuFragment.getInstance().stopThread();
                     stopServices();
@@ -402,6 +407,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         handler.postDelayed(new Runnable() {
             public void run() {
                 mapFragment.finishTrip();
+                locationSender.stopLocationSender();
                 if(MainMenuFragment.isInstanceInitialized())
                     MainMenuFragment.getInstance().stopThread();
                 stopServices();
@@ -411,6 +417,11 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     }
 
     public void setFragment(int position){
+
+        previousMenus.push(actualFragmentPosition);
+
+        actualFragmentPosition = position;
+
         switch (position) {
             case 0:
                 setFragment(0, PerfilFragment.class);
@@ -439,6 +450,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 break;
             case 10:
                 MainMenuActivity.mapFragment.finishTrip();
+                locationSender.stopLocationSender();
                 if(MainMenuFragment.isInstanceInitialized())
                     MainMenuFragment.getInstance().stopThread();
                 stopServices();
@@ -572,9 +584,14 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     MainMenuFragment.bt_next.setEnabled(false);
                     MainMenuFragment.bt_previous.setEnabled(false);
 
-                    // ACTIVAR PANTALLA DE MARVIN
+                    MainMenuFragment.spokenText.setText("Hablá, yo escucho...");
+                    MainMenuFragment.marvinImage.setImageResource(R.drawable.marvin_on);
 
-                } else if (notification.equals("MarvinFinish")) {
+                } else if (notification.startsWith("MarvinFinish")) {
+
+                    notification = notification.replace("MarvinFinish ", "");
+
+                    MainMenuFragment.spokenText.setText(notification);
 
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
@@ -592,7 +609,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     MainMenuFragment.bt_next.setEnabled(true);
                     MainMenuFragment.bt_previous.setEnabled(true);
 
-                    // CERRAR PANTALLA DE MARVIN
+                    MainMenuFragment.marvinImage.setImageResource(R.drawable.marvin_off);
 
                 } else if (notification.startsWith("Command ")) {
 
@@ -719,9 +736,11 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         }
 
         if (!musicService.isPlaying()) {
+            wasPlaying = true;
             musicService.startPlaying();
             MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
         } else {
+            wasPlaying = false;
             musicService.pause();
             MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_play);
             MainMenuFragment.tv_song.setText("Reproducción Pausada");
@@ -742,9 +761,13 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
             }
 
+            wasPlaying = true;
+
             musicService.nextSong();
 
         }else{
+
+            wasPlaying = false;
 
             MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_play);
             musicService.nextRadio();
@@ -794,9 +817,13 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
             }
 
+            wasPlaying = true;
+
             musicService.previousSong();
 
         }else{
+
+            wasPlaying = false;
 
             MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_play);
             musicService.previousRadio();
@@ -1109,26 +1136,61 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         return getSupportFragmentManager();
     }
 
+    /**
+     * ***********************************
+     * ************SITES METHODS**************
+     * ***********************************
+     */
 
 
+    public int addNewSite(String address, String site){
 
-             /*
-    private void addShortcut() {
+        return  MisSitiosFragment.getInstance().addNewSite(address,site);
 
-        //on Home screen
-        Intent shortcutIntent = new Intent(getApplicationContext(),SplashActivity.class);
-
-        shortcutIntent.setAction(Intent.ACTION_MAIN);
-
-        Intent addIntent = new Intent();
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "marvin");
-        addIntent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,Intent.ShortcutIconResource.fromContext(getApplicationContext(),R.mipmap.ic_launcher));
-        addIntent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-        getApplicationContext().sendBroadcast(addIntent);
     }
-*/
 
+    public boolean checkSiteExistence(String site){
+
+        return MisSitiosFragment.getInstance().checkSiteExistence(site);
+
+    }
+
+    public void openSite(String site){
+
+        MisSitiosFragment.getInstance().openSite(site);
+
+    }
+
+    public void deleteSite(String site){
+
+        MisSitiosFragment.getInstance().deleteSite(site);
+
+    }
+
+    /**
+     * ***********************************
+     * ************TRIPS METHODS**************
+     * ***********************************
+     */
+
+    public boolean checkTripExistence(String trip){
+
+        return MisViajesFragment.getInstance().checkTripExistence(trip);
+
+    }
+
+    public void openTrip(String trip){
+
+        MisViajesFragment.getInstance().openTrip(trip);
+
+    }
+
+
+    /**
+     * ***********************************
+     * ************MUSIC BUTTONS METHODS**************
+     * ***********************************
+     */
 
     public void setButtonsEnabled() {
 

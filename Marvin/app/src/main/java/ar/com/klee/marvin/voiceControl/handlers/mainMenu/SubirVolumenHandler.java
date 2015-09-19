@@ -14,7 +14,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class SubirVolumenHandler extends CommandHandler {
 
     public SubirVolumenHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("subir volumen"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("subir volumen","aumentar volumen","incrementar volumen"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

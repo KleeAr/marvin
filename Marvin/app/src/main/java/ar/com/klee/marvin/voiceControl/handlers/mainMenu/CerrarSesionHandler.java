@@ -40,6 +40,7 @@ public class CerrarSesionHandler extends CommandHandler {
                 if(MainMenuFragment.isInstanceInitialized())
                     MainMenuFragment.getInstance().stopThread();
                 MainMenuActivity.mapFragment.finishTrip();
+                MainMenuActivity.locationSender.stopLocationSender();
                 ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).stopServices();
             }
         }, 1000);

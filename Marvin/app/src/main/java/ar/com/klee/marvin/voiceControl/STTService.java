@@ -18,7 +18,12 @@ import android.view.View;
 
 import java.util.ArrayList;
 
+import ar.com.klee.marvin.activities.MainMenuActivity;
+import ar.com.klee.marvin.fragments.MainMenuFragment;
 import ar.com.klee.marvin.sms.SMSDriver;
+import ar.com.klee.marvin.social.NotificationService;
+import ar.com.klee.marvin.voiceControl.handlers.LeerWhatsappHandler;
+import ar.com.klee.marvin.voiceControl.handlers.ResponderSMSHandler;
 
 /* Clase STT
 ** -Gestión del pasaje de audio a texto
@@ -36,6 +41,9 @@ public class STTService extends Service {
     private boolean previousListening;
 
     private boolean sttState;
+
+    public int numberOfWhatsapp = 0;
+    public String whatsAppContact;
 
     LocalBroadcastManager broadcaster;
     public static final String COPA_RESULT = "com.controlj.copame.backend.COPAService.REQUEST_PROCESSED";
@@ -91,7 +99,7 @@ public class STTService extends Service {
             mSpeechRecognizer.cancel();
             sttState = false;
 
-            Log.d("STT", "stopListening");
+            //Log.d("STT", "stopListening");
         }
     }
 
@@ -104,7 +112,7 @@ public class STTService extends Service {
 
         @Override
         public void onBeginningOfSpeech(){
-            Log.d("STT", "onBeginningOfSpeech");
+            //Log.d("STT", "onBeginningOfSpeech");
         }
 
         @Override
@@ -114,14 +122,14 @@ public class STTService extends Service {
 
         @Override
         public void onEndOfSpeech(){
-            Log.d("STT", "onEndOfSpeech");
+            //Log.d("STT", "onEndOfSpeech");
         }
 
         @Override
-        public void onError(int error){
+        public void onError(final int error){
 
-            Log.d("STT", "onError");
-            Log.d("STT", getErrorText(error));
+            //Log.d("STT", "onError");
+            //Log.d("STT", getErrorText(error));
 
             if(error != SpeechRecognizer.ERROR_RECOGNIZER_BUSY) {
                 Handler handler = new Handler();
@@ -129,7 +137,38 @@ public class STTService extends Service {
                     public void run() {
                         mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
                         sttState = true;
-                        Log.d("STT", "onErrorActivate");
+
+                        if(error == SpeechRecognizer.ERROR_SPEECH_TIMEOUT) {
+
+                            MainMenuFragment.spokenText.setText("Hablá, yo escucho...");
+
+                            if (!isListening &&
+                                    commandHandlerManager.getCurrentActivity() == CommandHandlerManager.ACTIVITY_MAIN &&
+                                    SMSDriver.getInstance().getInboxSize() != 0 &&
+                                    commandHandlerManager.getCommandHandler() == null
+                                    ) {
+
+                                SMSDriver.getInstance().displayIncomingSMS();
+                            }
+
+                            if (NotificationService.isInstanceInitialized() &&
+                                    !isListening &&
+                                    commandHandlerManager.getCurrentActivity() == CommandHandlerManager.ACTIVITY_MAIN &&
+                                    NotificationService.instance.checkMessageList() &&
+                                    commandHandlerManager.getCommandHandler() == null
+                                    ) {
+
+                                whatsAppContact = NotificationService.instance.getNextContact();
+                                numberOfWhatsapp = NotificationService.instance.getNumberOfMessages(whatsAppContact);
+
+                                setIsListening(true);
+                                ((MainMenuActivity) commandHandlerManager.getMainActivity()).setButtonsDisabled();
+                                commandHandlerManager.setCurrentCommandHandler(new LeerWhatsappHandler(commandHandlerManager.getTextToSpeech(), commandHandlerManager.getContext(), commandHandlerManager));
+                                commandHandlerManager.setCurrentContext(commandHandlerManager.getCommandHandler().drive(commandHandlerManager.getCommandHandler().createContext(commandHandlerManager.getCurrentContext(), commandHandlerManager.getActivity(), "leer whatsapp")));
+
+                            }
+                        }
+                        //Log.d("STT", "onErrorActivate");
                     }
                 }, 1000);
             }else{
@@ -137,7 +176,7 @@ public class STTService extends Service {
                 handler.postDelayed(new Runnable() {
                     public void run() {
                         sttState = true;
-                        Log.d("STT", "onErrorActivate");
+                        //Log.d("STT", "onErrorActivate");
                     }
                 }, 1000);
             }
@@ -146,21 +185,21 @@ public class STTService extends Service {
         @Override
         public void onEvent(int eventType, Bundle params){
 
-            Log.d("STT", "onEvent");
+            //Log.d("STT", "onEvent");
 
         }
 
         @Override
         public void onPartialResults(Bundle partialResults){
 
-            Log.d("STT", "onPartialResults");
+            //Log.d("STT", "onPartialResults");
 
         }
 
         @Override
         public void onReadyForSpeech(Bundle params){
 
-            Log.d("STT", "onReadyForSpeech");
+            //Log.d("STT", "onReadyForSpeech");
 
         }
 
@@ -172,21 +211,12 @@ public class STTService extends Service {
             ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
             String text = matches.get(0);
 
-            Log.d("STT", "onResults");
-            Log.d("STT", text);
+            //Log.d("STT", "onResults");
+            //Log.d("STT", text);
 
             previousListening = isListening;
 
             isListening = commandHandlerManager.detectCommand(text, isListening);
-
-            if(!isListening &&
-                    commandHandlerManager.getCurrentActivity() == CommandHandlerManager.ACTIVITY_MAIN &&
-                    SMSDriver.getInstance().getInboxSize() != 0 &&
-                    commandHandlerManager.getCommandHandler() == null
-                    ){
-
-                SMSDriver.getInstance().displayIncomingSMS();
-            }
 
             if(text != null && text != "") {
                 if (isListening && !previousListening)
@@ -194,8 +224,9 @@ public class STTService extends Service {
                 else if (isListening && previousListening)
                     sendResult("Command " + text);
                 else if (!isListening && previousListening)
-                    sendResult("MarvinFinish");
+                    sendResult("MarvinFinish " + text);
             }
+
         }
 
         @Override

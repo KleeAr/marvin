@@ -14,7 +14,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class DireccionHandler extends CommandHandler {
 
     public DireccionHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("dirección"),textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("dirección","dirección actual","ubicación","ubicación actual"),textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext currentContext){

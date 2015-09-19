@@ -1,12 +1,5 @@
 package ar.com.klee.marvin.controller;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import ar.com.klee.marvin.model.User;
+import ar.com.klee.marvin.model.UserSetting;
 import ar.com.klee.marvin.repository.UserRepository;
+import ar.com.klee.marvin.repository.UserSettingRepository;
 import ar.com.klee.marvin.representation.LoginRequest;
 import ar.com.klee.marvin.representation.LoginResponse;
 
@@ -31,13 +26,15 @@ import ar.com.klee.marvin.representation.LoginResponse;
 public class UserController {
 
 	private UserRepository userRepository;
+	private UserSettingRepository settingRepository;
 	private AuthenticationManager authManager;
 	
 	@Autowired	
-	public UserController(UserRepository userRepository, AuthenticationManager authenticationManager) {
+	public UserController(UserRepository userRepository, AuthenticationManager authenticationManager, UserSettingRepository settingRepository) {
 		super();
 		this.userRepository = userRepository;
 		this.authManager = authenticationManager;
+		this.settingRepository = settingRepository;
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -50,9 +47,16 @@ public class UserController {
 		return userRepository.findOne(id);
 	}
 	
+	@RequestMapping(value = "/me", method = RequestMethod.GET)
+	public User getMe(HttpSession session) {
+		return (User) session.getAttribute("user");
+	}
+	
 	@RequestMapping(value ="/register", method = RequestMethod.POST)
 	public User save(@RequestBody User user) {
-		return userRepository.save(user);
+		user = userRepository.save(user);
+		settingRepository.save(UserSetting.createDefaultSettings(user));
+		return user;
 	}
 	
 	@RequestMapping(value = "/auth", method = RequestMethod.POST)
@@ -62,8 +66,9 @@ public class UserController {
 		    if (isAuthenticated) {
 		        SecurityContextHolder.getContext().setAuthentication(authentication);
 		    }
-		    
-		    return new LoginResponse(userRepository.findByEmail(loginRequest.getEmail()).getId(), session.getId());
+		    User user = userRepository.findByEmail(loginRequest.getEmail());
+		    session.setAttribute("user", user);
+			return new LoginResponse(user.getId(), session.getId());
 	}
 	
 	private boolean isAuthenticated(Authentication authentication) {

@@ -16,7 +16,7 @@ public class ReproducirArtistaHandler extends CommandHandler {
     public static final String ARTISTA = "artista";
 
     public ReproducirArtistaHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("reproducir artista {artista}"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("reproducir artista {artista}","reproducir cantante {artista}","reproducir banda {artista}","escuchar artista {artista}","escuchar cantante {artista}","escuchar banda {artista}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

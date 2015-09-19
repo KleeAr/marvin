@@ -1,10 +1,6 @@
 package ar.com.klee.marvin.configuration;
 
 
-import android.content.Context;
-import android.content.Intent;
-import android.speech.SpeechRecognizer;
-
 public class UserConfig {
 
     private static UserConfig instance;
