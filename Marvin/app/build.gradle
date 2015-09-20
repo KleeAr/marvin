@@ -27,8 +27,8 @@ android {
             storePassword 'android'
         }
     }
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    compileSdkVersion 22
+    buildToolsVersion "23.0.1"
     defaultConfig {
         applicationId "ar.com.klee.marvin"
         minSdkVersion 16
@@ -39,8 +39,14 @@ android {
         multiDexEnabled true
     }
     buildTypes {
+        debug {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -68,9 +74,10 @@ dependencies {
     compile 'com.google.apis:google-api-services-youtube:v3-rev141-1.20.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile files('libs/YouTubeAndroidPlayerApi.jar')
-    compile 'com.google.android.gms:play-services-maps:7.0.0'
+    compile 'com.google.android.gms:play-services-maps:7.8.0'
     compile 'org.twitter4j:twitter4j-core:[4.0,)'
     compile files('libs/butterknife-7.0.1.jar')
     compile files('libs/fmp.jar')
     compile files('libs/lib.jar')
+    compile files('libs/rest-client-1.0.jar')
 }
