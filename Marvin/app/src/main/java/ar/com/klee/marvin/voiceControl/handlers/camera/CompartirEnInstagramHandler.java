@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import ar.com.klee.marvin.activities.CameraActivity;
+import ar.com.klee.marvin.activities.SiteActivity;
 import ar.com.klee.marvin.activities.TripActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -190,10 +191,13 @@ public class CompartirEnInstagramHandler extends CommandHandler {
             getTextToSpeech().speakText("Publicando la foto en Instagram");
 
             CameraActivity cameraActivity = null;
+            SiteActivity siteActivity = null;
             TripActivity tripActivity = null;
 
             if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
                 cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
+            }if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
+                siteActivity = context.getObject(ACTIVITY, SiteActivity.class);
             }else{
                 tripActivity = context.getObject(ACTIVITY, TripActivity.class);
             }
@@ -233,6 +237,8 @@ public class CompartirEnInstagramHandler extends CommandHandler {
 
             if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
                 cameraActivity.shareInInstagram(textToPublish);
+            }if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
+                siteActivity.shareInInstagram(textToPublish);
             }else{
                 tripActivity.shareInInstagram(textToPublish);
             }

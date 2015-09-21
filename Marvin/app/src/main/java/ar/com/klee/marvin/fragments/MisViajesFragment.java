@@ -230,8 +230,9 @@ public class MisViajesFragment extends Fragment {
             }
 
             if(trip.startsWith("number - ")){
-                trip = trip.replace("number - ","");
-                return Integer.parseInt(trip) < tripList.size();
+                trip = trip.replace("number - ", "");
+                int tripNumber = Integer.parseInt(trip);
+                return (tripNumber <= tripList.size() && tripNumber >= 1);
             }
 
             boolean isBeginnig = true;
@@ -250,12 +251,12 @@ public class MisViajesFragment extends Fragment {
 
                 if(isBeginnig){
 
-                    if(trip.startsWith(tripList.get(i).getBeginningAddress()))
+                    if(trip.startsWith(tripList.get(i).getBeginningAddress().toLowerCase()))
                         break;
 
                 }else{
 
-                    if(trip.startsWith(tripList.get(i).getEndingAddress()))
+                    if(trip.startsWith(tripList.get(i).getEndingAddress().toLowerCase()))
                         break;
 
                 }
@@ -277,7 +278,7 @@ public class MisViajesFragment extends Fragment {
 
             if(trip.startsWith("number - ")){
                 trip = trip.replace("number - ","");
-                return tripList.get(Integer.parseInt(trip));
+                return tripList.get(Integer.parseInt(trip)-1);
             }
 
             boolean isBeginnig = true;
@@ -296,12 +297,12 @@ public class MisViajesFragment extends Fragment {
 
                 if(isBeginnig){
 
-                    if(trip.startsWith(tripList.get(i).getBeginningAddress()))
+                    if(trip.startsWith(tripList.get(i).getBeginningAddress().toLowerCase()))
                         break;
 
                 }else{
 
-                    if(trip.startsWith(tripList.get(i).getEndingAddress()))
+                    if(trip.startsWith(tripList.get(i).getEndingAddress().toLowerCase()))
                         break;
 
                 }

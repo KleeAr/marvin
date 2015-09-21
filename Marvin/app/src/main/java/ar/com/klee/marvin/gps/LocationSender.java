@@ -106,6 +106,8 @@ public class LocationSender {
                     if(polylineLength > 100)
                         return;
 
+                    Log.d("GPS",((Double)polylineLength).toString());
+
                     polylineLength = polylineLength / 1000;
 
                     if(hours == 0.0)

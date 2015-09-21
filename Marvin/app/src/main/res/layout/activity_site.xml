@@ -12,7 +12,8 @@
         android:layout_alignParentLeft="false"
         android:layout_alignParentStart="false"
         android:layout_alignParentBottom="false"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"/>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
@@ -38,6 +39,7 @@
             android:text="Test"
             android:layout_alignParentBottom="false"
             android:layout_alignParentEnd="false"
+            android:layout_alignParentRight="false"
             android:layout_alignBottom="@+id/img_thumbnail" />
 
     </RelativeLayout>

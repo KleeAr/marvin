@@ -47,6 +47,8 @@ import ar.com.klee.marvin.voiceControl.handlers.places.AbrirSitioHandler;
 import ar.com.klee.marvin.voiceControl.handlers.places.BorrarSitioHandler;
 import ar.com.klee.marvin.voiceControl.handlers.places.CerrarMisSitiosHandler;
 import ar.com.klee.marvin.voiceControl.handlers.places.GuardarSitioHandler;
+import ar.com.klee.marvin.voiceControl.handlers.site.CerrarSitioHandler;
+import ar.com.klee.marvin.voiceControl.handlers.site.CompartirSitioHandler;
 import ar.com.klee.marvin.voiceControl.handlers.smsInbox.CerrarHistorialDeSMSHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.DireccionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.AnteriorInterseccionHandler;
@@ -269,7 +271,11 @@ public class CommandHandlerManager {
                 this.compartirEnInstagramHandler,
                 new CompartirViajeHandler(textToSpeech, context, this));
 
-        commandHandlersSite = Arrays.asList();
+        commandHandlersSite = Arrays.asList(new CerrarSitioHandler(textToSpeech, context, this),
+                this.compartirEnFacebookHandler,
+                this.compartirEnTwitterHandler,
+                this.compartirEnInstagramHandler,
+                new CompartirSitioHandler(textToSpeech, context, this));
 
         commandHandlers = new HashMap<>();
 

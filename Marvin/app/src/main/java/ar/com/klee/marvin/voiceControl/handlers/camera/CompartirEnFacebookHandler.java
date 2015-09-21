@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import ar.com.klee.marvin.activities.CameraActivity;
+import ar.com.klee.marvin.activities.SiteActivity;
 import ar.com.klee.marvin.activities.TripActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -203,11 +204,15 @@ public class CompartirEnFacebookHandler extends CommandHandler {
             }
 
             CameraActivity cameraActivity = null;
+            SiteActivity siteActivity = null;
             TripActivity tripActivity = null;
 
             if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
                 cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
                 cameraActivity.shareInFacebook(textToPublish);
+            }if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
+                siteActivity = context.getObject(ACTIVITY, SiteActivity.class);
+                siteActivity.shareInFacebook(textToPublish);
             }else{
                 tripActivity = context.getObject(ACTIVITY, TripActivity.class);
                 tripActivity.shareInFacebook(textToPublish);

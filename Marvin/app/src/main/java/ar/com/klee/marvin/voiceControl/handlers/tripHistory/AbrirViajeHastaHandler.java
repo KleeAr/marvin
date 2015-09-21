@@ -12,19 +12,25 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 
 public class AbrirViajeHastaHandler extends CommandHandler {
 
+    public static final String DIRECCION = "direccion";
+    public static final String ADDRESS = "ADDRESS";
+
+
     public AbrirViajeHastaHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("abrir último viaje"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("abrir viaje hasta {direccion}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){
 
-        boolean result = ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).checkTripExistence("last");
+        String address = context.getString(ADDRESS);
+
+        boolean result = ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).checkTripExistence("finish - " + address);
 
         if(result) {
-            getTextToSpeech().speakText("Abriendo el último viaje");
-            ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).openTrip("last");
+            getTextToSpeech().speakText("Abriendo viaje desde " + address);
+            ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).openTrip("finish - " + address);
         }else
-            getTextToSpeech().speakText("No hay viajes guardados");
+            getTextToSpeech().speakText("No se encontraron viajes desde la dirección " + address);
 
         context.put(STEP, 0);
         return context;
@@ -32,5 +38,7 @@ public class AbrirViajeHastaHandler extends CommandHandler {
 
     @Override
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
+        String command = commandHandlerContext.getString(COMMAND);
+        commandHandlerContext.put(ADDRESS, getExpressionMatcher(command).getValuesFromExpression(command).get(DIRECCION));
     }
 }

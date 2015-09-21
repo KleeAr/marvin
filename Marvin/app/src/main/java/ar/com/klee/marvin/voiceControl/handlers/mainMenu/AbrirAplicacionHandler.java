@@ -66,14 +66,20 @@ public class AbrirAplicacionHandler extends CommandHandler {
             currentContext.put(STEP, 0);
             return currentContext;
         }else if(app.equals("mis sitios")) {
+            getTextToSpeech().speakText("Abriendo mis sitios");
+            ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).previousMenus.push(1);
             ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).setFragment(5);
             currentContext.put(STEP, 0);
             return currentContext;
         }else if(app.equals("historial de viajes")) {
+            getTextToSpeech().speakText("Abriendo historial de viajes");
+            ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).previousMenus.push(1);
             ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).setFragment(4);
             currentContext.put(STEP, 0);
             return currentContext;
         }else if(app.equals("dónde estacioné")) {
+            getTextToSpeech().speakText("Abriendo dónde estacioné");
+            ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).previousMenus.push(1);
             ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).setFragment(6);
             currentContext.put(STEP, 0);
             return currentContext;

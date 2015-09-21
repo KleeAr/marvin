@@ -232,7 +232,7 @@ public class MisSitiosFragment extends Fragment {
 
                                     builder.setView(layout);
                                 }
-                            }, 3000);
+                            }, 2000);
 
 
                             builder.setNegativeButton("Imagen 1", new DialogInterface.OnClickListener() {
@@ -367,7 +367,7 @@ public class MisSitiosFragment extends Fragment {
                                 public void run() {
                                     builder.show();
                                 }
-                            }, 3000);
+                            }, 2000);
 
                         }
                         else {
@@ -593,7 +593,7 @@ public class MisSitiosFragment extends Fragment {
 
         while(j<lSites.size()){
             Site s = lSites.get(j);
-            if(s.getSiteName().equals(siteName.toString())){
+            if(s.getSiteName().equals(siteName.toString().toLowerCase())){
                 return 2;
             }
             j++;
@@ -624,72 +624,143 @@ public class MisSitiosFragment extends Fragment {
 
         final ImageGetterTask task = (ImageGetterTask) new ImageGetterTask().execute();
 
-        if(task.getImageExists()) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
+        builder.setCancelable(true);
+        builder.setTitle("Imagen a Mostrar");
 
-            final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
-            builder.setCancelable(true);
-            builder.setTitle("Imagen a Mostrar");
+        final Context context = getActivity();
+        final LinearLayout layout = new LinearLayout(context);
+        layout.setOrientation(LinearLayout.HORIZONTAL);
 
-            final Context context = getActivity();
-            final LinearLayout layout = new LinearLayout(context);
-            layout.setOrientation(LinearLayout.HORIZONTAL);
+        final ImageView image1 = new ImageView(context);
+        final ImageView image2 = new ImageView(context);
 
-            final ImageView image1 = new ImageView(context);
-            final ImageView image2 = new ImageView(context);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                image1.setImageBitmap(task.getImg1());
+                layout.addView(image1);
 
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                public void run() {
-                    image1.setImageBitmap(task.getImg1());
-                    layout.addView(image1);
+                image2.setImageBitmap(task.getImg2());
+                layout.addView(image2);
 
-                    image2.setImageBitmap(task.getImg2());
-                    layout.addView(image2);
+                int px = (int) (250 * context.getResources().getDisplayMetrics().density);
 
-                    int px = (int) (250 * context.getResources().getDisplayMetrics().density);
+                image1.getLayoutParams().height = px;
+                image1.getLayoutParams().width = px;
 
-                    image1.getLayoutParams().height = px;
-                    image1.getLayoutParams().width = px;
+                image2.getLayoutParams().height = px;
+                image2.getLayoutParams().width = px;
 
-                    image2.getLayoutParams().height = px;
-                    image2.getLayoutParams().width = px;
+                builder.setView(layout);
+            }
+        }, 2500);
 
-                    builder.setView(layout);
+
+        builder.setNegativeButton("Imagen 1", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+                File mediaStorageDir = new File("/sdcard/", "MARVIN");
+
+                if (!mediaStorageDir.exists()) {
+                    if (!mediaStorageDir.mkdirs()) {
+                        return;
+                    }
                 }
-            }, 3000);
 
+                mediaStorageDir = new File("/sdcard/MARVIN", "Sitios");
 
-            builder.setNegativeButton("Imagen 1", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-
-                    File mediaStorageDir = new File("/sdcard/", "MARVIN");
-
-                    if (!mediaStorageDir.exists()) {
-                        if (!mediaStorageDir.mkdirs()) {
-                            return;
-                        }
+                if (!mediaStorageDir.exists()) {
+                    if (!mediaStorageDir.mkdirs()) {
+                        return;
                     }
+                }
 
-                    mediaStorageDir = new File("/sdcard/MARVIN", "Sitios");
+                FileOutputStream out;
+                try {
+                    out = new FileOutputStream("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                    task.getImg1().compress(Bitmap.CompressFormat.PNG, 90, out);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
 
-                    if (!mediaStorageDir.exists()) {
-                        if (!mediaStorageDir.mkdirs()) {
-                            return;
-                        }
+                newSite.setSiteThumbnail(1);
+                newSite.setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                lSites.get(lSites.size() - 1).setSiteThumbnail(1);
+                lSites.get(lSites.size() - 1).setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+
+                MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
+                SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
+                SharedPreferences.Editor prefsEditor = mPrefs.edit();
+                Gson gson = new Gson();
+                String json = gson.toJson(newSite);
+                Integer numberOfSites = mPrefs.getInt("NumberOfSites", 0);
+                prefsEditor.putString("Site" + numberOfSites.toString(), json);
+                prefsEditor.commit();
+
+                dialog.dismiss();
+
+                mAdapter = new CardSiteAdapter(lSites);
+                mRecyclerView.setAdapter(mAdapter);
+            }
+        });
+
+        builder.setPositiveButton("Imagen 2", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+                File mediaStorageDir = new File("/sdcard/", "MARVIN");
+
+                if (!mediaStorageDir.exists()) {
+                    if (!mediaStorageDir.mkdirs()) {
+                        return;
                     }
+                }
 
-                    FileOutputStream out;
-                    try {
-                        out = new FileOutputStream("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
-                        task.getImg1().compress(Bitmap.CompressFormat.PNG, 90, out);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
+                mediaStorageDir = new File("/sdcard/MARVIN", "Sitios");
+
+                if (!mediaStorageDir.exists()) {
+                    if (!mediaStorageDir.mkdirs()) {
+                        return;
                     }
+                }
 
-                    newSite.setSiteThumbnail(1);
-                    newSite.setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
-                    lSites.get(lSites.size() - 1).setSiteThumbnail(1);
-                    lSites.get(lSites.size() - 1).setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                FileOutputStream out = null;
+                try {
+                    out = new FileOutputStream("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                    task.getImg2().compress(Bitmap.CompressFormat.PNG, 90, out);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                newSite.setSiteThumbnail(1);
+                newSite.setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                lSites.get(lSites.size() - 1).setSiteThumbnail(1);
+                lSites.get(lSites.size() - 1).setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+
+                MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
+                SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
+                SharedPreferences.Editor prefsEditor = mPrefs.edit();
+                Gson gson = new Gson();
+                String json = gson.toJson(newSite);
+                Integer numberOfSites = mPrefs.getInt("NumberOfSites", 0);
+                prefsEditor.putString("Site" + numberOfSites.toString(), json);
+                prefsEditor.commit();
+
+                dialog.dismiss();
+
+                mAdapter = new CardSiteAdapter(lSites);
+                mRecyclerView.setAdapter(mAdapter);
+            }
+        });
+        builder.setOnKeyListener(new DialogInterface.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP && !event.isCanceled()) {
+
+                    newSite.setSiteThumbnail(0);
+                    newSite.setSiteImage(null);
+                    lSites.get(lSites.size() - 1).setSiteThumbnail(0);
+                    lSites.get(lSites.size() - 1).setSiteImage(null);
 
                     MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
                     SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
@@ -704,97 +775,22 @@ public class MisSitiosFragment extends Fragment {
 
                     mAdapter = new CardSiteAdapter(lSites);
                     mRecyclerView.setAdapter(mAdapter);
-                }
-            });
-
-            builder.setPositiveButton("Imagen 2", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-
-                    File mediaStorageDir = new File("/sdcard/", "MARVIN");
-
-                    if (!mediaStorageDir.exists()) {
-                        if (!mediaStorageDir.mkdirs()) {
-                            return;
-                        }
-                    }
-
-                    mediaStorageDir = new File("/sdcard/MARVIN", "Sitios");
-
-                    if (!mediaStorageDir.exists()) {
-                        if (!mediaStorageDir.mkdirs()) {
-                            return;
-                        }
-                    }
-
-                    FileOutputStream out = null;
-                    try {
-                        out = new FileOutputStream("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
-                        task.getImg2().compress(Bitmap.CompressFormat.PNG, 90, out);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-
-                    newSite.setSiteThumbnail(1);
-                    newSite.setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
-                    lSites.get(lSites.size() - 1).setSiteThumbnail(1);
-                    lSites.get(lSites.size() - 1).setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
-
-                    MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
-                    SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
-                    SharedPreferences.Editor prefsEditor = mPrefs.edit();
-                    Gson gson = new Gson();
-                    String json = gson.toJson(newSite);
-                    Integer numberOfSites = mPrefs.getInt("NumberOfSites", 0);
-                    prefsEditor.putString("Site" + numberOfSites.toString(), json);
-                    prefsEditor.commit();
 
                     dialog.dismiss();
-
-                    mAdapter = new CardSiteAdapter(lSites);
-                    mRecyclerView.setAdapter(mAdapter);
+                    return true;
                 }
-            });
-            builder.setOnKeyListener(new DialogInterface.OnKeyListener() {
-                @Override
-                public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                    if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP && !event.isCanceled()) {
+                return false;
+            }
 
-                        newSite.setSiteThumbnail(0);
-                        newSite.setSiteImage(null);
-                        lSites.get(lSites.size() - 1).setSiteThumbnail(0);
-                        lSites.get(lSites.size() - 1).setSiteImage(null);
+        });
 
-                        MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
-                        SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
-                        SharedPreferences.Editor prefsEditor = mPrefs.edit();
-                        Gson gson = new Gson();
-                        String json = gson.toJson(newSite);
-                        Integer numberOfSites = mPrefs.getInt("NumberOfSites", 0);
-                        prefsEditor.putString("Site" + numberOfSites.toString(), json);
-                        prefsEditor.commit();
-
-                        dialog.dismiss();
-
-                        mAdapter = new CardSiteAdapter(lSites);
-                        mRecyclerView.setAdapter(mAdapter);
-
-                        dialog.dismiss();
-                        return true;
-                    }
-                    return false;
-                }
-
-            });
-
-            Handler handler2 = new Handler();
-            handler2.postDelayed(new Runnable() {
-                public void run() {
+        Handler handler2 = new Handler();
+        handler2.postDelayed(new Runnable() {
+            public void run() {
+                if(task.getImageExists())
                     builder.show();
-                }
-            }, 3000);
-
-            return 1;
-        }
+            }
+        }, 3000);
 
         return 0;
     }
@@ -805,7 +801,7 @@ public class MisSitiosFragment extends Fragment {
 
         while(i < lSites.size()){
 
-            if(site.equals(lSites.get(i).getSiteName()))
+            if(site.equals(lSites.get(i).getSiteName().toLowerCase()))
                 break;
 
             i++;
@@ -824,7 +820,7 @@ public class MisSitiosFragment extends Fragment {
 
         while(i < lSites.size()){
 
-            if(site.equals(lSites.get(i).getSiteName()))
+            if(site.equals(lSites.get(i).getSiteName().toLowerCase()))
                 break;
 
             i++;
@@ -845,7 +841,7 @@ public class MisSitiosFragment extends Fragment {
 
         while(i < lSites.size()){
 
-            if(site.equals(lSites.get(i).getSiteName()))
+            if(site.equals(lSites.get(i).getSiteName().toLowerCase()))
                 break;
 
             i++;

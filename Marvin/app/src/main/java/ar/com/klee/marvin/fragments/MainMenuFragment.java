@@ -43,6 +43,8 @@ public class MainMenuFragment extends Fragment {
     public static TextView spokenText;
     public static ImageView marvinImage;
 
+    private boolean isRadio;
+
     public static TextView mainStreet;
     public static TextView speed;
 
@@ -70,7 +72,8 @@ public class MainMenuFragment extends Fragment {
         v = inflater.inflate(R.layout.fragment_main_menu, container, false);
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("musicService", Context.MODE_PRIVATE);
-        boolean isRadio = sharedPreferences.getBoolean("isRadio",false);
+        if(instance==null)
+            isRadio = sharedPreferences.getBoolean("isRadio",false);
 
         mainStreet = (TextView)v.findViewById(R.id.mainStreet);
 
@@ -294,5 +297,11 @@ public class MainMenuFragment extends Fragment {
         pager.setCurrentItem(item);
     }
 
+    public boolean isRadio() {
+        return isRadio;
+    }
 
+    public void setIsRadio(boolean isRadio) {
+        this.isRadio = isRadio;
+    }
 }

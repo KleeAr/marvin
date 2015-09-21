@@ -87,6 +87,13 @@ public class TripActivity extends ActionBarActivity {
 
     }
 
+    public void onBackPressed(){
+        commandHandlerManager.setNullCommand();
+        STTService.getInstance().setIsListening(false);
+        commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_TRIP_HISTORY, commandHandlerManager.getMainActivity());
+        this.finish();
+    }
+
     public void addMap(){
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();

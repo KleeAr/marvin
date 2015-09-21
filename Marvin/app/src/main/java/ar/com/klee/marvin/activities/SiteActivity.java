@@ -68,8 +68,17 @@ public class SiteActivity extends ActionBarActivity {
         if(imgFile.exists()){
             Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
             imageView.setImageBitmap(myBitmap);
+        }else{
+            imageView.setImageResource(R.drawable.city);
         }
 
+    }
+
+    public void onBackPressed(){
+        commandHandlerManager.setNullCommand();
+        STTService.getInstance().setIsListening(false);
+        commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_PLACES, commandHandlerManager.getMainActivity());
+        this.finish();
     }
 
     public void addMap(){
@@ -150,46 +159,102 @@ public class SiteActivity extends ActionBarActivity {
 
     public void shareInFacebook(String text){
 
+        if(!text.equals("")){
+            Character firstCharacter, newFirstCharacter;
+
+            firstCharacter = text.charAt(0);
+            newFirstCharacter = Character.toUpperCase(firstCharacter);
+            text = text.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
+
+        }
+
+        currentDialog.dismiss();
+
         fragment.captureScreen();
 
         FacebookService facebookService = new FacebookService(this);
 
         facebookService.postImage(mapBitmap, text);
 
-        File photo = new File(mapPath);
-        photo.delete();
-
-        currentDialog.dismiss();
+        Handler handler2 = new Handler();
+        handler2.postDelayed(new Runnable() {
+            public void run() {
+                File photo = new File(mapPath);
+                photo.delete();
+            }
+        }, 3000);
 
     }
 
     public void shareInTwitter(String text){
 
-        fragment.captureScreen();
+        if(!text.equals("")){
+            Character firstCharacter, newFirstCharacter;
 
-        TwitterService twitterService = TwitterService.getInstance();
+            firstCharacter = text.charAt(0);
+            newFirstCharacter = Character.toUpperCase(firstCharacter);
+            text = text.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
 
-        twitterService.postTweet(text, new File(mapPath));
+        }
 
-        File photo = new File(mapPath);
-        photo.delete();
+        final String textToPublish = text;
 
         currentDialog.dismiss();
+
+        fragment.captureScreen();
+
+        final TwitterService twitterService = TwitterService.getInstance();
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                twitterService.postTweet(textToPublish, new File(mapPath));
+            }
+        }, 1000);
+
+        Handler handler2 = new Handler();
+        handler2.postDelayed(new Runnable() {
+            public void run() {
+                File photo = new File(mapPath);
+                photo.delete();
+            }
+        }, 3000);
 
     }
 
     public void shareInInstagram(String text){
 
-        fragment.captureScreen();
+        if(!text.equals("")){
+            Character firstCharacter, newFirstCharacter;
 
-        InstagramService instagramService = new InstagramService(this);
+            firstCharacter = text.charAt(0);
+            newFirstCharacter = Character.toUpperCase(firstCharacter);
+            text = text.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
 
-        instagramService.postImageOnInstagram("image/png", text, mapPath);
+        }
 
-        File photo = new File(mapPath);
-        photo.delete();
+        final String textToPublish = text;
 
         currentDialog.dismiss();
+
+        fragment.captureScreen();
+
+        final InstagramService instagramService = new InstagramService(this);
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                instagramService.postImageOnInstagram("image/png", textToPublish, mapPath);
+            }
+        }, 1000);
+
+        Handler handler2 = new Handler();
+        handler2.postDelayed(new Runnable() {
+            public void run() {
+                File photo = new File(mapPath);
+                photo.delete();
+            }
+        }, 3000);
 
     }
 

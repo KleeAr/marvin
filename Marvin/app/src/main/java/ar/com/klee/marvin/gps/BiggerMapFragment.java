@@ -109,6 +109,9 @@ public class BiggerMapFragment extends Fragment {
         startLongitude = lon;
         startAddress = address;
 
+        lastLatitude = lat;
+        lastLongitude = lon;
+
         // create marker
         MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon));
 

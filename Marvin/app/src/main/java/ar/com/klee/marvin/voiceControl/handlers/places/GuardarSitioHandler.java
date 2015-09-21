@@ -63,7 +63,15 @@ public class GuardarSitioHandler extends CommandHandler {
     public CommandHandlerContext stepOne(CommandHandlerContext context){
         String site = context.getString(SITE);
 
-        getCommandHandlerManager().getTextToSpeech().speakText("¿Quéres guardar el sitio " + site + "?");
+        getCommandHandlerManager().getTextToSpeech().speakText("¿Querés guardar el sitio " + site + "?");
+
+        Character firstCharacter, newFirstCharacter;
+
+        firstCharacter = site.charAt(0);
+        newFirstCharacter = Character.toUpperCase(firstCharacter);
+        site = site.replaceFirst(firstCharacter.toString(), newFirstCharacter.toString());
+
+        context.put(SITE,site);
 
         context.put(STEP, 3);
         return context;
@@ -74,7 +82,7 @@ public class GuardarSitioHandler extends CommandHandler {
     public CommandHandlerContext stepThree(CommandHandlerContext context){
 
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getTextToSpeech().speakText("Indicá la dirección del sitio");
             context.put(STEP, 5);
             return context;
@@ -104,6 +112,12 @@ public class GuardarSitioHandler extends CommandHandler {
     public CommandHandlerContext stepFive(CommandHandlerContext context){
         String input = context.getString(COMMAND);
 
+        Character firstCharacter, newFirstCharacter;
+
+        firstCharacter = input.charAt(0);
+        newFirstCharacter = Character.toUpperCase(firstCharacter);
+        input = input.replaceFirst(firstCharacter.toString(), newFirstCharacter.toString());
+
         context.put("ADDRESS",input);
 
         getTextToSpeech().speakText("¿La dirección es " + input + "?");
@@ -114,24 +128,21 @@ public class GuardarSitioHandler extends CommandHandler {
     //CONFIRMACION DE MENSAJE
     public CommandHandlerContext stepSeven(CommandHandlerContext context){
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             int result = ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).addNewSite(context.getString("ADDRESS"),context.getString(SITE));
             if(result == 0)
-                getTextToSpeech().speakText("Guardando sitio");
-            else if(result == 1)
-                getTextToSpeech().speakText("Seleccioná la imagen del lugar");
+                getTextToSpeech().speakText("Guardando sitio.");
             else if(result == 2)
                 getTextToSpeech().speakText("El sitio ya existe");
             else if(result == 3)
                 getTextToSpeech().speakText("La dirección indicada es inválida");
-            else
 
             context.put(STEP, 0);
             return context;
         }
 
         if(input.equals("cancelar")) {
-            getTextToSpeech().speakText("Cancelando envío");
+            getTextToSpeech().speakText("Cancelando guardado de sitio");
             context.put(STEP, 0);
             return context;
         }

@@ -46,7 +46,9 @@ public class TTS {
 
                             if (utteranceId.equals("FINISH_SPEAK")) {
                                 //Log.d("TTS","Salta alarma");
-                                ((MainMenuActivity)CommandHandlerManager.getInstance().getMainActivity()).activate(mSpeechRecognizer, mSpeechRecognizerIntent);
+                                MainMenuActivity mainMenuActivity = ((MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity());
+                                mainMenuActivity.activate(mSpeechRecognizer, mSpeechRecognizerIntent);
+
                             }
 
                         }

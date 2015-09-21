@@ -44,7 +44,7 @@ public class CompartirViajeHandler extends CommandHandler {
 
     public CommandHandlerContext stepOne(CommandHandlerContext context){
 
-        getTextToSpeech().speakText("¿En qué red social deseás compartirla?");
+        getTextToSpeech().speakText("¿En qué red social deseás compartirlo?");
         context.getObject(ACTIVITY, TripActivity.class).openShareDialog();
         getCommandHandlerManager().setIsPhotoTaken(false);
 
@@ -70,8 +70,11 @@ public class CompartirViajeHandler extends CommandHandler {
         }
 
         if(input.equals("instagram")) {
-            getTextToSpeech().speakText("Compartiendo viaje en Instagram. ¿Querés agregar un mensaje?");
-            context.put(STEP, 6);
+            getTextToSpeech().speakText("Compartiendo viaje en Instagram");
+            TripActivity tripActivity = context.getObject(ACTIVITY, TripActivity.class);
+            tripActivity.shareInInstagram("");
+            //context.put(STEP, 6);
+            context.put(STEP, 0);
             return context;
         }
 

@@ -105,7 +105,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     public static LocationSender locationSender;
 
     private boolean mIsBound;
-    private boolean wasPlaying;
+    private boolean wasPlaying = false;
+    private boolean restoreMusicButton = false;
 
     private SMSDriver smsDriver;
     private CallDriver callDriver;
@@ -418,8 +419,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     public void setFragment(int position){
 
-        previousMenus.push(actualFragmentPosition);
-
         actualFragmentPosition = position;
 
         switch (position) {
@@ -591,19 +590,15 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
                     notification = notification.replace("MarvinFinish ", "");
 
+                    Character firstCharacter, newFirstCharacter;
+
+                    firstCharacter = notification.charAt(0);
+                    newFirstCharacter = Character.toUpperCase(firstCharacter);
+                    notification = notification.replaceFirst(firstCharacter.toString(), newFirstCharacter.toString());
+
                     MainMenuFragment.spokenText.setText(notification);
 
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        public void run() {
-                            if (wasPlaying) {
-                                MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
-                                musicService.startPlaying();
-                            } else {
-                                MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_play);
-                            }
-                        }
-                    }, 5000);
+                    restoreMusicButton = true;
 
                     MainMenuFragment.bt_play.setEnabled(true);
                     MainMenuFragment.bt_next.setEnabled(true);
@@ -614,6 +609,12 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 } else if (notification.startsWith("Command ")) {
 
                     notification = notification.replace("Command ", "");
+
+                    Character firstCharacter, newFirstCharacter;
+
+                    firstCharacter = notification.charAt(0);
+                    newFirstCharacter = Character.toUpperCase(firstCharacter);
+                    notification = notification.replaceFirst(firstCharacter.toString(), newFirstCharacter.toString());
 
                     MainMenuFragment.spokenText.setText(notification);
 
@@ -704,10 +705,12 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         if(musicService.getIsRadio()){
             MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
             MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_audiotrack_white_48dp);
+            MainMenuFragment.getInstance().setIsRadio(false);
             musicService.setIsRadio(false);
         }else{
             MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_play);
             MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_radio_white_48dp);
+            MainMenuFragment.getInstance().setIsRadio(true);
             musicService.setIsRadio(true);
         }
 
@@ -718,9 +721,11 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
         if(musicService.getIsRadio()){
             MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_audiotrack_white_48dp);
+            MainMenuFragment.getInstance().setIsRadio(false);
             musicService.setIsRadio(false);
         }else{
             MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_radio_white_48dp);
+            MainMenuFragment.getInstance().setIsRadio(true);
             musicService.setIsRadio(true);
         }
 
@@ -784,6 +789,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             }
 
             MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_audiotrack_white_48dp);
+            MainMenuFragment.getInstance().setIsRadio(false);
             musicService.setIsRadio(false);
 
             wasPlaying = true;
@@ -793,6 +799,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         }else{
 
             MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_radio_white_48dp);
+            MainMenuFragment.getInstance().setIsRadio(true);
             musicService.setIsRadio(true);
 
             wasPlaying = true;
@@ -840,6 +847,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             }
 
             MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_audiotrack_white_48dp);
+            MainMenuFragment.getInstance().setIsRadio(false);
             musicService.setIsRadio(false);
 
             wasPlaying = true;
@@ -849,6 +857,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         }else{
 
             MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_radio_white_48dp);
+            MainMenuFragment.getInstance().setIsRadio(true);
             musicService.setIsRadio(true);
 
             wasPlaying = true;
@@ -867,6 +876,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         if(musicService.findArtist(artist)){
             musicService.setIsRadio(false);
+            MainMenuFragment.getInstance().setIsRadio(false);
             return true;
         }
 
@@ -882,6 +892,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         if(musicService.findTitle(song)){
             musicService.setIsRadio(false);
+            MainMenuFragment.getInstance().setIsRadio(false);
             return true;
         }
 
@@ -908,6 +919,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         if(musicService.findRadioName(name)){
             musicService.setIsRadio(true);
+            MainMenuFragment.getInstance().setIsRadio(true);
             return true;
         }
 
@@ -922,6 +934,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         if(musicService.findRadioFrequence(frequence)){
             musicService.setIsRadio(true);
+            MainMenuFragment.getInstance().setIsRadio(true);
             return true;
         }
 
@@ -1121,6 +1134,17 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
                 mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
                 STTService.getInstance().setState(true);
+
+                if (restoreMusicButton){
+                    if (wasPlaying) {
+                        MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
+                        musicService.startPlaying();
+                    } else {
+                        MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_play);
+                    }
+                }
+
+                restoreMusicButton = false;
 
             }
         });

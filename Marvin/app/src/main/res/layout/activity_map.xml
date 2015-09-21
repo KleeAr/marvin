@@ -13,36 +13,44 @@
         android:layout_alignParentRight="false"
         android:layout_alignParentEnd="false" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageButton
+        android:layout_width="75dp"
+        android:layout_height="75dp"
         android:text="Actual"
         android:id="@+id/bt_currentPosition"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:nestedScrollingEnabled="false"
-        android:onClick="currentLocation" />
+        android:onClick="currentLocation"
+        android:src="@mipmap/ic_my_location_black_48dp"
+        android:background="@color/tw__light_gray" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageButton
+        android:layout_width="75dp"
+        android:layout_height="75dp"
         android:text="Zoom Out"
         android:id="@+id/bt_zoomOut"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:onClick="zoomOut" />
+        android:onClick="zoomOut"
+        android:src="@mipmap/ic_remove_circle_outline_black_48dp"
+        android:background="@color/tw__light_gray" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageButton
+        android:layout_width="75dp"
+        android:layout_height="75dp"
         android:text="Zoom In"
         android:id="@+id/bt_zoomIn"
         android:layout_above="@+id/bt_zoomOut"
         android:layout_alignEnd="@+id/mapView"
+        android:layout_alignRight="@+id/mapView"
         android:onClick="zoomIn"
-        android:layout_alignParentRight="true" />
+        android:layout_alignParentRight="true"
+        android:src="@mipmap/ic_add_circle_outline_black_48dp"
+        android:background="@color/tw__light_gray"
+        android:layout_marginBottom="2dp" />
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"

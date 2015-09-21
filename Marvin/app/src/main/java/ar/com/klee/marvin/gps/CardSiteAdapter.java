@@ -33,7 +33,7 @@ public class CardSiteAdapter extends RecyclerView.Adapter<CardSiteAdapter.ViewHo
         for(int i=0;i<mItems.size();i++) {
             Site site = mItems.get(i);
             if(site.getSiteThumbnail()==0)
-                site.setSiteThumbnail(R.drawable.sample);
+                site.setSiteThumbnail(R.drawable.city);
         }
     }
 
@@ -49,7 +49,7 @@ public class CardSiteAdapter extends RecyclerView.Adapter<CardSiteAdapter.ViewHo
         Site site = mItems.get(i);
 
         viewHolder.tvSite.setText(site.getSiteName() + " - " + site.getSiteAddress());
-        if(site.getSiteThumbnail() == 0 || site.getSiteThumbnail() == R.drawable.sample)
+        if(site.getSiteThumbnail() == 0 || site.getSiteThumbnail() == R.drawable.city)
             viewHolder.imgThumbnail.setImageResource(site.getSiteThumbnail());
         else {
             File imgFile = new  File("/sdcard/MARVIN/Sitios/" + site.getSiteName() + ".png");
