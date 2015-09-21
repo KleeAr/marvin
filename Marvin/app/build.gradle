@@ -79,5 +79,5 @@ dependencies {
     compile files('libs/butterknife-7.0.1.jar')
     compile files('libs/fmp.jar')
     compile files('libs/lib.jar')
-    compile files('libs/rest-client-1.0.jar')
+    compile files('libs/marvinSDK-1.0.jar')
 }

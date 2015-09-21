@@ -41,11 +41,17 @@ import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 import java.security.MessageDigest;
 import java.util.Arrays;
+
+import ar.com.klee.marvin.client.Marvin;
+import ar.com.klee.marvin.client.MarvinLoginCallback;
+import ar.com.klee.marvin.client.model.LoginResponse;
 import butterknife.ButterKnife;
 import butterknife.Bind;
 import io.fabric.sdk.android.Fabric;
 
 import ar.com.klee.marvin.R;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -75,6 +81,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         //initializeTwitterSdk();
         ButterKnife.bind(this);
+        Marvin.setMarvinHost("192.168.0.103");
 
         Typeface typeface = Typeface.createFromAsset(getAssets(), "Wisdom Script AJ.otf");
 
@@ -120,23 +127,38 @@ public class LoginActivity extends AppCompatActivity {
         final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
                 R.style.AppTheme_Dark_Dialog);
         progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Autentificando...");
+        progressDialog.setMessage("Autenticando...");
         progressDialog.show();
 
         String email = emailText.getText().toString();
         String password = passwordText.getText().toString();
 
-        // TODO: Implement your own authentication logic here.
+        Marvin.users().authenticate(email, password, new MarvinLoginCallback() {
+            @Override
+            public void onSuccess(LoginResponse loginResponse, Response response) {
+                new android.os.Handler().postDelayed(
+                        new Runnable() {
+                            public void run() {
+                                Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class );
+                                startActivity(intent);
+                                progressDialog.dismiss();
+                            }
+                        }, 3000);
+            }
 
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // On complete call either onLoginSuccess or onLoginFailed
-                        onLoginSuccess();
-                        // onLoginFailed();
-                        progressDialog.dismiss();
-                    }
-                }, 3000);
+            @Override
+            public void failure(RetrofitError error) {
+                new android.os.Handler().postDelayed(
+                        new Runnable() {
+                            public void run() {
+                                onLoginFailed();
+                                progressDialog.dismiss();
+                            }
+                        }, 3000);
+            }
+        });
+
+
     }
 
 /*

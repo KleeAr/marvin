@@ -19,3 +19,4 @@
 -dontwarn
 -ignorewarnings
 -dontshrink
+-keepattributes SourceFile,LineNumberTable
