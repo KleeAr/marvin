@@ -45,6 +45,7 @@ import java.util.Arrays;
 import ar.com.klee.marvin.client.Marvin;
 import ar.com.klee.marvin.client.MarvinLoginCallback;
 import ar.com.klee.marvin.client.model.LoginResponse;
+import ar.com.klee.marvin.configuration.UserConfig;
 import butterknife.ButterKnife;
 import butterknife.Bind;
 import io.fabric.sdk.android.Fabric;
@@ -135,11 +136,12 @@ public class LoginActivity extends AppCompatActivity {
 
         Marvin.users().authenticate(email, password, new MarvinLoginCallback() {
             @Override
-            public void onSuccess(LoginResponse loginResponse, Response response) {
+            public void onSuccess(final LoginResponse loginResponse, Response response) {
                 new android.os.Handler().postDelayed(
                         new Runnable() {
                             public void run() {
                                 Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class );
+                                UserConfig.setSettings(loginResponse.getSettings());
                                 startActivity(intent);
                                 progressDialog.dismiss();
                             }
@@ -240,7 +242,7 @@ public class LoginActivity extends AppCompatActivity {
     private void initializeFacebookSdk() {
         FacebookSdk.sdkInitialize(getApplicationContext());
         showHashKey(getApplicationContext());
-        LoginManager.getInstance().registerCallback(callbackManager,
+        LoginManager.getSettings().registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
@@ -256,7 +258,7 @@ public class LoginActivity extends AppCompatActivity {
                         // App code
                     }
                 });
-        LoginManager.getInstance().logInWithPublishPermissions(this, Arrays.asList("publish_actions"));
+        LoginManager.getSettings().logInWithPublishPermissions(this, Arrays.asList("publish_actions"));
     }
 
 
@@ -277,7 +279,7 @@ public class LoginActivity extends AppCompatActivity {
             PackageInfo info = context.getPackageManager().getPackageInfo(
                     "ar.com.klee.marvin", PackageManager.GET_SIGNATURES); //Your package name here
             for (Signature signature : info.signatures) {
-                MessageDigest md = MessageDigest.getInstance("SHA");
+                MessageDigest md = MessageDigest.getSettings("SHA");
                 md.update(signature.toByteArray());
                 Log.v("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
             }

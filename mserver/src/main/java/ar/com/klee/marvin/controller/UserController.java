@@ -68,7 +68,7 @@ public class UserController {
 		    }
 		    User user = userRepository.findByEmail(loginRequest.getEmail());
 		    session.setAttribute("user", user);
-			return new LoginResponse(user.getId(), session.getId());
+			return new LoginResponse(user.getId(), session.getId(), settingRepository.findOne(user.getId()));
 	}
 	
 	private boolean isAuthenticated(Authentication authentication) {

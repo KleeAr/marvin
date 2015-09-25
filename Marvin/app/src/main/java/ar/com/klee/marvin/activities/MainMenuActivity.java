@@ -32,7 +32,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -40,8 +39,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.twitter.sdk.android.core.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +48,7 @@ import ar.com.klee.marvin.DrawerMenuAdapter;
 import ar.com.klee.marvin.DrawerMenuItem;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.call.CallDriver;
+import ar.com.klee.marvin.client.model.UserSetting;
 import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.data.Channel;
 import ar.com.klee.marvin.data.Item;
@@ -135,10 +133,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         initializeMusicService();
         initializeSTTService();
-        if(!UserConfig.isInstanceInitialized())
-            UserConfig.initializeInstance();
 
-        UserConfig configuration = UserConfig.getInstance();
+        UserSetting configuration = UserConfig.getSettings();
 
         //Crea el mainMenu
         if (MainMenuFragment.isInstanceInitialized())

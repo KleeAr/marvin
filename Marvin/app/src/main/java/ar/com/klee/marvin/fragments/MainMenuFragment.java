@@ -279,7 +279,7 @@ public class MainMenuFragment extends Fragment {
 
     public static MainMenuFragment getInstance() {
         if (instance == null) {
-            throw new IllegalStateException("Instance not initialized. Call initializeInstance before calling getInstance");
+            throw new IllegalStateException("Instance not initialized. Call initializeInstance before calling getSettings");
         }
         return instance;
     }
