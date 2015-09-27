@@ -164,6 +164,27 @@
             android:name=".activities.SiteActivity"
             android:label="@string/title_activity_site" >
         </activity>
+        <activity android:name=".ConfSpeedAlertActivity"
+            android:label="alertas">
+        </activity>
+        <activity android:name=".ConfOrientationScreenActivity"
+            android:label="rotacion">
+        </activity>
+        <activity android:name=".ConfTermsActivity"
+            android:label="terms">
+        </activity>
+        <activity android:name=".ConfFavoriteAppActivity"
+            android:label="favoriteApp">
+        </activity>
+        <activity android:name=".ConfSmsEmergencyActivity"
+            android:label="smsEmergency">
+        </activity>
+        <activity android:name=".ConfHistoryTripActivity"
+            android:label="historyTrip">
+        </activity>
+        <activity android:name=".ConfHotSpotActivity"
+            android:label="hotspot">
+        </activity>
 
         <service
             android:name=".social.NotificationService"
