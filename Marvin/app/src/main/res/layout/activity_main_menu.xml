@@ -29,7 +29,7 @@
         <!-- The navigation drawer (sliding menu) -->
         <ListView
             android:id="@+id/lv_drawer_menu"
-            android:layout_width="360dp"
+            android:layout_width="300dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:choiceMode="singleChoice"

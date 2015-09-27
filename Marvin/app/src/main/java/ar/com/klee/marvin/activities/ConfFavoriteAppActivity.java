@@ -1,5 +1,8 @@
 package ar.com.klee.marvin.activities;
 
+import android.content.Intent;
+import android.content.pm.ResolveInfo;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
@@ -11,14 +14,17 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.applications.Application;
+import ar.com.klee.marvin.fragments.MainMenuFragment;
 
 
 public class ConfFavoriteAppActivity extends ActionBarActivity {
 
     private Switch switch1;
-
+    private ArrayList<String> listApp;
 
     private boolean openAppWhenStop = false; //Indica si está activada la opción de abrir una app al detenerse
     private String appToOpenWhenStop; //Indica el nombre de la aplicación a abrir al detenerse
@@ -29,12 +35,21 @@ public class ConfFavoriteAppActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configure_favorite_app);
 
-        getSupportActionBar().setTitle("APLICACIÓN FAVORITA");
+       // getSupportActionBar().setTitle("APLICACIÓN FAVORITA");
 
 
-        final ArrayList<String> listApp = new ArrayList<String>();
-        listApp.add("APP1");
-        //buscar la lista de las apps
+        listApp = new ArrayList<String>();
+        listApp.add("Ninguna");
+
+
+        int i = 0;
+
+        while(i<12){
+            if(!MainMenuFragment.shortcutList[i].getName().equals(""))
+                listApp.add( MainMenuFragment.shortcutList[i].getName());
+            i++;
+        }
+
 
         Spinner spinner1 = (Spinner) findViewById(R.id.spinner1);
 

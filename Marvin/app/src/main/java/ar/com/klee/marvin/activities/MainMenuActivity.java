@@ -311,7 +311,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 setFragment(1, MainMenuFragment.class);
                 break;
             case 2:
-               // Toast.makeText(getApplicationContext(), "posicion " + position, Toast.LENGTH_SHORT).show();
                 setFragment(2, VozFragment.class);
                 break;
             case 4:
@@ -327,7 +326,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 setFragment(8, ConfigureFragment.class);
                 break;
             case 9:
-                Toast.makeText(getApplicationContext(), "posicion 9" + position, Toast.LENGTH_SHORT).show();
+                setFragment(9, HelpFragment.class);
                 break;
             case 10:
                 MainMenuActivity.mapFragment.finishTrip();
@@ -381,7 +380,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     setFragment(8, ConfigureFragment.class);
                     break;
                 case 9:
-                   // Toast.makeText(getApplicationContext(), "posicion 9" + position, Toast.LENGTH_SHORT).show();
                     setFragment(9, HelpFragment.class);
                     break;
                 case 10:

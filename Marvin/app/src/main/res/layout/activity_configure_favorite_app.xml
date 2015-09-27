@@ -8,7 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Elige una App para que se abra mientras el vehiculo esta circulando a baja velocidad."
+        android:text="Elige una App para que se abra mientras el vehiculo esta circulando a baja velocidad. La App debe haber sido establecida anteriormente como atajo en el menú principal para poder ser seleccionada."
         android:id="@+id/descripcion"
         android:textSize="15dp"
         android:textColor="#000000"
