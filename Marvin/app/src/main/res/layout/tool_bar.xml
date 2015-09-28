@@ -20,35 +20,6 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true">
 
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="0.2">
-
-                <ar.com.klee.marvin.AutoScaleTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:text="@string/day_default_text"
-                    android:id="@+id/weekDayText"
-                    android:textColor="#00ffff"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:layout_weight="0.5"
-                    android:gravity="bottom|start" />
-
-                <ar.com.klee.marvin.AutoScaleTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:text="@string/date_default_text"
-                    android:id="@+id/dateText"
-                    android:textColor="#00ffff"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:layout_weight="0.5"
-                    android:gravity="top|center|start" />
-            </LinearLayout>
-
             <ar.com.klee.marvin.AutoScaleTextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -79,7 +50,6 @@
                 android:textColor="#00ffff"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:layout_alignParentEnd="true"
                 android:editable="false"
                 android:gravity="center"
                 android:layout_weight="0.1"
@@ -87,5 +57,4 @@
         </LinearLayout>
 
     </RelativeLayout>
-
 </android.support.v7.widget.Toolbar>

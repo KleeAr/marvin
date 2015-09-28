@@ -2,6 +2,7 @@ package ar.com.klee.marvin.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -16,6 +17,7 @@ public class ConfHotSpotActivity extends ActionBarActivity {
     private String hotspotPassword = "marvinHotSpot"; //Contraseña de la red creada
 
     private Switch switch1;
+    private Toolbar toolbar;
 
 
     @Override
@@ -23,7 +25,13 @@ public class ConfHotSpotActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configure_hotspot);
 
-        //getSupportActionBar().setTitle("CONFIGURACIÓN HOTSPOT");
+        toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+        getSupportActionBar().setTitle("CONFIGURACIÓN HOTSPOT");
         final EditText netName;
         final EditText netPassword;
 

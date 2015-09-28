@@ -5,6 +5,8 @@ import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -29,14 +31,21 @@ public class ConfFavoriteAppActivity extends ActionBarActivity {
     private boolean openAppWhenStop = false; //Indica si está activada la opción de abrir una app al detenerse
     private String appToOpenWhenStop; //Indica el nombre de la aplicación a abrir al detenerse
 
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configure_favorite_app);
 
-       // getSupportActionBar().setTitle("APLICACIÓN FAVORITA");
 
+
+        toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        getSupportActionBar().setTitle("APLICACIÓN FAVORITA");
 
         listApp = new ArrayList<String>();
         listApp.add("Ninguna");
@@ -99,5 +108,17 @@ public class ConfFavoriteAppActivity extends ActionBarActivity {
 
 
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch(item.getItemId()){
+            case android.R.id.home:
+                //app icon in action bar clicked
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

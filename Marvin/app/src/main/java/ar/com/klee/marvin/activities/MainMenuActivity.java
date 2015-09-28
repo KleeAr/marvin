@@ -31,11 +31,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -84,7 +87,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     private ActionBarDrawerToggle mDrawerToggle;
     private ListView mLvDrawerMenu;
     private DrawerMenuAdapter mDrawerMenuAdapter;
-    private Toolbar toolbar;
+    public static Toolbar toolbar;
 
     public static TextView cityText;
 
@@ -143,8 +146,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         else
             mainMenuFragment = new MainMenuFragment();
 
-        weekDay = (TextView) findViewById(R.id.weekDayText);
-        dateText = (TextView) findViewById(R.id.dateText);
+      //  weekDay = (TextView) findViewById(R.id.weekDayText);
+      //  dateText = (TextView) findViewById(R.id.dateText);
 
         //Crea el mapa
         if (MapFragment.isInstanceInitialized())
@@ -170,6 +173,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         //definimos los tipos de letra
         Typeface fBariolRegular = Typeface.createFromAsset(getAssets(), "Bariol_Regular.otf");
+
+
+
 
         temperatureTextView = (TextView) findViewById(R.id.temperatureText);
         temperatureTextView.setTypeface(fBariolRegular);
