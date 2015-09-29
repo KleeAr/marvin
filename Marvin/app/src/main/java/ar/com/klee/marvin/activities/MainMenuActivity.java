@@ -91,6 +91,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     public static TextView cityText;
 
+    public static TextView titleText;
+
     private ImageView weatherIconImageView;
     private TextView temperatureTextView;
     private YahooWeatherService service;
@@ -169,20 +171,30 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             callDriver = CallDriver.initializeInstance(getApplicationContext());
         }
 
-        cityText = (TextView) findViewById(R.id.cityText);
+
 
         //definimos los tipos de letra
         Typeface fBariolRegular = Typeface.createFromAsset(getAssets(), "Bariol_Regular.otf");
 
+        toolbar = (Toolbar) findViewById(R.id.tool_bar);
 
 
 
-        temperatureTextView = (TextView) findViewById(R.id.temperatureText);
-        temperatureTextView.setTypeface(fBariolRegular);
+        if(actualFragmentPosition==1){
+            View view = getLayoutInflater().inflate(R.layout.view_toolbar, null);
+            toolbar.addView(view);
+            cityText = (TextView) view.findViewById(R.id.cityText) ;//(TextView) findViewById(R.id.cityText);
+            temperatureTextView = (TextView) view.findViewById(R.id.temperatureText);//(TextView) findViewById(R.id.temperatureText);
+            temperatureTextView.setTypeface(fBariolRegular);
 
-        weatherIconImageView = (ImageView) findViewById(R.id.weatherImage);
-        service = new YahooWeatherService(this, getApplicationContext());
-        service.refreshWeather(cityText.getText().toString());
+            weatherIconImageView = (ImageView) view.findViewById(R.id.weatherImage);//(ImageView) findViewById(R.id.weatherImage);
+            service = new YahooWeatherService(this, getApplicationContext());
+            service.refreshWeather(cityText.getText().toString());
+
+        }
+
+
+
 
         Thread tWheather = new Thread() {
 
@@ -195,7 +207,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                             @Override
                             public void run() {
                                 // update TextView here!
-                                service.refreshWeather(cityText.getText().toString());
+                                if(actualFragmentPosition==1)
+                                    service.refreshWeather(cityText.getText().toString());
                             }
                         });
                     }
@@ -206,7 +219,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         tWheather.start();
 
-        toolbar = (Toolbar) findViewById(R.id.tool_bar);
+
+
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mLvDrawerMenu = (ListView) findViewById(R.id.lv_drawer_menu);
 
@@ -318,6 +332,12 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 break;
             case 2:
                 setFragment(2, VozFragment.class);
+                /*
+                View v = getLayoutInflater().inflate(R.layout.view_toolbar2, null);
+                toolbar.addView(v);
+                titleText = (TextView) view.findViewById(R.id.titleText);
+                titleText.setText("COMANDOS DE VOZ");
+                 */
                 break;
             case 4:
                 setFragment(4, MisViajesFragment.class);

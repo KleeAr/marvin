@@ -34,7 +34,7 @@ public class ConfigureFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_configure, container, false);
 
         // Set title bar
-        ((MainMenuActivity) getActivity()).setActionBarTitle("CONFIGURACIÓN");
+       // ((MainMenuActivity) getActivity()).setActionBarTitle("CONFIGURACIÓN");
 
         final ArrayList<String> listCategories =  new ArrayList<String>();
         listCategories.add("Alertas de Velocidad");

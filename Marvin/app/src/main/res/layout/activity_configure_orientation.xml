@@ -4,6 +4,12 @@
     android:layout_height="match_parent"
     android:background="#4db6ac">
 
+    <include
+        layout="@layout/tool_bar2"
+        android:id="@+id/tool_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,19 +41,11 @@
             android:id="@+id/radioButton1"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Según los ajustes del dispositivo"
+            android:text="Retrato"
             android:checked="true" />
 
         <RadioButton
             android:id="@+id/radioButton2"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="Retrato"
-            android:checked="false"
-            android:layout_marginTop="10dp" />
-
-        <RadioButton
-            android:id="@+id/radioButton3"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="Horizontal"
@@ -55,11 +53,12 @@
             android:layout_marginTop="10dp" />
 
         <RadioButton
-            android:id="@+id/radioButton4"
+            android:id="@+id/radioButton3"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="Horizontal Inverso"
             android:checked="false"
             android:layout_marginTop="10dp" />
+
     </RadioGroup>
 </LinearLayout>

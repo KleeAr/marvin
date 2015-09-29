@@ -140,7 +140,7 @@ public class VozFragment extends Fragment {
 
 
         // Set title bar
-        ((MainMenuActivity) getActivity()).setActionBarTitle("COMANDOS DE VOZ");
+       // ((MainMenuActivity) getActivity()).setActionBarTitle("COMANDOS DE VOZ");
 
 
         // get the listview

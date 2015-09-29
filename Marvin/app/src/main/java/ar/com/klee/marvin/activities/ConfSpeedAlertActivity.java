@@ -4,6 +4,8 @@ package ar.com.klee.marvin.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -21,24 +23,18 @@ public class ConfSpeedAlertActivity extends ActionBarActivity {
 
     private Switch switch1;
     private Switch switch2;
-
-    /*public AlertasVelocidadFragment() {
-        // Required empty public constructor
-    }
-
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.activity_configure_speed_alert, container, false);
-*/
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configure_speed_alert);
 
+        toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        setSupportActionBar(toolbar);
+
         getSupportActionBar().setTitle("ALERTAS DE VELOCIDAD");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
        // final EditText etSpeed1 = (EditText) findViewById(R.id.et_vel1);
 
@@ -149,10 +145,17 @@ public class ConfSpeedAlertActivity extends ActionBarActivity {
         });
 
 
+    }
 
-
-
-
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch(item.getItemId()){
+            case android.R.id.home:
+                //app icon in action bar clicked
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
