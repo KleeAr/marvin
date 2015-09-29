@@ -7,6 +7,10 @@ import java.util.List;
 
 public class Trip {
 
+    private double beginLat;
+    private double beginLon;
+    private double endLat;
+    private double endLon;
     private LatLng beginning;
     private LatLng ending;
     private String beginningAddress;
@@ -20,6 +24,8 @@ public class Trip {
 
     public Trip(double lat, double lon, String address){
         beginning = new LatLng(lat,lon);
+        beginLat = lat;
+        beginLon = lon;
         startTime = new Date();
         beginningAddress = address;
     }
@@ -102,6 +108,38 @@ public class Trip {
 
     public void setTripPath(List<TripStep> tripPath) {
         this.tripPath = tripPath;
+    }
+
+    public double getBeginLat() {
+        return beginLat;
+    }
+
+    public void setBeginLat(double beginLat) {
+        this.beginLat = beginLat;
+    }
+
+    public double getEndLon() {
+        return endLon;
+    }
+
+    public void setEndLon(double endLon) {
+        this.endLon = endLon;
+    }
+
+    public double getEndLat() {
+        return endLat;
+    }
+
+    public void setEndLat(double endLat) {
+        this.endLat = endLat;
+    }
+
+    public double getBeginLon() {
+        return beginLon;
+    }
+
+    public void setBeginLon(double beginLon) {
+        this.beginLon = beginLon;
     }
 
     @Override

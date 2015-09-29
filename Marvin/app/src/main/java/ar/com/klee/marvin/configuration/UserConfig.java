@@ -1,6 +1,8 @@
 package ar.com.klee.marvin.configuration;
 
 
+import ar.com.klee.marvin.client.model.UserSetting;
+
 public class UserConfig {
 
     private static UserConfig instance;
@@ -17,26 +19,16 @@ public class UserConfig {
     private String appToOpenWhenStop; //Indica el nombre de la aplicación a abrir al detenerse
     private String hotspotName = "MRVN"; //Nombre de la red creada
     private String hotspotPassword = "marvinHotSpot"; //Contraseña de la red creada
+    private static UserSetting settings;
 
-    public static UserConfig getInstance() {
-        if (instance == null) {
-            throw new IllegalStateException("Instance not initialized. Call initializeInstance before calling getInstance");
+    public static UserSetting getSettings() {
+        if (settings == null) {
+            settings = new UserSetting();
         }
-        return instance;
+        return settings;
     }
 
-    public static UserConfig initializeInstance() {
-        if(instance != null) {
-            throw new IllegalStateException("Instance already initialized");
-        }
-        UserConfig.instance = new UserConfig();
-        return instance;
-    }
-
-    public UserConfig(){
-
-
-
+    private UserConfig(){
     }
 
     public static boolean isInstanceInitialized() {
@@ -47,4 +39,7 @@ public class UserConfig {
         instance = null;
     }
 
+    public static void setSettings(UserSetting settings) {
+        UserConfig.settings = settings;
+    }
 }

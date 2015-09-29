@@ -31,17 +31,17 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.text.InputFilter;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.twitter.sdk.android.core.models.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,16 +51,18 @@ import ar.com.klee.marvin.DrawerMenuAdapter;
 import ar.com.klee.marvin.DrawerMenuItem;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.call.CallDriver;
+import ar.com.klee.marvin.client.model.UserSetting;
 import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.data.Channel;
 import ar.com.klee.marvin.data.Item;
-import ar.com.klee.marvin.fragments.ComandosDeVozFragment;
-import ar.com.klee.marvin.fragments.ConfigureAppFragment;
+import ar.com.klee.marvin.fragments.ConfigureFragment;
 import ar.com.klee.marvin.fragments.DondeEstacioneFragment;
+import ar.com.klee.marvin.fragments.HelpFragment;
 import ar.com.klee.marvin.fragments.MainMenuFragment;
 import ar.com.klee.marvin.fragments.MisSitiosFragment;
 import ar.com.klee.marvin.fragments.MisViajesFragment;
 import ar.com.klee.marvin.fragments.PerfilFragment;
+import ar.com.klee.marvin.fragments.VozFragment;
 import ar.com.klee.marvin.gps.LocationSender;
 import ar.com.klee.marvin.gps.MapFragment;
 import ar.com.klee.marvin.multimedia.music.MusicService;
@@ -85,9 +87,11 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     private ActionBarDrawerToggle mDrawerToggle;
     private ListView mLvDrawerMenu;
     private DrawerMenuAdapter mDrawerMenuAdapter;
-    private Toolbar toolbar;
+    public static Toolbar toolbar;
 
     public static TextView cityText;
+
+    public static TextView titleText;
 
     private ImageView weatherIconImageView;
     private TextView temperatureTextView;
@@ -135,10 +139,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         initializeMusicService();
         initializeSTTService();
-        if(!UserConfig.isInstanceInitialized())
-            UserConfig.initializeInstance();
 
-        UserConfig configuration = UserConfig.getInstance();
+        UserSetting configuration = UserConfig.getSettings();
 
         //Crea el mainMenu
         if (MainMenuFragment.isInstanceInitialized())
@@ -146,8 +148,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         else
             mainMenuFragment = new MainMenuFragment();
 
-        weekDay = (TextView) findViewById(R.id.weekDayText);
-        dateText = (TextView) findViewById(R.id.dateText);
+      //  weekDay = (TextView) findViewById(R.id.weekDayText);
+      //  dateText = (TextView) findViewById(R.id.dateText);
 
         //Crea el mapa
         if (MapFragment.isInstanceInitialized())
@@ -169,17 +171,30 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             callDriver = CallDriver.initializeInstance(getApplicationContext());
         }
 
-        cityText = (TextView) findViewById(R.id.cityText);
+
 
         //definimos los tipos de letra
         Typeface fBariolRegular = Typeface.createFromAsset(getAssets(), "Bariol_Regular.otf");
 
-        temperatureTextView = (TextView) findViewById(R.id.temperatureText);
-        temperatureTextView.setTypeface(fBariolRegular);
+        toolbar = (Toolbar) findViewById(R.id.tool_bar);
 
-        weatherIconImageView = (ImageView) findViewById(R.id.weatherImage);
-        service = new YahooWeatherService(this, getApplicationContext());
-        service.refreshWeather(cityText.getText().toString());
+
+
+        if(actualFragmentPosition==1){
+            View view = getLayoutInflater().inflate(R.layout.view_toolbar, null);
+            toolbar.addView(view);
+            cityText = (TextView) view.findViewById(R.id.cityText) ;//(TextView) findViewById(R.id.cityText);
+            temperatureTextView = (TextView) view.findViewById(R.id.temperatureText);//(TextView) findViewById(R.id.temperatureText);
+            temperatureTextView.setTypeface(fBariolRegular);
+
+            weatherIconImageView = (ImageView) view.findViewById(R.id.weatherImage);//(ImageView) findViewById(R.id.weatherImage);
+            service = new YahooWeatherService(this, getApplicationContext());
+            service.refreshWeather(cityText.getText().toString());
+
+        }
+
+
+
 
         Thread tWheather = new Thread() {
 
@@ -192,7 +207,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                             @Override
                             public void run() {
                                 // update TextView here!
-                                service.refreshWeather(cityText.getText().toString());
+                                if(actualFragmentPosition==1)
+                                    service.refreshWeather(cityText.getText().toString());
                             }
                         });
                     }
@@ -203,7 +219,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         tWheather.start();
 
-        toolbar = (Toolbar) findViewById(R.id.tool_bar);
+
+
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mLvDrawerMenu = (ListView) findViewById(R.id.lv_drawer_menu);
 
@@ -271,6 +288,12 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         return actualFragmentPosition;
     }
 
+    //Permite editar el titulo de la barra
+    public void setActionBarTitle(String title) {
+        getSupportActionBar().setTitle(title);
+    }
+
+
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -285,6 +308,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 return super.onOptionsItemSelected(item);
         }
     }
+
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -308,8 +332,13 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 MainMenuFragment.spokenText.setText("Hablá, yo escucho...");
                 break;
             case 2:
-                Toast.makeText(getApplicationContext(), "posicion " + position, Toast.LENGTH_SHORT).show();
-                //setFragment(2, ComandosDeVoz.class);
+                setFragment(2, VozFragment.class);
+                /*
+                View v = getLayoutInflater().inflate(R.layout.view_toolbar2, null);
+                toolbar.addView(v);
+                titleText = (TextView) view.findViewById(R.id.titleText);
+                titleText.setText("COMANDOS DE VOZ");
+                 */
                 break;
             case 4:
                 setFragment(4, MisViajesFragment.class);
@@ -321,10 +350,10 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 setFragment(6, DondeEstacioneFragment.class);
                 break;
             case 8:
-                setFragment(8, ConfigureAppFragment.class);
+                setFragment(8, ConfigureFragment.class);
                 break;
             case 9:
-                Toast.makeText(getApplicationContext(), "posicion 9" + position, Toast.LENGTH_SHORT).show();
+                setFragment(9, HelpFragment.class);
                 break;
             case 10:
                 MainMenuActivity.mapFragment.finishTrip();
@@ -364,7 +393,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     MainMenuFragment.spokenText.setText("Hablá, yo escucho...");
                     break;
                 case 2:
-                    setFragment(2, ComandosDeVozFragment.class);
+                    setFragment(2, VozFragment.class);
                     break;
                 case 4:
                     setFragment(4, MisViajesFragment.class);
@@ -376,10 +405,10 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     setFragment(6, DondeEstacioneFragment.class);
                     break;
                 case 8:
-                    setFragment(8, ConfigureAppFragment.class);
+                    setFragment(8, ConfigureFragment.class);
                     break;
                 case 9:
-                    Toast.makeText(getApplicationContext(), "posicion 9" + position, Toast.LENGTH_SHORT).show();
+                    setFragment(9, HelpFragment.class);
                     break;
                 case 10:
                     MainMenuActivity.mapFragment.finishTrip();
@@ -432,8 +461,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 MainMenuFragment.spokenText.setText("Hablá, yo escucho...");
                 break;
             case 2:
-                Toast.makeText(getApplicationContext(), "posicion " + position, Toast.LENGTH_SHORT).show();
-                //setFragment(2, ComandosDeVoz.class);
+                setFragment(2, VozFragment.class);
                 break;
             case 4:
                 setFragment(4, MisViajesFragment.class);
@@ -445,10 +473,10 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 setFragment(6, DondeEstacioneFragment.class);
                 break;
             case 8:
-                setFragment(8, ConfigureAppFragment.class);
+                setFragment(8, ConfigureFragment.class);
                 break;
             case 9:
-                Toast.makeText(getApplicationContext(), "posicion 9" + position, Toast.LENGTH_SHORT).show();
+                setFragment(9, HelpFragment.class);
                 break;
             case 10:
                 MainMenuActivity.mapFragment.finishTrip();

@@ -18,12 +18,12 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import ar.com.klee.marvin.R;
-import ar.com.klee.marvin.fragments.ComandosDeVozFragment;
-import ar.com.klee.marvin.fragments.ConfigureAppFragment;
+import ar.com.klee.marvin.fragments.ConfigureFragment;
 import ar.com.klee.marvin.fragments.DondeEstacioneFragment;
 import ar.com.klee.marvin.fragments.MainMenuFragment;
 import ar.com.klee.marvin.fragments.MisSitiosFragment;
 import ar.com.klee.marvin.fragments.MisViajesFragment;
+import ar.com.klee.marvin.fragments.VozFragment;
 
 
 public class Tab2 extends Fragment implements View.OnClickListener, View.OnLongClickListener {
@@ -105,12 +105,12 @@ public class Tab2 extends Fragment implements View.OnClickListener, View.OnLongC
                 case "Marvin - Comandos de voz":
                     ((MainMenuActivity) getActivity()).previousMenus.push(1);
                     ((MainMenuActivity) getActivity()).actualFragmentPosition = 2;
-                    ((MainMenuActivity)getActivity()).setFragment(2, ComandosDeVozFragment.class);
+                    ((MainMenuActivity)getActivity()).setFragment(2, VozFragment.class);
                     break;
                 case "Marvin - Configuración":
                     ((MainMenuActivity) getActivity()).previousMenus.push(1);
                     ((MainMenuActivity) getActivity()).actualFragmentPosition = 8;
-                    ((MainMenuActivity)getActivity()).setFragment(8, ConfigureAppFragment.class);
+                    ((MainMenuActivity)getActivity()).setFragment(8, ConfigureFragment.class);
                     break;
                 case "Marvin - Dónde estacioné":
                     ((MainMenuActivity) getActivity()).previousMenus.push(1);
