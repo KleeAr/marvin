@@ -28,6 +28,7 @@ public class ConfHistoryTripActivity extends ActionBarActivity {
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("HISTORIAL DE VIAJES");
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -69,7 +70,8 @@ public class ConfHistoryTripActivity extends ActionBarActivity {
 
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                // Toast.makeText(getApplicationContext(), "Seleccionaste: " + timeMin.get(i), Toast.LENGTH_SHORT).show();
-                miniumTripTime = Integer.parseInt(timeMin.get(i));
+               if(!timeMin.get(i).equals("Ninguno"))
+                   miniumTripTime = Integer.parseInt(timeMin.get(i));
 
             }
 
@@ -85,7 +87,8 @@ public class ConfHistoryTripActivity extends ActionBarActivity {
 
             public void onItemSelected(AdapterView<?> adapterView,View view, int i, long l) {
                 //Toast.makeText(getApplicationContext(),"Seleccionaste: "+ tripMin.get(i),Toast.LENGTH_SHORT).show();
-                miniumTripDistance = Integer.parseInt(tripMin.get(i));
+                if(!tripMin.get(i).equals("Ninguno"))
+                    miniumTripDistance = Integer.parseInt(tripMin.get(i));
 
             }
             // If no option selected
