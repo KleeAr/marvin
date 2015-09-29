@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.fragments.MainMenuFragment;
+import ar.com.klee.marvin.multimedia.music.MusicService;
 import ar.com.klee.marvin.sms.SMSDriver;
 import ar.com.klee.marvin.social.NotificationService;
 import ar.com.klee.marvin.voiceControl.handlers.LeerWhatsappHandler;
@@ -49,6 +50,7 @@ public class STTService extends Service {
     public static final String COPA_RESULT = "com.controlj.copame.backend.COPAService.REQUEST_PROCESSED";
     public static final String COPA_MESSAGE = "com.controlj.copame.backend.COPAService.COPA_MSG";
 
+    private Thread isAlive;
 
     @Override
     public void onCreate(){
@@ -72,6 +74,27 @@ public class STTService extends Service {
         sttState = true;
         mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
 
+        isAlive = new Thread() {
+
+            @Override
+            public void run() {
+                try {
+                    while (!isInterrupted()) {
+                        Thread.sleep(5000);
+
+                        try{
+                            MusicService.getInstance();
+                        }catch (IllegalStateException e) {
+                            ((MainMenuActivity)CommandHandlerManager.getInstance().getMainActivity()).initializeMusicService();
+                        }
+
+                    }
+                } catch (InterruptedException e) {
+                } catch (NullPointerException e) {
+                }
+            }
+        };
+
         instance = this;
 
         sendResult("Started");
@@ -88,6 +111,8 @@ public class STTService extends Service {
     public void onDestroy(){
         super.onDestroy();
 
+        instance = null;
+
         if (mSpeechRecognizer != null)
             mSpeechRecognizer.destroy();
     }
@@ -99,7 +124,7 @@ public class STTService extends Service {
             mSpeechRecognizer.cancel();
             sttState = false;
 
-            //Log.d("STT", "stopListening");
+            Log.d("STT", "stopListening");
         }
     }
 
@@ -112,7 +137,7 @@ public class STTService extends Service {
 
         @Override
         public void onBeginningOfSpeech(){
-            //Log.d("STT", "onBeginningOfSpeech");
+            Log.d("STT", "onBeginningOfSpeech");
         }
 
         @Override
@@ -122,14 +147,14 @@ public class STTService extends Service {
 
         @Override
         public void onEndOfSpeech(){
-            //Log.d("STT", "onEndOfSpeech");
+            Log.d("STT", "onEndOfSpeech");
         }
 
         @Override
         public void onError(final int error){
 
-            //Log.d("STT", "onError");
-            //Log.d("STT", getErrorText(error));
+            Log.d("STT", "onError");
+            Log.d("STT", getErrorText(error));
 
             if(error != SpeechRecognizer.ERROR_RECOGNIZER_BUSY) {
                 Handler handler = new Handler();
@@ -168,7 +193,7 @@ public class STTService extends Service {
 
                             }
                         }
-                        //Log.d("STT", "onErrorActivate");
+                        Log.d("STT", "onErrorActivate");
                     }
                 }, 1000);
             }else{
@@ -176,7 +201,7 @@ public class STTService extends Service {
                 handler.postDelayed(new Runnable() {
                     public void run() {
                         sttState = true;
-                        //Log.d("STT", "onErrorActivate");
+                        Log.d("STT", "onErrorActivate");
                     }
                 }, 1000);
             }
@@ -199,7 +224,7 @@ public class STTService extends Service {
         @Override
         public void onReadyForSpeech(Bundle params){
 
-            //Log.d("STT", "onReadyForSpeech");
+            Log.d("STT", "onReadyForSpeech");
 
         }
 
@@ -211,8 +236,8 @@ public class STTService extends Service {
             ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
             String text = matches.get(0);
 
-            //Log.d("STT", "onResults");
-            //Log.d("STT", text);
+            Log.d("STT", "onResults");
+            Log.d("STT", text);
 
             previousListening = isListening;
 

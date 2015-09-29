@@ -74,7 +74,6 @@ public class CompartirEnFacebookHandler extends CommandHandler {
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando publicación");
-            context.getObject(ACTIVITY, CameraActivity.class).closeDialog();
             return context.put(STEP, 0);
         }
 
@@ -99,14 +98,29 @@ public class CompartirEnFacebookHandler extends CommandHandler {
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando publicación");
-            context.getObject(ACTIVITY, CameraActivity.class).closeDialog();
             return context.put(STEP, 0);
         }
 
         if(input.equals("no")){
             getTextToSpeech().speakText("Publicando en el muro de Facebook");
 
-            context.getObject(ACTIVITY, CameraActivity.class).shareInFacebook(context.getString(MESSAGE));
+            String textToPublish = context.getString(MESSAGE);
+
+            CameraActivity cameraActivity = null;
+            SiteActivity siteActivity = null;
+            TripActivity tripActivity = null;
+
+            if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
+                cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
+                cameraActivity.shareInFacebook(textToPublish);
+            }if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
+                siteActivity = context.getObject(ACTIVITY, SiteActivity.class);
+                siteActivity.shareInFacebook(textToPublish);
+            }else{
+                tripActivity = context.getObject(ACTIVITY, TripActivity.class);
+                tripActivity.shareInFacebook(textToPublish);
+            }
+
             return context.put(STEP, 0);
         }
 
@@ -137,7 +151,6 @@ public class CompartirEnFacebookHandler extends CommandHandler {
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando publicación");
-            context.getObject(ACTIVITY, CameraActivity.class).closeDialog();
             return context.put(STEP, 0);
         }
 
@@ -164,7 +177,6 @@ public class CompartirEnFacebookHandler extends CommandHandler {
         }
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando publicación");
-            context.getObject(ACTIVITY, CameraActivity.class).closeDialog();
             return context.put(STEP, 0);
         }
         if(input.equals("no")){

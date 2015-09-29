@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.Stack;
 
+import ar.com.klee.marvin.activities.MainMenuActivity;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
+import ar.com.klee.marvin.voiceControl.STTService;
 import wseemann.media.FFmpegMediaPlayer;
 
 public class MusicService extends Service {
@@ -45,11 +48,17 @@ public class MusicService extends Service {
     public static final String COPA_RESULT = "com.controlj.copame.backend.COPAService.REQUEST_PROCESSED";
     public static final String COPA_MESSAGE = "com.controlj.copame.backend.COPAService.COPA_MSG";
 
+    private Thread isAlive;
+
+    private static MusicService instance;
+
     public void onCreate(){
         super.onCreate();
 
+        instance = this;
+
         mpMusic.setVolume((float) 0.5, (float) 0.5);
-        mpRadio.setVolume((float)0.5,(float)0.5);
+        mpRadio.setVolume((float) 0.5, (float) 0.5);
 
         mpRadio.setOnPreparedListener(new FFmpegMediaPlayer.OnPreparedListener() {
             public void onPrepared(FFmpegMediaPlayer mp) {
@@ -64,9 +73,43 @@ public class MusicService extends Service {
         getSharedPreferences();
 
         broadcaster = LocalBroadcastManager.getInstance(this);
+
+        isAlive = new Thread() {
+
+            @Override
+            public void run() {
+                try {
+                    while (!isInterrupted()) {
+                        Thread.sleep(5000);
+
+                        try{
+                            STTService.getInstance();
+                            Log.d("ALIVE","uno");
+                        }catch (IllegalStateException e) {
+                            ((MainMenuActivity)CommandHandlerManager.getInstance().getMainActivity()).initializeSTTService();
+                            Log.d("ALIVE", "dos");
+                        }
+
+                    }
+                } catch (InterruptedException e) {
+                } catch (NullPointerException e) {
+                }
+            }
+        };
+    }
+
+    public static MusicService getInstance() {
+        if (instance == null) {
+            throw new IllegalStateException("Instance not initialized. Call initializeInstance before calling getInstance");
+        }
+        return instance;
     }
 
     public void onStop(){
+
+        isAlive.interrupt();
+
+        instance = null;
 
         SharedPreferences sharedPreferences = getSharedPreferences("musicService",Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -634,6 +677,10 @@ public class MusicService extends Service {
         if(message != null)
             intent.putExtra(COPA_MESSAGE, message);
         broadcaster.sendBroadcast(intent);
+    }
+
+    public static void destroyInstance() {
+        instance = null;
     }
 
 }

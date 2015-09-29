@@ -43,7 +43,7 @@ public class MainMenuFragment extends Fragment {
     public static TextView spokenText;
     public static ImageView marvinImage;
 
-    private boolean isRadio;
+    public static boolean isRadio;
 
     public static TextView mainStreet;
     public static TextView speed;
@@ -91,6 +91,8 @@ public class MainMenuFragment extends Fragment {
         tv_artist = (TextView)v.findViewById(R.id.artist);
 
         spokenText = (TextView) v.findViewById(R.id.spokenText);
+
+        spokenText.setText("Hablá, yo escucho...");
 
         marvinImage = (ImageView) v.findViewById(R.id.marvinImage);
 

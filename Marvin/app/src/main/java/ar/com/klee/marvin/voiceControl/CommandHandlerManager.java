@@ -160,6 +160,7 @@ public class CommandHandlerManager {
             throw new IllegalStateException("Instance already initialized");
         }
         CommandHandlerManager.instance = new CommandHandlerManager(context, mSpeechRecognizer, mSpeechRecognizerIntent);
+
         return instance;
     }
 
@@ -313,6 +314,12 @@ public class CommandHandlerManager {
 
             return false;
 
+        }
+
+        if(command.equals("cancelar")){
+            textToSpeech.speakText("Cancelando...");
+            setNullCommand();
+            return false;
         }
 
         final String finalCommand = command;

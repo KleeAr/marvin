@@ -48,7 +48,6 @@ public class CompartirFotoHandler extends CommandHandler {
         if(getCommandHandlerManager().getIsPhotoTaken()) {
 
             getTextToSpeech().speakText("¿En qué red social deseás compartirla?");
-            context.getObject(ACTIVITY, CameraActivity.class).share();
             getCommandHandlerManager().setIsPhotoTaken(false);
 
             context.put(STEP, 3);

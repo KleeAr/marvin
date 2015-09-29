@@ -45,7 +45,6 @@ public class CompartirViajeHandler extends CommandHandler {
     public CommandHandlerContext stepOne(CommandHandlerContext context){
 
         getTextToSpeech().speakText("¿En qué red social deseás compartirlo?");
-        context.getObject(ACTIVITY, TripActivity.class).openShareDialog();
         getCommandHandlerManager().setIsPhotoTaken(false);
 
         context.put(STEP, 3);

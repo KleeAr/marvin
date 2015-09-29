@@ -6,6 +6,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -128,6 +129,177 @@ public class AgregarEventoHandler extends CommandHandler {
     public CommandHandlerContext stepFive(CommandHandlerContext context){
 
         String input = context.getString(COMMAND);
+
+        if(input.equals("hoy")){
+
+            getTextToSpeech().speakText("¿El evento es hoy?");
+
+            context.put(DAY, Calendar.DAY_OF_MONTH);
+            context.put(MONTH, Calendar.MONTH);
+            context.put(YEAR, Calendar.YEAR);
+
+            context.put(STEP, 7);
+            return context;
+        }
+
+        if(input.equals("mañana")){
+
+            getTextToSpeech().speakText("¿El evento es mañana?");
+
+            GregorianCalendar c = new GregorianCalendar();
+            c.add(Calendar.DATE, 1);
+
+            context.put(DAY, c.DAY_OF_MONTH);
+            context.put(MONTH, c.MONTH);
+            context.put(YEAR, c.YEAR);
+
+            context.put(STEP, 7);
+            return context;
+        }
+
+        if(input.equals("el lunes") || input.equals("lunes") ){
+
+            getTextToSpeech().speakText("¿El evento es el lunes?");
+
+            GregorianCalendar c = new GregorianCalendar();
+            c.add(Calendar.DATE, 1);
+
+            while(c.DAY_OF_WEEK != c.MONDAY)
+                c.add(Calendar.DATE, 1);
+
+            context.put(DAY, c.DAY_OF_MONTH);
+            context.put(MONTH, c.MONTH);
+            context.put(YEAR, c.YEAR);
+
+            context.put(STEP, 7);
+            return context;
+        }
+
+        if(input.equals("el martes") || input.equals("martes") ){
+
+            getTextToSpeech().speakText("¿El evento es el martes?");
+
+            GregorianCalendar c = new GregorianCalendar();
+            c.add(Calendar.DATE, 1);
+
+            while(c.DAY_OF_WEEK != c.THURSDAY)
+                c.add(Calendar.DATE, 1);
+
+            context.put(DAY, c.DAY_OF_MONTH);
+            context.put(MONTH, c.MONTH);
+            context.put(YEAR, c.YEAR);
+
+            context.put(STEP, 7);
+            return context;
+        }
+
+        if(input.equals("el martes") || input.equals("martes") ){
+
+            getTextToSpeech().speakText("¿El evento es el martes?");
+
+            GregorianCalendar c = new GregorianCalendar();
+            c.add(Calendar.DATE, 1);
+
+            while(c.DAY_OF_WEEK != c.TUESDAY)
+                c.add(Calendar.DATE, 1);
+
+            context.put(DAY, c.DAY_OF_MONTH);
+            context.put(MONTH, c.MONTH);
+            context.put(YEAR, c.YEAR);
+
+            context.put(STEP, 7);
+            return context;
+        }
+
+        if(input.equals("el miércoles") || input.equals("miércoles") ){
+
+            getTextToSpeech().speakText("¿El evento es el miércoles?");
+
+            GregorianCalendar c = new GregorianCalendar();
+            c.add(Calendar.DATE, 1);
+
+            while(c.DAY_OF_WEEK != c.WEDNESDAY)
+                c.add(Calendar.DATE, 1);
+
+            context.put(DAY, c.DAY_OF_MONTH);
+            context.put(MONTH, c.MONTH);
+            context.put(YEAR, c.YEAR);
+
+            context.put(STEP, 7);
+            return context;
+        }
+
+        if(input.equals("el jueves") || input.equals("jueves") ){
+
+            getTextToSpeech().speakText("¿El evento es el jueves?");
+
+            GregorianCalendar c = new GregorianCalendar();
+            c.add(Calendar.DATE, 1);
+
+            while(c.DAY_OF_WEEK != c.THURSDAY)
+                c.add(Calendar.DATE, 1);
+
+            context.put(DAY, c.DAY_OF_MONTH);
+            context.put(MONTH, c.MONTH);
+            context.put(YEAR, c.YEAR);
+
+            context.put(STEP, 7);
+            return context;
+        }
+
+        if(input.equals("el viernes") || input.equals("viernes") ){
+
+            getTextToSpeech().speakText("¿El evento es el viernes?");
+
+            GregorianCalendar c = new GregorianCalendar();
+            c.add(Calendar.DATE, 1);
+
+            while(c.DAY_OF_WEEK != c.FRIDAY)
+                c.add(Calendar.DATE, 1);
+
+            context.put(DAY, c.DAY_OF_MONTH);
+            context.put(MONTH, c.MONTH);
+            context.put(YEAR, c.YEAR);
+
+            context.put(STEP, 7);
+            return context;
+        }
+
+        if(input.equals("el sábado") || input.equals("sábado") ){
+
+            getTextToSpeech().speakText("¿El evento es el sábado?");
+
+            GregorianCalendar c = new GregorianCalendar();
+            c.add(Calendar.DATE, 1);
+
+            while(c.DAY_OF_WEEK != c.SATURDAY)
+                c.add(Calendar.DATE, 1);
+
+            context.put(DAY, c.DAY_OF_MONTH);
+            context.put(MONTH, c.MONTH);
+            context.put(YEAR, c.YEAR);
+
+            context.put(STEP, 7);
+            return context;
+        }
+
+        if(input.equals("el domingo") || input.equals("domingo") ){
+
+            getTextToSpeech().speakText("¿El evento es el domingo?");
+
+            GregorianCalendar c = new GregorianCalendar();
+            c.add(Calendar.DATE, 1);
+
+            while(c.DAY_OF_WEEK != c.SUNDAY)
+                c.add(Calendar.DATE, 1);
+
+            context.put(DAY, c.DAY_OF_MONTH);
+            context.put(MONTH, c.MONTH);
+            context.put(YEAR, c.YEAR);
+
+            context.put(STEP, 7);
+            return context;
+        }
 
         ExpressionMatcher dateFormat = new ExpressionMatcher("{day} de {month} del {year}");
 

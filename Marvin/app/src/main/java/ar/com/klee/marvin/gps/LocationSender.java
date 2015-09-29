@@ -103,7 +103,7 @@ public class LocationSender {
                             results);
                     double polylineLength = results[0];
 
-                    if(polylineLength > 100)
+                    if(polylineLength > 100.0)
                         return;
 
                     Log.d("GPS",((Double)polylineLength).toString());

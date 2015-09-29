@@ -305,6 +305,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 break;
             case 1:
                 setFragment(1, MainMenuFragment.class);
+                MainMenuFragment.spokenText.setText("Hablá, yo escucho...");
                 break;
             case 2:
                 Toast.makeText(getApplicationContext(), "posicion " + position, Toast.LENGTH_SHORT).show();
@@ -360,6 +361,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     break;
                 case 1:
                     setFragment(1, MainMenuFragment.class);
+                    MainMenuFragment.spokenText.setText("Hablá, yo escucho...");
                     break;
                 case 2:
                     setFragment(2, ComandosDeVozFragment.class);
@@ -427,6 +429,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 break;
             case 1:
                 setFragment(1, MainMenuFragment.class);
+                MainMenuFragment.spokenText.setText("Hablá, yo escucho...");
                 break;
             case 2:
                 Toast.makeText(getApplicationContext(), "posicion " + position, Toast.LENGTH_SHORT).show();
