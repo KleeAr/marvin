@@ -647,16 +647,20 @@ public class MusicService extends Service {
 
     public void setIsRadio(boolean isRadio){
 
+        boolean play = false;
+
+        if(isPlaying())
+            play = true;
+
+        if(!isRadio)
+            currentDuration = mpMusic.getCurrentPosition();
+
         mpRadio.pause();
         mpMusic.pause();
         this.isRadio = isRadio;
 
-        if(!isRadio)
+        if(play)
             startPlaying();
-        else{
-            sendResult("SONG_TITLE " + radios.get(currentRadio).getName());
-            sendResult("SONG_ARTIST " + radios.get(currentRadio).getFrequence());
-        }
 
     }
 

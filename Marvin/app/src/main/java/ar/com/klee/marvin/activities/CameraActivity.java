@@ -347,13 +347,6 @@ public class CameraActivity extends ActionBarActivity {
                     photo.delete();
                 }
 
-                save.setVisibility(View.INVISIBLE);
-                share.setVisibility(View.INVISIBLE);
-                cancel.setVisibility(View.INVISIBLE);
-                capture.setVisibility(View.VISIBLE);
-
-                mPreview.refreshCamera(mCamera);
-
             }
         }, 3000);
 

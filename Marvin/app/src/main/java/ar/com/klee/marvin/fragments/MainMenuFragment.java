@@ -33,7 +33,6 @@ public class MainMenuFragment extends Fragment {
     public final int CANT_APPLICATION=12; //variable en que se definen la cantidad de aplicaciones disponibles
 
     private long date;
-    private TextView dateText;
     private SlidingTabLayout tabs;
 
     public static ImageButton bt_play;
@@ -76,8 +75,6 @@ public class MainMenuFragment extends Fragment {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("musicService", Context.MODE_PRIVATE);
         if(instance==null)
             isRadio = sharedPreferences.getBoolean("isRadio",false);
-
-
 
         mainStreet = (TextView)v.findViewById(R.id.mainStreet);
 
@@ -178,12 +175,11 @@ public class MainMenuFragment extends Fragment {
 
 
         final TextView digitalClock = (TextView)v.findViewById(R.id.digitalClock);
-        //final TextView weekDay = (TextView) findViewById(R.id.weekDayText);
-        //weekDay.setTypeface(fBariolRegular);
 
-        dateText = (TextView) v.findViewById(R.id.dateText);
+        final TextView weekDay = MainMenuActivity.weekDay;
+        weekDay.setTypeface(fBariolRegular);
 
-       // final TextView dateText = MainMenuActivity.dateText;
+        final TextView dateText = MainMenuActivity.dateText;
         dateText.setTypeface(fBariolRegular);
 
         final TextView anteMeridiem = (TextView)v.findViewById(R.id.anteMeridiem);
@@ -199,11 +195,11 @@ public class MainMenuFragment extends Fragment {
         anteMeridiem.setTypeface(fBariolRegular);
 
         final SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
-      //  weekDay.setText(sdf.format(date));
+        weekDay.setText(sdf.format(date));
 
 
         final SimpleDateFormat formatTime3 = new SimpleDateFormat("dd 'de' MMMM");
-        dateText.setText(sdf.format(date)+", "+formatTime3.format(date));
+        dateText.setText(formatTime3.format(date));
 
         final SimpleDateFormat dateComplete = new SimpleDateFormat("hh:mm aa");
 
@@ -223,8 +219,8 @@ public class MainMenuFragment extends Fragment {
                                     digitalClock.setText(formatTime1.format(date));
                                     anteMeridiem.setText(formatTime2.format(date));
                                     if (dateComplete.format(date).equals("12:00 a.m.")) {
-                                       // weekDay.setText();
-                                        dateText.setText(sdf.format(date)+", "+formatTime3.format(date));
+                                        weekDay.setText(sdf.format(date));
+                                        dateText.setText(formatTime3.format(date));
 
                                     }
                                 }

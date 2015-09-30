@@ -198,7 +198,7 @@ public class LocationSender {
 
     public void updateScreen(){
         if(!town.equals("Buscando ciudad...")) {
-            MainMenuActivity.cityText.setText(getTown() + ", " + getState());
+            MainMenuActivity.cityText.setText(getTown());
             MainMenuFragment.mainStreet.setText(getAddress());
             MainMenuFragment.speed.setText(getSpeed());
         }

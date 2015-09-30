@@ -90,7 +90,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     public static Toolbar toolbar;
 
     public static TextView cityText;
-
     public static TextView titleText;
 
     private ImageView weatherIconImageView;
@@ -127,6 +126,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     private boolean wasBackPressed = false;
 
+    private String lastSong;
+    private String lastArtist;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -148,8 +150,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         else
             mainMenuFragment = new MainMenuFragment();
 
-      //  weekDay = (TextView) findViewById(R.id.weekDayText);
-      //  dateText = (TextView) findViewById(R.id.dateText);
+        weekDay = (TextView) findViewById(R.id.weekDayText);
+        dateText = (TextView) findViewById(R.id.dateText);
 
         //Crea el mapa
         if (MapFragment.isInstanceInitialized())
@@ -171,30 +173,23 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             callDriver = CallDriver.initializeInstance(getApplicationContext());
         }
 
+        cityText = (TextView) findViewById(R.id.cityText);
 
+        Typeface fBariolBold = Typeface.createFromAsset(getAssets(), "Bariol_Bold.otf");
+
+        titleText = (TextView) findViewById(R.id.activityTitle);
+        titleText.setVisibility(TextView.INVISIBLE);
+        titleText.setTypeface(fBariolBold);
 
         //definimos los tipos de letra
         Typeface fBariolRegular = Typeface.createFromAsset(getAssets(), "Bariol_Regular.otf");
 
-        toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        temperatureTextView = (TextView) findViewById(R.id.temperatureText);
+        temperatureTextView.setTypeface(fBariolRegular);
 
-
-
-        if(actualFragmentPosition==1){
-            View view = getLayoutInflater().inflate(R.layout.view_toolbar, null);
-            toolbar.addView(view);
-            cityText = (TextView) view.findViewById(R.id.cityText) ;//(TextView) findViewById(R.id.cityText);
-            temperatureTextView = (TextView) view.findViewById(R.id.temperatureText);//(TextView) findViewById(R.id.temperatureText);
-            temperatureTextView.setTypeface(fBariolRegular);
-
-            weatherIconImageView = (ImageView) view.findViewById(R.id.weatherImage);//(ImageView) findViewById(R.id.weatherImage);
-            service = new YahooWeatherService(this, getApplicationContext());
-            service.refreshWeather(cityText.getText().toString());
-
-        }
-
-
-
+        weatherIconImageView = (ImageView) findViewById(R.id.weatherImage);
+        service = new YahooWeatherService(this, getApplicationContext());
+        service.refreshWeather(cityText.getText().toString());
 
         Thread tWheather = new Thread() {
 
@@ -207,8 +202,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                             @Override
                             public void run() {
                                 // update TextView here!
-                                if(actualFragmentPosition==1)
-                                    service.refreshWeather(cityText.getText().toString());
+                                service.refreshWeather(cityText.getText().toString());
                             }
                         });
                     }
@@ -219,8 +213,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         tWheather.start();
 
-
-
+        toolbar = (Toolbar) findViewById(R.id.tool_bar);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mLvDrawerMenu = (ListView) findViewById(R.id.lv_drawer_menu);
 
@@ -323,37 +316,58 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         actualFragmentPosition = position;
 
+        if(position == 1){
+            titleText.setVisibility(TextView.INVISIBLE);
+            weekDay.setVisibility(TextView.VISIBLE);
+            dateText.setVisibility(TextView.VISIBLE);
+            cityText.setVisibility(TextView.VISIBLE);
+            temperatureTextView.setVisibility(TextView.VISIBLE);
+            weatherIconImageView.setVisibility(ImageView.VISIBLE);
+        }else{
+            titleText.setVisibility(TextView.VISIBLE);
+            weekDay.setVisibility(TextView.INVISIBLE);
+            dateText.setVisibility(TextView.INVISIBLE);
+            cityText.setVisibility(TextView.INVISIBLE);
+            temperatureTextView.setVisibility(TextView.INVISIBLE);
+            weatherIconImageView.setVisibility(ImageView.INVISIBLE);
+        }
+
         switch (position) {
             case 0:
                 setFragment(0, PerfilFragment.class);
+                titleText.setText("Perfil");
                 break;
             case 1:
                 setFragment(1, MainMenuFragment.class);
-                MainMenuFragment.spokenText.setText("Hablá, yo escucho...");
+                if(musicService.isPlaying()){
+                    MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
+                    MainMenuFragment.tv_song.setText(lastSong);
+                    MainMenuFragment.tv_artist.setText(lastArtist);
+                }
                 break;
             case 2:
                 setFragment(2, VozFragment.class);
-                /*
-                View v = getLayoutInflater().inflate(R.layout.view_toolbar2, null);
-                toolbar.addView(v);
-                titleText = (TextView) view.findViewById(R.id.titleText);
-                titleText.setText("COMANDOS DE VOZ");
-                 */
+                titleText.setText("Comandos de Voz");
                 break;
             case 4:
                 setFragment(4, MisViajesFragment.class);
+                titleText.setText("Historial de Viajes");
                 break;
             case 5:
                 setFragment(5, MisSitiosFragment.class);
+                titleText.setText("Mis Sitios");
                 break;
             case 6:
                 setFragment(6, DondeEstacioneFragment.class);
+                titleText.setText("¿Dónde Estacioné?");
                 break;
             case 8:
                 setFragment(8, ConfigureFragment.class);
+                titleText.setText("Ajustes");
                 break;
             case 9:
                 setFragment(9, HelpFragment.class);
+                titleText.setText("Ayuda");
                 break;
             case 10:
                 MainMenuActivity.mapFragment.finishTrip();
@@ -368,7 +382,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 break;
         }
 
-        // Setting it as the Toolbar for the activity
         setSupportActionBar(toolbar);
     }
 
@@ -384,31 +397,58 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
             actualFragmentPosition = position;
 
+            if(position == 1){
+                titleText.setVisibility(TextView.INVISIBLE);
+                weekDay.setVisibility(TextView.VISIBLE);
+                dateText.setVisibility(TextView.VISIBLE);
+                cityText.setVisibility(TextView.VISIBLE);
+                temperatureTextView.setVisibility(TextView.VISIBLE);
+                weatherIconImageView.setVisibility(ImageView.VISIBLE);
+            }else{
+                titleText.setVisibility(TextView.VISIBLE);
+                weekDay.setVisibility(TextView.INVISIBLE);
+                dateText.setVisibility(TextView.INVISIBLE);
+                cityText.setVisibility(TextView.INVISIBLE);
+                temperatureTextView.setVisibility(TextView.INVISIBLE);
+                weatherIconImageView.setVisibility(ImageView.INVISIBLE);
+            }
+
             switch (position) {
                 case 0:
                     setFragment(0, PerfilFragment.class);
+                    titleText.setText("Perfil");
                     break;
                 case 1:
                     setFragment(1, MainMenuFragment.class);
-                    MainMenuFragment.spokenText.setText("Hablá, yo escucho...");
+                    if(musicService.isPlaying()){
+                        MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
+                        MainMenuFragment.tv_song.setText(lastSong);
+                        MainMenuFragment.tv_artist.setText(lastArtist);
+                    }
                     break;
                 case 2:
                     setFragment(2, VozFragment.class);
+                    titleText.setText("Comandos de Voz");
                     break;
                 case 4:
                     setFragment(4, MisViajesFragment.class);
+                    titleText.setText("Historial de Viajes");
                     break;
                 case 5:
                     setFragment(5, MisSitiosFragment.class);
+                    titleText.setText("Mis Sitios");
                     break;
                 case 6:
                     setFragment(6, DondeEstacioneFragment.class);
+                    titleText.setText("¿Dónde Estacioné?");
                     break;
                 case 8:
                     setFragment(8, ConfigureFragment.class);
+                    titleText.setText("Ajustes");
                     break;
                 case 9:
                     setFragment(9, HelpFragment.class);
+                    titleText.setText("Ayuda");
                     break;
                 case 10:
                     MainMenuActivity.mapFragment.finishTrip();
@@ -452,31 +492,58 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         actualFragmentPosition = position;
 
+        if(position == 1){
+            titleText.setVisibility(TextView.INVISIBLE);
+            weekDay.setVisibility(TextView.VISIBLE);
+            dateText.setVisibility(TextView.VISIBLE);
+            cityText.setVisibility(TextView.VISIBLE);
+            temperatureTextView.setVisibility(TextView.VISIBLE);
+            weatherIconImageView.setVisibility(ImageView.VISIBLE);
+        }else{
+            titleText.setVisibility(TextView.VISIBLE);
+            weekDay.setVisibility(TextView.INVISIBLE);
+            dateText.setVisibility(TextView.INVISIBLE);
+            cityText.setVisibility(TextView.INVISIBLE);
+            temperatureTextView.setVisibility(TextView.INVISIBLE);
+            weatherIconImageView.setVisibility(ImageView.INVISIBLE);
+        }
+
         switch (position) {
             case 0:
                 setFragment(0, PerfilFragment.class);
+                titleText.setText("Perfil");
                 break;
             case 1:
                 setFragment(1, MainMenuFragment.class);
-                MainMenuFragment.spokenText.setText("Hablá, yo escucho...");
+                if(musicService.isPlaying()){
+                    MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
+                    MainMenuFragment.tv_song.setText(lastSong);
+                    MainMenuFragment.tv_artist.setText(lastArtist);
+                }
                 break;
             case 2:
                 setFragment(2, VozFragment.class);
+                titleText.setText("Comandos de Voz");
                 break;
             case 4:
                 setFragment(4, MisViajesFragment.class);
+                titleText.setText("Historial de Viajes");
                 break;
             case 5:
                 setFragment(5, MisSitiosFragment.class);
+                titleText.setText("Mis Sitios");
                 break;
             case 6:
                 setFragment(6, DondeEstacioneFragment.class);
+                titleText.setText("¿Dónde Estacioné?");
                 break;
             case 8:
                 setFragment(8, ConfigureFragment.class);
+                titleText.setText("Ajustes");
                 break;
             case 9:
                 setFragment(9, HelpFragment.class);
+                titleText.setText("Ayuda");
                 break;
             case 10:
                 MainMenuActivity.mapFragment.finishTrip();
@@ -627,7 +694,10 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     newFirstCharacter = Character.toUpperCase(firstCharacter);
                     notification = notification.replaceFirst(firstCharacter.toString(), newFirstCharacter.toString());
 
-                    MainMenuFragment.spokenText.setText(notification);
+                    if(notification.startsWith("Abrir"))
+                        MainMenuFragment.spokenText.setText("Hablá, yo escucho...");
+                    else
+                        MainMenuFragment.spokenText.setText(notification);
 
                     restoreMusicButton = true;
 
@@ -688,15 +758,14 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 if (notification.startsWith("SONG_TITLE ")) {
 
                     notification = notification.replace("SONG_TITLE ", "");
-                    Log.d("TITLE", notification);
                     MainMenuFragment.tv_song.setText(notification);
-
+                    lastSong = notification;
 
                 } else if (notification.startsWith("SONG_ARTIST ")) {
 
                     notification = notification.replace("SONG_ARTIST ", "");
-                    Log.d("ARTIST", notification);
                     MainMenuFragment.tv_artist.setText(notification);
+                    lastArtist = notification;
 
                 }
             }
@@ -733,13 +802,16 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     public void radioMusic(View view){
 
-        if(musicService.getIsRadio()){
+        if(!musicService.isPlaying())
+            MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_play);
+        else
             MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
+
+        if(musicService.getIsRadio()){
             MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_audiotrack_white_48dp);
             MainMenuFragment.getInstance().setIsRadio(false);
             musicService.setIsRadio(false);
         }else{
-            MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_play);
             MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_radio_white_48dp);
             MainMenuFragment.getInstance().setIsRadio(true);
             musicService.setIsRadio(true);
@@ -749,7 +821,11 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     public void radioMusic(){
 
-        MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
+        if(!musicService.isPlaying())
+            MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_play);
+        else
+            MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
+
         if(musicService.getIsRadio()){
             MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_audiotrack_white_48dp);
             MainMenuFragment.getInstance().setIsRadio(false);

@@ -134,9 +134,15 @@ public class AgregarEventoHandler extends CommandHandler {
 
             getTextToSpeech().speakText("¿El evento es hoy?");
 
-            context.put(DAY, Calendar.DAY_OF_MONTH);
-            context.put(MONTH, Calendar.MONTH);
-            context.put(YEAR, Calendar.YEAR);
+            GregorianCalendar c = new GregorianCalendar();
+
+            Log.d("CALENDAR", ((Integer)c.DAY_OF_MONTH).toString());
+            Log.d("CALENDAR",((Integer)c.MONTH).toString());
+            Log.d("CALENDAR",((Integer)c.YEAR).toString());
+
+            context.put(DAY, c.DAY_OF_MONTH);
+            context.put(MONTH, c.MONTH);
+            context.put(YEAR, c.YEAR);
 
             context.put(STEP, 7);
             return context;

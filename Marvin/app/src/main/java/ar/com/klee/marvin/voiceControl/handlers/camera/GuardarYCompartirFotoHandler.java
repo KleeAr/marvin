@@ -50,7 +50,6 @@ public class GuardarYCompartirFotoHandler extends CommandHandler {
             getTextToSpeech().speakText("Guardando foto. ¿En qué red social deseás compartirla?");
             context.getObject(ACTIVITY, CameraActivity.class).save();
             context.getObject(ACTIVITY, CameraActivity.class).share();
-            getCommandHandlerManager().setIsPhotoTaken(false);
 
             context.put(STEP, 3);
             return context;
