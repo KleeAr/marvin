@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="E:\Mis documentos\Mati\marvin\BluetoothChat\Application\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.0"
+        sha1="8413c27b45b7fe61dca4a98159f65e2cee215f5a">
+        <dex dex="E:\Mis documentos\Mati\marvin\BluetoothChat\Application\build\intermediates\pre-dexed\debug\classes-57ba1136a4f7dff000fedcc4be3759fecb835509.jar" />
+    </item>
+    <item
+        jar="C:\Users\Salerno flia\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.0.0\support-annotations-23.0.0.jar"
+        jumboMode="false"
+        revision="23.0.0"
+        sha1="990e7f98a7bad86a40b1f0bcfeb039023afd0839">
+        <dex dex="E:\Mis documentos\Mati\marvin\BluetoothChat\Application\build\intermediates\pre-dexed\debug\support-annotations-23.0.0-62aa64eafd0b518a77e058f3d250810c801fa266.jar" />
+    </item>
+    <item
+        jar="E:\Mis documentos\Mati\marvin\BluetoothChat\Application\build\intermediates\exploded-aar\com.android.support\cardview-v7\23.0.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.0"
+        sha1="1ccbc26be2c465c622a48310e8092241b01abe80">
+        <dex dex="E:\Mis documentos\Mati\marvin\BluetoothChat\Application\build\intermediates\pre-dexed\debug\classes-558da33faee96ee295ba69d42f52ca9f8c1c79b8.jar" />
+    </item>
+    <item
+        jar="E:\Mis documentos\Mati\marvin\BluetoothChat\Application\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.0\jars\libs\internal_impl-23.0.0.jar"
+        jumboMode="false"
+        revision="23.0.0"
+        sha1="8bd336eeae661e8311330284897ee07f8ebaa297">
+        <dex dex="E:\Mis documentos\Mati\marvin\BluetoothChat\Application\build\intermediates\pre-dexed\debug\internal_impl-23.0.0-158e57a0921a8d973a0273ad0b21d444e4473eb3.jar" />
+    </item>
+    <item
+        jar="E:\Mis documentos\Mati\marvin\BluetoothChat\Application\build\intermediates\exploded-aar\com.android.support\gridlayout-v7\23.0.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.0"
+        sha1="1618fd467fb5971c394741e8976ededb97aaee0a">
+        <dex dex="E:\Mis documentos\Mati\marvin\BluetoothChat\Application\build\intermediates\pre-dexed\debug\classes-53910f5e914ba45ccbe944f272f5fd183b9dfe63.jar" />
+    </item>
+
+</items>
