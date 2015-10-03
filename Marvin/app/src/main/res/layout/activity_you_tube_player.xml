@@ -1,22 +1,64 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="ar.com.klee.marvin.activities.YouTubePlayerActivity">
+    android:layout_height="match_parent"
+    tools:context="ar.com.klee.marvin.activities.YouTubePlayerActivity"
+    android:background="#ffffff"
+    android:orientation="vertical"
+    android:id="@+id/">
 
-    <TextView android:text="video" android:layout_width="wrap_content"
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/video_title" />
+        android:background="#ef404a"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="false">
+
+        <TextView android:text="video" android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/title"
+            android:textColor="#ffffff"
+            android:textSize="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp" />
+    </LinearLayout>
+
+
 
     <com.google.android.youtube.player.YouTubePlayerView
         android:id="@+id/youtube_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="44dp"
-        android:layout_below="@+id/video_title"
+        android:layout_marginTop="10dp"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="false"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp" />
 
-</RelativeLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/lyt_description">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/video_title"
+            android:text="Video Title"
+            android:textStyle="bold"
+            android:layout_marginTop="11dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="13dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/video_desc"
+            android:text="Video Description"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="5dp" />
+    </LinearLayout>
+
+</LinearLayout>

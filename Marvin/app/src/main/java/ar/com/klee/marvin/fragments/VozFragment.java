@@ -25,6 +25,7 @@ import java.util.List;
 import ar.com.klee.marvin.Command;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.activities.ExpandableListAdapter;
+import ar.com.klee.marvin.activities.LoginActivity;
 import ar.com.klee.marvin.activities.MainMenuActivity;
 
 public class VozFragment extends Fragment {
@@ -352,16 +353,16 @@ public class VozFragment extends Fragment {
 
         final TextView commandFunction = new TextView(getActivity());
         commandFunction.setText("Función: " + command.function);
-        commandFunction.setPadding(10, 0, 0, 0);
+        commandFunction.setPadding(10, 0, 0, 20);
         layout.addView(commandFunction);
 
         builder.setView(layout);
 
-        builder.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
+       /* builder.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 dialog.dismiss();
             }
-        });
+        });*/
           builder.show();
 
     }

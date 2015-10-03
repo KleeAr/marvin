@@ -2,6 +2,7 @@ package ar.com.klee.marvin.activities;
 
 
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -10,8 +11,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -24,6 +27,12 @@ public class ConfSpeedAlertActivity extends ActionBarActivity {
     private Switch switch1;
     private Switch switch2;
     private Toolbar toolbar;
+    public TextView titleText;
+    public TextView cityText;
+    public ImageView weatherIconImageView;
+    public TextView temperatureTextView;
+    public TextView weekDay;
+    public TextView dateText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +42,25 @@ public class ConfSpeedAlertActivity extends ActionBarActivity {
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setTitle("ALERTAS DE VELOCIDAD");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+       Typeface fBariolBold = Typeface.createFromAsset(getAssets(), "Bariol_Bold.otf");
+
+        titleText = (TextView) findViewById(R.id.activityTitle);
+        titleText.setVisibility(TextView.VISIBLE);
+        titleText.setTypeface(fBariolBold);
+        titleText.setText("Alertas de Velocidad");
+
+        weekDay = (TextView) findViewById(R.id.weekDayText);
+        dateText = (TextView) findViewById(R.id.dateText);
+        cityText = (TextView) findViewById(R.id.cityText);
+        temperatureTextView = (TextView) findViewById(R.id.temperatureText);
+        weatherIconImageView = (ImageView) findViewById(R.id.weatherImage);
+        weekDay.setVisibility(TextView.INVISIBLE);
+        dateText.setVisibility(TextView.INVISIBLE);
+        cityText.setVisibility(TextView.INVISIBLE);
+        temperatureTextView.setVisibility(TextView.INVISIBLE);
+        weatherIconImageView.setVisibility(ImageView.INVISIBLE);
 
        // final EditText etSpeed1 = (EditText) findViewById(R.id.et_vel1);
 
@@ -65,8 +91,6 @@ public class ConfSpeedAlertActivity extends ActionBarActivity {
         // Set the Adapter
         spinner1.setAdapter(arrayAdapter);
         spinner2.setAdapter(arrayAdapter);
-
-       // spinner1.setSelection(0);
 
 
         // Set the ClickListener for Spinner

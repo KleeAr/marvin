@@ -57,7 +57,7 @@
     <!-- Sliding Menu item icons -->
     <array name="nav_drawer_icons">
         <item>@mipmap/ic_home_black_48dp</item>
-        <item>@mipmap/ic_volume_up_black_48dp</item>
+        <item>@mipmap/ic_mic_black_48dp</item>
         <item>@mipmap/ic_schedule_black_48dp</item>
         <item>@mipmap/ic_location_on_black_48dp</item>
         <item>@mipmap/ic_local_parking_black_48dp</item>
