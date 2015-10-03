@@ -16,7 +16,7 @@ public class AbrirSitioHandler extends CommandHandler {
     public static final String SITE = "SITE";
 
     public AbrirSitioHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("abrir sitio {sitio}"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("abrir sitio {sitio}","abrir lugar {sitio}","abrir {sitio}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

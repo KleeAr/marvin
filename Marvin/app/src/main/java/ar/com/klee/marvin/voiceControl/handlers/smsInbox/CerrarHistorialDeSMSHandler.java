@@ -15,7 +15,7 @@ public class CerrarHistorialDeSMSHandler extends CommandHandler {
 
 
     public CerrarHistorialDeSMSHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("cerrar historial de sms"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("cerrar historial de sms","cerrar historial","cerrar","volver al menú principal"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

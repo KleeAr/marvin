@@ -13,7 +13,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class AumentarZoomHandler extends CommandHandler {
 
     public AumentarZoomHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("aumentar zoom"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("aumentar zoom","incrementar zoom","acercar zoom","acercar"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

@@ -15,7 +15,7 @@ public class CerrarViajeHandler extends CommandHandler {
 
 
     public CerrarViajeHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("cerrar viaje"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("cerrar viaje","cerrar","volver"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

@@ -14,7 +14,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class CompartirViajeHandler extends CommandHandler {
 
     public CompartirViajeHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("compartir viaje"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("compartir viaje","publicar viaje"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

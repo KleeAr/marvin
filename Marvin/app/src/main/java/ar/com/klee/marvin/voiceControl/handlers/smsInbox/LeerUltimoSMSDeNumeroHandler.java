@@ -26,7 +26,7 @@ public class LeerUltimoSMSDeNumeroHandler extends CommandHandler {
     private static final String NUMBER = "NUMBER";
 
     public LeerUltimoSMSDeNumeroHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("leer último sms del número {numero}"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("leer último sms del número {numero}","leer sms del {número}","leer último sms del {número}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

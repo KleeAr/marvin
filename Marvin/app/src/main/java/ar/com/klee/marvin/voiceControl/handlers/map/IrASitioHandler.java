@@ -19,7 +19,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class IrASitioHandler extends CommandHandler {
 
     public IrASitioHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("ir a sitio {sitio}"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("ir a sitio {sitio}","navegar hacia sitio {sitio}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

@@ -77,7 +77,7 @@ public class VozFragment extends Fragment {
         commandList.add(new Command("Subir volumen"," Subir volumen","Incrementa el volumen del dispositivo en dos unidades"));
         commandList.add(new Command("Twittear","Twittear [mensaje] (Ejemplo:  \"Twittear Estoy usando Marvin\")","Publica un mensaje en tu cuenta de Twitter asociada"));
         //Cámara
-        commandList.add(new Command("Cancelar foto","Cancelar foto","Descarta una fotografía tomada"));
+        commandList.add(new Command("Cancelar foto","Cancelar foto","Regresa a la cámara"));
         commandList.add(new Command("Cerrar cámara","Cerrar cámara","Regresa al menú principal"));
         commandList.add(new Command("Compartir foto","Compartir foto","Comparte la foto en la red social indicada"));
         commandList.add(new Command("Guardar foto","Guardar foto","Guarda la foto en la carpeta MARVIN del dispositivo"));
@@ -110,10 +110,10 @@ public class VozFragment extends Fragment {
         //Mapa
         commandList.add(new Command("Aumentar zoom","Aumentar zoom","Aumenta el zoom realizado sobre el mapa"));
         commandList.add(new Command("Buscar en mapa","Buscar en mapa [dirección] (Ejemplo: Buscar en mapa Arieta 1500, San Justo)","Busca una dirección en el mapa"));
-        commandList.add(new Command("Buscar en sitio","Buscar en sitio [sitio] (Ejemplo: Buscar sitio Casa)","Busca en el mapa un sitio previamente guardado"));
+        commandList.add(new Command("Buscar sitio","Buscar sitio [sitio] (Ejemplo: Buscar sitio Casa)","Busca en el mapa un sitio previamente guardado"));
         commandList.add(new Command("Cerrar mapa","Cerrar mapa","Regresa al menú principal"));
         commandList.add(new Command("Establecer zoom","Establecer zoom [número] (Ejemplo: Establecer zoom 15)","Establece un zoom definido entre los valores 1 y 20"));
-        commandList.add(new Command("Ir a dirección","Ir a [dirección] (Ejemplo: Ir a Arieta 1500, San Justo)","Activa la navegación hacia la dirección indicada"));
+        commandList.add(new Command("Ir a dirección","Ir a dirección [dirección] (Ejemplo: Ir a Arieta 1500, San Justo)","Activa la navegación hacia la dirección indicada"));
         commandList.add(new Command("Ir a sitio","Ir a sitio [sitio] (Ejemplo: Ir a Casa)","Activa la navegación hacia un sitio previamente guardado"));
         commandList.add(new Command("Reducir zoom","Reducir zoom","Reduce el zoom realizado sobre el mapa"));
         commandList.add(new Command("Ubicación actual","Ubicación actual","Regresa el mapa a la posición donde te encontrás en un momento dado"));

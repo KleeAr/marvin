@@ -15,7 +15,7 @@ public class CerrarSitioHandler extends CommandHandler {
 
 
     public CerrarSitioHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("cerrar sitio"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("cerrar sitio","cerrar","volver"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

@@ -1202,9 +1202,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        STTService.getInstance().stopListening();
-
         if (requestCode == CallDriver.REQUEST_CODE_PICK_CONTACTS && resultCode == RESULT_OK) {
+            STTService.getInstance().stopListening();
             callDriver.setUriContact(data.getData());
             callDriver.retrieveContactNumber();
 
