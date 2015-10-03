@@ -24,7 +24,7 @@ public class CerrarSitioHandler extends CommandHandler {
 
         getTextToSpeech().speakText("Cerrando sitio");
 
-        getCommandHandlerManager().defineActivity(CommandHandlerManager.ACTIVITY_MAIN, getCommandHandlerManager().getMainActivity());
+        getCommandHandlerManager().defineActivity(CommandHandlerManager.ACTIVITY_PLACES, getCommandHandlerManager().getMainActivity());
 
         siteActivity.finish();
 

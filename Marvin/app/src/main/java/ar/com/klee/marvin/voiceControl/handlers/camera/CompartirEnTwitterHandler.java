@@ -1,6 +1,7 @@
 package ar.com.klee.marvin.voiceControl.handlers.camera;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,6 +54,7 @@ public class CompartirEnTwitterHandler extends CommandHandler {
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
         List<String> hashtags = new ArrayList<>();
         commandHandlerContext.put(TWITTER_HASHTAG, hashtags);
+        commandHandlerContext.put(SET_MESSAGE, false);
     }
 
     //PRONUNCIA MENSAJE
@@ -116,7 +118,7 @@ public class CompartirEnTwitterHandler extends CommandHandler {
 
             if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
                 cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
-            }if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
+            }else if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
                 siteActivity = context.getObject(ACTIVITY, SiteActivity.class);
             }else{
                 tripActivity = context.getObject(ACTIVITY, TripActivity.class);
@@ -206,9 +208,11 @@ public class CompartirEnTwitterHandler extends CommandHandler {
             SiteActivity siteActivity = null;
             TripActivity tripActivity = null;
 
+            Log.d("CAM",((Integer)getCommandHandlerManager().getCurrentActivity()).toString());
+
             if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
                 cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
-            }if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
+            }else if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
                 siteActivity = context.getObject(ACTIVITY, SiteActivity.class);
             }else{
                 tripActivity = context.getObject(ACTIVITY, TripActivity.class);

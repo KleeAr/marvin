@@ -6,10 +6,12 @@ import android.content.SharedPreferences;
 import com.google.gson.Gson;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.activities.MapActivity;
+import ar.com.klee.marvin.configuration.UserSites;
 import ar.com.klee.marvin.gps.Site;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
@@ -28,26 +30,18 @@ public class IrASitioHandler extends CommandHandler {
         Map<String, String> values = getExpressionMatcher(command).getValuesFromExpression(command);
         String site = values.get("sitio");
 
-        MainMenuActivity mainMenuActivity;
-
-        mainMenuActivity = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
-
-        SharedPreferences mPrefs = mainMenuActivity.getPreferences(mainMenuActivity.MODE_PRIVATE);
-
-        int numberOfSites = mPrefs.getInt("NumberOfSites",0);
-
         Integer i;
         Site searchedSite = null;
 
-        for(i=1; i<=numberOfSites; i++) {
-            Gson gson = new Gson();
-            String json = mPrefs.getString("Site"+i.toString(), "");
-            searchedSite = gson.fromJson(json, Site.class);
+        List<Site> sites = UserSites.getInstance().getSites();
+
+        for(i=0; i<sites.size() ; i++) {
+            searchedSite = sites.get(i);
             if(searchedSite.getSiteName().toLowerCase().equals(site))
                 break;
         }
 
-        if(i==numberOfSites+1)
+        if(i==sites.size()+1)
             getCommandHandlerManager().getTextToSpeech().speakText("El sitio no fue encontrado");
         else {
             getCommandHandlerManager().getTextToSpeech().speakText("Activando navegación hacia el sitio");

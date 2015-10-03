@@ -13,6 +13,8 @@ import java.util.List;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.multimedia.video.YouTubeVideo;
 import ar.com.klee.marvin.multimedia.video.adapter.YouTubeListAdapter;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
+import ar.com.klee.marvin.voiceControl.STTService;
 
 public class SearchResultActivity extends ListActivity implements AdapterView.OnItemClickListener{
 
@@ -22,8 +24,19 @@ public class SearchResultActivity extends ListActivity implements AdapterView.On
         setContentView(R.layout.activity_search_result);
         List<YouTubeVideo> videos = getIntent().getExtras().getParcelableArrayList("videos");
         YouTubeListAdapter adapter = new YouTubeListAdapter(this,R.layout.you_tube_video_item,videos);
+
         setListAdapter(adapter);
         getListView().setOnItemClickListener(this);
+    }
+
+    public void onBackPressed(){
+        CommandHandlerManager commandHandlerManager = CommandHandlerManager.getInstance();
+        MainMenuActivity mainMenuActivity = ((MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity());
+        mainMenuActivity.activate(commandHandlerManager.getmSpeechRecognizer(), commandHandlerManager.getmSpeechRecognizerIntent());
+        commandHandlerManager.setNullCommand();
+        STTService.getInstance().setIsListening(false);
+        commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_MAIN, commandHandlerManager.getMainActivity());
+        this.finish();
     }
 
 

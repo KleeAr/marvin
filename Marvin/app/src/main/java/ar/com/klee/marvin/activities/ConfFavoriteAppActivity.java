@@ -38,8 +38,6 @@ public class ConfFavoriteAppActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configure_favorite_app);
 
-
-
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
 
@@ -71,7 +69,7 @@ public class ConfFavoriteAppActivity extends ActionBarActivity {
 
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 Toast.makeText(getApplicationContext(), "Seleccionaste: " + listApp.get(i), Toast.LENGTH_SHORT).show();
-                appToOpenWhenStop="APLCIACION SELECCIONADA";
+                appToOpenWhenStop="APLICACION SELECCIONADA";
 
             }
 

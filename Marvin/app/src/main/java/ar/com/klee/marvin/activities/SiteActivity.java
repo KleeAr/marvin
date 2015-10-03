@@ -40,7 +40,6 @@ public class SiteActivity extends ActionBarActivity {
     private Site site;
 
     private CommandHandlerManager commandHandlerManager;
-    private Dialog currentDialog;
     private String mapPath = "/sdcard/MARVIN/site.png";
     private Bitmap mapBitmap;
 
@@ -94,12 +93,11 @@ public class SiteActivity extends ActionBarActivity {
         transaction.commit();
     }
 
-    public void share(View v){
+    public void shareSite(View v){
         openShareDialog();
     }
 
     public void openShareDialog(){
-
 
         final AlertDialog.Builder builderDialog =new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
         builderDialog.setCancelable(true);
@@ -168,10 +166,6 @@ public class SiteActivity extends ActionBarActivity {
 
         }
 
-        currentDialog.dismiss();
-
-        fragment.captureScreen();
-
         FacebookService facebookService = new FacebookService(this);
 
         facebookService.postImage(mapBitmap, text);
@@ -198,8 +192,6 @@ public class SiteActivity extends ActionBarActivity {
         }
 
         final String textToPublish = text;
-
-        currentDialog.dismiss();
 
         fragment.captureScreen();
 
@@ -234,8 +226,6 @@ public class SiteActivity extends ActionBarActivity {
         }
 
         final String textToPublish = text;
-
-        currentDialog.dismiss();
 
         fragment.captureScreen();
 

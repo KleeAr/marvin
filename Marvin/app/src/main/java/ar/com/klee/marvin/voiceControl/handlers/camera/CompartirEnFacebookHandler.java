@@ -54,6 +54,7 @@ public class CompartirEnFacebookHandler extends CommandHandler {
     @Override
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
         commandHandlerContext.put(FACEBOOK_HASHTAG, new ArrayList<String>());
+        commandHandlerContext.put(SET_MESSAGE, false);
     }
 
     //PRONUNCIA MENSAJE
@@ -113,7 +114,7 @@ public class CompartirEnFacebookHandler extends CommandHandler {
             if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
                 cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
                 cameraActivity.shareInFacebook(textToPublish);
-            }if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
+            }else if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
                 siteActivity = context.getObject(ACTIVITY, SiteActivity.class);
                 siteActivity.shareInFacebook(textToPublish);
             }else{
@@ -222,7 +223,7 @@ public class CompartirEnFacebookHandler extends CommandHandler {
             if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
                 cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
                 cameraActivity.shareInFacebook(textToPublish);
-            }if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
+            }else if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
                 siteActivity = context.getObject(ACTIVITY, SiteActivity.class);
                 siteActivity.shareInFacebook(textToPublish);
             }else{

@@ -95,6 +95,8 @@ public class STTService extends Service {
             }
         };
 
+        isAlive.start();
+
         instance = this;
 
         sendResult("Started");
@@ -236,8 +238,8 @@ public class STTService extends Service {
             ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
             String text = matches.get(0);
 
-            Log.d("STT", "onResults");
-            Log.d("STT", text);
+            //Log.d("STT", "onResults");
+            //Log.d("STT", text);
 
             previousListening = isListening;
 
@@ -329,6 +331,10 @@ public class STTService extends Service {
 
         sttState = state;
 
+    }
+
+    public void interruptThread(){
+        isAlive.interrupt();
     }
 
 }

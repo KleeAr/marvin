@@ -24,7 +24,7 @@ public class CerrarViajeHandler extends CommandHandler {
 
         getTextToSpeech().speakText("Cerrando viaje");
 
-        getCommandHandlerManager().defineActivity(CommandHandlerManager.ACTIVITY_MAIN, getCommandHandlerManager().getMainActivity());
+        getCommandHandlerManager().defineActivity(CommandHandlerManager.ACTIVITY_TRIP_HISTORY, getCommandHandlerManager().getMainActivity());
 
         tripActivity.finish();
 

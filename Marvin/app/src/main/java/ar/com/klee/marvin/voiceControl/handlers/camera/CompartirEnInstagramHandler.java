@@ -55,6 +55,7 @@ public class CompartirEnInstagramHandler extends CommandHandler {
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
         List<String> hashtags = new ArrayList<>();
         commandHandlerContext.put(INSTAGRAM_HASHTAG, hashtags);
+        commandHandlerContext.put(SET_MESSAGE, false);
     }
 
     //PRONUNCIA MENSAJE
@@ -131,7 +132,7 @@ public class CompartirEnInstagramHandler extends CommandHandler {
 
             if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
                 cameraActivity.shareInInstagram(textToPublish);
-            }if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
+            }else if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
                 siteActivity.shareInInstagram(textToPublish);
             }else{
                 tripActivity.shareInInstagram(textToPublish);
@@ -213,7 +214,7 @@ public class CompartirEnInstagramHandler extends CommandHandler {
 
             if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
                 cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
-            }if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
+            }else if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
                 siteActivity = context.getObject(ACTIVITY, SiteActivity.class);
             }else{
                 tripActivity = context.getObject(ACTIVITY, TripActivity.class);
