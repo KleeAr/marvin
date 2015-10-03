@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -43,6 +44,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -53,6 +56,7 @@ import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.call.CallDriver;
 import ar.com.klee.marvin.client.model.UserSetting;
 import ar.com.klee.marvin.configuration.UserConfig;
+import ar.com.klee.marvin.configuration.UserSites;
 import ar.com.klee.marvin.data.Channel;
 import ar.com.klee.marvin.data.Item;
 import ar.com.klee.marvin.fragments.ConfigureFragment;
@@ -65,6 +69,7 @@ import ar.com.klee.marvin.fragments.PerfilFragment;
 import ar.com.klee.marvin.fragments.VozFragment;
 import ar.com.klee.marvin.gps.LocationSender;
 import ar.com.klee.marvin.gps.MapFragment;
+import ar.com.klee.marvin.gps.Site;
 import ar.com.klee.marvin.multimedia.music.MusicService;
 import ar.com.klee.marvin.multimedia.video.YouTubeVideo;
 import ar.com.klee.marvin.service.WeatherServiceCallback;
@@ -142,7 +147,41 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         initializeMusicService();
         initializeSTTService();
 
-        UserSetting configuration = UserConfig.getSettings();
+        UserConfig config = new UserConfig();
+        UserSites sites = new UserSites();
+
+        boolean invitado = true;
+        if(invitado){
+
+            SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
+
+            UserSetting invitedUserSettings = new UserSetting();
+
+            invitedUserSettings.setMiniumTripTime(mPrefs.getLong("miniumTripTime", 30));
+            invitedUserSettings.setMiniumTripDistance(mPrefs.getLong("miniumTripDistance", 100));
+            invitedUserSettings.setEmergencyNumber(mPrefs.getString("emergencyNumber", ""));
+            invitedUserSettings.setEmergencySMS(mPrefs.getString("emergencySMS", ""));
+            invitedUserSettings.setOrientation(mPrefs.getInt("orientation", 0));
+            invitedUserSettings.setOpenAppWhenStop(mPrefs.getBoolean("openAppWhenStop", false));
+            invitedUserSettings.setAppToOpenWhenStop(mPrefs.getString("appToOpenWhenStop", ""));
+            invitedUserSettings.setHotspotName(mPrefs.getString("hotspotPassword", "marvinHotSpot"));
+            invitedUserSettings.setHotspotPassword(mPrefs.getString("hotspotPassword", "marvinHotSpot"));
+
+            config.setSettings(invitedUserSettings);
+
+            int numberOfSites = mPrefs.getInt("NumberOfSites",0);
+
+            Integer i;
+
+            for(i=1; i<=numberOfSites; i++) {
+                Gson gson = new Gson();
+                String json = mPrefs.getString("Site"+i.toString(), "");
+                UserSites.getInstance().add(gson.fromJson(json, Site.class));
+            }
+
+        }else{
+
+        }
 
         //Crea el mainMenu
         if (MainMenuFragment.isInstanceInitialized())
@@ -339,11 +378,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 break;
             case 1:
                 setFragment(1, MainMenuFragment.class);
-                if(musicService.isPlaying()){
-                    MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
-                    MainMenuFragment.tv_song.setText(lastSong);
-                    MainMenuFragment.tv_artist.setText(lastArtist);
-                }
                 break;
             case 2:
                 setFragment(2, VozFragment.class);
@@ -420,11 +454,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     break;
                 case 1:
                     setFragment(1, MainMenuFragment.class);
-                    if(musicService.isPlaying()){
-                        MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
-                        MainMenuFragment.tv_song.setText(lastSong);
-                        MainMenuFragment.tv_artist.setText(lastArtist);
-                    }
                     break;
                 case 2:
                     setFragment(2, VozFragment.class);
@@ -480,7 +509,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             public void run() {
                 mapFragment.finishTrip();
                 locationSender.stopLocationSender();
-                if(MainMenuFragment.isInstanceInitialized())
+                if (MainMenuFragment.isInstanceInitialized())
                     MainMenuFragment.getInstance().stopThread();
                 stopServices();
             }
@@ -515,11 +544,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 break;
             case 1:
                 setFragment(1, MainMenuFragment.class);
-                if(musicService.isPlaying()){
-                    MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
-                    MainMenuFragment.tv_song.setText(lastSong);
-                    MainMenuFragment.tv_artist.setText(lastArtist);
-                }
                 break;
             case 2:
                 setFragment(2, VozFragment.class);
@@ -627,7 +651,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     }
 
     public void stopServices() {
+
         wakeLock.release();
+        STTService.getInstance().interruptThread();
         musicService.onStop();
         stopService(voiceControlServiceIntent);
         stopService(musicServiceIntent);
@@ -694,7 +720,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     newFirstCharacter = Character.toUpperCase(firstCharacter);
                     notification = notification.replaceFirst(firstCharacter.toString(), newFirstCharacter.toString());
 
-                    if(notification.startsWith("Abrir"))
+                    if(notification.startsWith("Abrir") || notification.startsWith("Buscar en YouTube"))
                         MainMenuFragment.spokenText.setText("Hablá, yo escucho...");
                     else
                         MainMenuFragment.spokenText.setText(notification);
@@ -1202,9 +1228,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        STTService.getInstance().stopListening();
-
         if (requestCode == CallDriver.REQUEST_CODE_PICK_CONTACTS && resultCode == RESULT_OK) {
+            STTService.getInstance().stopListening();
             callDriver.setUriContact(data.getData());
             callDriver.retrieveContactNumber();
 
@@ -1242,7 +1267,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
                 STTService.getInstance().setState(true);
 
-                if (restoreMusicButton){
+                if (restoreMusicButton) {
                     if (wasPlaying) {
                         MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
                         musicService.startPlaying();
@@ -1276,7 +1301,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     public int addNewSite(String address, String site){
 
-        return  MisSitiosFragment.getInstance().addNewSite(address,site);
+        return  MisSitiosFragment.getInstance().addNewSite(address, site);
 
     }
 
@@ -1337,6 +1362,14 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         MainMenuFragment.bt_next.setEnabled(false);
         MainMenuFragment.bt_previous.setEnabled(false);
 
+    }
+
+    public void refreshMusicButtons(){
+        if(musicService.isPlaying()){
+            MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
+            MainMenuFragment.tv_song.setText(lastSong);
+            MainMenuFragment.tv_artist.setText(lastArtist);
+        }
     }
 
 }

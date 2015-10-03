@@ -45,7 +45,7 @@ public class TTS {
                         public void onUtteranceCompleted(String utteranceId) {
 
                             if (utteranceId.equals("FINISH_SPEAK")) {
-                                Log.d("TTS","Salta alarma");
+                                //Log.d("TTS","Salta alarma");
                                 MainMenuActivity mainMenuActivity = ((MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity());
                                 mainMenuActivity.activate(mSpeechRecognizer, mSpeechRecognizerIntent);
 
@@ -71,7 +71,7 @@ public class TTS {
         myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_STREAM, String.valueOf(AudioManager.STREAM_ALARM));
         myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "FINISH_SPEAK");
 
-        Log.d("TTS","Reproduce texto");
+        //Log.d("TTS","Reproduce texto");
 
         // Reproduce el texto
         ttsObject.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH, myHashAlarm);

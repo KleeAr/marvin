@@ -13,7 +13,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class GuardarFotoHandler extends CommandHandler {
 
     public GuardarFotoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("guardar foto"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("guardar foto","almacenar foto","guardar"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

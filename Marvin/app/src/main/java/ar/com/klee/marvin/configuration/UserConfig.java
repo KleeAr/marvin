@@ -10,6 +10,7 @@ public class UserConfig {
     public static final int ORIENTATION_PORTRAIT = 0;
     public static final int ORIENTATION_LANDSCAPE = 1;
 
+<<<<<<< HEAD
     private static int miniumTripTime; //Guardado en horas
     private static int miniumTripDistance; //Guardado en kilómetros
     private static boolean emergencyEnable;
@@ -20,6 +21,17 @@ public class UserConfig {
     private static String appToOpenWhenStop; //Indica el nombre de la aplicación a abrir al detenerse
     private static String hotspotName = "MRVN"; //Nombre de la red creada
     private static String hotspotPassword = "marvinHotSpot"; //Contraseña de la red creada
+=======
+    //private Long miniumTripTime; //Guardado en minutos
+    //private Long miniumTripDistance; //Guardado en metros
+    //private String emergencyNumber; //Número al que enviarle un sms de emergencia
+    //private String emergencySMS; //Sms de emergencia a enviar
+    //private int orientation; //Orientación de la pantalla
+    //private boolean openAppWhenStop = false; //Indica si está activada la opción de abrir una app al detenerse
+    //private String appToOpenWhenStop; //Indica el nombre de la aplicación a abrir al detenerse
+    //private String hotspotName = "MRVN"; //Nombre de la red creada
+    //private String hotspotPassword = "marvinHotSpot"; //Contraseña de la red creada
+>>>>>>> origin/master
     private static UserSetting settings;
 
     public static UserSetting getSettings() {
@@ -29,7 +41,8 @@ public class UserConfig {
         return settings;
     }
 
-    private UserConfig(){
+    public UserConfig(){
+        instance = this;
     }
 
     public static boolean isInstanceInitialized() {

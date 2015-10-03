@@ -14,7 +14,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class CompartirSitioHandler extends CommandHandler {
 
     public CompartirSitioHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("compartir sitio"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("compartir sitio","publicar sitio"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

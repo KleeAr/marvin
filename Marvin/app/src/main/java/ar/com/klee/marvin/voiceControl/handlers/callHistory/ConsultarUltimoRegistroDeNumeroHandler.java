@@ -26,7 +26,7 @@ public class ConsultarUltimoRegistroDeNumeroHandler extends CommandHandler {
     private static final String NUMBER = "NUMBER";
 
     public ConsultarUltimoRegistroDeNumeroHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("consultar último registro del número {numero}"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("consultar último registro del número {numero}","consultar registro del {numero}","consultar último registro del {numero}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

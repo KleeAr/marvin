@@ -275,6 +275,8 @@ public class MainMenuFragment extends Fragment {
             CommandHandlerManager commandHandlerManager = CommandHandlerManager.getInstance();
             commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_MAIN,commandHandlerManager.getMainActivity());
 
+            ((MainMenuActivity)CommandHandlerManager.getInstance().getMainActivity()).refreshMusicButtons();
+
         }
         return v;
     }

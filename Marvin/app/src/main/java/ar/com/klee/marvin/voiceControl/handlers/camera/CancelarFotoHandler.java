@@ -13,7 +13,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class CancelarFotoHandler extends CommandHandler {
 
     public CancelarFotoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("cancelar foto"),textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("cancelar foto","volver","refrescar"),textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

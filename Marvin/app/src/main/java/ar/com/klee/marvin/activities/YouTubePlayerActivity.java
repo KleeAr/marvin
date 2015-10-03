@@ -14,6 +14,7 @@ import com.google.android.youtube.player.YouTubePlayerView;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.multimedia.video.YouTubeService;
 import ar.com.klee.marvin.multimedia.video.YouTubeVideo;
+import ar.com.klee.marvin.voiceControl.STTService;
 
 
 public class YouTubePlayerActivity extends YouTubeBaseActivity implements
@@ -25,6 +26,8 @@ public class YouTubePlayerActivity extends YouTubeBaseActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_you_tube_player);
+
+        STTService.getInstance().stopListening();
 
         this.video = getIntent().getExtras().getParcelable("video");
         YouTubePlayerView youTubeView = (YouTubePlayerView) findViewById(R.id.youtube_view);

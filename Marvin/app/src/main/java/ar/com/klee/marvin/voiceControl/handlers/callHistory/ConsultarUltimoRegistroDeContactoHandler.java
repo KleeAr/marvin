@@ -25,7 +25,7 @@ public class ConsultarUltimoRegistroDeContactoHandler extends CommandHandler {
     public static final String CONTACTO = "contacto";
 
     public ConsultarUltimoRegistroDeContactoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("consultar último registro de {contacto}"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("consultar último registro de {contacto}","consultar registro de {contacto}","consultar último registro del contacto {contacto}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

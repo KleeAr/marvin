@@ -38,7 +38,7 @@
                     android:orientation="vertical"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.3">
+                    android:layout_weight="0.25">
 
                     <ar.com.klee.marvin.AutoScaleTextView
                         android:layout_width="wrap_content"
@@ -48,7 +48,7 @@
                         android:textColor="#00ffff"
                         android:textSize="20dp"
                         android:textStyle="bold"
-                        android:layout_weight="0.5"
+                        android:layout_weight="0.35"
                         android:gravity="bottom|start" />
 
                     <ar.com.klee.marvin.AutoScaleTextView
@@ -59,7 +59,7 @@
                         android:textColor="#00ffff"
                         android:textSize="20dp"
                         android:textStyle="bold"
-                        android:layout_weight="0.5"
+                        android:layout_weight="0.35"
                         android:gravity="top|center|start" />
                 </LinearLayout>
 
@@ -70,9 +70,9 @@
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"
                     android:textColor="#FFFFFF"
-                    android:textSize="25dp"
+                    android:textSize="0.35dp"
                     android:text="@string/city_name_default"
-                    android:layout_weight="0.4"
+                    android:layout_weight="0.45"
                     android:gravity="center" />
 
                 <ImageView

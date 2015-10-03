@@ -16,7 +16,7 @@ public class CerrarHistorialDeViajesHandler extends CommandHandler {
 
 
     public CerrarHistorialDeViajesHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("cerrar historial de viajes"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("cerrar historial de viajes","cerrar","volver al menú principal"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

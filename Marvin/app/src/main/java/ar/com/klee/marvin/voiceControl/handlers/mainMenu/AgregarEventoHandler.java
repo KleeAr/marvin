@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -134,15 +135,15 @@ public class AgregarEventoHandler extends CommandHandler {
 
             getTextToSpeech().speakText("¿El evento es hoy?");
 
-            GregorianCalendar c = new GregorianCalendar();
+            Calendar c = Calendar.getInstance();
 
-            Log.d("CALENDAR", ((Integer)c.DAY_OF_MONTH).toString());
-            Log.d("CALENDAR",((Integer)c.MONTH).toString());
-            Log.d("CALENDAR",((Integer)c.YEAR).toString());
+            SimpleDateFormat df1 = new SimpleDateFormat("dd");
+            SimpleDateFormat df2 = new SimpleDateFormat("MM");
+            SimpleDateFormat df3 = new SimpleDateFormat("yyyy");
 
-            context.put(DAY, c.DAY_OF_MONTH);
-            context.put(MONTH, c.MONTH);
-            context.put(YEAR, c.YEAR);
+            context.put(DAY, Integer.parseInt(df1.format(c.getTime())));
+            context.put(MONTH, Integer.parseInt(df2.format(c.getTime())));
+            context.put(YEAR, Integer.parseInt(df3.format(c.getTime())));
 
             context.put(STEP, 7);
             return context;
@@ -152,12 +153,16 @@ public class AgregarEventoHandler extends CommandHandler {
 
             getTextToSpeech().speakText("¿El evento es mañana?");
 
-            GregorianCalendar c = new GregorianCalendar();
+            Calendar c = Calendar.getInstance();
             c.add(Calendar.DATE, 1);
 
-            context.put(DAY, c.DAY_OF_MONTH);
-            context.put(MONTH, c.MONTH);
-            context.put(YEAR, c.YEAR);
+            SimpleDateFormat df1 = new SimpleDateFormat("dd");
+            SimpleDateFormat df2 = new SimpleDateFormat("MM");
+            SimpleDateFormat df3 = new SimpleDateFormat("yyyy");
+
+            context.put(DAY, Integer.parseInt(df1.format(c.getTime())));
+            context.put(MONTH, Integer.parseInt(df2.format(c.getTime())));
+            context.put(YEAR, Integer.parseInt(df3.format(c.getTime())));
 
             context.put(STEP, 7);
             return context;
@@ -167,15 +172,19 @@ public class AgregarEventoHandler extends CommandHandler {
 
             getTextToSpeech().speakText("¿El evento es el lunes?");
 
-            GregorianCalendar c = new GregorianCalendar();
+            Calendar c = Calendar.getInstance();
             c.add(Calendar.DATE, 1);
 
-            while(c.DAY_OF_WEEK != c.MONDAY)
+            while(c.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY)
                 c.add(Calendar.DATE, 1);
 
-            context.put(DAY, c.DAY_OF_MONTH);
-            context.put(MONTH, c.MONTH);
-            context.put(YEAR, c.YEAR);
+            SimpleDateFormat df1 = new SimpleDateFormat("dd");
+            SimpleDateFormat df2 = new SimpleDateFormat("MM");
+            SimpleDateFormat df3 = new SimpleDateFormat("yyyy");
+
+            context.put(DAY, Integer.parseInt(df1.format(c.getTime())));
+            context.put(MONTH, Integer.parseInt(df2.format(c.getTime())));
+            context.put(YEAR, Integer.parseInt(df3.format(c.getTime())));
 
             context.put(STEP, 7);
             return context;
@@ -185,33 +194,19 @@ public class AgregarEventoHandler extends CommandHandler {
 
             getTextToSpeech().speakText("¿El evento es el martes?");
 
-            GregorianCalendar c = new GregorianCalendar();
+            Calendar c = Calendar.getInstance();
             c.add(Calendar.DATE, 1);
 
-            while(c.DAY_OF_WEEK != c.THURSDAY)
+            while(c.get(Calendar.DAY_OF_WEEK) != Calendar.TUESDAY)
                 c.add(Calendar.DATE, 1);
 
-            context.put(DAY, c.DAY_OF_MONTH);
-            context.put(MONTH, c.MONTH);
-            context.put(YEAR, c.YEAR);
+            SimpleDateFormat df1 = new SimpleDateFormat("dd");
+            SimpleDateFormat df2 = new SimpleDateFormat("MM");
+            SimpleDateFormat df3 = new SimpleDateFormat("yyyy");
 
-            context.put(STEP, 7);
-            return context;
-        }
-
-        if(input.equals("el martes") || input.equals("martes") ){
-
-            getTextToSpeech().speakText("¿El evento es el martes?");
-
-            GregorianCalendar c = new GregorianCalendar();
-            c.add(Calendar.DATE, 1);
-
-            while(c.DAY_OF_WEEK != c.TUESDAY)
-                c.add(Calendar.DATE, 1);
-
-            context.put(DAY, c.DAY_OF_MONTH);
-            context.put(MONTH, c.MONTH);
-            context.put(YEAR, c.YEAR);
+            context.put(DAY, Integer.parseInt(df1.format(c.getTime())));
+            context.put(MONTH, Integer.parseInt(df2.format(c.getTime())));
+            context.put(YEAR, Integer.parseInt(df3.format(c.getTime())));
 
             context.put(STEP, 7);
             return context;
@@ -221,15 +216,19 @@ public class AgregarEventoHandler extends CommandHandler {
 
             getTextToSpeech().speakText("¿El evento es el miércoles?");
 
-            GregorianCalendar c = new GregorianCalendar();
+            Calendar c = Calendar.getInstance();
             c.add(Calendar.DATE, 1);
 
-            while(c.DAY_OF_WEEK != c.WEDNESDAY)
+            while(c.get(Calendar.DAY_OF_WEEK) != Calendar.WEDNESDAY)
                 c.add(Calendar.DATE, 1);
 
-            context.put(DAY, c.DAY_OF_MONTH);
-            context.put(MONTH, c.MONTH);
-            context.put(YEAR, c.YEAR);
+            SimpleDateFormat df1 = new SimpleDateFormat("dd");
+            SimpleDateFormat df2 = new SimpleDateFormat("MM");
+            SimpleDateFormat df3 = new SimpleDateFormat("yyyy");
+
+            context.put(DAY, Integer.parseInt(df1.format(c.getTime())));
+            context.put(MONTH, Integer.parseInt(df2.format(c.getTime())));
+            context.put(YEAR, Integer.parseInt(df3.format(c.getTime())));
 
             context.put(STEP, 7);
             return context;
@@ -239,15 +238,19 @@ public class AgregarEventoHandler extends CommandHandler {
 
             getTextToSpeech().speakText("¿El evento es el jueves?");
 
-            GregorianCalendar c = new GregorianCalendar();
+            Calendar c = Calendar.getInstance();
             c.add(Calendar.DATE, 1);
 
-            while(c.DAY_OF_WEEK != c.THURSDAY)
+            while(c.get(Calendar.DAY_OF_WEEK) != Calendar.THURSDAY)
                 c.add(Calendar.DATE, 1);
 
-            context.put(DAY, c.DAY_OF_MONTH);
-            context.put(MONTH, c.MONTH);
-            context.put(YEAR, c.YEAR);
+            SimpleDateFormat df1 = new SimpleDateFormat("dd");
+            SimpleDateFormat df2 = new SimpleDateFormat("MM");
+            SimpleDateFormat df3 = new SimpleDateFormat("yyyy");
+
+            context.put(DAY, Integer.parseInt(df1.format(c.getTime())));
+            context.put(MONTH, Integer.parseInt(df2.format(c.getTime())));
+            context.put(YEAR, Integer.parseInt(df3.format(c.getTime())));
 
             context.put(STEP, 7);
             return context;
@@ -257,15 +260,19 @@ public class AgregarEventoHandler extends CommandHandler {
 
             getTextToSpeech().speakText("¿El evento es el viernes?");
 
-            GregorianCalendar c = new GregorianCalendar();
+            Calendar c = Calendar.getInstance();
             c.add(Calendar.DATE, 1);
 
-            while(c.DAY_OF_WEEK != c.FRIDAY)
+            while(c.get(Calendar.DAY_OF_WEEK) != Calendar.FRIDAY)
                 c.add(Calendar.DATE, 1);
 
-            context.put(DAY, c.DAY_OF_MONTH);
-            context.put(MONTH, c.MONTH);
-            context.put(YEAR, c.YEAR);
+            SimpleDateFormat df1 = new SimpleDateFormat("dd");
+            SimpleDateFormat df2 = new SimpleDateFormat("MM");
+            SimpleDateFormat df3 = new SimpleDateFormat("yyyy");
+
+            context.put(DAY, Integer.parseInt(df1.format(c.getTime())));
+            context.put(MONTH, Integer.parseInt(df2.format(c.getTime())));
+            context.put(YEAR, Integer.parseInt(df3.format(c.getTime())));
 
             context.put(STEP, 7);
             return context;
@@ -275,15 +282,19 @@ public class AgregarEventoHandler extends CommandHandler {
 
             getTextToSpeech().speakText("¿El evento es el sábado?");
 
-            GregorianCalendar c = new GregorianCalendar();
+            Calendar c = Calendar.getInstance();
             c.add(Calendar.DATE, 1);
 
-            while(c.DAY_OF_WEEK != c.SATURDAY)
+            while(c.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY)
                 c.add(Calendar.DATE, 1);
 
-            context.put(DAY, c.DAY_OF_MONTH);
-            context.put(MONTH, c.MONTH);
-            context.put(YEAR, c.YEAR);
+            SimpleDateFormat df1 = new SimpleDateFormat("dd");
+            SimpleDateFormat df2 = new SimpleDateFormat("MM");
+            SimpleDateFormat df3 = new SimpleDateFormat("yyyy");
+
+            context.put(DAY, Integer.parseInt(df1.format(c.getTime())));
+            context.put(MONTH, Integer.parseInt(df2.format(c.getTime())));
+            context.put(YEAR, Integer.parseInt(df3.format(c.getTime())));
 
             context.put(STEP, 7);
             return context;
@@ -293,15 +304,19 @@ public class AgregarEventoHandler extends CommandHandler {
 
             getTextToSpeech().speakText("¿El evento es el domingo?");
 
-            GregorianCalendar c = new GregorianCalendar();
+            Calendar c = Calendar.getInstance();
             c.add(Calendar.DATE, 1);
 
-            while(c.DAY_OF_WEEK != c.SUNDAY)
+            while(c.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY)
                 c.add(Calendar.DATE, 1);
 
-            context.put(DAY, c.DAY_OF_MONTH);
-            context.put(MONTH, c.MONTH);
-            context.put(YEAR, c.YEAR);
+            SimpleDateFormat df1 = new SimpleDateFormat("dd");
+            SimpleDateFormat df2 = new SimpleDateFormat("MM");
+            SimpleDateFormat df3 = new SimpleDateFormat("yyyy");
+
+            context.put(DAY, Integer.parseInt(df1.format(c.getTime())));
+            context.put(MONTH, Integer.parseInt(df2.format(c.getTime())));
+            context.put(YEAR, Integer.parseInt(df3.format(c.getTime())));
 
             context.put(STEP, 7);
             return context;

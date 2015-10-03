@@ -15,7 +15,7 @@ public class CerrarDondeEstacioneHandler extends CommandHandler {
 
 
     public CerrarDondeEstacioneHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("cerrar dónde estacioné"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("cerrar dónde estacioné","cerrar","volver al menú principal"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

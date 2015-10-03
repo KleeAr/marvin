@@ -79,15 +79,15 @@ public class MusicService extends Service {
             @Override
             public void run() {
                 try {
+
                     while (!isInterrupted()) {
+
                         Thread.sleep(5000);
 
                         try{
                             STTService.getInstance();
-                            Log.d("ALIVE","uno");
                         }catch (IllegalStateException e) {
                             ((MainMenuActivity)CommandHandlerManager.getInstance().getMainActivity()).initializeSTTService();
-                            Log.d("ALIVE", "dos");
                         }
 
                     }
@@ -96,6 +96,7 @@ public class MusicService extends Service {
                 }
             }
         };
+        isAlive.start();
     }
 
     public static MusicService getInstance() {

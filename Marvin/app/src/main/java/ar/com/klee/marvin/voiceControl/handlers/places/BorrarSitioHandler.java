@@ -16,7 +16,7 @@ public class BorrarSitioHandler extends CommandHandler {
     public static final String SITE = "SITE";
 
     public BorrarSitioHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("borrar sitio {sitio}"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("borrar sitio {sitio}","borrar lugar {sitio}","borrar {sitio}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

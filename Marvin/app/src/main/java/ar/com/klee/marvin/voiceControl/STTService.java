@@ -95,6 +95,8 @@ public class STTService extends Service {
             }
         };
 
+        isAlive.start();
+
         instance = this;
 
         sendResult("Started");
@@ -124,7 +126,7 @@ public class STTService extends Service {
             mSpeechRecognizer.cancel();
             sttState = false;
 
-            Log.d("STT", "stopListening");
+            //Log.d("STT", "stopListening");
         }
     }
 
@@ -137,7 +139,7 @@ public class STTService extends Service {
 
         @Override
         public void onBeginningOfSpeech(){
-            Log.d("STT", "onBeginningOfSpeech");
+            //Log.d("STT", "onBeginningOfSpeech");
         }
 
         @Override
@@ -147,14 +149,14 @@ public class STTService extends Service {
 
         @Override
         public void onEndOfSpeech(){
-            Log.d("STT", "onEndOfSpeech");
+            //Log.d("STT", "onEndOfSpeech");
         }
 
         @Override
         public void onError(final int error){
 
-            Log.d("STT", "onError");
-            Log.d("STT", getErrorText(error));
+            //Log.d("STT", "onError");
+            //Log.d("STT", getErrorText(error));
 
             if(error != SpeechRecognizer.ERROR_RECOGNIZER_BUSY) {
                 Handler handler = new Handler();
@@ -193,7 +195,7 @@ public class STTService extends Service {
 
                             }
                         }
-                        Log.d("STT", "onErrorActivate");
+                        //Log.d("STT", "onErrorActivate");
                     }
                 }, 1000);
             }else{
@@ -201,7 +203,7 @@ public class STTService extends Service {
                 handler.postDelayed(new Runnable() {
                     public void run() {
                         sttState = true;
-                        Log.d("STT", "onErrorActivate");
+                        //Log.d("STT", "onErrorActivate");
                     }
                 }, 1000);
             }
@@ -224,7 +226,7 @@ public class STTService extends Service {
         @Override
         public void onReadyForSpeech(Bundle params){
 
-            Log.d("STT", "onReadyForSpeech");
+            //Log.d("STT", "onReadyForSpeech");
 
         }
 
@@ -236,8 +238,8 @@ public class STTService extends Service {
             ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
             String text = matches.get(0);
 
-            Log.d("STT", "onResults");
-            Log.d("STT", text);
+            //Log.d("STT", "onResults");
+            //Log.d("STT", text);
 
             previousListening = isListening;
 
@@ -329,6 +331,10 @@ public class STTService extends Service {
 
         sttState = state;
 
+    }
+
+    public void interruptThread(){
+        isAlive.interrupt();
     }
 
 }
