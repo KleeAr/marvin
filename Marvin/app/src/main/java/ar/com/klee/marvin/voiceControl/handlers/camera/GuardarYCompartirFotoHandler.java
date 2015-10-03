@@ -13,7 +13,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class GuardarYCompartirFotoHandler extends CommandHandler {
 
     public GuardarYCompartirFotoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("guardar y compartir foto"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("guardar y compartir foto", "guardar y publicar foto","guardar y compartir"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){
@@ -50,7 +50,6 @@ public class GuardarYCompartirFotoHandler extends CommandHandler {
             getTextToSpeech().speakText("Guardando foto. ¿En qué red social deseás compartirla?");
             context.getObject(ACTIVITY, CameraActivity.class).save();
             context.getObject(ACTIVITY, CameraActivity.class).share();
-            getCommandHandlerManager().setIsPhotoTaken(false);
 
             context.put(STEP, 3);
             return context;

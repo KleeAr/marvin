@@ -119,15 +119,28 @@
         </LinearLayout>
     </ScrollView>
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:linksClickable="true"
-        android:text="Leer los Terminos y condiciones"
-        android:layout_gravity="center"
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/lyt_terminos"
         android:gravity="center"
-        android:id="@+id/link_term" />
+        android:layout_marginBottom="5dp">
 
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/checkBox"
+            android:checked="false" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Acepta los Terminos y Condiciones"
+            android:id="@+id/tv_terms"
+            android:textColor="#000000" />
+
+    </LinearLayout>
 
 
 </LinearLayout>

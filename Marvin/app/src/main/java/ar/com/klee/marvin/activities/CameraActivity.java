@@ -20,6 +20,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AlertDialog;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -32,6 +34,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,19 +60,17 @@ public class CameraActivity extends ActionBarActivity {
     private Camera mCamera;
     private CameraPreview mPreview;
     private PictureCallback mPicture;
-    private ImageButton capture, save, share, saveAndShare, cancel;
+    private ImageButton capture, save, share, cancel;
     private Context myContext;
     private LinearLayout cameraPreview;
     private boolean cameraFront = false;
     private byte[] datos;
     private File pictureFile;
-    private TextView buttonInfo;
 
     private String lastImagePath;
     private Bitmap lastBitMap;
-    private boolean onlyShare;
 
-    private Dialog currentDialog;
+    private boolean isSaved;
 
     private CommandHandlerManager commandHandlerManager;
 
@@ -82,78 +83,11 @@ public class CameraActivity extends ActionBarActivity {
         capture = (ImageButton)findViewById(R.id.button_capture);
         save = (ImageButton)findViewById(R.id.button_save);
         share = (ImageButton)findViewById(R.id.button_share);
-        saveAndShare = (ImageButton)findViewById(R.id.button_saveAndShare);
         cancel = (ImageButton)findViewById(R.id.button_cancel);
-        buttonInfo = (TextView)findViewById(R.id.textView_buttonInfo);
-
-        Typeface font = Typeface.createFromAsset(getAssets(), "Bariol_Bold.otf");
-        buttonInfo.setTypeface(font);
-
-        save.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()){
-                    case MotionEvent.ACTION_DOWN:
-                        buttonInfo.setText("Guardar Foto");
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        buttonInfo.setText("");
-                        save();
-                        break;
-                }
-                return true;
-            }
-        });
-
-        share.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()){
-                    case MotionEvent.ACTION_DOWN:
-                        buttonInfo.setText("Compartir Foto");
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        buttonInfo.setText("");
-                        share();
-                        break;
-                }
-                return true;
-            }
-        });
-
-        saveAndShare.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()){
-                    case MotionEvent.ACTION_DOWN:
-                        buttonInfo.setText("Guardar y Compartir Foto");
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        buttonInfo.setText("");
-                        saveAndShare();
-                        break;
-                }
-                return true;
-            }
-        });
-
-        cancel.setOnTouchListener(new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()){
-                    case MotionEvent.ACTION_DOWN:
-                        buttonInfo.setText("Cancelar Foto");
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        buttonInfo.setText("");
-                        cancel();
-                        break;
-                }
-                return true;
-            }
-        });
 
         save.setVisibility(View.INVISIBLE);
         share.setVisibility(View.INVISIBLE);
-        saveAndShare.setVisibility(View.INVISIBLE);
         cancel.setVisibility(View.INVISIBLE);
-        buttonInfo.setVisibility(View.INVISIBLE);
 
         commandHandlerManager = CommandHandlerManager.getInstance();
 
@@ -341,17 +275,22 @@ public class CameraActivity extends ActionBarActivity {
                     bm.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                     datos = stream.toByteArray();
 
+                    isSaved = false;
                     save.setVisibility(View.VISIBLE);
-                    saveAndShare.setVisibility(View.VISIBLE);
                     share.setVisibility(View.VISIBLE);
                     cancel.setVisibility(View.VISIBLE);
-                    buttonInfo.setVisibility(View.VISIBLE);
 
                 }
 
             }
         };
         return picture;
+    }
+
+    public void save(View v){
+
+        save();
+
     }
 
     public void save(){
@@ -361,24 +300,13 @@ public class CameraActivity extends ActionBarActivity {
             FileOutputStream fos = new FileOutputStream(pictureFile);
             fos.write(datos);
             fos.close();
+            isSaved = true;
             Toast toast = Toast.makeText(myContext, "Imagen guardada: " + pictureFile.getName(), Toast.LENGTH_LONG);
             toast.show();
 
         } catch (FileNotFoundException e) {
         } catch (IOException e) {
         }
-
-        onlyShare = false;
-
-        mPreview.refreshCamera(mCamera);
-        commandHandlerManager.setIsPhotoTaken(false);
-
-        save.setVisibility(View.INVISIBLE);
-        saveAndShare.setVisibility(View.INVISIBLE);
-        share.setVisibility(View.INVISIBLE);
-        cancel.setVisibility(View.INVISIBLE);
-        capture.setVisibility(View.VISIBLE);
-        buttonInfo.setVisibility(View.INVISIBLE);
 
     }
 
@@ -386,44 +314,15 @@ public class CameraActivity extends ActionBarActivity {
 
         try {
             //write the file
-            FileOutputStream fos = new FileOutputStream(pictureFile);
-            fos.write(datos);
-            fos.close();
+            if(!isSaved) {
+                FileOutputStream fos = new FileOutputStream(pictureFile);
+                fos.write(datos);
+                fos.close();
+            }
 
         } catch (FileNotFoundException e) {
         } catch (IOException e) {
         }
-
-        onlyShare = true;
-
-        openShareDialog();
-
-    }
-
-    public void saveAndShare(){
-
-        try {
-            //write the file
-            FileOutputStream fos = new FileOutputStream(pictureFile);
-            fos.write(datos);
-            fos.close();
-            Toast toast = Toast.makeText(myContext, "Imagen guardada: " + pictureFile.getName(), Toast.LENGTH_LONG);
-            toast.show();
-
-        } catch (FileNotFoundException e) {
-        } catch (IOException e) {
-        }
-
-        onlyShare = false;
-
-        openShareDialog();
-
-        save.setVisibility(View.INVISIBLE);
-        saveAndShare.setVisibility(View.INVISIBLE);
-        share.setVisibility(View.INVISIBLE);
-        cancel.setVisibility(View.INVISIBLE);
-        capture.setVisibility(View.VISIBLE);
-        buttonInfo.setVisibility(View.INVISIBLE);
 
     }
 
@@ -438,8 +337,6 @@ public class CameraActivity extends ActionBarActivity {
 
         }
 
-        currentDialog.dismiss();
-
         FacebookService facebookService = new FacebookService(this);
 
         facebookService.postImage(lastBitMap, text);
@@ -447,21 +344,11 @@ public class CameraActivity extends ActionBarActivity {
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-                if(onlyShare){
 
+                if(!isSaved) {
                     File photo = new File(lastImagePath);
                     photo.delete();
-
                 }
-
-                save.setVisibility(View.INVISIBLE);
-                saveAndShare.setVisibility(View.INVISIBLE);
-                share.setVisibility(View.INVISIBLE);
-                cancel.setVisibility(View.INVISIBLE);
-                capture.setVisibility(View.VISIBLE);
-                buttonInfo.setVisibility(View.INVISIBLE);
-
-                mPreview.refreshCamera(mCamera);
 
             }
         }, 3000);
@@ -479,8 +366,6 @@ public class CameraActivity extends ActionBarActivity {
 
         }
 
-        currentDialog.dismiss();
-
         TwitterService twitterService = TwitterService.getInstance();
 
         twitterService.postTweet(text, new File(lastImagePath));
@@ -488,21 +373,11 @@ public class CameraActivity extends ActionBarActivity {
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-                if(onlyShare){
 
+                if(!isSaved) {
                     File photo = new File(lastImagePath);
                     photo.delete();
-
                 }
-
-                save.setVisibility(View.INVISIBLE);
-                saveAndShare.setVisibility(View.INVISIBLE);
-                share.setVisibility(View.INVISIBLE);
-                cancel.setVisibility(View.INVISIBLE);
-                capture.setVisibility(View.VISIBLE);
-                buttonInfo.setVisibility(View.INVISIBLE);
-
-                mPreview.refreshCamera(mCamera);
 
             }
         }, 3000);
@@ -520,8 +395,6 @@ public class CameraActivity extends ActionBarActivity {
 
         }
 
-        currentDialog.dismiss();
-
         InstagramService instagramService = new InstagramService(this);
 
         instagramService.postImageOnInstagram("image/png", text, lastImagePath);
@@ -529,24 +402,20 @@ public class CameraActivity extends ActionBarActivity {
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-                if(onlyShare){
 
+                if(!isSaved) {
                     File photo = new File(lastImagePath);
                     photo.delete();
-
                 }
-
-                save.setVisibility(View.INVISIBLE);
-                saveAndShare.setVisibility(View.INVISIBLE);
-                share.setVisibility(View.INVISIBLE);
-                cancel.setVisibility(View.INVISIBLE);
-                capture.setVisibility(View.VISIBLE);
-                buttonInfo.setVisibility(View.INVISIBLE);
-
-                mPreview.refreshCamera(mCamera);
 
             }
         }, 3000);
+
+    }
+
+    public void cancel(View v){
+
+        cancel();
 
     }
 
@@ -557,65 +426,65 @@ public class CameraActivity extends ActionBarActivity {
         commandHandlerManager.setIsPhotoTaken(false);
 
         save.setVisibility(View.INVISIBLE);
-        saveAndShare.setVisibility(View.INVISIBLE);
         share.setVisibility(View.INVISIBLE);
         cancel.setVisibility(View.INVISIBLE);
         capture.setVisibility(View.VISIBLE);
-        buttonInfo.setVisibility(View.INVISIBLE);
 
     }
 
-    public void closeDialog(){
-        currentDialog.dismiss();
-    }
+    public  void openShareDialog(View v){
 
-    public  void openShareDialog(){
-        final Dialog customDialog = new Dialog(this);
-        customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        customDialog.setCancelable(true);
-        customDialog.setContentView(R.layout.dialog_camera);
-        customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        AlertDialog.Builder builder =new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+        builder.setCancelable(true);
+        builder.setTitle("¿Dónde querés compartir la foto?");
 
-        currentDialog = customDialog;
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
 
-        customDialog.findViewById(R.id.facebook).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view){
+        final ImageView imgMarvin = new ImageView(this);
+        imgMarvin.setImageResource(R.drawable.marvin);
+        imgMarvin.setMaxHeight(30);
+        imgMarvin.setMaxWidth(30);
+        layout.addView(imgMarvin);
+
+        builder.setView(layout);
+
+        builder.setPositiveButton("facebook", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
 
                 shareInFacebook("");
 
                 STTService.getInstance().setIsListening(false);
                 commandHandlerManager.setNullCommand();
-                customDialog.dismiss();
+                dialog.dismiss();
 
             }
         });
-        customDialog.findViewById(R.id.twitter).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view){
+        builder.setNegativeButton("twitter", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
 
                 shareInTwitter("");
 
                 STTService.getInstance().setIsListening(false);
                 commandHandlerManager.setNullCommand();
-                customDialog.dismiss();
+                dialog.dismiss();
 
             }
         });
-        customDialog.findViewById(R.id.instagram).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view){
+
+        builder.setNeutralButton("instagram", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
 
                 shareInInstagram("");
 
                 STTService.getInstance().setIsListening(false);
                 commandHandlerManager.setNullCommand();
-                customDialog.dismiss();
+                dialog.dismiss();
 
             }
         });
 
-        customDialog.setOnKeyListener(new Dialog.OnKeyListener() {
+        builder.setOnKeyListener(new Dialog.OnKeyListener() {
 
             @Override
             public boolean onKey(DialogInterface arg0, int keyCode,
@@ -623,32 +492,22 @@ public class CameraActivity extends ActionBarActivity {
 
                 if (keyCode == KeyEvent.KEYCODE_BACK) {
 
-                    if(onlyShare){
-
-                        File photo = new File(lastImagePath);
-                        photo.delete();
-
-                    }
-
-                    save.setVisibility(View.INVISIBLE);
-                    saveAndShare.setVisibility(View.INVISIBLE);
-                    share.setVisibility(View.INVISIBLE);
-                    cancel.setVisibility(View.INVISIBLE);
-                    capture.setVisibility(View.VISIBLE);
-                    buttonInfo.setVisibility(View.INVISIBLE);
-
-                    mPreview.refreshCamera(mCamera);
+                    File photo = new File(lastImagePath);
+                    photo.delete();
 
                     STTService.getInstance().setIsListening(false);
                     commandHandlerManager.setNullCommand();
-                    customDialog.dismiss();
+                   // customDialog.dismiss();
                 }
                 return true;
             }
 
         });
 
-        customDialog.show();
+
+        builder.show();
+
+
 
     }
 

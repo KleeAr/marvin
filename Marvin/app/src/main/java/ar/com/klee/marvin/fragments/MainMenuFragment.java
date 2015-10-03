@@ -24,6 +24,7 @@ import ar.com.klee.marvin.ViewPagerAdpater;
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.activities.TabMap;
 import ar.com.klee.marvin.applications.Application;
+import ar.com.klee.marvin.service.YahooWeatherService;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 
 public class MainMenuFragment extends Fragment {
@@ -43,7 +44,7 @@ public class MainMenuFragment extends Fragment {
     public static TextView spokenText;
     public static ImageView marvinImage;
 
-    private boolean isRadio;
+    public static boolean isRadio;
 
     public static TextView mainStreet;
     public static TextView speed;
@@ -91,6 +92,8 @@ public class MainMenuFragment extends Fragment {
         tv_artist = (TextView)v.findViewById(R.id.artist);
 
         spokenText = (TextView) v.findViewById(R.id.spokenText);
+
+        spokenText.setText("Hablá, yo escucho...");
 
         marvinImage = (ImageView) v.findViewById(R.id.marvinImage);
 
@@ -172,6 +175,7 @@ public class MainMenuFragment extends Fragment {
 
 
         final TextView digitalClock = (TextView)v.findViewById(R.id.digitalClock);
+
         final TextView weekDay = MainMenuActivity.weekDay;
         weekDay.setTypeface(fBariolRegular);
 
@@ -270,6 +274,8 @@ public class MainMenuFragment extends Fragment {
 
             CommandHandlerManager commandHandlerManager = CommandHandlerManager.getInstance();
             commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_MAIN,commandHandlerManager.getMainActivity());
+
+            ((MainMenuActivity)CommandHandlerManager.getInstance().getMainActivity()).refreshMusicButtons();
 
         }
         return v;

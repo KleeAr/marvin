@@ -129,7 +129,7 @@ public class MisSitiosFragment extends Fragment {
             public void onClick(View view) {
 
                 final AlertDialog.Builder builder =new AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
-                builder.setCancelable(false);
+                builder.setCancelable(true);
                 builder.setTitle("Nuevo Sitio Favorito");
 
                 Context context = getActivity();

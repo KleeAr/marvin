@@ -51,7 +51,9 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_gravity="end|bottom"
-        android:src="@drawable/abc_ic_menu_share_mtrl_alpha"/>
+        android:src="@drawable/abc_ic_menu_share_mtrl_alpha"
+        android:nestedScrollingEnabled="false"
+        android:onClick="shareSite" />
 
 
 </RelativeLayout>

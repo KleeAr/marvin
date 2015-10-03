@@ -58,6 +58,10 @@ public class PerfilFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        CommandHandlerManager commandHandlerManager = CommandHandlerManager.getInstance();
+
+        commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_PROFILE,commandHandlerManager.getMainActivity());
+
         activity = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
 
         initializeFacebookSdk();

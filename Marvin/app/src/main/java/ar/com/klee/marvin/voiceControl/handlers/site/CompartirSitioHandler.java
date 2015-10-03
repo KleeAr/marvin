@@ -14,7 +14,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class CompartirSitioHandler extends CommandHandler {
 
     public CompartirSitioHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("compartir sitio"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("compartir sitio","publicar sitio"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){
@@ -45,7 +45,6 @@ public class CompartirSitioHandler extends CommandHandler {
     public CommandHandlerContext stepOne(CommandHandlerContext context){
 
         getTextToSpeech().speakText("¿En qué red social deseás compartirlo?");
-        context.getObject(ACTIVITY, SiteActivity.class).openShareDialog();
         getCommandHandlerManager().setIsPhotoTaken(false);
 
         context.put(STEP, 3);

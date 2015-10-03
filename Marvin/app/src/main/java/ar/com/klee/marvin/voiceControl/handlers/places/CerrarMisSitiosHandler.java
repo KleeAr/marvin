@@ -15,7 +15,7 @@ public class CerrarMisSitiosHandler extends CommandHandler {
 
 
     public CerrarMisSitiosHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("cerrar mis sitios"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("cerrar mis sitios","cerrar","volver al menú principal"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

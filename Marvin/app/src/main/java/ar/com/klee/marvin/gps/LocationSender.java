@@ -1,6 +1,9 @@
 package ar.com.klee.marvin.gps;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -36,9 +39,19 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import ar.com.klee.marvin.Command;
+import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.activities.CallHistoryActivity;
+import ar.com.klee.marvin.activities.CameraActivity;
 import ar.com.klee.marvin.activities.MainMenuActivity;
+import ar.com.klee.marvin.activities.MapActivity;
+import ar.com.klee.marvin.activities.SMSInboxActivity;
 import ar.com.klee.marvin.activities.TabMap;
+import ar.com.klee.marvin.client.model.User;
+import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.fragments.MainMenuFragment;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
+import ar.com.klee.marvin.voiceControl.STTService;
 
 public class LocationSender {
 
@@ -103,10 +116,8 @@ public class LocationSender {
                             results);
                     double polylineLength = results[0];
 
-                    if(polylineLength > 100)
+                    if(polylineLength > 100.0)
                         return;
-
-                    Log.d("GPS",((Double)polylineLength).toString());
 
                     polylineLength = polylineLength / 1000;
 
@@ -125,6 +136,19 @@ public class LocationSender {
                 handler.postDelayed(new Runnable() {
                     public void run() {
                         setSpeed(velocity);
+                        if(false && velocity < 1){
+
+                            String app = UserConfig.getSettings().getAppToOpenWhenStop();
+                            CommandHandlerManager commandHandlerManager = CommandHandlerManager.getInstance();
+
+                            if(!STTService.getInstance().getIsListening() &&
+                                    commandHandlerManager.getCurrentActivity() == CommandHandlerManager.ACTIVITY_MAIN &&
+                                    commandHandlerManager.getCommandHandler() == null) {
+
+                                openApp(app);
+
+                            }
+                        }
                         updateScreen();
 
                         if(!town.equals("Buscando ciudad...")) {
@@ -198,7 +222,11 @@ public class LocationSender {
 
     public void updateScreen(){
         if(!town.equals("Buscando ciudad...")) {
-            MainMenuActivity.cityText.setText(getTown() + ", " + getState());
+            boolean tabletSize = CommandHandlerManager.getInstance().getMainActivity().getResources().getBoolean(R.bool.isTablet);
+            if(!tabletSize)
+                MainMenuActivity.cityText.setText(getTown());
+            else
+                MainMenuActivity.cityText.setText(getTown()+", "+getState());
             MainMenuFragment.mainStreet.setText(getAddress());
             MainMenuFragment.speed.setText(getSpeed());
         }
@@ -414,5 +442,65 @@ public class LocationSender {
     public void stopLocationSender(){
         mlocManager.removeUpdates(locationListener);
         mlocManager = null;
+    }
+
+    public void openApp(String app){
+
+        CommandHandlerManager commandHandlerManager = CommandHandlerManager.getInstance();
+
+        Context context = CommandHandlerManager.getInstance().getContext();
+
+        if(app.equals("cámara")) {
+            Intent intent = new Intent(context, CameraActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+            return;
+        }else if(app.equals("historial de sms")) {
+            Intent intent = new Intent(context, SMSInboxActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+            return;
+        }else if(app.equals("historial de llamadas")) {
+            Intent intent = new Intent(context, CallHistoryActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+            return;
+        }else if(app.equals("mapa")) {
+            Intent intent = new Intent(context, MapActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+            return;
+        }else if(app.equals("mis sitios")) {
+            ((MainMenuActivity)commandHandlerManager.getMainActivity()).previousMenus.push(1);
+            ((MainMenuActivity)commandHandlerManager.getMainActivity()).setFragment(5);
+            return;
+        }else if(app.equals("historial de viajes")) {
+            ((MainMenuActivity)commandHandlerManager.getMainActivity()).previousMenus.push(1);
+            ((MainMenuActivity)commandHandlerManager.getMainActivity()).setFragment(4);
+            return;
+        }else if(app.equals("dónde estacioné")) {
+            ((MainMenuActivity)commandHandlerManager.getMainActivity()).previousMenus.push(1);
+            ((MainMenuActivity)commandHandlerManager.getMainActivity()).setFragment(6);
+            return;
+        }else if(app.equals("marvin")) {
+            return;
+        }else{
+            final PackageManager pm = CommandHandlerManager.getInstance().getContext().getPackageManager();
+            //get a list of installed apps.
+            List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+
+            int i = 0;
+
+            while(i < packages.size()) {
+                String appLabel = pm.getApplicationLabel(packages.get(i)).toString();
+
+                if(appLabel.toLowerCase().equals(app)){
+                    commandHandlerManager.getMainActivity().startActivity(pm.getLaunchIntentForPackage(packages.get(i).packageName));
+                    return;
+                }
+
+                i++;
+            }
+        }
     }
 }

@@ -15,7 +15,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class CompartirFotoHandler extends CommandHandler {
 
     public CompartirFotoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("compartir foto"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("compartir foto","publicar foto","compartir"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){
@@ -48,8 +48,6 @@ public class CompartirFotoHandler extends CommandHandler {
         if(getCommandHandlerManager().getIsPhotoTaken()) {
 
             getTextToSpeech().speakText("¿En qué red social deseás compartirla?");
-            context.getObject(ACTIVITY, CameraActivity.class).share();
-            getCommandHandlerManager().setIsPhotoTaken(false);
 
             context.put(STEP, 3);
             return context;

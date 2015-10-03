@@ -15,7 +15,7 @@ public class CerrarSitioHandler extends CommandHandler {
 
 
     public CerrarSitioHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("cerrar sitio"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("cerrar sitio","cerrar","volver"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){
@@ -24,7 +24,7 @@ public class CerrarSitioHandler extends CommandHandler {
 
         getTextToSpeech().speakText("Cerrando sitio");
 
-        getCommandHandlerManager().defineActivity(CommandHandlerManager.ACTIVITY_MAIN, getCommandHandlerManager().getMainActivity());
+        getCommandHandlerManager().defineActivity(CommandHandlerManager.ACTIVITY_PLACES, getCommandHandlerManager().getMainActivity());
 
         siteActivity.finish();
 

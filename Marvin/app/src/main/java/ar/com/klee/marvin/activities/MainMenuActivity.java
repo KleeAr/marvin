@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -31,14 +32,19 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,17 +56,20 @@ import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.call.CallDriver;
 import ar.com.klee.marvin.client.model.UserSetting;
 import ar.com.klee.marvin.configuration.UserConfig;
+import ar.com.klee.marvin.configuration.UserSites;
 import ar.com.klee.marvin.data.Channel;
 import ar.com.klee.marvin.data.Item;
-import ar.com.klee.marvin.fragments.ComandosDeVozFragment;
-import ar.com.klee.marvin.fragments.ConfigureAppFragment;
+import ar.com.klee.marvin.fragments.ConfigureFragment;
 import ar.com.klee.marvin.fragments.DondeEstacioneFragment;
+import ar.com.klee.marvin.fragments.HelpFragment;
 import ar.com.klee.marvin.fragments.MainMenuFragment;
 import ar.com.klee.marvin.fragments.MisSitiosFragment;
 import ar.com.klee.marvin.fragments.MisViajesFragment;
 import ar.com.klee.marvin.fragments.PerfilFragment;
+import ar.com.klee.marvin.fragments.VozFragment;
 import ar.com.klee.marvin.gps.LocationSender;
 import ar.com.klee.marvin.gps.MapFragment;
+import ar.com.klee.marvin.gps.Site;
 import ar.com.klee.marvin.multimedia.music.MusicService;
 import ar.com.klee.marvin.multimedia.video.YouTubeVideo;
 import ar.com.klee.marvin.service.WeatherServiceCallback;
@@ -83,9 +92,10 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     private ActionBarDrawerToggle mDrawerToggle;
     private ListView mLvDrawerMenu;
     private DrawerMenuAdapter mDrawerMenuAdapter;
-    private Toolbar toolbar;
+    public static Toolbar toolbar;
 
     public static TextView cityText;
+    public static TextView titleText;
 
     private ImageView weatherIconImageView;
     private TextView temperatureTextView;
@@ -121,6 +131,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     private boolean wasBackPressed = false;
 
+    private String lastSong;
+    private String lastArtist;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,7 +147,41 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         initializeMusicService();
         initializeSTTService();
 
-        UserSetting configuration = UserConfig.getSettings();
+        UserConfig config = new UserConfig();
+        UserSites sites = new UserSites();
+
+        boolean invitado = true;
+        if(invitado){
+
+            SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
+
+            UserSetting invitedUserSettings = new UserSetting();
+
+            invitedUserSettings.setMiniumTripTime(mPrefs.getLong("miniumTripTime", 30));
+            invitedUserSettings.setMiniumTripDistance(mPrefs.getLong("miniumTripDistance", 100));
+            invitedUserSettings.setEmergencyNumber(mPrefs.getString("emergencyNumber", ""));
+            invitedUserSettings.setEmergencySMS(mPrefs.getString("emergencySMS", ""));
+            invitedUserSettings.setOrientation(mPrefs.getInt("orientation", 0));
+            invitedUserSettings.setOpenAppWhenStop(mPrefs.getBoolean("openAppWhenStop", false));
+            invitedUserSettings.setAppToOpenWhenStop(mPrefs.getString("appToOpenWhenStop", ""));
+            invitedUserSettings.setHotspotName(mPrefs.getString("hotspotPassword", "marvinHotSpot"));
+            invitedUserSettings.setHotspotPassword(mPrefs.getString("hotspotPassword", "marvinHotSpot"));
+
+            config.setSettings(invitedUserSettings);
+
+            int numberOfSites = mPrefs.getInt("NumberOfSites",0);
+
+            Integer i;
+
+            for(i=1; i<=numberOfSites; i++) {
+                Gson gson = new Gson();
+                String json = mPrefs.getString("Site"+i.toString(), "");
+                UserSites.getInstance().add(gson.fromJson(json, Site.class));
+            }
+
+        }else{
+
+        }
 
         //Crea el mainMenu
         if (MainMenuFragment.isInstanceInitialized())
@@ -166,6 +213,12 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         }
 
         cityText = (TextView) findViewById(R.id.cityText);
+
+        Typeface fBariolBold = Typeface.createFromAsset(getAssets(), "Bariol_Bold.otf");
+
+        titleText = (TextView) findViewById(R.id.activityTitle);
+        titleText.setVisibility(TextView.INVISIBLE);
+        titleText.setTypeface(fBariolBold);
 
         //definimos los tipos de letra
         Typeface fBariolRegular = Typeface.createFromAsset(getAssets(), "Bariol_Regular.otf");
@@ -267,6 +320,12 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         return actualFragmentPosition;
     }
 
+    //Permite editar el titulo de la barra
+    public void setActionBarTitle(String title) {
+        getSupportActionBar().setTitle(title);
+    }
+
+
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -282,6 +341,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         }
     }
 
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
@@ -295,31 +355,53 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         actualFragmentPosition = position;
 
+        if(position == 1){
+            titleText.setVisibility(TextView.INVISIBLE);
+            weekDay.setVisibility(TextView.VISIBLE);
+            dateText.setVisibility(TextView.VISIBLE);
+            cityText.setVisibility(TextView.VISIBLE);
+            temperatureTextView.setVisibility(TextView.VISIBLE);
+            weatherIconImageView.setVisibility(ImageView.VISIBLE);
+        }else{
+            titleText.setVisibility(TextView.VISIBLE);
+            weekDay.setVisibility(TextView.INVISIBLE);
+            dateText.setVisibility(TextView.INVISIBLE);
+            cityText.setVisibility(TextView.INVISIBLE);
+            temperatureTextView.setVisibility(TextView.INVISIBLE);
+            weatherIconImageView.setVisibility(ImageView.INVISIBLE);
+        }
+
         switch (position) {
             case 0:
                 setFragment(0, PerfilFragment.class);
+                titleText.setText("Perfil");
                 break;
             case 1:
                 setFragment(1, MainMenuFragment.class);
                 break;
             case 2:
-                Toast.makeText(getApplicationContext(), "posicion " + position, Toast.LENGTH_SHORT).show();
-                //setFragment(2, ComandosDeVoz.class);
+                setFragment(2, VozFragment.class);
+                titleText.setText("Comandos de Voz");
                 break;
             case 4:
                 setFragment(4, MisViajesFragment.class);
+                titleText.setText("Historial de Viajes");
                 break;
             case 5:
                 setFragment(5, MisSitiosFragment.class);
+                titleText.setText("Mis Sitios");
                 break;
             case 6:
                 setFragment(6, DondeEstacioneFragment.class);
+                titleText.setText("¿Dónde Estacioné?");
                 break;
             case 8:
-                setFragment(8, ConfigureAppFragment.class);
+                setFragment(8, ConfigureFragment.class);
+                titleText.setText("Ajustes");
                 break;
             case 9:
-                Toast.makeText(getApplicationContext(), "posicion 9" + position, Toast.LENGTH_SHORT).show();
+                setFragment(9, HelpFragment.class);
+                titleText.setText("Ayuda");
                 break;
             case 10:
                 MainMenuActivity.mapFragment.finishTrip();
@@ -334,7 +416,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 break;
         }
 
-        // Setting it as the Toolbar for the activity
         setSupportActionBar(toolbar);
     }
 
@@ -350,30 +431,53 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
             actualFragmentPosition = position;
 
+            if(position == 1){
+                titleText.setVisibility(TextView.INVISIBLE);
+                weekDay.setVisibility(TextView.VISIBLE);
+                dateText.setVisibility(TextView.VISIBLE);
+                cityText.setVisibility(TextView.VISIBLE);
+                temperatureTextView.setVisibility(TextView.VISIBLE);
+                weatherIconImageView.setVisibility(ImageView.VISIBLE);
+            }else{
+                titleText.setVisibility(TextView.VISIBLE);
+                weekDay.setVisibility(TextView.INVISIBLE);
+                dateText.setVisibility(TextView.INVISIBLE);
+                cityText.setVisibility(TextView.INVISIBLE);
+                temperatureTextView.setVisibility(TextView.INVISIBLE);
+                weatherIconImageView.setVisibility(ImageView.INVISIBLE);
+            }
+
             switch (position) {
                 case 0:
                     setFragment(0, PerfilFragment.class);
+                    titleText.setText("Perfil");
                     break;
                 case 1:
                     setFragment(1, MainMenuFragment.class);
                     break;
                 case 2:
-                    setFragment(2, ComandosDeVozFragment.class);
+                    setFragment(2, VozFragment.class);
+                    titleText.setText("Comandos de Voz");
                     break;
                 case 4:
                     setFragment(4, MisViajesFragment.class);
+                    titleText.setText("Historial de Viajes");
                     break;
                 case 5:
                     setFragment(5, MisSitiosFragment.class);
+                    titleText.setText("Mis Sitios");
                     break;
                 case 6:
                     setFragment(6, DondeEstacioneFragment.class);
+                    titleText.setText("¿Dónde Estacioné?");
                     break;
                 case 8:
-                    setFragment(8, ConfigureAppFragment.class);
+                    setFragment(8, ConfigureFragment.class);
+                    titleText.setText("Ajustes");
                     break;
                 case 9:
-                    Toast.makeText(getApplicationContext(), "posicion 9" + position, Toast.LENGTH_SHORT).show();
+                    setFragment(9, HelpFragment.class);
+                    titleText.setText("Ayuda");
                     break;
                 case 10:
                     MainMenuActivity.mapFragment.finishTrip();
@@ -405,7 +509,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             public void run() {
                 mapFragment.finishTrip();
                 locationSender.stopLocationSender();
-                if(MainMenuFragment.isInstanceInitialized())
+                if (MainMenuFragment.isInstanceInitialized())
                     MainMenuFragment.getInstance().stopThread();
                 stopServices();
             }
@@ -417,31 +521,53 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         actualFragmentPosition = position;
 
+        if(position == 1){
+            titleText.setVisibility(TextView.INVISIBLE);
+            weekDay.setVisibility(TextView.VISIBLE);
+            dateText.setVisibility(TextView.VISIBLE);
+            cityText.setVisibility(TextView.VISIBLE);
+            temperatureTextView.setVisibility(TextView.VISIBLE);
+            weatherIconImageView.setVisibility(ImageView.VISIBLE);
+        }else{
+            titleText.setVisibility(TextView.VISIBLE);
+            weekDay.setVisibility(TextView.INVISIBLE);
+            dateText.setVisibility(TextView.INVISIBLE);
+            cityText.setVisibility(TextView.INVISIBLE);
+            temperatureTextView.setVisibility(TextView.INVISIBLE);
+            weatherIconImageView.setVisibility(ImageView.INVISIBLE);
+        }
+
         switch (position) {
             case 0:
                 setFragment(0, PerfilFragment.class);
+                titleText.setText("Perfil");
                 break;
             case 1:
                 setFragment(1, MainMenuFragment.class);
                 break;
             case 2:
-                Toast.makeText(getApplicationContext(), "posicion " + position, Toast.LENGTH_SHORT).show();
-                //setFragment(2, ComandosDeVoz.class);
+                setFragment(2, VozFragment.class);
+                titleText.setText("Comandos de Voz");
                 break;
             case 4:
                 setFragment(4, MisViajesFragment.class);
+                titleText.setText("Historial de Viajes");
                 break;
             case 5:
                 setFragment(5, MisSitiosFragment.class);
+                titleText.setText("Mis Sitios");
                 break;
             case 6:
                 setFragment(6, DondeEstacioneFragment.class);
+                titleText.setText("¿Dónde Estacioné?");
                 break;
             case 8:
-                setFragment(8, ConfigureAppFragment.class);
+                setFragment(8, ConfigureFragment.class);
+                titleText.setText("Ajustes");
                 break;
             case 9:
-                Toast.makeText(getApplicationContext(), "posicion 9" + position, Toast.LENGTH_SHORT).show();
+                setFragment(9, HelpFragment.class);
+                titleText.setText("Ayuda");
                 break;
             case 10:
                 MainMenuActivity.mapFragment.finishTrip();
@@ -525,7 +651,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     }
 
     public void stopServices() {
+
         wakeLock.release();
+        STTService.getInstance().interruptThread();
         musicService.onStop();
         stopService(voiceControlServiceIntent);
         stopService(musicServiceIntent);
@@ -592,7 +720,10 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     newFirstCharacter = Character.toUpperCase(firstCharacter);
                     notification = notification.replaceFirst(firstCharacter.toString(), newFirstCharacter.toString());
 
-                    MainMenuFragment.spokenText.setText(notification);
+                    if(notification.startsWith("Abrir") || notification.startsWith("Buscar en YouTube"))
+                        MainMenuFragment.spokenText.setText("Hablá, yo escucho...");
+                    else
+                        MainMenuFragment.spokenText.setText(notification);
 
                     restoreMusicButton = true;
 
@@ -653,15 +784,14 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 if (notification.startsWith("SONG_TITLE ")) {
 
                     notification = notification.replace("SONG_TITLE ", "");
-                    Log.d("TITLE", notification);
                     MainMenuFragment.tv_song.setText(notification);
-
+                    lastSong = notification;
 
                 } else if (notification.startsWith("SONG_ARTIST ")) {
 
                     notification = notification.replace("SONG_ARTIST ", "");
-                    Log.d("ARTIST", notification);
                     MainMenuFragment.tv_artist.setText(notification);
+                    lastArtist = notification;
 
                 }
             }
@@ -698,13 +828,16 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     public void radioMusic(View view){
 
-        if(musicService.getIsRadio()){
+        if(!musicService.isPlaying())
+            MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_play);
+        else
             MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
+
+        if(musicService.getIsRadio()){
             MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_audiotrack_white_48dp);
             MainMenuFragment.getInstance().setIsRadio(false);
             musicService.setIsRadio(false);
         }else{
-            MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_play);
             MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_radio_white_48dp);
             MainMenuFragment.getInstance().setIsRadio(true);
             musicService.setIsRadio(true);
@@ -714,7 +847,11 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     public void radioMusic(){
 
-        MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
+        if(!musicService.isPlaying())
+            MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_play);
+        else
+            MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
+
         if(musicService.getIsRadio()){
             MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_audiotrack_white_48dp);
             MainMenuFragment.getInstance().setIsRadio(false);
@@ -1091,9 +1228,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        STTService.getInstance().stopListening();
-
         if (requestCode == CallDriver.REQUEST_CODE_PICK_CONTACTS && resultCode == RESULT_OK) {
+            STTService.getInstance().stopListening();
             callDriver.setUriContact(data.getData());
             callDriver.retrieveContactNumber();
 
@@ -1131,7 +1267,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
                 STTService.getInstance().setState(true);
 
-                if (restoreMusicButton){
+                if (restoreMusicButton) {
                     if (wasPlaying) {
                         MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
                         musicService.startPlaying();
@@ -1165,7 +1301,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     public int addNewSite(String address, String site){
 
-        return  MisSitiosFragment.getInstance().addNewSite(address,site);
+        return  MisSitiosFragment.getInstance().addNewSite(address, site);
 
     }
 
@@ -1226,6 +1362,14 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         MainMenuFragment.bt_next.setEnabled(false);
         MainMenuFragment.bt_previous.setEnabled(false);
 
+    }
+
+    public void refreshMusicButtons(){
+        if(musicService.isPlaying()){
+            MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
+            MainMenuFragment.tv_song.setText(lastSong);
+            MainMenuFragment.tv_artist.setText(lastArtist);
+        }
     }
 
 }

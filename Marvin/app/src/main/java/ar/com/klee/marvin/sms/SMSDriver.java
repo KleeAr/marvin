@@ -1,6 +1,5 @@
 package ar.com.klee.marvin.sms;
 
-
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;

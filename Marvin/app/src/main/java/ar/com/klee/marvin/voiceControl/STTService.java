@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.fragments.MainMenuFragment;
+import ar.com.klee.marvin.multimedia.music.MusicService;
 import ar.com.klee.marvin.sms.SMSDriver;
 import ar.com.klee.marvin.social.NotificationService;
 import ar.com.klee.marvin.voiceControl.handlers.LeerWhatsappHandler;
@@ -49,6 +50,7 @@ public class STTService extends Service {
     public static final String COPA_RESULT = "com.controlj.copame.backend.COPAService.REQUEST_PROCESSED";
     public static final String COPA_MESSAGE = "com.controlj.copame.backend.COPAService.COPA_MSG";
 
+    private Thread isAlive;
 
     @Override
     public void onCreate(){
@@ -72,6 +74,29 @@ public class STTService extends Service {
         sttState = true;
         mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
 
+        isAlive = new Thread() {
+
+            @Override
+            public void run() {
+                try {
+                    while (!isInterrupted()) {
+                        Thread.sleep(5000);
+
+                        try{
+                            MusicService.getInstance();
+                        }catch (IllegalStateException e) {
+                            ((MainMenuActivity)CommandHandlerManager.getInstance().getMainActivity()).initializeMusicService();
+                        }
+
+                    }
+                } catch (InterruptedException e) {
+                } catch (NullPointerException e) {
+                }
+            }
+        };
+
+        isAlive.start();
+
         instance = this;
 
         sendResult("Started");
@@ -87,6 +112,8 @@ public class STTService extends Service {
     @Override
     public void onDestroy(){
         super.onDestroy();
+
+        instance = null;
 
         if (mSpeechRecognizer != null)
             mSpeechRecognizer.destroy();
@@ -304,6 +331,10 @@ public class STTService extends Service {
 
         sttState = state;
 
+    }
+
+    public void interruptThread(){
+        isAlive.interrupt();
     }
 
 }

@@ -6,17 +6,18 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import ar.com.klee.marvin.R;
-import butterknife.ButterKnife;
 import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class SignupActivity extends AppCompatActivity {
     private static final String TAG = "SignupActivity";
@@ -33,7 +34,13 @@ public class SignupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_signup);
         ButterKnife.bind(this);
 
+        signupbutton.setEnabled(false);
+
         Typeface typeface = Typeface.createFromAsset(getAssets(), "Wisdom Script AJ.otf");
+
+        CheckBox checkBox = (CheckBox)findViewById(R.id.checkBox);
+        TextView tv_terms = (TextView)findViewById(R.id.tv_terms);
+
 
         TextView text_app = (TextView) findViewById(R.id.textView);
         text_app.setTypeface(typeface);
@@ -45,16 +52,33 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
 
-        TextView t2 = (TextView) findViewById(R.id.link_term);
-        t2.setOnClickListener(new View.OnClickListener() {
-
+        tv_terms.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),"TERMINOS", Toast.LENGTH_SHORT).show();
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), ConfTermsActivity.class);
+                startActivity(intent);
             }
         });
 
+         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    signupbutton.setEnabled(true);
+                }
+                else {
+                    signupbutton.setEnabled(false);
+                }
+            }
+        });
+
+
+
+
     }
+
+
+
+
 
     public void signup() {
         Log.d(TAG, "Signup");

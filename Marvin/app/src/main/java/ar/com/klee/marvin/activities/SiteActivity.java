@@ -11,11 +11,16 @@ import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AlertDialog;
+import android.text.InputFilter;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 
@@ -35,7 +40,6 @@ public class SiteActivity extends ActionBarActivity {
     private Site site;
 
     private CommandHandlerManager commandHandlerManager;
-    private Dialog currentDialog;
     private String mapPath = "/sdcard/MARVIN/site.png";
     private Bitmap mapBitmap;
 
@@ -89,54 +93,48 @@ public class SiteActivity extends ActionBarActivity {
         transaction.commit();
     }
 
-    public void share(View v){
+    public void shareSite(View v){
         openShareDialog();
     }
 
     public void openShareDialog(){
-        final Dialog customDialog = new Dialog(this);
-        customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        customDialog.setCancelable(true);
-        customDialog.setContentView(R.layout.dialog_site);
-        customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        currentDialog = customDialog;
+        final AlertDialog.Builder builderDialog =new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+        builderDialog.setCancelable(true);
+        builderDialog.setTitle("¿Dónde querés compartir el sitio?");
+        builderDialog.setIcon(R.drawable.marvin);
 
-        customDialog.findViewById(R.id.facebook).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view){
+
+        builderDialog.setPositiveButton("facebook", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
 
                 shareInFacebook("");
-
                 STTService.getInstance().setIsListening(false);
                 commandHandlerManager.setNullCommand();
-
+                dialog.dismiss();
             }
         });
-        customDialog.findViewById(R.id.twitter).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view){
+        builderDialog.setNegativeButton("twitter", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
 
                 shareInTwitter("");
-
                 STTService.getInstance().setIsListening(false);
                 commandHandlerManager.setNullCommand();
-
+                dialog.dismiss();
             }
         });
-        customDialog.findViewById(R.id.instagram).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view){
+
+        builderDialog.setNeutralButton("instagram", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
 
                 shareInInstagram("");
-
                 STTService.getInstance().setIsListening(false);
                 commandHandlerManager.setNullCommand();
-
+                dialog.dismiss();
             }
         });
 
-        customDialog.setOnKeyListener(new Dialog.OnKeyListener() {
+        builderDialog.setOnKeyListener(new Dialog.OnKeyListener() {
 
             @Override
             public boolean onKey(DialogInterface arg0, int keyCode,
@@ -146,14 +144,14 @@ public class SiteActivity extends ActionBarActivity {
 
                     STTService.getInstance().setIsListening(false);
                     commandHandlerManager.setNullCommand();
-                    customDialog.dismiss();
+                    //dialog.dismiss();
                 }
                 return true;
             }
 
         });
+        builderDialog.show();
 
-        customDialog.show();
 
     }
 
@@ -167,10 +165,6 @@ public class SiteActivity extends ActionBarActivity {
             text = text.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
 
         }
-
-        currentDialog.dismiss();
-
-        fragment.captureScreen();
 
         FacebookService facebookService = new FacebookService(this);
 
@@ -198,8 +192,6 @@ public class SiteActivity extends ActionBarActivity {
         }
 
         final String textToPublish = text;
-
-        currentDialog.dismiss();
 
         fragment.captureScreen();
 
@@ -234,8 +226,6 @@ public class SiteActivity extends ActionBarActivity {
         }
 
         final String textToPublish = text;
-
-        currentDialog.dismiss();
 
         fragment.captureScreen();
 

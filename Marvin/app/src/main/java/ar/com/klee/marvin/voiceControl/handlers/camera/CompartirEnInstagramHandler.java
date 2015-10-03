@@ -55,6 +55,7 @@ public class CompartirEnInstagramHandler extends CommandHandler {
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
         List<String> hashtags = new ArrayList<>();
         commandHandlerContext.put(INSTAGRAM_HASHTAG, hashtags);
+        commandHandlerContext.put(SET_MESSAGE, false);
     }
 
     //PRONUNCIA MENSAJE
@@ -80,7 +81,6 @@ public class CompartirEnInstagramHandler extends CommandHandler {
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando publicación");
-            context.getObject(ACTIVITY, CameraActivity.class).closeDialog();
             context.put(STEP, 0);
             return context;
         }
@@ -109,15 +109,35 @@ public class CompartirEnInstagramHandler extends CommandHandler {
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando publicación");
-            context.getObject(ACTIVITY, CameraActivity.class).closeDialog();
             context.put(STEP, 0);
             return context;
         }
 
         if(input.equals("no")){
             getTextToSpeech().speakText("Publicando la foto en Instagram");
-            CameraActivity cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
-            cameraActivity.shareInInstagram(context.getString(MESSAGE));
+
+            CameraActivity cameraActivity = null;
+            SiteActivity siteActivity = null;
+            TripActivity tripActivity = null;
+
+            if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
+                cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
+            }if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
+                siteActivity = context.getObject(ACTIVITY, SiteActivity.class);
+            }else{
+                tripActivity = context.getObject(ACTIVITY, TripActivity.class);
+            }
+
+            String textToPublish = context.getString(MESSAGE);
+
+            if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
+                cameraActivity.shareInInstagram(textToPublish);
+            }else if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
+                siteActivity.shareInInstagram(textToPublish);
+            }else{
+                tripActivity.shareInInstagram(textToPublish);
+            }
+
             context.put(STEP, 0);
             return context;
         }
@@ -152,7 +172,6 @@ public class CompartirEnInstagramHandler extends CommandHandler {
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando publicación");
-            context.getObject(ACTIVITY, CameraActivity.class).closeDialog();
             context.put(STEP, 0);
             return context;
         }
@@ -182,7 +201,6 @@ public class CompartirEnInstagramHandler extends CommandHandler {
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando publicación");
-            context.getObject(ACTIVITY, CameraActivity.class).closeDialog();
             context.put(STEP, 0);
             return context;
         }
@@ -196,7 +214,7 @@ public class CompartirEnInstagramHandler extends CommandHandler {
 
             if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
                 cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
-            }if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
+            }else if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
                 siteActivity = context.getObject(ACTIVITY, SiteActivity.class);
             }else{
                 tripActivity = context.getObject(ACTIVITY, TripActivity.class);

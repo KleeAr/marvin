@@ -26,7 +26,7 @@ import ar.com.klee.marvin.gps.Site;
 
 public class ApplicationList extends Activity {
 
-
+    private List<Application> appsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +45,7 @@ public class ApplicationList extends Activity {
     public void getInstalledAppList(final int buttonClick) {
         final Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-        final List<Application> appsList = new ArrayList<>();
+        appsList  = new ArrayList<>();
         final List<ResolveInfo> pkgAppsList = getPackageManager().queryIntentActivities(mainIntent, 0);
 
         boolean setContacts = false;

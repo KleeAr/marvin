@@ -118,6 +118,15 @@ public class CommandHandlerManager {
     private int errorCounter = 0;
     private CommandHandler currentCommandHandler;
     private SpeechRecognizer mSpeechRecognizer;
+
+    public SpeechRecognizer getmSpeechRecognizer() {
+        return mSpeechRecognizer;
+    }
+
+    public Intent getmSpeechRecognizerIntent() {
+        return mSpeechRecognizerIntent;
+    }
+
     private Intent mSpeechRecognizerIntent;
 
     private TTS textToSpeech;
@@ -160,6 +169,7 @@ public class CommandHandlerManager {
             throw new IllegalStateException("Instance already initialized");
         }
         CommandHandlerManager.instance = new CommandHandlerManager(context, mSpeechRecognizer, mSpeechRecognizerIntent);
+
         return instance;
     }
 
@@ -315,6 +325,12 @@ public class CommandHandlerManager {
 
         }
 
+        if(command.equals("cancelar")){
+            textToSpeech.speakText("Cancelando...");
+            setNullCommand();
+            return false;
+        }
+
         final String finalCommand = command;
         if(currentContext == null || currentContext.getInteger(CommandHandler.STEP) == 0) {
             // find the command that matches
@@ -362,7 +378,7 @@ public class CommandHandlerManager {
         else if(errorCounter == 1)
             textToSpeech.speakText("No pude entender el comando ingresado. Quizás quisiste decir "+suggestion);
         else
-            textToSpeech.speakText("No pude entender el comando ingresado. Consultá la lista de comandos del menú ayuda y volvé a llamarme por mi nombre");
+            textToSpeech.speakText("No pude entender el comando ingresado. Consultá el menú comandos de voz y volvé a llamarme por mi nombre");
 
         errorCounter++;
         isError = true;

@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -128,6 +130,197 @@ public class AgregarEventoHandler extends CommandHandler {
     public CommandHandlerContext stepFive(CommandHandlerContext context){
 
         String input = context.getString(COMMAND);
+
+        if(input.equals("hoy")){
+
+            getTextToSpeech().speakText("¿El evento es hoy?");
+
+            Calendar c = Calendar.getInstance();
+
+            SimpleDateFormat df1 = new SimpleDateFormat("dd");
+            SimpleDateFormat df2 = new SimpleDateFormat("MM");
+            SimpleDateFormat df3 = new SimpleDateFormat("yyyy");
+
+            context.put(DAY, Integer.parseInt(df1.format(c.getTime())));
+            context.put(MONTH, Integer.parseInt(df2.format(c.getTime())));
+            context.put(YEAR, Integer.parseInt(df3.format(c.getTime())));
+
+            context.put(STEP, 7);
+            return context;
+        }
+
+        if(input.equals("mañana")){
+
+            getTextToSpeech().speakText("¿El evento es mañana?");
+
+            Calendar c = Calendar.getInstance();
+            c.add(Calendar.DATE, 1);
+
+            SimpleDateFormat df1 = new SimpleDateFormat("dd");
+            SimpleDateFormat df2 = new SimpleDateFormat("MM");
+            SimpleDateFormat df3 = new SimpleDateFormat("yyyy");
+
+            context.put(DAY, Integer.parseInt(df1.format(c.getTime())));
+            context.put(MONTH, Integer.parseInt(df2.format(c.getTime())));
+            context.put(YEAR, Integer.parseInt(df3.format(c.getTime())));
+
+            context.put(STEP, 7);
+            return context;
+        }
+
+        if(input.equals("el lunes") || input.equals("lunes") ){
+
+            getTextToSpeech().speakText("¿El evento es el lunes?");
+
+            Calendar c = Calendar.getInstance();
+            c.add(Calendar.DATE, 1);
+
+            while(c.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY)
+                c.add(Calendar.DATE, 1);
+
+            SimpleDateFormat df1 = new SimpleDateFormat("dd");
+            SimpleDateFormat df2 = new SimpleDateFormat("MM");
+            SimpleDateFormat df3 = new SimpleDateFormat("yyyy");
+
+            context.put(DAY, Integer.parseInt(df1.format(c.getTime())));
+            context.put(MONTH, Integer.parseInt(df2.format(c.getTime())));
+            context.put(YEAR, Integer.parseInt(df3.format(c.getTime())));
+
+            context.put(STEP, 7);
+            return context;
+        }
+
+        if(input.equals("el martes") || input.equals("martes") ){
+
+            getTextToSpeech().speakText("¿El evento es el martes?");
+
+            Calendar c = Calendar.getInstance();
+            c.add(Calendar.DATE, 1);
+
+            while(c.get(Calendar.DAY_OF_WEEK) != Calendar.TUESDAY)
+                c.add(Calendar.DATE, 1);
+
+            SimpleDateFormat df1 = new SimpleDateFormat("dd");
+            SimpleDateFormat df2 = new SimpleDateFormat("MM");
+            SimpleDateFormat df3 = new SimpleDateFormat("yyyy");
+
+            context.put(DAY, Integer.parseInt(df1.format(c.getTime())));
+            context.put(MONTH, Integer.parseInt(df2.format(c.getTime())));
+            context.put(YEAR, Integer.parseInt(df3.format(c.getTime())));
+
+            context.put(STEP, 7);
+            return context;
+        }
+
+        if(input.equals("el miércoles") || input.equals("miércoles") ){
+
+            getTextToSpeech().speakText("¿El evento es el miércoles?");
+
+            Calendar c = Calendar.getInstance();
+            c.add(Calendar.DATE, 1);
+
+            while(c.get(Calendar.DAY_OF_WEEK) != Calendar.WEDNESDAY)
+                c.add(Calendar.DATE, 1);
+
+            SimpleDateFormat df1 = new SimpleDateFormat("dd");
+            SimpleDateFormat df2 = new SimpleDateFormat("MM");
+            SimpleDateFormat df3 = new SimpleDateFormat("yyyy");
+
+            context.put(DAY, Integer.parseInt(df1.format(c.getTime())));
+            context.put(MONTH, Integer.parseInt(df2.format(c.getTime())));
+            context.put(YEAR, Integer.parseInt(df3.format(c.getTime())));
+
+            context.put(STEP, 7);
+            return context;
+        }
+
+        if(input.equals("el jueves") || input.equals("jueves") ){
+
+            getTextToSpeech().speakText("¿El evento es el jueves?");
+
+            Calendar c = Calendar.getInstance();
+            c.add(Calendar.DATE, 1);
+
+            while(c.get(Calendar.DAY_OF_WEEK) != Calendar.THURSDAY)
+                c.add(Calendar.DATE, 1);
+
+            SimpleDateFormat df1 = new SimpleDateFormat("dd");
+            SimpleDateFormat df2 = new SimpleDateFormat("MM");
+            SimpleDateFormat df3 = new SimpleDateFormat("yyyy");
+
+            context.put(DAY, Integer.parseInt(df1.format(c.getTime())));
+            context.put(MONTH, Integer.parseInt(df2.format(c.getTime())));
+            context.put(YEAR, Integer.parseInt(df3.format(c.getTime())));
+
+            context.put(STEP, 7);
+            return context;
+        }
+
+        if(input.equals("el viernes") || input.equals("viernes") ){
+
+            getTextToSpeech().speakText("¿El evento es el viernes?");
+
+            Calendar c = Calendar.getInstance();
+            c.add(Calendar.DATE, 1);
+
+            while(c.get(Calendar.DAY_OF_WEEK) != Calendar.FRIDAY)
+                c.add(Calendar.DATE, 1);
+
+            SimpleDateFormat df1 = new SimpleDateFormat("dd");
+            SimpleDateFormat df2 = new SimpleDateFormat("MM");
+            SimpleDateFormat df3 = new SimpleDateFormat("yyyy");
+
+            context.put(DAY, Integer.parseInt(df1.format(c.getTime())));
+            context.put(MONTH, Integer.parseInt(df2.format(c.getTime())));
+            context.put(YEAR, Integer.parseInt(df3.format(c.getTime())));
+
+            context.put(STEP, 7);
+            return context;
+        }
+
+        if(input.equals("el sábado") || input.equals("sábado") ){
+
+            getTextToSpeech().speakText("¿El evento es el sábado?");
+
+            Calendar c = Calendar.getInstance();
+            c.add(Calendar.DATE, 1);
+
+            while(c.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY)
+                c.add(Calendar.DATE, 1);
+
+            SimpleDateFormat df1 = new SimpleDateFormat("dd");
+            SimpleDateFormat df2 = new SimpleDateFormat("MM");
+            SimpleDateFormat df3 = new SimpleDateFormat("yyyy");
+
+            context.put(DAY, Integer.parseInt(df1.format(c.getTime())));
+            context.put(MONTH, Integer.parseInt(df2.format(c.getTime())));
+            context.put(YEAR, Integer.parseInt(df3.format(c.getTime())));
+
+            context.put(STEP, 7);
+            return context;
+        }
+
+        if(input.equals("el domingo") || input.equals("domingo") ){
+
+            getTextToSpeech().speakText("¿El evento es el domingo?");
+
+            Calendar c = Calendar.getInstance();
+            c.add(Calendar.DATE, 1);
+
+            while(c.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY)
+                c.add(Calendar.DATE, 1);
+
+            SimpleDateFormat df1 = new SimpleDateFormat("dd");
+            SimpleDateFormat df2 = new SimpleDateFormat("MM");
+            SimpleDateFormat df3 = new SimpleDateFormat("yyyy");
+
+            context.put(DAY, Integer.parseInt(df1.format(c.getTime())));
+            context.put(MONTH, Integer.parseInt(df2.format(c.getTime())));
+            context.put(YEAR, Integer.parseInt(df3.format(c.getTime())));
+
+            context.put(STEP, 7);
+            return context;
+        }
 
         ExpressionMatcher dateFormat = new ExpressionMatcher("{day} de {month} del {year}");
 

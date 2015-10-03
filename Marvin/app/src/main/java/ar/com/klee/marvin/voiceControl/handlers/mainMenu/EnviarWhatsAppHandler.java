@@ -61,7 +61,7 @@ public class EnviarWhatsAppHandler extends CommandHandler {
     public CommandHandlerContext stepThree(CommandHandlerContext context){
 
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             sendWhatsApp(context.getString(MESSAGE));
             context.put(STEP, 0);
             return context;

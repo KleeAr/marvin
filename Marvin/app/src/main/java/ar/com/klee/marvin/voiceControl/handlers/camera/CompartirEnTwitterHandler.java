@@ -1,6 +1,7 @@
 package ar.com.klee.marvin.voiceControl.handlers.camera;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,6 +54,7 @@ public class CompartirEnTwitterHandler extends CommandHandler {
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
         List<String> hashtags = new ArrayList<>();
         commandHandlerContext.put(TWITTER_HASHTAG, hashtags);
+        commandHandlerContext.put(SET_MESSAGE, false);
     }
 
     //PRONUNCIA MENSAJE
@@ -75,7 +77,6 @@ public class CompartirEnTwitterHandler extends CommandHandler {
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando publicación");
-            context.getObject(ACTIVITY, CameraActivity.class).closeDialog();
             context.put(STEP, 9);
             return context;
         }
@@ -104,15 +105,35 @@ public class CompartirEnTwitterHandler extends CommandHandler {
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando publicación");
-            context.getObject(ACTIVITY, CameraActivity.class).closeDialog();
             context.put(STEP, 0);
             return context;
         }
 
         if(input.equals("no")){
             getTextToSpeech().speakText("Publicando la foto en Twitter");
-            CameraActivity cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
-            cameraActivity.shareInTwitter(context.getString(MESSAGE));
+
+            CameraActivity cameraActivity = null;
+            SiteActivity siteActivity = null;
+            TripActivity tripActivity = null;
+
+            if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
+                cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
+            }else if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
+                siteActivity = context.getObject(ACTIVITY, SiteActivity.class);
+            }else{
+                tripActivity = context.getObject(ACTIVITY, TripActivity.class);
+            }
+
+            String textToPublish = context.getString(MESSAGE);
+
+            if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
+                cameraActivity.shareInTwitter(textToPublish);
+            }if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
+                siteActivity.shareInTwitter(textToPublish);
+            }else{
+                tripActivity.shareInTwitter(textToPublish);
+            }
+
             context.put(STEP, 0);
             return context;
         }
@@ -146,7 +167,6 @@ public class CompartirEnTwitterHandler extends CommandHandler {
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando publicación");
-            context.getObject(ACTIVITY, CameraActivity.class).closeDialog();
             context.put(STEP, 0);
             return context;
         }
@@ -177,7 +197,6 @@ public class CompartirEnTwitterHandler extends CommandHandler {
 
         if(input.equals("cancelar")) {
             getTextToSpeech().speakText("Cancelando publicación");
-            context.getObject(ACTIVITY, CameraActivity.class).closeDialog();
             context.put(STEP, 0);
             return context;
         }
@@ -189,9 +208,11 @@ public class CompartirEnTwitterHandler extends CommandHandler {
             SiteActivity siteActivity = null;
             TripActivity tripActivity = null;
 
+            Log.d("CAM",((Integer)getCommandHandlerManager().getCurrentActivity()).toString());
+
             if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
                 cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
-            }if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
+            }else if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
                 siteActivity = context.getObject(ACTIVITY, SiteActivity.class);
             }else{
                 tripActivity = context.getObject(ACTIVITY, TripActivity.class);

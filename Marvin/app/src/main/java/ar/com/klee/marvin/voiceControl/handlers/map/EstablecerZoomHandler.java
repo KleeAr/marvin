@@ -15,7 +15,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class EstablecerZoomHandler extends CommandHandler {
 
     public EstablecerZoomHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("establecer zoom {zoom}"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("establecer zoom {zoom}","setear zoom {zoom}","configurar zoom {zoom}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

@@ -14,7 +14,7 @@ public class CerrarCamaraHandler extends CommandHandler {
 
 
     public CerrarCamaraHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("cerrar cámara"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("cerrar cámara","volver al menú principal","cerrar"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){
