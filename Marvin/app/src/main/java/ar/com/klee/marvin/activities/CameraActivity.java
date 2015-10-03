@@ -20,6 +20,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AlertDialog;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -32,6 +34,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -430,50 +433,58 @@ public class CameraActivity extends ActionBarActivity {
     }
 
     public  void openShareDialog(View v){
-        final Dialog customDialog = new Dialog(this);
-        customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        customDialog.setCancelable(true);
-        customDialog.setContentView(R.layout.dialog_camera);
-        customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        customDialog.findViewById(R.id.facebook).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view){
+        AlertDialog.Builder builder =new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+        builder.setCancelable(true);
+        builder.setTitle("¿Dónde querés compartir la foto?");
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final ImageView imgMarvin = new ImageView(this);
+        imgMarvin.setImageResource(R.drawable.marvin);
+        imgMarvin.setMaxHeight(30);
+        imgMarvin.setMaxWidth(30);
+        layout.addView(imgMarvin);
+
+        builder.setView(layout);
+
+        builder.setPositiveButton("facebook", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
 
                 shareInFacebook("");
 
                 STTService.getInstance().setIsListening(false);
                 commandHandlerManager.setNullCommand();
-                customDialog.dismiss();
+                dialog.dismiss();
 
             }
         });
-        customDialog.findViewById(R.id.twitter).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view){
+        builder.setNegativeButton("twitter", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
 
                 shareInTwitter("");
 
                 STTService.getInstance().setIsListening(false);
                 commandHandlerManager.setNullCommand();
-                customDialog.dismiss();
+                dialog.dismiss();
 
             }
         });
-        customDialog.findViewById(R.id.instagram).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view){
+
+        builder.setNeutralButton("instagram", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
 
                 shareInInstagram("");
 
                 STTService.getInstance().setIsListening(false);
                 commandHandlerManager.setNullCommand();
-                customDialog.dismiss();
+                dialog.dismiss();
 
             }
         });
 
-        customDialog.setOnKeyListener(new Dialog.OnKeyListener() {
+        builder.setOnKeyListener(new Dialog.OnKeyListener() {
 
             @Override
             public boolean onKey(DialogInterface arg0, int keyCode,
@@ -486,14 +497,17 @@ public class CameraActivity extends ActionBarActivity {
 
                     STTService.getInstance().setIsListening(false);
                     commandHandlerManager.setNullCommand();
-                    customDialog.dismiss();
+                   // customDialog.dismiss();
                 }
                 return true;
             }
 
         });
 
-        customDialog.show();
+
+        builder.show();
+
+
 
     }
 

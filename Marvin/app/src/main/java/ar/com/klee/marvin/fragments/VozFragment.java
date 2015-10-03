@@ -337,7 +337,7 @@ public class VozFragment extends Fragment {
 
     public void dialogCommand(String group, Command command){
 
-        AlertDialog.Builder builder =new AlertDialog.Builder(getActivity());// R.style.AppCompatAlertDialogStyle);
+        AlertDialog.Builder builder =new AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
         builder.setCancelable(true);
         builder.setTitle(group+" - "+command.description);
        // builder.setIcon(R.drawable.marvin);
