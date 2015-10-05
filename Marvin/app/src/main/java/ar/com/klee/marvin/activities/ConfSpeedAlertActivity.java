@@ -21,11 +21,11 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.configuration.UserConfig;
 
 public class ConfSpeedAlertActivity extends ActionBarActivity {
 
     private Switch switch1;
-    private Switch switch2;
     private Toolbar toolbar;
     public TextView titleText;
     public TextView cityText;
@@ -33,6 +33,13 @@ public class ConfSpeedAlertActivity extends ActionBarActivity {
     public TextView temperatureTextView;
     public TextView weekDay;
     public TextView dateText;
+
+    private Spinner spinner1;
+    private ArrayAdapter<String> arrayAdapter;
+    private int chosenItem;
+    private boolean isAlertEnabled = false;
+
+    final ArrayList<String> speedVelocity = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +56,7 @@ public class ConfSpeedAlertActivity extends ActionBarActivity {
         titleText = (TextView) findViewById(R.id.activityTitle);
         titleText.setVisibility(TextView.VISIBLE);
         titleText.setTypeface(fBariolBold);
-        titleText.setText("Alertas de Velocidad");
+        titleText.setText("Alerta de Velocidad");
 
         weekDay = (TextView) findViewById(R.id.weekDayText);
         dateText = (TextView) findViewById(R.id.dateText);
@@ -62,9 +69,6 @@ public class ConfSpeedAlertActivity extends ActionBarActivity {
         temperatureTextView.setVisibility(TextView.INVISIBLE);
         weatherIconImageView.setVisibility(ImageView.INVISIBLE);
 
-       // final EditText etSpeed1 = (EditText) findViewById(R.id.et_vel1);
-
-        final ArrayList<String> speedVelocity = new ArrayList<String>();
         speedVelocity.add("40");
         speedVelocity.add("50");
         speedVelocity.add("60");
@@ -76,58 +80,42 @@ public class ConfSpeedAlertActivity extends ActionBarActivity {
         speedVelocity.add("120");
         speedVelocity.add("130");
 
-
-
-       Spinner spinner1 = (Spinner) findViewById(R.id.spinner1);
-        Spinner spinner2 = (Spinner) findViewById(R.id.spinner2);
-
-
+        spinner1 = (Spinner) findViewById(R.id.spinner1);
 
         // Create the ArrayAdapter
-
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,speedVelocity);
-
+        arrayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,speedVelocity);
 
         // Set the Adapter
         spinner1.setAdapter(arrayAdapter);
-        spinner2.setAdapter(arrayAdapter);
 
+        chosenItem = UserConfig.getSettings().getAlertSpeed();
+        int position = arrayAdapter.getPosition(((Integer)UserConfig.getSettings().getAlertSpeed()).toString());
+        spinner1.setSelection(position);
 
         // Set the ClickListener for Spinner
         spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getApplicationContext(), "Seleccionaste: " + speedVelocity.get(i), Toast.LENGTH_SHORT).show();
+
+                chosenItem = Integer.parseInt(speedVelocity.get(i));
 
             }
 
-            // If no option selected
             public void onNothingSelected(AdapterView<?> arg0) {
-                // TODO Auto-generated method stub
+
             }
 
         });
-
-        // Set the ClickListener for Spinner
-        spinner2.setOnItemSelectedListener(new  AdapterView.OnItemSelectedListener() {
-
-            public void onItemSelected(AdapterView<?> adapterView,View view, int i, long l) {
-                Toast.makeText(getApplicationContext(),"Seleccionaste: "+ speedVelocity.get(i),Toast.LENGTH_SHORT).show();
-
-            }
-            // If no option selected
-            public void onNothingSelected(AdapterView<?> arg0) {
-                // TODO Auto-generated method stub
-            }
-
-        });
-
 
         switch1 = (Switch) findViewById(R.id.switch1);
 
-// set the switch to OFF
-        switch1.setChecked(false);
-// attach a listener to check for changes in state
+        if(UserConfig.getSettings().isSpeedAlertEnabled())
+            switch1.setChecked(true);
+        else
+            switch1.setChecked(false);
+
+        isAlertEnabled = UserConfig.getSettings().isSpeedAlertEnabled();
+
         switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
             @Override
@@ -135,39 +123,16 @@ public class ConfSpeedAlertActivity extends ActionBarActivity {
 
                 if (isChecked) {
 
-                    Toast.makeText(getApplicationContext(), "Activado", Toast.LENGTH_SHORT).show();
+                    isAlertEnabled = true;
 
                 } else {
 
-                    Toast.makeText(getApplicationContext(), "NO", Toast.LENGTH_SHORT).show();
+                    isAlertEnabled = false;
+
                 }
 
             }
         });
-
-
-        switch2 = (Switch) findViewById(R.id.switch2);
-
-// set the switch to OFF
-        switch2.setChecked(false);
-// attach a listener to check for changes in state
-        switch2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                if (isChecked) {
-
-                    Toast.makeText(getApplicationContext(), "Activado", Toast.LENGTH_SHORT).show();
-
-                } else {
-
-                    Toast.makeText(getApplicationContext(), "NO", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-
 
     }
 
@@ -181,5 +146,35 @@ public class ConfSpeedAlertActivity extends ActionBarActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+
+    public void saveSpeedAlert(View v){
+
+        UserConfig.getSettings().setAlertSpeed(chosenItem);
+
+        if(switch1.isChecked())
+            UserConfig.getSettings().setSpeedAlertEnabled(true);
+        else
+            UserConfig.getSettings().setSpeedAlertEnabled(false);
+
+        finish();
+
+    }
+
+    public void resetSpeedAlert(View v){
+
+        chosenItem = arrayAdapter.getPosition("80");
+        spinner1.setSelection(chosenItem);
+
+        isAlertEnabled = false;
+        switch1.setChecked(false);
+
+    }
+
+    public void cancelSpeedAlert(View v){
+
+        finish();
+
     }
 }

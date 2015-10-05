@@ -208,8 +208,10 @@ public class MainMenuFragment extends Fragment {
             @Override
             public void run() {
                 try {
+
+                    Thread.sleep(999);
+
                     while (!isInterrupted()) {
-                        Thread.sleep(999);
                         if(!isInterrupted() && ((MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity()).getActualFragmentPosition() == 1) {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
@@ -226,6 +228,8 @@ public class MainMenuFragment extends Fragment {
                                 }
                             });
                         }
+
+                        Thread.sleep(999);
                     }
                 } catch (InterruptedException e) {
                 } catch (NullPointerException e) {

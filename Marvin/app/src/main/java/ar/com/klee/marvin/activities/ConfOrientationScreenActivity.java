@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -23,6 +24,9 @@ public class ConfOrientationScreenActivity extends ActionBarActivity {
     public TextView temperatureTextView;
     public TextView weekDay;
     public TextView dateText;
+
+    private RadioButton buttonPortrait;
+    private RadioButton buttonLandscape;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,21 +56,16 @@ public class ConfOrientationScreenActivity extends ActionBarActivity {
         temperatureTextView.setVisibility(TextView.INVISIBLE);
         weatherIconImageView.setVisibility(ImageView.INVISIBLE);
 
-        RadioGroup rg = (RadioGroup)findViewById(R.id.radioGroup);
-        String radiovalue = ((RadioButton)findViewById(rg.getCheckedRadioButtonId())).getText().toString();
-        switch(radiovalue) {
-            case "Retrato":
-                UserConfig.setOrientation(1);
-                break;
-            case "Horizontal":
-                UserConfig.setOrientation(2);
-                break;
-            case "Horizontal Inverso":
-                UserConfig.setOrientation(3);
-                break;
-        }
+        buttonPortrait = (RadioButton)findViewById(R.id.radioButton1);
+        buttonLandscape = (RadioButton)findViewById(R.id.radioButton2);
 
-        Toast.makeText(getApplicationContext(), radiovalue, Toast.LENGTH_SHORT).show();
+        if(UserConfig.getSettings().getOrientation() == UserConfig.ORIENTATION_PORTRAIT){
+            buttonPortrait.setChecked(true);
+            buttonLandscape.setChecked(false);
+        }else{
+            buttonPortrait.setChecked(false);
+            buttonLandscape.setChecked(true);
+        }
 
     }
 
@@ -80,5 +79,29 @@ public class ConfOrientationScreenActivity extends ActionBarActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void saveOrientationScreen(View v){
+
+        if(buttonPortrait.isChecked())
+            UserConfig.getSettings().setOrientation(UserConfig.ORIENTATION_PORTRAIT);
+        else
+            UserConfig.getSettings().setOrientation(UserConfig.ORIENTATION_LANDSCAPE);
+
+        finish();
+
+    }
+
+    public void resetOrientationScreen(View v){
+
+        buttonPortrait.setChecked(true);
+        buttonLandscape.setChecked(false);
+
+    }
+
+    public void cancelOrientationScreen(View v){
+
+        finish();
+
     }
 }

@@ -2,6 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
     android:background="#4db6ac"
     android:id="@+id/lyt">
 
@@ -29,7 +31,9 @@
             android:textColor="#000000"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:background="#4db6ac" />
+            android:background="#4db6ac"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp" />
 
         <View
             android:layout_width="match_parent"
@@ -38,15 +42,6 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_gravity="center_horizontal|bottom"></View>
-
-        <Switch
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Activar servicio SMS"
-            android:id="@+id/switch1"
-            android:layout_gravity="right"
-            android:checked="false"
-            android:textSize="15dp" />
 
         <LinearLayout
             android:orientation="vertical"
@@ -62,13 +57,17 @@
                 android:textSize="15dp"
                 android:textColor="#000000"
                 android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp" />
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="10dp" />
 
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/toSMS"
-                android:textColor="#ffffff" />
+                android:textColor="#ffffff"
+                android:numeric="integer"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
 
         </LinearLayout>
 
@@ -85,14 +84,17 @@
                 android:textSize="15dp"
                 android:textColor="#000000"
                 android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp" />
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="10dp" />
 
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/bodySMS"
                 android:layout_gravity="center_horizontal"
-                android:textColor="#ffffff" />
+                android:textColor="#ffffff"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
 
             <LinearLayout
                 android:orientation="vertical"
@@ -105,10 +107,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="¿Queres guardar los cambios?"
+                    android:text="¿Querés guardar los cambios?"
                     android:id="@+id/tv_title"
                     android:textColor="#ffffff"
-                    android:textSize="15dp" />
+                    android:textSize="15dp"
+                    android:layout_marginLeft="10dp" />
 
                 <View
                     android:layout_width="match_parent"
@@ -134,7 +137,8 @@
                         android:id="@+id/button_cancel"
                         android:layout_weight="0.5"
                         android:drawableTop="@mipmap/ic_cancel_white_48dp"
-                        android:layout_marginLeft="5dp" />
+                        android:layout_marginLeft="5dp"
+                        android:onClick="cancelSmsEmergency" />
 
                     <View
                         android:layout_width="2dp"
@@ -154,7 +158,8 @@
                         android:layout_weight="0.5"
                         android:drawableTop="@mipmap/ic_reply_white_48dp"
                         android:layout_marginLeft="2dp"
-                        android:layout_marginRight="2dp" />
+                        android:layout_marginRight="2dp"
+                        android:onClick="resetSmsEmergency" />
 
                     <View
                         android:layout_width="2dp"
@@ -173,7 +178,8 @@
                         android:id="@+id/button_save"
                         android:layout_weight="0.5"
                         android:drawableTop="@mipmap/ic_save_white_48dp"
-                        android:layout_marginRight="5dp" />
+                        android:layout_marginRight="5dp"
+                        android:onClick="saveSmsEmergency" />
 
                 </LinearLayout>
 

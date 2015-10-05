@@ -28,6 +28,13 @@ public class ConfHistoryTripActivity extends ActionBarActivity {
     public TextView weekDay;
     public TextView dateText;
 
+    private long timeChosenValue;
+    private long distanceChosenValue;
+
+    private ArrayAdapter<String> arrayAdapter1;
+    private ArrayAdapter<String> arrayAdapter2;
+    private Spinner spinner1;
+    private Spinner spinner2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,50 +65,51 @@ public class ConfHistoryTripActivity extends ActionBarActivity {
         weatherIconImageView.setVisibility(ImageView.INVISIBLE);
 
         final ArrayList<String> timeMin = new ArrayList<String>();
-        timeMin.add("Ninguno");
         timeMin.add("5");
         timeMin.add("15");
         timeMin.add("30");
         timeMin.add("60");
 
         final ArrayList<String> tripMin = new ArrayList<String>();
-        tripMin.add("Ninguno");
         tripMin.add("1");
         tripMin.add("5");
         tripMin.add("10");
         tripMin.add("15");
         tripMin.add("20");
 
-
-        Spinner spinner1 = (Spinner) findViewById(R.id.spinner1);
-        Spinner spinner2 = (Spinner) findViewById(R.id.spinner2);
-
-
+        spinner1 = (Spinner) findViewById(R.id.spinner1);
+        spinner2 = (Spinner) findViewById(R.id.spinner2);
 
         // Create the ArrayAdapter
 
-        ArrayAdapter<String> arrayAdapter1 = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,timeMin);
-        ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,tripMin);
+        arrayAdapter1 = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,timeMin);
+        arrayAdapter2 = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,tripMin);
 
 
         // Set the Adapter
         spinner1.setAdapter(arrayAdapter1);
         spinner2.setAdapter(arrayAdapter2);
 
+        timeChosenValue = UserConfig.getSettings().getMiniumTripTime();
+        int position = arrayAdapter1.getPosition(UserConfig.getSettings().getMiniumTripTime().toString());
+        spinner1.setSelection(position);
+
+        distanceChosenValue = UserConfig.getSettings().getMiniumTripDistance();
+        position = arrayAdapter2.getPosition(UserConfig.getSettings().getMiniumTripDistance().toString());
+        spinner2.setSelection(position);
 
         // Set the ClickListener for Spinner
         spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-               // Toast.makeText(getApplicationContext(), "Seleccionaste: " + timeMin.get(i), Toast.LENGTH_SHORT).show();
-               if(!timeMin.get(i).equals("Ninguno"))
-                   UserConfig.setMiniumTripTime(Integer.parseInt(timeMin.get(i)));
+
+                timeChosenValue = Integer.parseInt(timeMin.get(i));
 
             }
 
             // If no option selected
             public void onNothingSelected(AdapterView<?> arg0) {
-                // TODO Auto-generated method stub
+
             }
 
         });
@@ -110,14 +118,13 @@ public class ConfHistoryTripActivity extends ActionBarActivity {
         spinner2.setOnItemSelectedListener(new  AdapterView.OnItemSelectedListener() {
 
             public void onItemSelected(AdapterView<?> adapterView,View view, int i, long l) {
-                //Toast.makeText(getApplicationContext(),"Seleccionaste: "+ tripMin.get(i),Toast.LENGTH_SHORT).show();
-                if(!tripMin.get(i).equals("Ninguno"))
-                    UserConfig.setMiniumTripDistance(Integer.parseInt(tripMin.get(i)));
+
+                distanceChosenValue = Integer.parseInt(tripMin.get(i));
 
             }
             // If no option selected
             public void onNothingSelected(AdapterView<?> arg0) {
-                // TODO Auto-generated method stub
+
             }
 
         });
@@ -135,5 +142,32 @@ public class ConfHistoryTripActivity extends ActionBarActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void saveHistoryTrip(View v){
+
+        UserConfig.getSettings().setMiniumTripTime(timeChosenValue);
+        UserConfig.getSettings().setMiniumTripDistance(distanceChosenValue);
+
+        finish();
+
+    }
+
+    public void resetHistoryTrip(View v){
+
+        timeChosenValue = 30;
+        int position = arrayAdapter1.getPosition("30");
+        spinner1.setSelection(position);
+
+        distanceChosenValue = 1;
+        position = arrayAdapter2.getPosition("1");
+        spinner2.setSelection(position);
+
+    }
+
+    public void cancelHistoryTrip(View v){
+
+        finish();
+
     }
 }

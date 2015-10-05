@@ -21,7 +21,7 @@ public class TTS {
     private TextToSpeech ttsObject;
     private SpeechRecognizer mSpeechRecognizer;
     private Intent mSpeechRecognizerIntent;
-    private boolean firstTime = true;
+    private boolean speedAlert = false;
 
     /* Constructor de la clase TTS
     ** -Inicializa el objeto de la clase TextToSpeech que nos va a permitir reproducir texto
@@ -49,6 +49,10 @@ public class TTS {
                                 MainMenuActivity mainMenuActivity = ((MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity());
                                 mainMenuActivity.activate(mSpeechRecognizer, mSpeechRecognizerIntent);
 
+                                if(speedAlert){
+                                    ((MainMenuActivity)CommandHandlerManager.getInstance().getMainActivity()).speedAlertFinish();
+                                }
+
                             }
 
                         }
@@ -72,6 +76,13 @@ public class TTS {
         myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "FINISH_SPEAK");
 
         //Log.d("TTS","Reproduce texto");
+
+        if(textToSpeak.startsWith("SPEED ALERT - ")){
+            textToSpeak = textToSpeak.replace("SPEED ALERT - ","");
+            speedAlert = true;
+        }else{
+            speedAlert = false;
+        }
 
         // Reproduce el texto
         ttsObject.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH, myHashAlarm);

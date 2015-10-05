@@ -37,7 +37,7 @@ public class ConfTermsActivity extends ActionBarActivity {
         titleText = (TextView) findViewById(R.id.activityTitle);
         titleText.setVisibility(TextView.VISIBLE);
         titleText.setTypeface(fBariolBold);
-        titleText.setText("Terminos y Conidiciones");
+        titleText.setText("Términos y Condiciones");
 
         weekDay = (TextView) findViewById(R.id.weekDayText);
         dateText = (TextView) findViewById(R.id.dateText);

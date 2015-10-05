@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -21,7 +22,6 @@ public class ConfSmsEmergencyActivity extends ActionBarActivity {
     private EditText toSMS;
     private EditText bodySMS;
 
-    private Switch switch1;
     private Toolbar toolbar;
     public TextView titleText;
     public TextView cityText;
@@ -64,39 +64,10 @@ public class ConfSmsEmergencyActivity extends ActionBarActivity {
         toSMS = (EditText) findViewById(R.id.toSMS);
         bodySMS = (EditText) findViewById(R.id.bodySMS);
 
-
-        switch1 = (Switch) findViewById(R.id.switch1);
-        // set the switch to OFF
-        switch1.setChecked(false);
-        // attach a listener to check for changes in state
-        switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                if (isChecked) {
-                    Toast.makeText(getApplicationContext(), "Activado", Toast.LENGTH_SHORT).show();
-                    UserConfig.setEmergencyEnable(true);
-
-                } else {
-                    Toast.makeText(getApplicationContext(), "Desactivado", Toast.LENGTH_SHORT).show();
-                    UserConfig.setEmergencyEnable(false);
-                }
-
-            }
-        });
-
-
-
+        toSMS.setText(UserConfig.getSettings().getEmergencyNumber());
+        bodySMS.setText(UserConfig.getSettings().getEmergencySMS());
 
     }
-    @Override
-    public void onBackPressed() {
-        UserConfig.setEmergencyNumber(toSMS .getText().toString());
-        UserConfig.setEmergencySMS(bodySMS.getText().toString());
-        this.finish();
-    }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
@@ -108,5 +79,27 @@ public class ConfSmsEmergencyActivity extends ActionBarActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void saveSmsEmergency(View v){
+
+        UserConfig.getSettings().setEmergencyNumber(toSMS.getText().toString());
+        UserConfig.getSettings().setEmergencySMS(bodySMS.getText().toString());
+
+        finish();
+
+    }
+
+    public void resetSmsEmergency(View v){
+
+        toSMS.setText("");
+        bodySMS.setText("");
+
+    }
+
+    public void cancelSmsEmergency(View v){
+
+        finish();
+
     }
 }

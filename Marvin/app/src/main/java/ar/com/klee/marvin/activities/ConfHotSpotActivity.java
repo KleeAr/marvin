@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -64,40 +65,9 @@ public class ConfHotSpotActivity extends ActionBarActivity {
         netName= (EditText) findViewById(R.id.netName);
         netPassword= (EditText) findViewById(R.id.netPassword);
 
+        netName.setText(UserConfig.getSettings().getHotspotName());
+        netPassword.setText(UserConfig.getSettings().getHotspotPassword());
 
-        switch1 = (Switch) findViewById(R.id.switch1);
-
-// set the switch to OFF
-        switch1.setChecked(false);
-// attach a listener to check for changes in state
-        switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                if (isChecked) {
-
-                    Toast.makeText(getApplicationContext(), "Activado", Toast.LENGTH_SHORT).show();
-                    UserConfig.setHotspotName(netName.getText().toString());
-                    UserConfig.setHotspotPassword(netPassword.getText().toString());
-
-                } else {
-
-                    Toast.makeText(getApplicationContext(), "NO", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-
-
-
-    }
-
-    @Override
-    public void onBackPressed() {
-        UserConfig.setHotspotName(netName.getText().toString());
-        UserConfig.setHotspotPassword(netPassword.getText().toString());
-        this.finish();
     }
 
     @Override
@@ -110,5 +80,27 @@ public class ConfHotSpotActivity extends ActionBarActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void saveHotSpot(View v){
+
+        UserConfig.getSettings().setHotspotName(netName.getText().toString());
+        UserConfig.getSettings().setHotspotPassword(netPassword.getText().toString());
+
+        finish();
+
+    }
+
+    public void resetHotSpot(View v){
+
+        netName.setText("MRVN");
+        netPassword.setText("marvinHotSpot");
+
+    }
+
+    public void cancelHotSpot(View v){
+
+        finish();
+
     }
 }

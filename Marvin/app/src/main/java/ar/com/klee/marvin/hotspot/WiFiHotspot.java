@@ -8,6 +8,9 @@ import android.util.Log;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import ar.com.klee.marvin.client.model.User;
+import ar.com.klee.marvin.configuration.UserConfig;
+
 public class WiFiHotspot {
 
     private Context context;
@@ -29,8 +32,8 @@ public class WiFiHotspot {
             if(method.getName().equals("setWifiApEnabled")){
                 methodFound=true;
                 WifiConfiguration netConfig = new WifiConfiguration();
-                netConfig.SSID = "MRVN";
-                netConfig.preSharedKey = "marvinHotSpot";
+                netConfig.SSID = UserConfig.getSettings().getHotspotName();
+                netConfig.preSharedKey = UserConfig.getSettings().getHotspotPassword();
                 netConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
                 netConfig.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
                 netConfig.allowedProtocols.set(WifiConfiguration.Protocol.WPA);

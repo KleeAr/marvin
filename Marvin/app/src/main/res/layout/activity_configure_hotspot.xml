@@ -2,6 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
     android:background="#4db6ac"
     android:id="@+id/lyt">
 
@@ -23,13 +25,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Ajustes para la utilización del HotSpot. Un HotSpot es un punto de acceso a Internet sobre una red inalámbrica. Por defecto el nombre de Red es 'MRVN' y la contraseña 'marvinHotSpot'."
+            android:text="Ajustes para la utilización del HotSpot. Un HotSpot es un punto de acceso a Internet sobre una red inalámbrica. Por defecto el nombre de red es 'MRVN' y la contraseña 'marvinHotSpot'."
             android:id="@+id/descripcion"
             android:textSize="15dp"
             android:textColor="#000000"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:background="#4db6ac" />
+            android:background="#4db6ac"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp" />
 
         <View
             android:layout_width="match_parent"
@@ -38,15 +42,6 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_gravity="center_horizontal|bottom"></View>
-
-        <Switch
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Activar HotSpot"
-            android:id="@+id/switch1"
-            android:layout_gravity="right"
-            android:checked="false"
-            android:textSize="15dp" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -64,7 +59,8 @@
                 android:textSize="15dp"
                 android:textColor="#000000"
                 android:gravity="left|center"
-                android:hint="MRVN"/>
+                android:hint="MRVN"
+                android:layout_marginLeft="10dp" />
 
             <EditText
                 android:layout_width="match_parent"
@@ -89,7 +85,8 @@
                 android:textSize="15dp"
                 android:textColor="#000000"
                 android:gravity="left|center"
-                android:layout_gravity="center" />
+                android:layout_gravity="center"
+                android:layout_marginLeft="10dp" />
 
             <EditText
                 android:layout_width="match_parent"
@@ -113,10 +110,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="¿Queres guardar los cambios?"
+                android:text="¿Querés guardar los cambios?"
                 android:id="@+id/tv_title"
                 android:textColor="#ffffff"
-                android:textSize="15dp" />
+                android:textSize="15dp"
+                android:layout_marginLeft="10dp" />
 
             <View
                 android:layout_width="match_parent"
@@ -142,7 +140,8 @@
                     android:id="@+id/button_cancel"
                     android:layout_weight="0.5"
                     android:drawableTop="@mipmap/ic_cancel_white_48dp"
-                    android:layout_marginLeft="5dp" />
+                    android:layout_marginLeft="5dp"
+                    android:onClick="cancelHotSpot" />
 
                 <View
                     android:layout_width="2dp"
@@ -162,7 +161,8 @@
                     android:layout_weight="0.5"
                     android:drawableTop="@mipmap/ic_reply_white_48dp"
                     android:layout_marginLeft="2dp"
-                    android:layout_marginRight="2dp" />
+                    android:layout_marginRight="2dp"
+                    android:onClick="resetHotSpot" />
 
                 <View
                     android:layout_width="2dp"
@@ -181,7 +181,8 @@
                     android:id="@+id/button_save"
                     android:layout_weight="0.5"
                     android:drawableTop="@mipmap/ic_save_white_48dp"
-                    android:layout_marginRight="5dp" />
+                    android:layout_marginRight="5dp"
+                    android:onClick="saveHotSpot" />
 
             </LinearLayout>
         </LinearLayout>

@@ -79,8 +79,10 @@ public class STTService extends Service {
             @Override
             public void run() {
                 try {
+
+                    Thread.sleep(5000);
+
                     while (!isInterrupted()) {
-                        Thread.sleep(5000);
 
                         try{
                             MusicService.getInstance();
@@ -88,6 +90,7 @@ public class STTService extends Service {
                             ((MainMenuActivity)CommandHandlerManager.getInstance().getMainActivity()).initializeMusicService();
                         }
 
+                        Thread.sleep(5000);
                     }
                 } catch (InterruptedException e) {
                 } catch (NullPointerException e) {

@@ -136,7 +136,7 @@ public class LocationSender {
                 handler.postDelayed(new Runnable() {
                     public void run() {
                         setSpeed(velocity);
-                        if(false && velocity < 1){
+                        if(UserConfig.getSettings().isOpenAppWhenStop() && velocity < 1){
 
                             String app = UserConfig.getSettings().getAppToOpenWhenStop();
                             CommandHandlerManager commandHandlerManager = CommandHandlerManager.getInstance();
@@ -146,9 +146,18 @@ public class LocationSender {
                                     commandHandlerManager.getCommandHandler() == null) {
 
                                 openApp(app);
-
                             }
                         }
+
+                        if(UserConfig.getSettings().isSpeedAlertEnabled() && velocity > UserConfig.getSettings().getAlertSpeed()){
+                            CommandHandlerManager commandHandlerManager = CommandHandlerManager.getInstance();
+                            STTService.getInstance().setIsListening(false);
+                            STTService.getInstance().stopListening();
+                            commandHandlerManager.setNullCommand();
+                            commandHandlerManager.getTextToSpeech().speakText("SPEED ALERT - Superaste los " + UserConfig.getSettings().getAlertSpeed() + " kilometros por hora");
+                            ((MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity()).speedAlert();
+                        }
+
                         updateScreen();
 
                         if(!town.equals("Buscando ciudad...")) {

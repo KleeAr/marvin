@@ -27,7 +27,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TERMINOS Y CONDICIONES DE USO"
+                android:text="TÉRMINOS Y CONDICIONES DE USO"
                 android:id="@+id/title0"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="5dp"
@@ -39,7 +39,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/textView0"
-                android:text="@string/termino0"/>
+                android:text="@string/termino0"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
 
 
             <TextView
@@ -57,7 +59,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/termino1"
-                android:id="@+id/textView1" />
+                android:id="@+id/textView1"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -74,7 +78,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/termino2"
-            android:id="@+id/textView2" />
+            android:id="@+id/textView2"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -91,7 +97,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/termino3"
-                android:id="@+id/textView3" />
+                android:id="@+id/textView3"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -108,7 +116,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/termino4"
-                android:id="@+id/textView4" />
+                android:id="@+id/textView4"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -125,7 +135,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/termino5"
-                android:id="@+id/textView5" />
+                android:id="@+id/textView5"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -142,7 +154,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/termino6"
-                android:id="@+id/textView6" />
+                android:id="@+id/textView6"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
 
             <TextView
             android:layout_width="wrap_content"
@@ -159,7 +173,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/termino7"
-                android:id="@+id/textView7" />
+                android:id="@+id/textView7"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -176,7 +192,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/termino8"
-                android:id="@+id/textView8" />
+                android:id="@+id/textView8"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -193,7 +211,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/termino9"
-            android:id="@+id/textView9" />
+            android:id="@+id/textView9"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
 
         </LinearLayout>
     </ScrollView>

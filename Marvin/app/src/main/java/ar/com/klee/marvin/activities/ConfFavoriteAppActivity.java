@@ -30,7 +30,11 @@ import ar.com.klee.marvin.fragments.MainMenuFragment;
 public class ConfFavoriteAppActivity extends ActionBarActivity {
 
     private Switch switch1;
+    private Spinner spinner1;
+    private ArrayAdapter<String> arrayAdapter;
     private ArrayList<String> listApp;
+    private int chosenApp;
+    private boolean switchEnabled = false;
 
     private Toolbar toolbar;
     public TextView titleText;
@@ -45,10 +49,6 @@ public class ConfFavoriteAppActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_configure_favorite_app);
 
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/master
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
 
@@ -76,34 +76,40 @@ public class ConfFavoriteAppActivity extends ActionBarActivity {
         listApp = new ArrayList<String>();
         listApp.add("Ninguna");
 
-
         int i = 0;
+        boolean appConfigured = false;
 
         while(i<12){
-            if(!MainMenuFragment.shortcutList[i].getName().equals(""))
-                listApp.add( MainMenuFragment.shortcutList[i].getName());
+            if(!MainMenuFragment.shortcutList[i].getName().equals("")) {
+                listApp.add(MainMenuFragment.shortcutList[i].getName());
+                if(MainMenuFragment.shortcutList[i].getName().equals(UserConfig.getSettings().getAppToOpenWhenStop()))
+                    appConfigured = true;
+            }
             i++;
         }
 
 
-        Spinner spinner1 = (Spinner) findViewById(R.id.spinner1);
+        spinner1 = (Spinner) findViewById(R.id.spinner1);
 
         // Create the ArrayAdapter
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,listApp);
+        arrayAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,listApp);
         // Set the Adapter
         spinner1.setAdapter(arrayAdapter);
+
+        if(appConfigured){
+            chosenApp = arrayAdapter.getPosition(UserConfig.getSettings().getAppToOpenWhenStop());
+            spinner1.setSelection(chosenApp);
+        }else {
+            chosenApp = arrayAdapter.getPosition("Ninguna");
+            spinner1.setSelection(chosenApp);
+        }
+
         // Set the ClickListener for Spinner
         spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-<<<<<<< HEAD
                 //Toast.makeText(getApplicationContext(), "Seleccionaste: " + listApp.get(i), Toast.LENGTH_SHORT).show();
-                UserConfig.setAppToOpenWhenStop(listApp.get(i));
-=======
-                Toast.makeText(getApplicationContext(), "Seleccionaste: " + listApp.get(i), Toast.LENGTH_SHORT).show();
-                appToOpenWhenStop="APLICACION SELECCIONADA";
->>>>>>> origin/master
-
+                chosenApp = i;
             }
 
             // If no option selected
@@ -113,25 +119,22 @@ public class ConfFavoriteAppActivity extends ActionBarActivity {
 
         });
 
-
-
         switch1 = (Switch) findViewById(R.id.switch1);
 
-// set the switch to OFF
-        switch1.setChecked(false);
-// attach a listener to check for changes in state
+        if(UserConfig.getSettings().isOpenAppWhenStop())
+            switch1.setChecked(true);
+        else
+            switch1.setChecked(false);
+
         switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 if (isChecked) {
-                    Toast.makeText(getApplicationContext(), "Activado", Toast.LENGTH_SHORT).show();
-                    UserConfig.setOpenAppWhenStop(true);
-
+                    switchEnabled = true;
                 } else {
-                    Toast.makeText(getApplicationContext(), "Desactivado", Toast.LENGTH_SHORT).show();
-                    UserConfig.setOpenAppWhenStop(false);
+                    switchEnabled = false;
                 }
 
             }
@@ -151,5 +154,34 @@ public class ConfFavoriteAppActivity extends ActionBarActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void saveFavoriteApp(View v){
+
+        UserConfig.getSettings().setAppToOpenWhenStop(listApp.get(chosenApp));
+
+        if (switchEnabled) {
+            UserConfig.getSettings().setOpenAppWhenStop(true);
+        } else {
+            UserConfig.getSettings().setOpenAppWhenStop(true);
+        }
+
+        finish();
+
+    }
+
+    public void resetFavoriteApp(View v){
+
+        switch1.setChecked(false);
+
+        chosenApp = arrayAdapter.getPosition("Ninguna");
+        spinner1.setSelection(chosenApp);
+
+    }
+
+    public void cancelFavoriteApp(View v){
+
+        finish();
+
     }
 }

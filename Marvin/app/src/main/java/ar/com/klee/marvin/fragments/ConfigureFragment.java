@@ -38,12 +38,12 @@ public class ConfigureFragment extends Fragment {
 
         final ArrayList<String> listCategories =  new ArrayList<String>();
         listCategories.add("Alertas de Velocidad");
-        listCategories.add("App Favorita");
+        listCategories.add("Aplicación Favorita");
         listCategories.add("SMS Emergencia");
         listCategories.add("Historial de viajes");
         listCategories.add("Configuración HotSpot");
         listCategories.add("Orientación Pantalla");
-        listCategories.add("Terminos y Condiciones");
+        listCategories.add("Términos y Condiciones");
 
 
         ListView lv = (ListView) v.findViewById(R.id.listView);
