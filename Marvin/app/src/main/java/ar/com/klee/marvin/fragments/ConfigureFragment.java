@@ -22,6 +22,7 @@ import ar.com.klee.marvin.activities.ConfSpeedAlertActivity;
 import ar.com.klee.marvin.activities.ConfTermsActivity;
 import ar.com.klee.marvin.activities.ListviewCategoriesAdapter;
 import ar.com.klee.marvin.activities.MainMenuActivity;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 
 
 public class ConfigureFragment extends Fragment {
@@ -35,6 +36,9 @@ public class ConfigureFragment extends Fragment {
 
         // Set title bar
        // ((MainMenuActivity) getActivity()).setActionBarTitle("CONFIGURACIÓN");
+
+        CommandHandlerManager commandHandlerManager = CommandHandlerManager.getInstance();
+        commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_SETTINGS,commandHandlerManager.getMainActivity());
 
         final ArrayList<String> listCategories =  new ArrayList<String>();
         listCategories.add("Alertas de Velocidad");

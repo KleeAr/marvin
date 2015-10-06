@@ -46,6 +46,8 @@ public class STTService extends Service {
     public int numberOfWhatsapp = 0;
     public String whatsAppContact;
 
+    private boolean wasPlayingMusic = false;
+
     LocalBroadcastManager broadcaster;
     public static final String COPA_RESULT = "com.controlj.copame.backend.COPAService.REQUEST_PROCESSED";
     public static final String COPA_MESSAGE = "com.controlj.copame.backend.COPAService.COPA_MSG";
@@ -249,12 +251,24 @@ public class STTService extends Service {
             isListening = commandHandlerManager.detectCommand(text, isListening);
 
             if(text != null && text != "") {
-                if (isListening && !previousListening)
+                if (isListening && !previousListening) {
                     sendResult("Marvin");
-                else if (isListening && previousListening)
+                    if(commandHandlerManager.getCurrentActivity() >= CommandHandlerManager.ACTIVITY_CAMERA &&
+                            MusicService.getInstance().isPlaying()){
+                        wasPlayingMusic = true;
+                        MusicService.getInstance().pause();
+                    }
+                }else if (isListening && previousListening) {
                     sendResult("Command " + text);
-                else if (!isListening && previousListening)
+                }else if (!isListening && previousListening) {
                     sendResult("MarvinFinish " + text);
+                    if(commandHandlerManager.getCurrentActivity() >= CommandHandlerManager.ACTIVITY_CAMERA){
+                        if(wasPlayingMusic) {
+                            commandHandlerManager.getTextToSpeech().setPlayMusic(true);
+                            wasPlayingMusic = false;
+                        }
+                    }
+                }
             }
 
         }

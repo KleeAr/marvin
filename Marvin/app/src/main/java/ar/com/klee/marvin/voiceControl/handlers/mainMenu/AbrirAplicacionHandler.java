@@ -24,7 +24,7 @@ public class AbrirAplicacionHandler extends CommandHandler {
 
     public AbrirAplicacionHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager){
 
-        super(Arrays.asList("abrir {aplicacion}"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("abrir {aplicacion}","abre {aplicacion}"), textToSpeech, context, commandHandlerManager);
 
     }
 

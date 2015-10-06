@@ -1,5 +1,6 @@
 package ar.com.klee.marvin.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -416,13 +417,26 @@ public class MisSitiosFragment extends Fragment {
 
     }
 
-    class ImageGetterTask extends AsyncTask<Void, Void, Void> {
+    public class ImageGetterTask extends AsyncTask<Void, Void, Integer> {
 
         private Bitmap img1;
         private Bitmap img2;
         private boolean imageExists;
+        private ProgressDialog progress;
 
-        protected Void doInBackground(Void... params) {
+        protected void onPreExecute() {
+            progress = new ProgressDialog(CommandHandlerManager.getInstance().getMainActivity());
+            progress.setTitle("Buscando imágenes");
+            progress.setMessage("Se está verificando si existen imágenes del sitio. Aguardá un momento...");
+            progress.setCancelable(false);
+            progress.show();
+        }
+
+        protected void onPostExecute(Integer success) {
+            progress.dismiss();
+        }
+
+        protected Integer doInBackground(Void... params) {
 
             final Site newSite = UserSites.getInstance().getSites().get(UserSites.getInstance().getSites().size()-1);
 
@@ -504,7 +518,7 @@ public class MisSitiosFragment extends Fragment {
                 e.printStackTrace();
             }
 
-            return null;
+            return 1;
 
         }
 

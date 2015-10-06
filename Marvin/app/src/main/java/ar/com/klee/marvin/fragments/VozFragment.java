@@ -27,6 +27,7 @@ import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.activities.ExpandableListAdapter;
 import ar.com.klee.marvin.activities.LoginActivity;
 import ar.com.klee.marvin.activities.MainMenuActivity;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 
 public class VozFragment extends Fragment {
 
@@ -39,6 +40,9 @@ public class VozFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
+
+        CommandHandlerManager commandHandlerManager = CommandHandlerManager.getInstance();
+        commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_VOICE_COMMANDS,commandHandlerManager.getMainActivity());
 
         commandList = new ArrayList<Command>();
         //Menu Principal

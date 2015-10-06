@@ -125,7 +125,7 @@ public class LocationSender {
                         velocity = 0.0;
                     else {
                         velocity = polylineLength / hours;
-                        if(velocity < 2.5)
+                        if(velocity < 3.0)
                             velocity = 0.0;
                     }
                 }
@@ -211,8 +211,8 @@ public class LocationSender {
             }
         };
 
-        mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0, locationListener);
-        mlocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 0, locationListener);
+        mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
+        mlocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
 
     }
 

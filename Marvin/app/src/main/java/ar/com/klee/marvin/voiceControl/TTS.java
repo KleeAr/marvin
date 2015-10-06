@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import ar.com.klee.marvin.activities.MainMenuActivity;
+import ar.com.klee.marvin.multimedia.music.MusicService;
 
 /* Clase TTS
 ** -Gestión del pasaje de textos a audio
@@ -22,6 +23,7 @@ public class TTS {
     private SpeechRecognizer mSpeechRecognizer;
     private Intent mSpeechRecognizerIntent;
     private boolean speedAlert = false;
+    private boolean playMusic = false;
 
     /* Constructor de la clase TTS
     ** -Inicializa el objeto de la clase TextToSpeech que nos va a permitir reproducir texto
@@ -48,6 +50,11 @@ public class TTS {
                                 //Log.d("TTS","Salta alarma");
                                 MainMenuActivity mainMenuActivity = ((MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity());
                                 mainMenuActivity.activate(mSpeechRecognizer, mSpeechRecognizerIntent);
+
+                                if(playMusic){
+                                    playMusic = false;
+                                    MusicService.getInstance().startPlaying();
+                                }
 
                                 if(speedAlert){
                                     ((MainMenuActivity)CommandHandlerManager.getInstance().getMainActivity()).speedAlertFinish();
@@ -108,6 +115,10 @@ public class TTS {
         ttsObject.stop();
         ttsObject.shutdown();
 
+    }
+
+    public void setPlayMusic(boolean value){
+        playMusic = value;
     }
 
 }
