@@ -341,4 +341,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
+    public void bluetoothClient(View view) {
+        startActivity(new Intent(this, BluetoothActivity.class));
+    }
 }

@@ -159,6 +159,14 @@
         android:textColor="#ffffff"
         android:background="#000000"
         android:onClick="logIn" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cliente Bluetooth"
+        android:id="@+id/bt_bluetooth"
+        android:textColor="#ffffff"
+        android:background="#000000"
+        android:onClick="bluetoothClient" />
     <!--
         <com.facebook.login.widget.LoginButton
             android:id="@+id/login_button"

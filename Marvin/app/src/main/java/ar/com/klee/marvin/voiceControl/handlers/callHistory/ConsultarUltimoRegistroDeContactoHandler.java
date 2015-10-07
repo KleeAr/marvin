@@ -206,7 +206,7 @@ public class ConsultarUltimoRegistroDeContactoHandler extends CommandHandler {
     public CommandHandlerContext stepThree(CommandHandlerContext context){
 
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getTextToSpeech().speakText("¿Querés llamar o enviar sms?");
             context.put(STEP, 3);
             return context;
@@ -265,7 +265,7 @@ public class ConsultarUltimoRegistroDeContactoHandler extends CommandHandler {
     //CONFIRMACION DE MENSAJE
     public CommandHandlerContext stepSeven(CommandHandlerContext context){
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getTextToSpeech().speakText(context.getObject(ACTIVITY,CallHistoryActivity.class).respondMessage());
             context.put(STEP, 0);
             return context;

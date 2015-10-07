@@ -17,6 +17,8 @@ public class UserSetting {
     private String appToOpenWhenStop;
     private String hotspotName = "MRVN";
     private String hotspotPassword = "marvinHotSpot";
+    private boolean speedAlertEnabled = false;
+    private int alertSpeed;
 	
 	public UserSetting() {
 		
@@ -24,7 +26,7 @@ public class UserSetting {
 
 	public UserSetting(Long userId, Long miniumTripTime, Long miniumTripDistance, String emergencyNumber,
 			String emergencySMS, int orientation, boolean openAppWhenStop, String appToOpenWhenStop, String hotspotName,
-			String hotspotPassword) {
+			String hotspotPassword, boolean speedAlertEnabled, int alertSpeed) {
 		super();
 		this.userId = userId;
 		this.miniumTripTime = miniumTripTime;
@@ -36,6 +38,8 @@ public class UserSetting {
 		this.appToOpenWhenStop = appToOpenWhenStop;
 		this.hotspotName = hotspotName;
 		this.hotspotPassword = hotspotPassword;
+		this.speedAlertEnabled = speedAlertEnabled;
+		this.alertSpeed = alertSpeed;
 	}
 
 	public Long getUserId() {
@@ -116,6 +120,22 @@ public class UserSetting {
 
 	public void setHotspotPassword(String hotspotPassword) {
 		this.hotspotPassword = hotspotPassword;
+	}
+
+	public boolean isSpeedAlertEnabled() {
+		return speedAlertEnabled;
+	}
+	
+	public void setSpeedAlertEnabled(boolean speedAlertEnabled) {
+		this.speedAlertEnabled = speedAlertEnabled;
+	}
+	
+	public int getAlertSpeed() {
+		return alertSpeed;
+	}
+	
+	public void setAlertSpeed(int alertSpeed) {
+		this.alertSpeed = alertSpeed;
 	}
 
 	public static UserSetting createDefaultSettings(User user) {

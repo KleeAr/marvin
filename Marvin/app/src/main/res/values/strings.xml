@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Marvin</string>
 
     <string name="hello_world">Hello world!</string>
@@ -41,6 +41,20 @@
     <string name="recycler_view">Recycler View</string>
     <string name="deleted">Eliminar Elemento</string>
     <string name="undo">Deshacer</string>
+    <string name="none_paired">no vinculados</string>
+    <string name="scanning">Buscando dispositivos</string>
+    <string name="select_device">Seleccione un dispositivo</string>
+    <string name="none_found">No se encontró dispositivo</string>
+    <string name="send">Send</string>
+    <string name="not_connected">You are not connected to a device</string>
+    <string name="bt_not_enabled_leaving">Bluetooth was not enabled. Leaving Bluetooth Chat.</string>
+    <string name="title_connecting">connecting...</string>
+    <string name="title_connected_to">connected to <xliff:g id="device_name">%1$s</xliff:g></string>
+    <string name="title_not_connected">not connected</string>
+    <string name="secure_connect">Conectar - seguro</string>
+    <string name="insecure_connect">Conectar - Inseguro</string>
+    <string name="discoverable">Hacer visible</string>
+    <string name="open_device_list">Conectar con dispositivos</string>
 
     <!-- Drawer Menu items -->
     <string-array name="nav_drawer_items">
@@ -66,6 +80,7 @@
         <item>@mipmap/ic_cancel_black_48dp</item>
 
     </array>
+    <string name="title_activity_no_voice_incomming_call">NoVoiceIncommingCallActivity</string>
 
     <string name="ayuda1"> Para que funcione necesitas conexión a Internet. El reconocedor de voz toma tu voz después del "bip", allí debes indicar la palabra MARVIN.  Luego de que el sistema active su modo escucha, deberas ingresar el comando que deseas ejecutar, como por ejemplo, "Abrir Contactos". \nA modo complementario el sistema muestra por pantalla el comando elegido.</string>
     <string name="ayuda2"> Para agregar íconos de atajos haz click en uno de los cuadrantes "Agregar" y después selecciona el atajo del menú que te aparece. Este menú mostrara todas las aplicaciones instaladas en tu dispositivo más las pantallas que dispone MARVIN.\nUna vez construido el atajo podra modificarse/eliminarse manteniendo apretado sobre el atajo y seleccionando la opción correspondiente.</string>

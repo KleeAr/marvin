@@ -16,6 +16,8 @@
 
     <uses-library android:name="com.google.android.maps" />
 
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -26,7 +28,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.GET_TASKS"/>
+    <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="package.name.permission.MAPS_RECEIVE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
@@ -39,7 +41,7 @@
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.SEND_SMS" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
@@ -56,19 +58,11 @@
         android:required="true" />
 
     <application
+        android:name="android.support.multidex.MultiDexApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:name="android.support.multidex.MultiDexApplication">
-        <receiver
-            android:name=".call.CallReceiver"
-            android:enabled="true" >
-            <intent-filter android:priority="99999" >
-                <action android:name="android.intent.action.PHONE_STATE" />
-            </intent-filter>
-        </receiver>
-
+        android:theme="@style/AppTheme" >
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
@@ -78,6 +72,7 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -94,6 +89,7 @@
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
         <service
             android:name=".voiceControl.STTService"
             android:label="STT" >
@@ -129,14 +125,29 @@
             android:label="@string/title_activity_bluetooth" >
         </activity>
         <activity
+            android:name=".bluetooth.DeviceListActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="select device"
+            android:theme="@android:style/Theme.Holo.Dialog" />
+        <activity
             android:name=".activities.CallHistoryActivity"
             android:label="@string/title_activity_call_history" >
         </activity>
         <activity
-            android:name=".activities.IncomingCallActivity"
+            android:name=".activities.DefaultIncomingCallActivity"
             android:label="IncomingCallActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.ANSWER" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activities.BluetoothIncomingCallActivity"
+            android:label="IncomingCallActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.ANSWER" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -188,10 +199,10 @@
 
         <service
             android:name=".social.NotificationService"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
             class=".social.NotificationService"
             android:enabled="true"
-            android:exported="false" >
+            android:exported="false"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE" >
             <intent-filter>
                 <action
                     android:name=".NotificationService"
@@ -200,6 +211,15 @@
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
             </intent-filter>
+        </service>
+
+        <activity
+            android:name=".activities.NoVoiceIncommingCallActivity"
+            android:label="@string/title_activity_no_voice_incomming_call" >
+        </activity>
+
+        <service
+            android:name=".bluetooth.BluetoothService">
         </service>
     </application>
 

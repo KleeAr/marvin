@@ -40,10 +40,11 @@
             android:layout_weight="1" />
 
         <Button
-            android:id="@+id/button_send"
+            android:id="@+id/button_connect_device"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/send"/>
+            android:text="@string/open_device_list"
+            android:onClick="openDeviceList"/>
     </LinearLayout>
 
 </LinearLayout>
