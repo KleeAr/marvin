@@ -33,6 +33,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,7 +54,12 @@ import java.util.Stack;
 import ar.com.klee.marvin.DrawerMenuAdapter;
 import ar.com.klee.marvin.DrawerMenuItem;
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.bluetooth.BluetoothConstants;
+import ar.com.klee.marvin.bluetooth.BluetoothHandler;
+import ar.com.klee.marvin.bluetooth.BluetoothService;
 import ar.com.klee.marvin.call.CallDriver;
+import ar.com.klee.marvin.call.CallReceiver;
+import ar.com.klee.marvin.call.PhoneCall;
 import ar.com.klee.marvin.client.model.UserSetting;
 import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.configuration.UserSites;
@@ -124,12 +130,37 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     public static TextView weekDay;
     public static TextView dateText;
 
+    private Gson gson = new Gson();
+
     public int actualFragmentPosition = 1;
     public Stack<Integer> previousMenus = new Stack();
 
     private PowerManager.WakeLock wakeLock;
 
     private boolean wasBackPressed = false;
+
+    /**
+     * The Handler that gets information back from the BluetoothService
+     */
+    private final Handler mHandler = new BluetoothHandler(this) {
+        @Override
+        protected void onMessageRead(String readMessage) {
+            PhoneCall phoneCall = gson.fromJson(readMessage, PhoneCall.class);
+            Intent incomingIntent = new Intent(super.context, BluetoothIncomingCallActivity.class);
+            incomingIntent.putExtra("number", phoneCall.getNumber());
+            startActivity(incomingIntent);
+        }
+
+        @Override
+        protected void onMessageWrote(String writeMessage) {
+            // TODO handle wrote
+        }
+    };
+
+
+    private BluetoothService bluetoothService;
+    private Intent bluetoothServiceIntent;
+
 
     private String lastSong;
     private String lastArtist;
@@ -140,6 +171,17 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         CommandHandlerManager.destroyInstance();
         setContentView(R.layout.activity_main_menu);
 
+        CallReceiver receiver = new CallReceiver();
+
+        if(CallReceiver.wasRegistered()) {
+            unregisterReceiver(receiver);
+            CallReceiver.setWasRegistered(false);
+        }else {
+            IntentFilter filter = new IntentFilter(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
+            filter.setPriority(Integer.MAX_VALUE);
+            registerReceiver(receiver, filter);
+            CallReceiver.setWasRegistered(true);
+        }
         PowerManager powerManager = (PowerManager)this.getSystemService(Context.POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "My Lock");
         wakeLock.acquire();
@@ -313,7 +355,21 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+        // Initialize the BluetoothChatService to perform bluetooth connections
+        bluetoothServiceIntent = new Intent(this, BluetoothService.class);
+        bluetoothServiceIntent.putExtra(BluetoothConstants.HANDLER, BluetoothConstants.MAIN_MENU_HANDLER);
+        startService(bluetoothServiceIntent);
+        new Thread() {
+            @Override
+            public void run() {
+                while (BluetoothService.getInstance() == null){
 
+                }
+                BluetoothService.getInstance().setmHandler(mHandler);
+            }
+        };
+        bluetoothService = BluetoothService.getInstance();
+        bluetoothService.setmHandler(mHandler);
     }
 
     public int getActualFragmentPosition() {
@@ -340,7 +396,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 return super.onOptionsItemSelected(item);
         }
     }
-
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -416,6 +471,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 break;
         }
 
+        // Setting it as the Toolbar for the activity
         setSupportActionBar(toolbar);
     }
 
@@ -817,8 +873,12 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         }
     }
 
+    @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (bluetoothService != null) {
+           // bluetoothService.stop();
+        }
         doUnbindService();
     }
 
@@ -1369,6 +1429,23 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
             MainMenuFragment.tv_song.setText(lastSong);
             MainMenuFragment.tv_artist.setText(lastArtist);
+        }
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Performing this check in onResume() covers the case in which BT was
+        // not enabled during onStart(), so we were paused to enable it...
+        // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
+        if (bluetoothService != null) {
+            // Only if the state is STATE_NONE, do we know that we haven't started already
+            if (bluetoothService.getState() == BluetoothService.STATE_NONE) {
+                // Start the Bluetooth chat services
+                bluetoothService.start();
+            }
         }
     }
 
