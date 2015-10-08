@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -150,6 +151,9 @@ public class MainMenuFragment extends Fragment {
                     case "Marvin - Mis sitios":
                         shortcutList[i].setIcon(getResources().getDrawable(getResources().getIdentifier("drawable/ic_places", null, getActivity().getPackageName())));
                         break;
+                    case "Marvin - Perfil":
+                        shortcutList[i].setIcon(getResources().getDrawable(getResources().getIdentifier("drawable/ic_profile", null, getActivity().getPackageName())));
+                        break;
                     case "Marvin - Salir":
                         shortcutList[i].setIcon(getResources().getDrawable(getResources().getIdentifier("drawable/ic_close", null, getActivity().getPackageName())));
                         break;
@@ -182,6 +186,7 @@ public class MainMenuFragment extends Fragment {
         final TextView dateText = MainMenuActivity.dateText;
         dateText.setTypeface(fBariolRegular);
 
+
         final TextView anteMeridiem = (TextView)v.findViewById(R.id.anteMeridiem);
         date = System.currentTimeMillis();
 
@@ -196,7 +201,6 @@ public class MainMenuFragment extends Fragment {
 
         final SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
         weekDay.setText(sdf.format(date));
-
 
         final SimpleDateFormat formatTime3 = new SimpleDateFormat("dd 'de' MMMM");
         dateText.setText(formatTime3.format(date));
@@ -220,6 +224,8 @@ public class MainMenuFragment extends Fragment {
                                     date = System.currentTimeMillis();
                                     digitalClock.setText(formatTime1.format(date));
                                     anteMeridiem.setText(formatTime2.format(date));
+                                    weekDay.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
+                                    dateText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
                                     if (dateComplete.format(date).equals("12:00 a.m.")) {
                                         weekDay.setText(sdf.format(date));
                                         dateText.setText(formatTime3.format(date));

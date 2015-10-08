@@ -78,6 +78,8 @@ public class MisSitiosFragment extends Fragment {
     RecyclerView.Adapter mAdapter;
     List<Site> lSites = new ArrayList<Site>();
 
+    private ProgressDialog progress;
+
     private CommandHandlerManager commandHandlerManager;
 
     public MisSitiosFragment() {
@@ -192,6 +194,11 @@ public class MisSitiosFragment extends Fragment {
                             final LinearLayout layout = new LinearLayout(context);
                             layout.setOrientation(LinearLayout.HORIZONTAL);
 
+                            final LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                            lp.setMargins(8, 10, 14, 2);
+                            final LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                            lp2.setMargins(14, 10, 8, 2);
+
                             final ImageView image1 = new ImageView(context);
                             final ImageView image2 = new ImageView(context);
 
@@ -199,9 +206,11 @@ public class MisSitiosFragment extends Fragment {
                             handler.postDelayed(new Runnable() {
                                 public void run() {
                                     image1.setImageBitmap(task.getImg1());
+                                    image1.setLayoutParams(lp);
                                     layout.addView(image1);
 
                                     image2.setImageBitmap(task.getImg2());
+                                    image2.setLayoutParams(lp2);
                                     layout.addView(image2);
 
                                     int px = (int) (250 * context.getResources().getDisplayMetrics().density);
@@ -214,7 +223,7 @@ public class MisSitiosFragment extends Fragment {
 
                                     builder.setView(layout);
                                 }
-                            }, 2000);
+                            }, 5000);
 
 
                             builder.setNegativeButton("Imagen 1", new DialogInterface.OnClickListener() {
@@ -326,9 +335,10 @@ public class MisSitiosFragment extends Fragment {
                             Handler handler2 = new Handler();
                             handler2.postDelayed(new Runnable() {
                                 public void run() {
+                                    progress.dismiss();
                                     builder.show();
                                 }
-                            }, 2000);
+                            }, 5000);
 
                         }
                         else {
@@ -422,7 +432,6 @@ public class MisSitiosFragment extends Fragment {
         private Bitmap img1;
         private Bitmap img2;
         private boolean imageExists;
-        private ProgressDialog progress;
 
         protected void onPreExecute() {
             progress = new ProgressDialog(CommandHandlerManager.getInstance().getMainActivity());
@@ -433,7 +442,7 @@ public class MisSitiosFragment extends Fragment {
         }
 
         protected void onPostExecute(Integer success) {
-            progress.dismiss();
+
         }
 
         protected Integer doInBackground(Void... params) {
@@ -575,13 +584,20 @@ public class MisSitiosFragment extends Fragment {
         final ImageView image1 = new ImageView(context);
         final ImageView image2 = new ImageView(context);
 
+        final LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(8, 10, 14, 2);
+        final LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp2.setMargins(14, 10, 8, 2);
+
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
                 image1.setImageBitmap(task.getImg1());
+                image1.setLayoutParams(lp);
                 layout.addView(image1);
 
                 image2.setImageBitmap(task.getImg2());
+                image2.setLayoutParams(lp2);
                 layout.addView(image2);
 
                 int px = (int) (250 * context.getResources().getDisplayMetrics().density);
@@ -594,7 +610,7 @@ public class MisSitiosFragment extends Fragment {
 
                 builder.setView(layout);
             }
-        }, 2500);
+        }, 5000);
 
 
         builder.setNegativeButton("Imagen 1", new DialogInterface.OnClickListener() {
@@ -708,8 +724,9 @@ public class MisSitiosFragment extends Fragment {
             public void run() {
                 if(task.getImageExists())
                     builder.show();
+                progress.dismiss();
             }
-        }, 3000);
+        }, 5000);
 
         return 0;
     }

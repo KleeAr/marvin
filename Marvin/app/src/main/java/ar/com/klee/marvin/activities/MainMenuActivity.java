@@ -135,6 +135,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     private String lastSong;
     private String lastArtist;
 
+    private int radioStopPlayCounter = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -688,10 +690,13 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         int resourceId = getResources().getIdentifier("drawable/icon_" + item.getCondition().getCode(), null, getPackageName());
 
-        @SuppressWarnings("deprecation")
-        Drawable weatherIconDrawble = getResources().getDrawable(resourceId);
-
-        weatherIconImageView.setImageDrawable(weatherIconDrawble);
+        try{
+            Drawable weatherIconDrawble = getResources().getDrawable(resourceId);
+            weatherIconImageView.setImageDrawable(weatherIconDrawble);
+        }catch(Exception e){
+            e.printStackTrace();
+            Log.e("Weather",((Integer)resourceId).toString());
+        }
 
         temperatureTextView.setText(item.getCondition().getTemperature() + "\u00B0" + channel.getUnits().getTemperature());
 
@@ -1209,7 +1214,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     public String sendEmergencyMessage() {
 
-        return smsDriver.sendEmergencyMessage(" " + locationSender.getAddress() + ", " + locationSender.getTown() + ", " + locationSender.getState());
+        return smsDriver.sendEmergencyMessage(" " + locationSender.getAddress() + ", " + locationSender.getTown() + ", " + locationSender.getAddressState());
 
     }
 

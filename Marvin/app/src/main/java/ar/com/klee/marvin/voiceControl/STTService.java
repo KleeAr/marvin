@@ -354,4 +354,8 @@ public class STTService extends Service {
         isAlive.interrupt();
     }
 
+    public static boolean isInstanceInitialized() {
+        return instance != null;
+    }
+
 }
