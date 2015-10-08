@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import ar.com.klee.marvin.activities.MainMenuActivity;
+import ar.com.klee.marvin.multimedia.music.MusicService;
 
 /* Clase TTS
 ** -Gestión del pasaje de textos a audio
@@ -21,7 +22,8 @@ public class TTS {
     private TextToSpeech ttsObject;
     private SpeechRecognizer mSpeechRecognizer;
     private Intent mSpeechRecognizerIntent;
-    private boolean firstTime = true;
+    private boolean speedAlert = false;
+    private boolean playMusic = false;
 
     /* Constructor de la clase TTS
     ** -Inicializa el objeto de la clase TextToSpeech que nos va a permitir reproducir texto
@@ -49,6 +51,15 @@ public class TTS {
                                 MainMenuActivity mainMenuActivity = ((MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity());
                                 mainMenuActivity.activate(mSpeechRecognizer, mSpeechRecognizerIntent);
 
+                                if(playMusic){
+                                    playMusic = false;
+                                    MusicService.getInstance().startPlaying();
+                                }
+
+                                if(speedAlert){
+                                    ((MainMenuActivity)CommandHandlerManager.getInstance().getMainActivity()).speedAlertFinish();
+                                }
+
                             }
 
                         }
@@ -72,6 +83,13 @@ public class TTS {
         myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "FINISH_SPEAK");
 
         //Log.d("TTS","Reproduce texto");
+
+        if(textToSpeak.startsWith("SPEED ALERT - ")){
+            textToSpeak = textToSpeak.replace("SPEED ALERT - ","");
+            speedAlert = true;
+        }else{
+            speedAlert = false;
+        }
 
         // Reproduce el texto
         ttsObject.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH, myHashAlarm);
@@ -97,6 +115,10 @@ public class TTS {
         ttsObject.stop();
         ttsObject.shutdown();
 
+    }
+
+    public void setPlayMusic(boolean value){
+        playMusic = value;
     }
 
 }

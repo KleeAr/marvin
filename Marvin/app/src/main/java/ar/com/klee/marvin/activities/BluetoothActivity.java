@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -45,6 +46,7 @@ public class BluetoothActivity extends FragmentActivity {
     private BluetoothService bluetoothService = null;
     private boolean recieverRegistered;
     private Intent bluetoothServiceIntent;
+    private BroadcastReceiver bluetoothCallReciever;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,6 +72,7 @@ public class BluetoothActivity extends FragmentActivity {
         bluetoothServiceIntent = new Intent(this, BluetoothService.class);
         bluetoothServiceIntent.putExtra(BluetoothConstants.HANDLER, BluetoothConstants.EMPTY_BLUETOOTH_HANDLER);
         startService(bluetoothServiceIntent);
+        bluetoothService = BluetoothService.getInstance();
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
@@ -85,9 +88,18 @@ public class BluetoothActivity extends FragmentActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(bluetoothCallReciever);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-
+        bluetoothCallReciever = new BluetoothCallReceiver(bluetoothService);
+        IntentFilter filter = new IntentFilter(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
+        filter.setPriority(Integer.MAX_VALUE);
+        registerReceiver(bluetoothCallReciever, filter);
         // Performing this check in onResume() covers the case in which BT was
         // not enabled during onStart(), so we were paused to enable it...
         // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
@@ -107,16 +119,6 @@ public class BluetoothActivity extends FragmentActivity {
      */
     private void setupChat() {
         // Initialize to perform bluetooth connections
-        BluetoothCallReceiver bluetoothCallReciever = new BluetoothCallReceiver(bluetoothService);
-        IntentFilter filter = new IntentFilter(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
-        filter.setPriority(Integer.MAX_VALUE);
-
-        if(recieverRegistered) {
-            unregisterReceiver(bluetoothCallReciever);
-        } else {
-            registerReceiver(bluetoothCallReciever, filter);
-            recieverRegistered = true;
-        }
     }
 
     /**
@@ -252,7 +254,7 @@ public class BluetoothActivity extends FragmentActivity {
         // Get the BluetoothDevice object
         BluetoothDevice device = mBluetoothAdapter.getRemoteDevice(address);
         // Attempt to connect to the device
-        bluetoothService.connect(device, secure);
+        BluetoothService.getInstance().connect(device, secure);
     }
 
     @Override

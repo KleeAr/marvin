@@ -19,11 +19,16 @@ public class UserSites {
 
     }
 
+    public void setSites(List<Site> sites) {
+        this.sites = sites;
+    }
+
     public static UserSites getInstance() {
         if (instance == null) {
             throw new IllegalStateException("Instance not initialized. Call initializeInstance before calling getInstance");
         }
         return instance;
+
     }
 
     public void add(Site site){

@@ -1,9 +1,12 @@
 package ar.com.klee.marvin.activities;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import ar.com.klee.marvin.R;
 
@@ -11,6 +14,12 @@ import ar.com.klee.marvin.R;
 public class ConfTermsActivity extends ActionBarActivity {
 
     private Toolbar toolbar;
+    public TextView titleText;
+    public TextView cityText;
+    public ImageView weatherIconImageView;
+    public TextView temperatureTextView;
+    public TextView weekDay;
+    public TextView dateText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,9 +29,32 @@ public class ConfTermsActivity extends ActionBarActivity {
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
         // Set title bar
-        getSupportActionBar().setTitle("TERMINOS Y CONDICIONES");
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        Typeface fBariolBold = Typeface.createFromAsset(getAssets(), "Bariol_Bold.otf");
+
+        titleText = (TextView) findViewById(R.id.activityTitle);
+        titleText.setVisibility(TextView.VISIBLE);
+        titleText.setTypeface(fBariolBold);
+        titleText.setText("Términos y Condiciones");
+
+        weekDay = (TextView) findViewById(R.id.weekDayText);
+        dateText = (TextView) findViewById(R.id.dateText);
+        cityText = (TextView) findViewById(R.id.cityText);
+        temperatureTextView = (TextView) findViewById(R.id.temperatureText);
+        weatherIconImageView = (ImageView) findViewById(R.id.weatherImage);
+        weekDay.setVisibility(TextView.INVISIBLE);
+        dateText.setVisibility(TextView.INVISIBLE);
+        cityText.setVisibility(TextView.INVISIBLE);
+        temperatureTextView.setVisibility(TextView.INVISIBLE);
+        weatherIconImageView.setVisibility(ImageView.INVISIBLE);
+
+
+      /*  titleText = (TextView) findViewById(R.id.activityTitle);
+        titleText.setVisibility(TextView.VISIBLE);
+        titleText.setTypeface(fBariolBold);
+        titleText.setText("TERMINOS Y CONDICIONES");*/
 
 
     }

@@ -1,5 +1,6 @@
 package ar.com.klee.marvin.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -60,6 +61,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import ar.com.klee.marvin.activities.SiteActivity;
+import ar.com.klee.marvin.client.model.User;
+import ar.com.klee.marvin.configuration.UserSites;
 import ar.com.klee.marvin.gps.CardSiteAdapter;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.activities.MainMenuActivity;
@@ -74,6 +77,8 @@ public class MisSitiosFragment extends Fragment {
     RecyclerView.LayoutManager mLayoutManager;
     RecyclerView.Adapter mAdapter;
     List<Site> lSites = new ArrayList<Site>();
+
+    private ProgressDialog progress;
 
     private CommandHandlerManager commandHandlerManager;
 
@@ -97,17 +102,7 @@ public class MisSitiosFragment extends Fragment {
 
         mainMenuActivity = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
 
-        SharedPreferences mPrefs = mainMenuActivity.getPreferences(mainMenuActivity.MODE_PRIVATE);
-
-        int numberOfSites = mPrefs.getInt("NumberOfSites",0);
-
-        Integer i;
-
-        for(i=1; i<=numberOfSites; i++) {
-            Gson gson = new Gson();
-            String json = mPrefs.getString("Site"+i.toString(), "");
-            lSites.add(gson.fromJson(json, Site.class));
-        }
+        lSites = UserSites.getInstance().getSites();
 
         if(lSites.size()==0)
             Toast.makeText(mainMenuActivity, "No hay sitios guardados", Toast.LENGTH_SHORT).show();
@@ -183,18 +178,7 @@ public class MisSitiosFragment extends Fragment {
 
                         lSites.add(newSite);
 
-                        SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
-                        SharedPreferences.Editor prefsEditor = mPrefs.edit();
-                        Gson gson = new Gson();
-                        String json = gson.toJson(newSite);
-
-                        Integer numberOfSites = mPrefs.getInt("NumberOfSites",0);
-
-                        numberOfSites++;
-
-                        prefsEditor.putInt("NumberOfSites",numberOfSites);
-                        prefsEditor.putString("Site" + numberOfSites.toString(), json);
-                        prefsEditor.commit();
+                        UserSites.getInstance().setSites(lSites);
 
                         final ImageGetterTask task = (ImageGetterTask) new ImageGetterTask().execute();
 
@@ -210,6 +194,11 @@ public class MisSitiosFragment extends Fragment {
                             final LinearLayout layout = new LinearLayout(context);
                             layout.setOrientation(LinearLayout.HORIZONTAL);
 
+                            final LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                            lp.setMargins(8, 10, 14, 2);
+                            final LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                            lp2.setMargins(14, 10, 8, 2);
+
                             final ImageView image1 = new ImageView(context);
                             final ImageView image2 = new ImageView(context);
 
@@ -217,9 +206,11 @@ public class MisSitiosFragment extends Fragment {
                             handler.postDelayed(new Runnable() {
                                 public void run() {
                                     image1.setImageBitmap(task.getImg1());
+                                    image1.setLayoutParams(lp);
                                     layout.addView(image1);
 
                                     image2.setImageBitmap(task.getImg2());
+                                    image2.setLayoutParams(lp2);
                                     layout.addView(image2);
 
                                     int px = (int) (250 * context.getResources().getDisplayMetrics().density);
@@ -232,7 +223,7 @@ public class MisSitiosFragment extends Fragment {
 
                                     builder.setView(layout);
                                 }
-                            }, 2000);
+                            }, 5000);
 
 
                             builder.setNegativeButton("Imagen 1", new DialogInterface.OnClickListener() {
@@ -267,14 +258,7 @@ public class MisSitiosFragment extends Fragment {
                                     lSites.get(lSites.size()-1).setSiteThumbnail(1);
                                     lSites.get(lSites.size()-1).setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
 
-                                    MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
-                                    SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
-                                    SharedPreferences.Editor prefsEditor = mPrefs.edit();
-                                    Gson gson = new Gson();
-                                    String json = gson.toJson(newSite);
-                                    Integer numberOfSites = mPrefs.getInt("NumberOfSites",0);
-                                    prefsEditor.putString("Site" + numberOfSites.toString(), json);
-                                    prefsEditor.commit();
+                                    UserSites.getInstance().setSites(lSites);
 
                                     dialog.dismiss();
 
@@ -315,14 +299,7 @@ public class MisSitiosFragment extends Fragment {
                                     lSites.get(lSites.size()-1).setSiteThumbnail(1);
                                     lSites.get(lSites.size()-1).setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
 
-                                    MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
-                                    SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
-                                    SharedPreferences.Editor prefsEditor = mPrefs.edit();
-                                    Gson gson = new Gson();
-                                    String json = gson.toJson(newSite);
-                                    Integer numberOfSites = mPrefs.getInt("NumberOfSites", 0);
-                                    prefsEditor.putString("Site" + numberOfSites.toString(), json);
-                                    prefsEditor.commit();
+                                    UserSites.getInstance().setSites(lSites);
 
                                     dialog.dismiss();
 
@@ -340,14 +317,7 @@ public class MisSitiosFragment extends Fragment {
                                         lSites.get(lSites.size()-1).setSiteThumbnail(0);
                                         lSites.get(lSites.size()-1).setSiteImage(null);
 
-                                        MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
-                                        SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
-                                        SharedPreferences.Editor prefsEditor = mPrefs.edit();
-                                        Gson gson = new Gson();
-                                        String json = gson.toJson(newSite);
-                                        Integer numberOfSites = mPrefs.getInt("NumberOfSites", 0);
-                                        prefsEditor.putString("Site" + numberOfSites.toString(), json);
-                                        prefsEditor.commit();
+                                        UserSites.getInstance().setSites(lSites);
 
                                         dialog.dismiss();
 
@@ -365,9 +335,10 @@ public class MisSitiosFragment extends Fragment {
                             Handler handler2 = new Handler();
                             handler2.postDelayed(new Runnable() {
                                 public void run() {
+                                    progress.dismiss();
                                     builder.show();
                                 }
-                            }, 2000);
+                            }, 5000);
 
                         }
                         else {
@@ -404,21 +375,8 @@ public class MisSitiosFragment extends Fragment {
                                 file.delete();
 
                                 lSites.remove(position);
-                                MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
 
-                                SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
-
-                                Integer numberOfSites = lSites.size();
-
-                                SharedPreferences.Editor prefsEditor = mPrefs.edit();
-                                Gson gson = new Gson();
-                                prefsEditor.putInt("NumberOfSites",numberOfSites);
-                                Integer i;
-                                for(i=1;i<=numberOfSites;i++) {
-                                    String json = gson.toJson(lSites.get(i-1));
-                                    prefsEditor.putString("Site" + i.toString(), json);
-                                }
-                                prefsEditor.commit();
+                                UserSites.getInstance().setSites(lSites);
 
                                 mAdapter = new CardSiteAdapter(lSites);
                                 mRecyclerView.setAdapter(mAdapter);
@@ -469,25 +427,27 @@ public class MisSitiosFragment extends Fragment {
 
     }
 
-    class ImageGetterTask extends AsyncTask<Void, Void, Void> {
+    public class ImageGetterTask extends AsyncTask<Void, Void, Integer> {
 
         private Bitmap img1;
         private Bitmap img2;
         private boolean imageExists;
 
-        protected Void doInBackground(Void... params) {
+        protected void onPreExecute() {
+            progress = new ProgressDialog(CommandHandlerManager.getInstance().getMainActivity());
+            progress.setTitle("Buscando imágenes");
+            progress.setMessage("Se está verificando si existen imágenes del sitio. Aguardá un momento...");
+            progress.setCancelable(false);
+            progress.show();
+        }
 
-            MainMenuActivity mainMenuActivity;
+        protected void onPostExecute(Integer success) {
 
-            mainMenuActivity = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
+        }
 
-            SharedPreferences mPrefs = mainMenuActivity.getPreferences(mainMenuActivity.MODE_PRIVATE);
+        protected Integer doInBackground(Void... params) {
 
-            Integer numberOfSites = mPrefs.getInt("NumberOfSites",0);
-
-            Gson gson = new Gson();
-            String json = mPrefs.getString("Site"+numberOfSites.toString(), "");
-            final Site newSite = gson.fromJson(json, Site.class);
+            final Site newSite = UserSites.getInstance().getSites().get(UserSites.getInstance().getSites().size()-1);
 
             String xml = "http://cbk0.google.com/cbk?output=xml&hl=x-local&ll=";
             xml += ((Double)(newSite.getCoordinates().latitude)).toString() + ",";
@@ -567,7 +527,7 @@ public class MisSitiosFragment extends Fragment {
                 e.printStackTrace();
             }
 
-            return null;
+            return 1;
 
         }
 
@@ -609,18 +569,7 @@ public class MisSitiosFragment extends Fragment {
 
         lSites.add(newSite);
 
-        SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
-        SharedPreferences.Editor prefsEditor = mPrefs.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(newSite);
-
-        Integer numberOfSites = mPrefs.getInt("NumberOfSites",0);
-
-        numberOfSites++;
-
-        prefsEditor.putInt("NumberOfSites",numberOfSites);
-        prefsEditor.putString("Site" + numberOfSites.toString(), json);
-        prefsEditor.commit();
+        UserSites.getInstance().setSites(lSites);
 
         final ImageGetterTask task = (ImageGetterTask) new ImageGetterTask().execute();
 
@@ -635,13 +584,20 @@ public class MisSitiosFragment extends Fragment {
         final ImageView image1 = new ImageView(context);
         final ImageView image2 = new ImageView(context);
 
+        final LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(8, 10, 14, 2);
+        final LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp2.setMargins(14, 10, 8, 2);
+
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
                 image1.setImageBitmap(task.getImg1());
+                image1.setLayoutParams(lp);
                 layout.addView(image1);
 
                 image2.setImageBitmap(task.getImg2());
+                image2.setLayoutParams(lp2);
                 layout.addView(image2);
 
                 int px = (int) (250 * context.getResources().getDisplayMetrics().density);
@@ -654,7 +610,7 @@ public class MisSitiosFragment extends Fragment {
 
                 builder.setView(layout);
             }
-        }, 2500);
+        }, 5000);
 
 
         builder.setNegativeButton("Imagen 1", new DialogInterface.OnClickListener() {
@@ -689,14 +645,7 @@ public class MisSitiosFragment extends Fragment {
                 lSites.get(lSites.size() - 1).setSiteThumbnail(1);
                 lSites.get(lSites.size() - 1).setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
 
-                MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
-                SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
-                SharedPreferences.Editor prefsEditor = mPrefs.edit();
-                Gson gson = new Gson();
-                String json = gson.toJson(newSite);
-                Integer numberOfSites = mPrefs.getInt("NumberOfSites", 0);
-                prefsEditor.putString("Site" + numberOfSites.toString(), json);
-                prefsEditor.commit();
+                UserSites.getInstance().setSites(lSites);
 
                 dialog.dismiss();
 
@@ -737,14 +686,7 @@ public class MisSitiosFragment extends Fragment {
                 lSites.get(lSites.size() - 1).setSiteThumbnail(1);
                 lSites.get(lSites.size() - 1).setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
 
-                MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
-                SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
-                SharedPreferences.Editor prefsEditor = mPrefs.edit();
-                Gson gson = new Gson();
-                String json = gson.toJson(newSite);
-                Integer numberOfSites = mPrefs.getInt("NumberOfSites", 0);
-                prefsEditor.putString("Site" + numberOfSites.toString(), json);
-                prefsEditor.commit();
+                UserSites.getInstance().setSites(lSites);
 
                 dialog.dismiss();
 
@@ -762,14 +704,7 @@ public class MisSitiosFragment extends Fragment {
                     lSites.get(lSites.size() - 1).setSiteThumbnail(0);
                     lSites.get(lSites.size() - 1).setSiteImage(null);
 
-                    MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
-                    SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
-                    SharedPreferences.Editor prefsEditor = mPrefs.edit();
-                    Gson gson = new Gson();
-                    String json = gson.toJson(newSite);
-                    Integer numberOfSites = mPrefs.getInt("NumberOfSites", 0);
-                    prefsEditor.putString("Site" + numberOfSites.toString(), json);
-                    prefsEditor.commit();
+                    UserSites.getInstance().setSites(lSites);
 
                     dialog.dismiss();
 
@@ -789,8 +724,9 @@ public class MisSitiosFragment extends Fragment {
             public void run() {
                 if(task.getImageExists())
                     builder.show();
+                progress.dismiss();
             }
-        }, 3000);
+        }, 5000);
 
         return 0;
     }
@@ -854,21 +790,8 @@ public class MisSitiosFragment extends Fragment {
         file.delete();
 
         lSites.remove(i);
-        MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
 
-        SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
-
-        Integer numberOfSites = lSites.size();
-
-        SharedPreferences.Editor prefsEditor = mPrefs.edit();
-        Gson gson = new Gson();
-        prefsEditor.putInt("NumberOfSites",numberOfSites);
-        Integer j;
-        for(j=1;j<=numberOfSites;j++) {
-            String json = gson.toJson(lSites.get(j-1));
-            prefsEditor.putString("Site" + j.toString(), json);
-        }
-        prefsEditor.commit();
+        UserSites.getInstance().setSites(lSites);
 
         mAdapter = new CardSiteAdapter(lSites);
         mRecyclerView.setAdapter(mAdapter);

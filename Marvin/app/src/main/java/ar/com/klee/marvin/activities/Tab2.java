@@ -23,6 +23,7 @@ import ar.com.klee.marvin.fragments.DondeEstacioneFragment;
 import ar.com.klee.marvin.fragments.MainMenuFragment;
 import ar.com.klee.marvin.fragments.MisSitiosFragment;
 import ar.com.klee.marvin.fragments.MisViajesFragment;
+import ar.com.klee.marvin.fragments.PerfilFragment;
 import ar.com.klee.marvin.fragments.VozFragment;
 
 
@@ -104,18 +105,15 @@ public class Tab2 extends Fragment implements View.OnClickListener, View.OnLongC
                     break;
                 case "Marvin - Comandos de voz":
                     ((MainMenuActivity) getActivity()).previousMenus.push(1);
-                    ((MainMenuActivity) getActivity()).actualFragmentPosition = 2;
-                    ((MainMenuActivity)getActivity()).setFragment(2, VozFragment.class);
+                    ((MainMenuActivity)getActivity()).setFragment(2);
                     break;
                 case "Marvin - Configuración":
                     ((MainMenuActivity) getActivity()).previousMenus.push(1);
-                    ((MainMenuActivity) getActivity()).actualFragmentPosition = 8;
-                    ((MainMenuActivity)getActivity()).setFragment(8, ConfigureFragment.class);
+                    ((MainMenuActivity)getActivity()).setFragment(8);
                     break;
                 case "Marvin - Dónde estacioné":
                     ((MainMenuActivity) getActivity()).previousMenus.push(1);
-                    ((MainMenuActivity) getActivity()).actualFragmentPosition = 6;
-                    ((MainMenuActivity)getActivity()).setFragment(6, DondeEstacioneFragment.class);
+                    ((MainMenuActivity)getActivity()).setFragment(6);
                     break;
                 case "Marvin - Historial de llamadas":
                     Intent callHistory = new Intent(getActivity(), CallHistoryActivity.class);
@@ -127,8 +125,7 @@ public class Tab2 extends Fragment implements View.OnClickListener, View.OnLongC
                     break;
                 case "Marvin - Historial de viajes":
                     ((MainMenuActivity) getActivity()).previousMenus.push(1);
-                    ((MainMenuActivity) getActivity()).actualFragmentPosition = 4;
-                    ((MainMenuActivity)getActivity()).setFragment(4, MisViajesFragment.class);
+                    ((MainMenuActivity)getActivity()).setFragment(4);
                     break;
                 case "Marvin - Mapa":
                     Intent map = new Intent(getActivity(), MapActivity.class);
@@ -136,8 +133,11 @@ public class Tab2 extends Fragment implements View.OnClickListener, View.OnLongC
                     break;
                 case "Marvin - Mis sitios":
                     ((MainMenuActivity) getActivity()).previousMenus.push(1);
-                    ((MainMenuActivity) getActivity()).actualFragmentPosition = 5;
-                    ((MainMenuActivity)getActivity()).setFragment(5, MisSitiosFragment.class);
+                    ((MainMenuActivity)getActivity()).setFragment(5);
+                    break;
+                case "Marvin - Perfil":
+                    ((MainMenuActivity) getActivity()).previousMenus.push(1);
+                    ((MainMenuActivity)getActivity()).setFragment(0);
                     break;
                 case "Marvin - Salir":
                     MainMenuFragment.getInstance().setItem(2);

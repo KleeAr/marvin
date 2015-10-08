@@ -22,6 +22,7 @@ import ar.com.klee.marvin.activities.ConfSpeedAlertActivity;
 import ar.com.klee.marvin.activities.ConfTermsActivity;
 import ar.com.klee.marvin.activities.ListviewCategoriesAdapter;
 import ar.com.klee.marvin.activities.MainMenuActivity;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 
 
 public class ConfigureFragment extends Fragment {
@@ -36,14 +37,17 @@ public class ConfigureFragment extends Fragment {
         // Set title bar
        // ((MainMenuActivity) getActivity()).setActionBarTitle("CONFIGURACIÓN");
 
+        CommandHandlerManager commandHandlerManager = CommandHandlerManager.getInstance();
+        commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_SETTINGS,commandHandlerManager.getMainActivity());
+
         final ArrayList<String> listCategories =  new ArrayList<String>();
         listCategories.add("Alertas de Velocidad");
-        listCategories.add("App Favorita");
+        listCategories.add("Aplicación Favorita");
         listCategories.add("SMS Emergencia");
         listCategories.add("Historial de viajes");
         listCategories.add("Configuración HotSpot");
         listCategories.add("Orientación Pantalla");
-        listCategories.add("Terminos y Condiciones");
+        listCategories.add("Términos y Condiciones");
 
 
         ListView lv = (ListView) v.findViewById(R.id.listView);

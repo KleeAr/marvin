@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.location.LocationManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -112,6 +113,12 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            Toast.makeText(this, "El GPS está desactivado. Activalo para usar las funciones de localización.", Toast.LENGTH_LONG).show();
+        }
+
     }
 
 
@@ -180,6 +187,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onBackPressed() {
         // Disable going back to the MainActivity
         moveTaskToBack(true);
+        finish();
     }
 
     public void onLoginSuccess() {

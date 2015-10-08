@@ -1,5 +1,6 @@
 package ar.com.klee.marvin.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -7,7 +8,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
@@ -21,6 +21,8 @@ import android.content.pm.Signature;
 import android.util.Base64;
 import android.util.Log;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 import com.facebook.CallbackManager;
@@ -38,10 +40,11 @@ import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 import java.security.MessageDigest;
 import java.util.Arrays;
-
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import io.fabric.sdk.android.Fabric;
 
 public class PerfilFragment extends Fragment {
@@ -50,6 +53,12 @@ public class PerfilFragment extends Fragment {
     
     private MainMenuActivity activity;
     private View view;
+
+    //variables para el manejo de contraseñas
+    @Bind(R.id.password_current)  EditText passwordCurrentText;
+    @Bind(R.id.password_new)  EditText passwordNewText;
+    @Bind(R.id.repeat_password) EditText repeatPasswordText;
+    @Bind(R.id.btn_change) Button changeButton;
 
     public PerfilFragment() {
         // Required empty public constructor
@@ -70,6 +79,16 @@ public class PerfilFragment extends Fragment {
 
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_perfil, container, false);
+        ButterKnife.bind(this,view);
+
+        changeButton.setEnabled(true);
+
+        changeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changePassword();
+            }
+        });
 
         initializeTwitterSdk();
 
@@ -164,5 +183,73 @@ public class PerfilFragment extends Fragment {
         }
     }
 
+    public void changePassword() {
+        if (!validate()) {
+            onSignupFailed();
+            return;
+        }
+
+        changeButton.setEnabled(false);
+
+        final ProgressDialog progressDialog = new ProgressDialog(getActivity(), R.style.AppTheme_Dark_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Cambiando contraseña...");
+        progressDialog.show();
+
+        String passwordCurrent = passwordCurrentText.getText().toString();
+        String passwordNew = passwordNewText.getText().toString();
+        String passwordRepeat = repeatPasswordText.getText().toString();
+
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        // On complete call either onSignupSuccess or onSignupFailed
+                        // depending on success
+                        onSignupSuccess();
+                        // onSignupFailed();
+                        progressDialog.dismiss();
+                    }
+                }, 3000);
+    }
+    public void onSignupSuccess() {
+        changeButton.setEnabled(true);
+    }
+
+    public void onSignupFailed() {
+        Toast.makeText(getActivity(), "Ingreso fallido", Toast.LENGTH_LONG).show();
+        changeButton.setEnabled(true);
+    }
+    public boolean validate() {
+        boolean valid = true;
+
+        String passwordCurrent = passwordCurrentText.getText().toString();
+        String passwordNew = passwordNewText.getText().toString();
+        String passwordRepeat = repeatPasswordText.getText().toString();
+
+
+        if (passwordCurrent.isEmpty() || passwordCurrent.length() < 4 || passwordCurrent.length() > 10) {
+            passwordCurrentText.setError("Debe tener entre 4 y 8 caracteres alfanumericos");
+            valid = false;
+        } else {
+            passwordCurrentText.setError(null);
+        }
+
+        if (passwordNew.isEmpty() || passwordNew.length() < 4 || passwordNew.length() > 10) {
+            passwordNewText.setError("Debe tener entre 4 y 8 caracteres alfanumericos");
+            valid = false;
+        } else {
+            passwordNewText.setError(null);
+        }
+
+
+        if (passwordRepeat.isEmpty() || passwordRepeat.equals(passwordNew)) {
+            repeatPasswordText.setError("Contraseña incorrecta");
+            valid = false;
+        } else {
+            repeatPasswordText.setError(null);
+        }
+
+        return valid;
+    }
 
 }

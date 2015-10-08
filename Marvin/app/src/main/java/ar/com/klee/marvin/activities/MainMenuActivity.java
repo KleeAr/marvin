@@ -60,6 +60,7 @@ import ar.com.klee.marvin.bluetooth.BluetoothService;
 import ar.com.klee.marvin.call.CallDriver;
 import ar.com.klee.marvin.call.CallReceiver;
 import ar.com.klee.marvin.call.PhoneCall;
+import ar.com.klee.marvin.client.model.User;
 import ar.com.klee.marvin.client.model.UserSetting;
 import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.configuration.UserSites;
@@ -165,23 +166,14 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     private String lastSong;
     private String lastArtist;
 
+    private int radioStopPlayCounter = 0;
+    private CallReceiver receiver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         CommandHandlerManager.destroyInstance();
         setContentView(R.layout.activity_main_menu);
-
-        CallReceiver receiver = new CallReceiver();
-
-        if(CallReceiver.wasRegistered()) {
-            unregisterReceiver(receiver);
-            CallReceiver.setWasRegistered(false);
-        }else {
-            IntentFilter filter = new IntentFilter(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
-            filter.setPriority(Integer.MAX_VALUE);
-            registerReceiver(receiver, filter);
-            CallReceiver.setWasRegistered(true);
-        }
         PowerManager powerManager = (PowerManager)this.getSystemService(Context.POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "My Lock");
         wakeLock.acquire();
@@ -199,15 +191,17 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
             UserSetting invitedUserSettings = new UserSetting();
 
-            invitedUserSettings.setMiniumTripTime(mPrefs.getLong("miniumTripTime", 30));
-            invitedUserSettings.setMiniumTripDistance(mPrefs.getLong("miniumTripDistance", 100));
+            invitedUserSettings.setMiniumTripTime(mPrefs.getLong("miniumTripTime", 5));
+            invitedUserSettings.setMiniumTripDistance(mPrefs.getLong("miniumTripDistance", 1));
             invitedUserSettings.setEmergencyNumber(mPrefs.getString("emergencyNumber", ""));
             invitedUserSettings.setEmergencySMS(mPrefs.getString("emergencySMS", ""));
             invitedUserSettings.setOrientation(mPrefs.getInt("orientation", 0));
             invitedUserSettings.setOpenAppWhenStop(mPrefs.getBoolean("openAppWhenStop", false));
-            invitedUserSettings.setAppToOpenWhenStop(mPrefs.getString("appToOpenWhenStop", ""));
-            invitedUserSettings.setHotspotName(mPrefs.getString("hotspotPassword", "marvinHotSpot"));
+            invitedUserSettings.setAppToOpenWhenStop(mPrefs.getString("appToOpenWhenStop", "No seleccionada"));
+            invitedUserSettings.setHotspotName(mPrefs.getString("hotspotName", "MRVN"));
             invitedUserSettings.setHotspotPassword(mPrefs.getString("hotspotPassword", "marvinHotSpot"));
+            invitedUserSettings.setAlertSpeed(mPrefs.getInt("alertSpeed", 80));
+            invitedUserSettings.setSpeedAlertEnabled(mPrefs.getBoolean("speedAlertEnabled", false));
 
             config.setSettings(invitedUserSettings);
 
@@ -369,7 +363,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             }
         };
         bluetoothService = BluetoothService.getInstance();
-        bluetoothService.setmHandler(mHandler);
     }
 
     public int getActualFragmentPosition() {
@@ -404,6 +397,12 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             mDrawerLayout.closeDrawer(mLvDrawerMenu);
             mLvDrawerMenu.invalidateViews();
             return;
+        }
+
+        if(actualFragmentPosition == 8){
+            refreshConfiguration();
+        }else if(actualFragmentPosition == 5){
+            refreshSites();
         }
 
         previousMenus.push(actualFragmentPosition);
@@ -480,6 +479,12 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         commandHandlerManager.setNullCommand();
         STTService.getInstance().setIsListening(false);
+
+        if(actualFragmentPosition == 8){
+            refreshConfiguration();
+        }else if(actualFragmentPosition == 5){
+            refreshSites();
+        }
 
         if(!previousMenus.empty()){
 
@@ -574,6 +579,12 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     }
 
     public void setFragment(int position){
+
+        if(actualFragmentPosition == 8){
+            refreshConfiguration();
+        }else if(actualFragmentPosition == 5){
+            refreshSites();
+        }
 
         actualFragmentPosition = position;
 
@@ -723,10 +734,13 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         int resourceId = getResources().getIdentifier("drawable/icon_" + item.getCondition().getCode(), null, getPackageName());
 
-        @SuppressWarnings("deprecation")
-        Drawable weatherIconDrawble = getResources().getDrawable(resourceId);
-
-        weatherIconImageView.setImageDrawable(weatherIconDrawble);
+        try{
+            Drawable weatherIconDrawble = getResources().getDrawable(resourceId);
+            weatherIconImageView.setImageDrawable(weatherIconDrawble);
+        }catch(Exception e){
+            e.printStackTrace();
+            Log.e("Weather",((Integer)resourceId).toString());
+        }
 
         temperatureTextView.setText(item.getCondition().getTemperature() + "\u00B0" + channel.getUnits().getTemperature());
 
@@ -1248,7 +1262,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     public String sendEmergencyMessage() {
 
-        return smsDriver.sendEmergencyMessage();
+        return smsDriver.sendEmergencyMessage(" " + locationSender.getAddress() + ", " + locationSender.getTown() + ", " + locationSender.getAddressState());
 
     }
 
@@ -1432,11 +1446,21 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(receiver);
+        CallReceiver.setWasRegistered(false);
+    }
 
     @Override
     public void onResume() {
         super.onResume();
-
+        receiver = new CallReceiver();
+        IntentFilter filter = new IntentFilter(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
+        filter.setPriority(Integer.MAX_VALUE);
+        registerReceiver(receiver, filter);
+        CallReceiver.setWasRegistered(true);
         // Performing this check in onResume() covers the case in which BT was
         // not enabled during onStart(), so we were paused to enable it...
         // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
@@ -1447,6 +1471,87 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 bluetoothService.start();
             }
         }
+    }
+
+    /**
+     * ***********************************
+     * ************SPEED ALERT METHOD**************
+     * ***********************************
+     */
+
+    public void speedAlert(){
+
+        MainMenuFragment.marvinImage.setImageResource(R.drawable.caution);
+
+    }
+
+    public void speedAlertFinish(){
+
+        MainMenuFragment.marvinImage.setImageResource(R.drawable.marvin_off);
+
+    }
+
+
+    /**
+     * ***********************************
+     * ************SETEO DE SERVER**************
+     * ***********************************
+     */
+
+    public void refreshConfiguration(){
+
+        boolean invitado = true;
+        if(invitado){
+
+            SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
+            SharedPreferences.Editor prefsEditor = mPrefs.edit();
+
+            prefsEditor.putLong("miniumTripTime",UserConfig.getSettings().getMiniumTripTime());
+            prefsEditor.putLong("miniumTripDistance",UserConfig.getSettings().getMiniumTripDistance());
+            prefsEditor.putString("emergencyNumber",UserConfig.getSettings().getEmergencyNumber());
+            prefsEditor.putString("emergencySMS",UserConfig.getSettings().getEmergencySMS());
+            prefsEditor.putInt("orientation",UserConfig.getSettings().getOrientation());
+            prefsEditor.putBoolean("openAppWhenStop",UserConfig.getSettings().isOpenAppWhenStop());
+            prefsEditor.putString("appToOpenWhenStop",UserConfig.getSettings().getAppToOpenWhenStop());
+            prefsEditor.putString("hotspotName",UserConfig.getSettings().getHotspotName());
+            prefsEditor.putString("hotspotPassword",UserConfig.getSettings().getHotspotPassword());
+            prefsEditor.putInt("alertSpeed",UserConfig.getSettings().getAlertSpeed());
+            prefsEditor.putBoolean("speedAlertEnabled",UserConfig.getSettings().isSpeedAlertEnabled());
+
+            prefsEditor.commit();
+
+        }else{
+
+        }
+
+    }
+
+    public void refreshSites(){
+
+        boolean invitado = true;
+        if(invitado){
+
+            SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
+            SharedPreferences.Editor prefsEditor = mPrefs.edit();
+
+            List<Site> sites = UserSites.getInstance().getSites();
+
+            prefsEditor.putInt("NumberOfSites", sites.size());
+
+            Integer j;
+            Gson gson = new Gson();
+
+            for(j=1;j<=sites.size();j++) {
+                String json = gson.toJson(sites.get(j-1));
+                prefsEditor.putString("Site" + j.toString(), json);
+            }
+
+            prefsEditor.commit();
+
+        }else{
+
+        }
+
     }
 
 }

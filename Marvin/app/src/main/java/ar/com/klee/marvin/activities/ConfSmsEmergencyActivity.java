@@ -1,27 +1,34 @@
 package ar.com.klee.marvin.activities;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.configuration.UserConfig;
 
 
 public class ConfSmsEmergencyActivity extends ActionBarActivity {
 
-    private String emergencyNumber; //Número al que enviarle un sms de emergencia
-    private String emergencySMS; //Sms de emergencia a enviar
-
     private EditText toSMS;
     private EditText bodySMS;
 
-    private Switch switch1;
     private Toolbar toolbar;
+    public TextView titleText;
+    public TextView cityText;
+    public ImageView weatherIconImageView;
+    public TextView temperatureTextView;
+    public TextView weekDay;
+    public TextView dateText;
 
 
     @Override
@@ -32,47 +39,35 @@ public class ConfSmsEmergencyActivity extends ActionBarActivity {
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setTitle("SMS DE EMERGENCIA");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+        Typeface fBariolBold = Typeface.createFromAsset(getAssets(), "Bariol_Bold.otf");
+
+        titleText = (TextView) findViewById(R.id.activityTitle);
+        titleText.setVisibility(TextView.VISIBLE);
+        titleText.setTypeface(fBariolBold);
+        titleText.setText("SMS de emergencia");
+
+        weekDay = (TextView) findViewById(R.id.weekDayText);
+        dateText = (TextView) findViewById(R.id.dateText);
+        cityText = (TextView) findViewById(R.id.cityText);
+        temperatureTextView = (TextView) findViewById(R.id.temperatureText);
+        weatherIconImageView = (ImageView) findViewById(R.id.weatherImage);
+        weekDay.setVisibility(TextView.INVISIBLE);
+        dateText.setVisibility(TextView.INVISIBLE);
+        cityText.setVisibility(TextView.INVISIBLE);
+        temperatureTextView.setVisibility(TextView.INVISIBLE);
+        weatherIconImageView.setVisibility(ImageView.INVISIBLE);
 
 
         toSMS = (EditText) findViewById(R.id.toSMS);
         bodySMS = (EditText) findViewById(R.id.bodySMS);
 
-
-        switch1 = (Switch) findViewById(R.id.switch1);
-        // set the switch to OFF
-        switch1.setChecked(false);
-        // attach a listener to check for changes in state
-        switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                if (isChecked) {
-
-                    Toast.makeText(getApplicationContext(), "Activado", Toast.LENGTH_SHORT).show();
-
-
-                } else {
-
-                    Toast.makeText(getApplicationContext(), "Desactivado", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-
-
-
+        toSMS.setText(UserConfig.getSettings().getEmergencyNumber());
+        bodySMS.setText(UserConfig.getSettings().getEmergencySMS());
 
     }
-    @Override
-    public void onBackPressed() {
-        emergencyNumber=toSMS .getText().toString();
-        emergencySMS=bodySMS.getText().toString();
-        this.finish();
-    }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
@@ -84,5 +79,27 @@ public class ConfSmsEmergencyActivity extends ActionBarActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void saveSmsEmergency(View v){
+
+        UserConfig.getSettings().setEmergencyNumber(toSMS.getText().toString());
+        UserConfig.getSettings().setEmergencySMS(bodySMS.getText().toString());
+
+        finish();
+
+    }
+
+    public void resetSmsEmergency(View v){
+
+        toSMS.setText("");
+        bodySMS.setText("");
+
+    }
+
+    public void cancelSmsEmergency(View v){
+
+        finish();
+
     }
 }

@@ -451,11 +451,12 @@ public class AgregarEventoHandler extends CommandHandler {
     public CommandHandlerContext stepNine(CommandHandlerContext context) {
 
         String input = context.getString(COMMAND);
+        String input2 = input.replace(" horas","");
 
         ExpressionMatcher hourFormat = new ExpressionMatcher("{hour} y {minute}");
         ExpressionMatcher hourOClockFormat = new ExpressionMatcher("{hour} horas");
 
-        if(!hourFormat.matches(input) && !hourOClockFormat.matches(input)){
+        if(!hourFormat.matches(input2) && !hourOClockFormat.matches(input)){
 
             getTextToSpeech().speakText("Debe indicar la hora como sigue: 22 y 15, o 13 horas, si es puntual");
 
@@ -469,8 +470,8 @@ public class AgregarEventoHandler extends CommandHandler {
 
         boolean isOClock = false;
 
-        if(hourFormat.matches(input)) {
-            values = hourFormat.getValuesFromExpression(input);
+        if(hourFormat.matches(input2)) {
+            values = hourFormat.getValuesFromExpression(input2);
             hourStr = values.get("hour");
             minuteStr = values.get("minute");
 
