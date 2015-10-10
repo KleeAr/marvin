@@ -54,6 +54,7 @@ import ar.com.klee.marvin.DrawerMenuAdapter;
 import ar.com.klee.marvin.DrawerMenuItem;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.call.CallDriver;
+import ar.com.klee.marvin.client.model.User;
 import ar.com.klee.marvin.client.model.UserSetting;
 import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.configuration.UserSites;
@@ -134,6 +135,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     private String lastSong;
     private String lastArtist;
 
+    private int radioStopPlayCounter = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -157,15 +160,17 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
             UserSetting invitedUserSettings = new UserSetting();
 
-            invitedUserSettings.setMiniumTripTime(mPrefs.getLong("miniumTripTime", 30));
-            invitedUserSettings.setMiniumTripDistance(mPrefs.getLong("miniumTripDistance", 100));
+            invitedUserSettings.setMiniumTripTime(mPrefs.getLong("miniumTripTime", 5));
+            invitedUserSettings.setMiniumTripDistance(mPrefs.getLong("miniumTripDistance", 1));
             invitedUserSettings.setEmergencyNumber(mPrefs.getString("emergencyNumber", ""));
             invitedUserSettings.setEmergencySMS(mPrefs.getString("emergencySMS", ""));
             invitedUserSettings.setOrientation(mPrefs.getInt("orientation", 0));
             invitedUserSettings.setOpenAppWhenStop(mPrefs.getBoolean("openAppWhenStop", false));
-            invitedUserSettings.setAppToOpenWhenStop(mPrefs.getString("appToOpenWhenStop", ""));
-            invitedUserSettings.setHotspotName(mPrefs.getString("hotspotPassword", "marvinHotSpot"));
+            invitedUserSettings.setAppToOpenWhenStop(mPrefs.getString("appToOpenWhenStop", "No seleccionada"));
+            invitedUserSettings.setHotspotName(mPrefs.getString("hotspotName", "MRVN"));
             invitedUserSettings.setHotspotPassword(mPrefs.getString("hotspotPassword", "marvinHotSpot"));
+            invitedUserSettings.setAlertSpeed(mPrefs.getInt("alertSpeed", 80));
+            invitedUserSettings.setSpeedAlertEnabled(mPrefs.getBoolean("speedAlertEnabled", false));
 
             config.setSettings(invitedUserSettings);
 
@@ -351,6 +356,12 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             return;
         }
 
+        if(actualFragmentPosition == 8){
+            refreshConfiguration();
+        }else if(actualFragmentPosition == 5){
+            refreshSites();
+        }
+
         previousMenus.push(actualFragmentPosition);
 
         actualFragmentPosition = position;
@@ -424,6 +435,12 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         commandHandlerManager.setNullCommand();
         STTService.getInstance().setIsListening(false);
+
+        if(actualFragmentPosition == 8){
+            refreshConfiguration();
+        }else if(actualFragmentPosition == 5){
+            refreshSites();
+        }
 
         if(!previousMenus.empty()){
 
@@ -518,6 +535,12 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     }
 
     public void setFragment(int position){
+
+        if(actualFragmentPosition == 8){
+            refreshConfiguration();
+        }else if(actualFragmentPosition == 5){
+            refreshSites();
+        }
 
         actualFragmentPosition = position;
 
@@ -667,10 +690,13 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         int resourceId = getResources().getIdentifier("drawable/icon_" + item.getCondition().getCode(), null, getPackageName());
 
-        @SuppressWarnings("deprecation")
-        Drawable weatherIconDrawble = getResources().getDrawable(resourceId);
-
-        weatherIconImageView.setImageDrawable(weatherIconDrawble);
+        try{
+            Drawable weatherIconDrawble = getResources().getDrawable(resourceId);
+            weatherIconImageView.setImageDrawable(weatherIconDrawble);
+        }catch(Exception e){
+            e.printStackTrace();
+            Log.e("Weather",((Integer)resourceId).toString());
+        }
 
         temperatureTextView.setText(item.getCondition().getTemperature() + "\u00B0" + channel.getUnits().getTemperature());
 
@@ -1188,7 +1214,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     public String sendEmergencyMessage() {
 
-        return smsDriver.sendEmergencyMessage();
+        return smsDriver.sendEmergencyMessage(" " + locationSender.getAddress() + ", " + locationSender.getTown() + ", " + locationSender.getAddressState());
 
     }
 
@@ -1370,6 +1396,87 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             MainMenuFragment.tv_song.setText(lastSong);
             MainMenuFragment.tv_artist.setText(lastArtist);
         }
+    }
+
+    /**
+     * ***********************************
+     * ************SPEED ALERT METHOD**************
+     * ***********************************
+     */
+
+    public void speedAlert(){
+
+        MainMenuFragment.marvinImage.setImageResource(R.drawable.caution);
+
+    }
+
+    public void speedAlertFinish(){
+
+        MainMenuFragment.marvinImage.setImageResource(R.drawable.marvin_off);
+
+    }
+
+
+    /**
+     * ***********************************
+     * ************SETEO DE SERVER**************
+     * ***********************************
+     */
+
+    public void refreshConfiguration(){
+
+        boolean invitado = true;
+        if(invitado){
+
+            SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
+            SharedPreferences.Editor prefsEditor = mPrefs.edit();
+
+            prefsEditor.putLong("miniumTripTime",UserConfig.getSettings().getMiniumTripTime());
+            prefsEditor.putLong("miniumTripDistance",UserConfig.getSettings().getMiniumTripDistance());
+            prefsEditor.putString("emergencyNumber",UserConfig.getSettings().getEmergencyNumber());
+            prefsEditor.putString("emergencySMS",UserConfig.getSettings().getEmergencySMS());
+            prefsEditor.putInt("orientation",UserConfig.getSettings().getOrientation());
+            prefsEditor.putBoolean("openAppWhenStop",UserConfig.getSettings().isOpenAppWhenStop());
+            prefsEditor.putString("appToOpenWhenStop",UserConfig.getSettings().getAppToOpenWhenStop());
+            prefsEditor.putString("hotspotName",UserConfig.getSettings().getHotspotName());
+            prefsEditor.putString("hotspotPassword",UserConfig.getSettings().getHotspotPassword());
+            prefsEditor.putInt("alertSpeed",UserConfig.getSettings().getAlertSpeed());
+            prefsEditor.putBoolean("speedAlertEnabled",UserConfig.getSettings().isSpeedAlertEnabled());
+
+            prefsEditor.commit();
+
+        }else{
+
+        }
+
+    }
+
+    public void refreshSites(){
+
+        boolean invitado = true;
+        if(invitado){
+
+            SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
+            SharedPreferences.Editor prefsEditor = mPrefs.edit();
+
+            List<Site> sites = UserSites.getInstance().getSites();
+
+            prefsEditor.putInt("NumberOfSites", sites.size());
+
+            Integer j;
+            Gson gson = new Gson();
+
+            for(j=1;j<=sites.size();j++) {
+                String json = gson.toJson(sites.get(j-1));
+                prefsEditor.putString("Site" + j.toString(), json);
+            }
+
+            prefsEditor.commit();
+
+        }else{
+
+        }
+
     }
 
 }

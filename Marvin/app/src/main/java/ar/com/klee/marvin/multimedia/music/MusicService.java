@@ -80,15 +80,17 @@ public class MusicService extends Service {
             public void run() {
                 try {
 
-                    while (!isInterrupted()) {
+                    Thread.sleep(5000);
 
-                        Thread.sleep(5000);
+                    while (!isInterrupted()) {
 
                         try{
                             STTService.getInstance();
                         }catch (IllegalStateException e) {
                             ((MainMenuActivity)CommandHandlerManager.getInstance().getMainActivity()).initializeSTTService();
                         }
+
+                        Thread.sleep(5000);
 
                     }
                 } catch (InterruptedException e) {

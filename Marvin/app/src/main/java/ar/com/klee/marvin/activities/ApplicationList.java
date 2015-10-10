@@ -85,6 +85,7 @@ public class ApplicationList extends Activity {
                 new Application("Marvin - Historial de viajes","ar.com.klee.marvin",getResources().getDrawable(getResources().getIdentifier("drawable/ic_clock",null,getPackageName()))),
                 new Application("Marvin - Mapa","ar.com.klee.marvin",getResources().getDrawable(getResources().getIdentifier("drawable/ic_map",null,getPackageName()))),
                 new Application("Marvin - Mis sitios","ar.com.klee.marvin",getResources().getDrawable(getResources().getIdentifier("drawable/ic_places",null,getPackageName()))),
+                new Application("Marvin - Perfil","ar.com.klee.marvin",getResources().getDrawable(getResources().getIdentifier("drawable/ic_profile",null,getPackageName()))),
                 new Application("Marvin - Salir","ar.com.klee.marvin",getResources().getDrawable(getResources().getIdentifier("drawable/ic_close",null,getPackageName())))
         );
 

@@ -42,7 +42,6 @@ public class TripActivity extends ActionBarActivity {
     private Trip trip;
 
     private CommandHandlerManager commandHandlerManager;
-    private Dialog currentDialog;
     private String mapPath = "/sdcard/MARVIN/trip.png";
     private Bitmap mapBitmap;
 
@@ -174,9 +173,6 @@ public class TripActivity extends ActionBarActivity {
 
         builder.show();
 
-
-
-
     }
 
     public void shareInFacebook(String text){
@@ -189,8 +185,6 @@ public class TripActivity extends ActionBarActivity {
             text = text.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
 
         }
-
-        currentDialog.dismiss();
 
         fragment.captureScreen();
 
@@ -220,8 +214,6 @@ public class TripActivity extends ActionBarActivity {
         }
 
         final String textToPublish = text;
-
-        currentDialog.dismiss();
 
         fragment.captureScreen();
 
@@ -256,8 +248,6 @@ public class TripActivity extends ActionBarActivity {
         }
 
         final String textToPublish = text;
-
-        currentDialog.dismiss();
 
         fragment.captureScreen();
 

@@ -165,12 +165,14 @@ public class CameraActivity extends ActionBarActivity {
             toast.show();
             finish();
         }
+
         if (mCamera == null) {
             //if the front facing camera does not exist
             if (findFrontFacingCamera() < 0) {
                 Toast.makeText(this, "No front facing camera found.", Toast.LENGTH_LONG).show();
             }
-            mCamera = Camera.open(findBackFacingCamera());
+
+            mCamera = Camera.open(findFrontFacingCamera());
             mPicture = getPictureCallback();
             mPreview.refreshCamera(mCamera);
         }

@@ -47,7 +47,6 @@ public class MapActivity extends ActionBarActivity {
         if(!biggerMapFragment.isAdded()) {
             FragmentManager manager = getSupportFragmentManager();
             FragmentTransaction transaction = manager.beginTransaction();
-            biggerMapFragment = new BiggerMapFragment();
             transaction.add(R.id.biggerMap, biggerMapFragment);
             transaction.commit();
         }

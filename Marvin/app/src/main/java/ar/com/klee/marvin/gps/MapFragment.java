@@ -159,7 +159,7 @@ public class MapFragment extends Fragment {
                     tripPath.get(tripPath.size()-1).getCoordinates().latitude, tripPath.get(tripPath.size()-1).getCoordinates().longitude,
                     lat, lon,
                     distance);
-            if(distance[0] > 25)
+            if(distance[0] > 150)
                 return;
         }
 

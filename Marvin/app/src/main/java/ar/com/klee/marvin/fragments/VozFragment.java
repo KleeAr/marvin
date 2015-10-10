@@ -25,7 +25,9 @@ import java.util.List;
 import ar.com.klee.marvin.Command;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.activities.ExpandableListAdapter;
+import ar.com.klee.marvin.activities.LoginActivity;
 import ar.com.klee.marvin.activities.MainMenuActivity;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 
 public class VozFragment extends Fragment {
 
@@ -38,6 +40,9 @@ public class VozFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
+
+        CommandHandlerManager commandHandlerManager = CommandHandlerManager.getInstance();
+        commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_VOICE_COMMANDS,commandHandlerManager.getMainActivity());
 
         commandList = new ArrayList<Command>();
         //Menu Principal
@@ -218,7 +223,7 @@ public class VozFragment extends Fragment {
         // Adding child data
         listDataHeader.add("Menú Principal");
         listDataHeader.add("Cámara");
-        listDataHeader.add("Dónde estacioné?");
+        listDataHeader.add("¿Dónde estacioné?");
         listDataHeader.add("Historial de Llamadas");
         listDataHeader.add("Historial de SMS");
         listDataHeader.add("Historial de Viajes");
@@ -352,16 +357,16 @@ public class VozFragment extends Fragment {
 
         final TextView commandFunction = new TextView(getActivity());
         commandFunction.setText("Función: " + command.function);
-        commandFunction.setPadding(10, 0, 0, 0);
+        commandFunction.setPadding(10, 0, 0, 20);
         layout.addView(commandFunction);
 
         builder.setView(layout);
 
-        builder.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
+       /* builder.setPositiveButton("Entendido", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 dialog.dismiss();
             }
-        });
+        });*/
           builder.show();
 
     }

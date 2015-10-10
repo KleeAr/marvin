@@ -8,22 +8,22 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
+import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
@@ -39,196 +39,285 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import ar.com.klee.marvin.Command;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.activities.CallHistoryActivity;
 import ar.com.klee.marvin.activities.CameraActivity;
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.activities.MapActivity;
 import ar.com.klee.marvin.activities.SMSInboxActivity;
-import ar.com.klee.marvin.activities.TabMap;
-import ar.com.klee.marvin.client.model.User;
 import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.fragments.MainMenuFragment;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
 
-public class LocationSender {
+public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        com.google.android.gms.location.LocationListener {
 
     private String address = "Buscando calle...";
     private String town = "Buscando ciudad...";
     private String state = "";
-    private String speed = "NA";
+
 
     private double actualLatitude = 0.0;
     private double actualLongitude = 0.0;
+    private String actualAddress;
     private Date actualTime;
     private double previousLatitude = 0.0;
     private double previousLongitude = 0.0;
     private Date previousTime;
+    private double startLatitude = 0.0;
+    private double startLongitude = 0.0;
+    private String startAddress;
 
     private double velocity = 0.0;
+    private double previousVelocity = 0.0;
 
     private MapFragment mapFragment;
     private BiggerMapFragment biggerMapFragment;
     private boolean isFirstLocation = true;
     private boolean isFirstLocation2 = true;
 
-    private LocationManager mlocManager;
-    private LocationListener locationListener;
+    private GoogleApiClient mGoogleApiClient;
+    private LocationRequest mLocationRequest;
 
     private Context context;
 
-    public LocationSender(Context context, MapFragment mf){
+    private static LocationSender instance;
+
+    private Thread tUpdateScreen = null;
+
+    private boolean connectionProblemsToast = false;
+    private boolean readyToUpdate = false;
+
+    public static LocationSender getInstance() {
+        if (instance == null) {
+            throw new IllegalStateException("Instance not initialized. Call initializeInstance before calling getInstance");
+        }
+        return instance;
+    }
+
+    public static boolean isInstanceInitialized() {
+        return instance != null;
+    }
+
+    public LocationSender(final Context context, MapFragment mf){
         /* Use the LocationManager class to obtain GPS locations */
+
+        instance = this;
+
 
         this.context = context;
 
         mapFragment = mf;
 
-        mlocManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new LocationListener() {
-            public void onLocationChanged(Location location) {
-                // Este metodo se ejecuta cada vez que el GPS recibe nuevas coordenadas
-                // debido a la deteccion de un cambio de ubicacion
+        mGoogleApiClient = new GoogleApiClient.Builder(context)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
 
-                double longitude = location.getLongitude();
-                double latitude = location.getLatitude();
+        mLocationRequest = LocationRequest.create();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(1000);
+        mLocationRequest.setFastestInterval(1000);
 
-                //Log.d("GPS","Recibo nuevas coordenadas. Latitud = " + ((Double)latitude).toString() + "; Longitud = " + ((Double)longitude).toString());
+        mGoogleApiClient.connect();
 
-                previousLatitude = actualLatitude;
-                previousLongitude = actualLongitude;
-                previousTime = actualTime;
+        tUpdateScreen = new Thread() {
 
-                actualLatitude = latitude;
-                actualLongitude = longitude;
-                actualTime = new Date();
+            @Override
+            public void run() {
+                try {
 
-                if(previousLatitude!=0.0) {
-                    long diffInMs = actualTime.getTime() - previousTime.getTime();
-                    double seconds = TimeUnit.MILLISECONDS.toSeconds(diffInMs);
-                    double hours = seconds / 3600;
+                    Thread.sleep(2000);
 
-                    float[] results = new float[1];
-                    Location.distanceBetween(previousLatitude, previousLongitude,
-                            actualLatitude, actualLongitude,
-                            results);
-                    double polylineLength = results[0];
-
-                    if(polylineLength > 100.0)
-                        return;
-
-                    polylineLength = polylineLength / 1000;
-
-                    if(hours == 0.0)
-                        velocity = 0.0;
-                    else {
-                        velocity = polylineLength / hours;
-                        if(velocity < 2.5)
-                            velocity = 0.0;
-                    }
-                }
-
-                setLocation(latitude, longitude);
-
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        setSpeed(velocity);
-                        if(false && velocity < 1){
-
-                            String app = UserConfig.getSettings().getAppToOpenWhenStop();
-                            CommandHandlerManager commandHandlerManager = CommandHandlerManager.getInstance();
-
-                            if(!STTService.getInstance().getIsListening() &&
-                                    commandHandlerManager.getCurrentActivity() == CommandHandlerManager.ACTIVITY_MAIN &&
-                                    commandHandlerManager.getCommandHandler() == null) {
-
-                                openApp(app);
-
-                            }
-                        }
-                        updateScreen();
+                    while (!isInterrupted()) {
 
                         if(!town.equals("Buscando ciudad...")) {
-                            if (!isFirstLocation) {
-                                mapFragment.refreshMap(actualLatitude, actualLongitude, address);
-                            } else {
-                                mapFragment.startTrip(actualLatitude, actualLongitude, address);
-                                isFirstLocation = false;
-                            }
+                            final boolean tabletSize = CommandHandlerManager.getInstance().getMainActivity().getResources().getBoolean(R.bool.isTablet);
 
-                            if (BiggerMapFragment.isInstanceInitialized()) {
-                                if (!isFirstLocation2)
-                                    biggerMapFragment.refreshMap(actualLatitude, actualLongitude, address);
-                                else {
-                                    biggerMapFragment = BiggerMapFragment.getInstance();
-                                    biggerMapFragment.startTrip(actualLatitude, actualLongitude, address);
-                                    isFirstLocation2 = false;
+                            CommandHandlerManager.getInstance().getMainActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if(!tabletSize)
+                                        MainMenuActivity.cityText.setText(getTown());
+                                    else
+                                        MainMenuActivity.cityText.setText(getTown()+", "+getAddressState());
+                                    MainMenuFragment.mainStreet.setText(getAddress());
+
+                                    int speed1 = (int) previousVelocity;
+                                    int speed2 = (int) velocity;
+
+                                    Integer i;
+
+                                    if(speed1 <= speed2){
+                                        for(i=speed1;i<=speed2;i++)
+                                            MainMenuFragment.speed.setText(i.toString());
+                                    }else{
+                                        for(i=speed1;i>=speed2;i--)
+                                            MainMenuFragment.speed.setText(i.toString());
+                                    }
                                 }
-                            } else {
-                                biggerMapFragment = new BiggerMapFragment();
+                            });
+
+                        }else{
+                            if(readyToUpdate && !connectionProblemsToast) {
+                                Toast.makeText(context, "No hay conexión a internet. No se puede identificar el nombre de la calle.", Toast.LENGTH_LONG).show();
+                                connectionProblemsToast = true;
                             }
                         }
+
+                        Thread.sleep(100);
                     }
-                }, 2000);
 
-            }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-                /*
-                   Este metodo se ejecuta cada vez que se detecta un cambio en el
-                   status del proveedor de localizacion (GPS)
-                   Los diferentes Status son:
-                   OUT_OF_SERVICE -> Si el proveedor esta fuera de servicio
-                   TEMPORARILY_UNAVAILABLE -> Temporalmente no disponible pero se
-                   espera que este disponible en breve
-                   AVAILABLE -> Disponible
-                */
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-                // Este metodo se ejecuta cuando el GPS es activado
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-                // Este metodo se ejecuta cuando el GPS es desactivado
-
+                } catch (InterruptedException e) {
+                } catch (NullPointerException e) {
+                }
             }
         };
 
-        mlocManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 0, locationListener);
-        mlocManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 2000, 0, locationListener);
+        tUpdateScreen.start();
 
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        handleNewLocation(location);
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+    private void handleNewLocation(Location location) {
+
+        double longitude = location.getLongitude();
+        double latitude = location.getLatitude();
+
+        //Log.d("GPS","Recibo nuevas coordenadas. Latitud = " + ((Double)latitude).toString() + "; Longitud = " + ((Double)longitude).toString());
+
+        previousLatitude = actualLatitude;
+        previousLongitude = actualLongitude;
+        previousTime = actualTime;
+
+        actualLatitude = latitude;
+        actualLongitude = longitude;
+        actualTime = new Date();
+
+        if(previousLatitude!=0.0) {
+            long diffInMs = actualTime.getTime() - previousTime.getTime();
+            double seconds = TimeUnit.MILLISECONDS.toSeconds(diffInMs);
+            double hours = seconds / 3600;
+
+            float[] results = new float[1];
+            Location.distanceBetween(previousLatitude, previousLongitude,
+                    actualLatitude, actualLongitude,
+                    results);
+            double polylineLength = results[0];
+
+            if(polylineLength > 100.0)
+                return;
+
+            polylineLength = polylineLength / 1000;
+
+            previousVelocity = velocity;
+
+            if(hours == 0.0)
+                velocity = 0.0;
+            else {
+                velocity = polylineLength / hours;
+                if(velocity < 3.0)
+                    velocity = 0.0;
+            }
+        }
+
+        setLocation(latitude, longitude);
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                if (UserConfig.getSettings().isOpenAppWhenStop() && velocity < 1) {
+
+                    String app = UserConfig.getSettings().getAppToOpenWhenStop();
+                    CommandHandlerManager commandHandlerManager = CommandHandlerManager.getInstance();
+
+                    if (STTService.isInstanceInitialized() && !STTService.getInstance().getIsListening() &&
+                            commandHandlerManager.getCurrentActivity() == CommandHandlerManager.ACTIVITY_MAIN &&
+                            commandHandlerManager.getCommandHandler() == null) {
+
+                        openApp(app);
+                    }
+                }
+
+                if (STTService.isInstanceInitialized() && UserConfig.getSettings().isSpeedAlertEnabled() && velocity > UserConfig.getSettings().getAlertSpeed()) {
+                    CommandHandlerManager commandHandlerManager = CommandHandlerManager.getInstance();
+                    STTService.getInstance().setIsListening(false);
+                    STTService.getInstance().stopListening();
+                    commandHandlerManager.setNullCommand();
+                    commandHandlerManager.getTextToSpeech().speakText("SPEED ALERT - Superaste los " + UserConfig.getSettings().getAlertSpeed() + " kilometros por hora");
+                    ((MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity()).speedAlert();
+                }
+
+                readyToUpdate = true;
+
+                if (!town.equals("Buscando ciudad...")) {
+                    if (!isFirstLocation) {
+                        mapFragment.refreshMap(actualLatitude, actualLongitude, address);
+                    } else {
+                        mapFragment.startTrip(actualLatitude, actualLongitude, address);
+                        isFirstLocation = false;
+                    }
+
+                    if (BiggerMapFragment.isInstanceInitialized()) {
+                        if (!isFirstLocation2) {
+                            biggerMapFragment.refreshMap(actualLatitude, actualLongitude, address);
+                            actualAddress = address;
+                            if(startLatitude == 0.0){
+                                startLatitude = actualLatitude;
+                                startLongitude = actualLongitude;
+                                startAddress = address;
+                            }
+                        }else {
+                            biggerMapFragment = BiggerMapFragment.getInstance();
+                            startLatitude = actualLatitude;
+                            startLongitude = actualLongitude;
+                            startAddress = address;
+                            isFirstLocation2 = false;
+                        }
+                    } else {
+                        biggerMapFragment = new BiggerMapFragment();
+                    }
+                }
+            }
+        }, 2000);
+    }
+
+    public void stopLocationSender(){
+        if (mGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient,this);
+            mGoogleApiClient.disconnect();
+        }
+        tUpdateScreen.interrupt();
     }
 
     public void setLocation(double latitude, double longitude) {
         //Obtener la direccion de la calle a partir de la latitud y la longitud
-
-        //Log.d("GPS","Seteo localización");
-
         if (latitude != 0.0 && longitude != 0.0) {
 
             new LocationGetter().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            //Log.d("GPS","Obtengo dirección");
 
-        }
-    }
-
-    public void updateScreen(){
-        if(!town.equals("Buscando ciudad...")) {
-            boolean tabletSize = CommandHandlerManager.getInstance().getMainActivity().getResources().getBoolean(R.bool.isTablet);
-            if(!tabletSize)
-                MainMenuActivity.cityText.setText(getTown());
-            else
-                MainMenuActivity.cityText.setText(getTown()+", "+getState());
-            MainMenuFragment.mainStreet.setText(getAddress());
-            MainMenuFragment.speed.setText(getSpeed());
         }
     }
 
@@ -254,15 +343,7 @@ public class LocationSender {
 
     }
 
-    public  void setSpeed(double speed){
-        this.speed = String.valueOf((int) speed);
-    }
-
-    public String getSpeed(){
-        return speed;
-    }
-
-    public String getState(){
+    public String getAddressState(){
         return state;
     }
 
@@ -369,7 +450,9 @@ public class LocationSender {
                     }
 
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    if(!connectionProblemsToast) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
@@ -439,11 +522,6 @@ public class LocationSender {
         }
     }
 
-    public void stopLocationSender(){
-        mlocManager.removeUpdates(locationListener);
-        mlocManager = null;
-    }
-
     public void openApp(String app){
 
         CommandHandlerManager commandHandlerManager = CommandHandlerManager.getInstance();
@@ -502,5 +580,29 @@ public class LocationSender {
                 i++;
             }
         }
+    }
+
+    public double getStartLatitude() {
+        return startLatitude;
+    }
+
+    public double getStartLongitude() {
+        return startLongitude;
+    }
+
+    public String getStartAddress() {
+        return startAddress;
+    }
+
+    public double getActualLatitude() {
+        return actualLatitude;
+    }
+
+    public double getActualLongitude() {
+        return actualLongitude;
+    }
+
+    public String getActualAddress() {
+        return actualAddress;
     }
 }

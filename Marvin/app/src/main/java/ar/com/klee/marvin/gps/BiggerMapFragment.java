@@ -55,14 +55,12 @@ public class BiggerMapFragment extends Fragment {
 
     private int zoom = 17;
 
-    private double startLatitude = 0.0;
-    private double startLongitude = 0.0;
-    private String startAddress = "";
+    private double startLatitude;
+    private double startLongitude;
+    private String startAddress;
 
-    private double lastLatitude = 0.0;
-    private double lastLongitude = 0.0;
-
-    private boolean isSearch = false;
+    private double lastLatitude;
+    private double lastLongitude;
 
     private Marker lastMarker = null;
     private Marker searchMarker = null;
@@ -99,40 +97,27 @@ public class BiggerMapFragment extends Fragment {
 
         googleMap = mMapView.getMap();
 
-        // Perform any camera updates here
-        return v;
-    }
-
-    public void startTrip(double lat, double lon, String address){
-
-        startLatitude = lat;
-        startLongitude = lon;
-        startAddress = address;
-
-        lastLatitude = lat;
-        lastLongitude = lon;
-
-        // create marker
-        MarkerOptions marker = new MarkerOptions().position(new LatLng(lat, lon));
+        MarkerOptions marker = new MarkerOptions().position(new LatLng(LocationSender.getInstance().getStartLatitude(), LocationSender.getInstance().getStartLongitude()));
 
         // Changing marker icon
-        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)).title("Partida").snippet(address);
+        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)).title("Partida").snippet(LocationSender.getInstance().getStartAddress());
 
         // adding marker
         googleMap.addMarker(marker);
 
-        if(MapFragment.isInstanceInitialized()) {
-            if (MapFragment.getInstance().getSearch() && !isSearch) {
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(lat, lon)).zoom(zoom).build();
-                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            }
-        }else{
-            if (!isSearch) {
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(lat, lon)).zoom(zoom).build();
-                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            }
-        }
+        marker = new MarkerOptions().position(new LatLng(LocationSender.getInstance().getActualLatitude(), LocationSender.getInstance().getActualLongitude()));
 
+        // Changing marker icon
+        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).title("Posición Actual").snippet(LocationSender.getInstance().getActualAddress());
+
+        // adding marker
+        lastMarker = googleMap.addMarker(marker);
+
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(LocationSender.getInstance().getActualLatitude(),LocationSender.getInstance().getActualLongitude())).zoom(zoom).build();
+        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+        // Perform any camera updates here
+        return v;
     }
 
     public void refreshMap(double lat, double lon, String address){
@@ -152,24 +137,6 @@ public class BiggerMapFragment extends Fragment {
 
         // adding marker
         lastMarker = googleMap.addMarker(marker);
-
-        if(MapFragment.isInstanceInitialized()) {
-            if(MapFragment.getInstance().getSearch() && !isSearch) {
-
-                if(searchMarker != null){
-                    searchMarker.remove();
-                    searchMarker = null;
-                }
-
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(lat, lon)).zoom(zoom).build();
-                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            }
-        }else{
-            if (!isSearch) {
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(lat, lon)).zoom(zoom).build();
-                googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            }
-        }
 
     }
 
@@ -197,16 +164,12 @@ public class BiggerMapFragment extends Fragment {
 
     public void goToCurrentPosition(){
 
-        isSearch = false;
-
         CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(lastLatitude,lastLongitude)).zoom(zoom).build();
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
     }
 
     public void search(String address, LatLng coordinates){
-
-        isSearch = true;
 
         if(searchMarker != null){
             searchMarker.remove();

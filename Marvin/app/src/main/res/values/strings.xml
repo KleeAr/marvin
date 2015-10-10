@@ -48,7 +48,7 @@
         <item>Comandos de voz</item>
         <item>Historial de viajes</item>
         <item>Mis sitios</item>
-        <item>¿Donde estacione?</item>
+        <item>¿Dónde estacione?</item>
         <item>Ajustes</item>
         <item>Ayuda</item>
         <item>Salir</item>
@@ -57,7 +57,7 @@
     <!-- Sliding Menu item icons -->
     <array name="nav_drawer_icons">
         <item>@mipmap/ic_home_black_48dp</item>
-        <item>@mipmap/ic_volume_up_black_48dp</item>
+        <item>@mipmap/ic_mic_black_48dp</item>
         <item>@mipmap/ic_schedule_black_48dp</item>
         <item>@mipmap/ic_location_on_black_48dp</item>
         <item>@mipmap/ic_local_parking_black_48dp</item>
@@ -75,7 +75,7 @@
     <string name="ayuda6"> Las acciones que se detallan a continuación no se realizar por voz:\n1- Encuadrar foto\n2- Presionar siguiente\n3- Agregar efectos\n4- Presionar siguiente\n5- Confirmar publicación\n6- Presionar botón "volver" para regresar a la aplicación</string>
     <string name="ayuda7"> Para poder enviar un e-mail a través de MARVIN, debes seleccionar la cuanta de correo electronico que deseas utilizar y confirmar el envío. </string>
 
-    <string name="termino0"> Última actualización: 05 de septiembre de 2015  Se recomienda probar la aplicación antes de usarla al conducir para lograr un entendimiento y familiarizarse con el funcionamiento de la misma.  Deberá contar con un dispositivo apto para utilizar el servicio con un plan de datos/internet que permita la utilización de la aplicación.</string>
+    <string name="termino0"> Última actualización: 05 de septiembre de 2015. Se recomienda probar la aplicación antes de usarla al conducir para lograr un entendimiento y familiarizarse con el funcionamiento de la misma.  Deberá contar con un dispositivo apto para utilizar el servicio con un plan de datos/internet que permita la utilización de la aplicación.</string>
     <string name="termino1"> 1.1. Registro del Usuario. Como una condición esencial para usar el Servicio con todas las funcionalidades disponibles, Usted deberá crear una cuenta de usuario, declarando que posee capacidad legal para contratar y que no posee ningún impedimento para recibir servicios bajo las leyes de Argentina y otras jurisdicciones aplicables. Usted se obliga a: (a) Proveer información verdadera, correcta, actual y completa acerca de su persona del modo requerido en el formulario de registro del Servicio (información denominada en adelante Datos de Registro); y, (b) Mantener y actualizar en todo momento los Datos de Registro a fin de conservarlos veraces, correctos, actuales y completos. Si suministra información que es falsa, inexacta, desactualizada o incompleta Marvin tendrá el derecho de suspender o cerrar su cuenta. \n
     1.2. Cuenta de Usuario y Seguridad. Luego de completar el proceso de inscripción al Servicio, Usted recibirá una contraseña y una designación de cuenta. Usted será responsable de mantener la confidencialidad de la contraseña y de la cuenta, siendo también único y absoluto responsable por todas las actividades que ocurran bajo su contraseña o cuenta; comprometiéndose a: (a) notificarnos inmediatamente de cualquier uso no autorizado de su cuenta o de cualquier otra violación de seguridad, y (b) asegurarse de que su cuenta de Usted sea cerrada al final de cada sesión. Marvin no se responsabiliza por la inviolabilidad de la transmisión de datos o Contenido cursado por las redes de telecomunicaciones o por cualquier otro medio telemático que estuviere fuera de su estricto control y/o de los reportes que el Usted curse.</string>
     <string name="termino2"> Usted sólo podrá utilizar el Servicio y la Plataforma, en la medida que cumpla en todo momento con las cuestiones que se detallan a continuación. Además, el Usted declara en forma irrevocable que, y se obliga a:\n

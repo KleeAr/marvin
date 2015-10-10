@@ -28,6 +28,7 @@ import java.util.Date;
 
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.activities.MainMenuActivity;
+import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
 import ar.com.klee.marvin.voiceControl.handlers.ResponderSMSHandler;
@@ -221,20 +222,24 @@ public class SMSDriver {
         }
     }
 
-    public String sendEmergencyMessage(){
+    public String sendEmergencyMessage(String location){
 
-        String smsNumber = "1559734434";
-        String smsBody = "Estoy en problemas";
-        try {
-            SmsManager smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage(smsNumber, null, smsBody, null, null);
-            if(android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
-                saveInOutbox(smsNumber, smsBody);
-            return "Mensaje de emergencia enviado";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "El mensaje no pudo ser enviado. Reintentá luego";
+        String smsNumber = UserConfig.getSettings().getEmergencyNumber();
+        String smsBody = UserConfig.getSettings().getEmergencySMS();
+        if(smsBody.equals("") || smsNumber.equals("")){
+            smsBody += location;
+            try {
+                SmsManager smsManager = SmsManager.getDefault();
+                smsManager.sendTextMessage(smsNumber, null, smsBody, null, null);
+                if(android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
+                    saveInOutbox(smsNumber, smsBody);
+                return "Mensaje de emergencia enviado";
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "El mensaje no pudo ser enviado. Reintentá luego";
+            }
         }
+        return "El mensaje de emergencia no fue configurado";
     }
 
 

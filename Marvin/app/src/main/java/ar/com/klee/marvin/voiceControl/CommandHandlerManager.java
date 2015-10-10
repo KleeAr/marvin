@@ -98,19 +98,20 @@ import ar.com.klee.marvin.voiceControl.handlers.tripHistory.CerrarHistorialDeVia
 public class CommandHandlerManager {
 
     public static final int ACTIVITY_MAIN = 1;
-    public static final int ACTIVITY_CAMERA = 2;
-    public static final int ACTIVITY_SMS_INBOX = 3;
-    public static final int ACTIVITY_INCOMING_CALL = 4;
-    public static final int ACTIVITY_CALL_HISTORY = 5;
-    public static final int ACTIVITY_MAP = 6;
-    public static final int ACTIVITY_TRIP_HISTORY = 7;
-    public static final int ACTIVITY_PLACES = 8;
-    public static final int ACTIVITY_PROFILE = 9;
-    public static final int ACTIVITY_HELP = 10;
-    public static final int ACTIVITY_PARKING = 11;
-    public static final int ACTIVITY_SETTINGS = 12;
-    public static final int ACTIVITY_TRIP = 13;
-    public static final int ACTIVITY_SITE = 14;
+    public static final int ACTIVITY_TRIP_HISTORY = 2;
+    public static final int ACTIVITY_PLACES = 3;
+    public static final int ACTIVITY_PROFILE = 4;
+    public static final int ACTIVITY_HELP = 5;
+    public static final int ACTIVITY_PARKING = 6;
+    public static final int ACTIVITY_SETTINGS = 7;
+    public static final int ACTIVITY_VOICE_COMMANDS = 8;
+    public static final int ACTIVITY_CAMERA = 9;
+    public static final int ACTIVITY_SMS_INBOX = 10;
+    public static final int ACTIVITY_INCOMING_CALL = 11;
+    public static final int ACTIVITY_CALL_HISTORY = 12;
+    public static final int ACTIVITY_MAP = 13;
+    public static final int ACTIVITY_TRIP = 14;
+    public static final int ACTIVITY_SITE = 15;
     private static CommandHandlerManager instance;
 
     private int currentActivity = ACTIVITY_MAIN;
