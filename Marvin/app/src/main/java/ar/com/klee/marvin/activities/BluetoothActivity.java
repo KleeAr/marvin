@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.speech.SpeechRecognizer;
 import android.support.v4.app.FragmentActivity;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -25,6 +26,11 @@ import ar.com.klee.marvin.bluetooth.BluetoothConstants;
 import ar.com.klee.marvin.bluetooth.BluetoothHandler;
 import ar.com.klee.marvin.bluetooth.BluetoothService;
 import ar.com.klee.marvin.bluetooth.DeviceListActivity;
+import ar.com.klee.marvin.fragments.MainMenuFragment;
+import ar.com.klee.marvin.sms.SMSDriver;
+import ar.com.klee.marvin.social.NotificationService;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
+import ar.com.klee.marvin.voiceControl.handlers.LeerWhatsappHandler;
 
 public class BluetoothActivity extends FragmentActivity {
 
@@ -72,14 +78,31 @@ public class BluetoothActivity extends FragmentActivity {
         bluetoothServiceIntent = new Intent(this, BluetoothService.class);
         bluetoothServiceIntent.putExtra(BluetoothConstants.HANDLER, BluetoothConstants.EMPTY_BLUETOOTH_HANDLER);
         startService(bluetoothServiceIntent);
-        bluetoothService = BluetoothService.getInstance();
-        if (!mBluetoothAdapter.isEnabled()) {
-            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
-            // Otherwise, setup the chat session
-        } else if (bluetoothService == null) {
-            setupChat();
-        }
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+
+                bluetoothService = BluetoothService.getInstance();
+
+                if(bluetoothService == null)
+                    Log.d("BLU","CouldntGetInstance!");
+                else
+                    Log.d("BLU","GotInstance!");
+
+                if (!mBluetoothAdapter.isEnabled()) {
+                    Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                    startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+                    // Otherwise, setup the chat session
+                } else if (bluetoothService == null) {
+                    setupChat();
+                }
+
+                Log.d("BLU","Initialized!");
+
+            }
+        }, 1000);
+
     }
 
     @Override

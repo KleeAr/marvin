@@ -32,13 +32,13 @@ public class BluetoothService extends Service {
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
     // Member fields
-    private final BluetoothAdapter mAdapter;
+    private BluetoothAdapter mAdapter;
     private Handler mHandler;
     private AcceptThread mSecureAcceptThread;
     private AcceptThread mInsecureAcceptThread;
     private ConnectThread mConnectThread;
     private ConnectedThread mConnectedThread;
-    private int mState;
+    private int mState = STATE_NONE;
 
     // Constants that indicate the current connection state
     public static final int STATE_NONE = 0;       // we're doing nothing
@@ -47,20 +47,14 @@ public class BluetoothService extends Service {
     public static final int STATE_CONNECTED = 3;  // now connected to a remote device
 
     private static BluetoothService instance;
-    /**
-     * Constructor.
-     *
-     */
-    public BluetoothService() {
-        mAdapter = BluetoothAdapter.getDefaultAdapter();
-        mState = STATE_NONE;
-        instance = this;
-    }
 
     @Override
     public void onCreate() {
         super.onCreate();
+        mAdapter = BluetoothAdapter.getDefaultAdapter();
         instance = this;
+
+        Log.d("BLU","Started!");
     }
 
     @Override

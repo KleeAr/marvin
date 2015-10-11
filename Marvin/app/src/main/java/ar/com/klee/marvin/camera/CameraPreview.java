@@ -73,7 +73,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     {
         if (isPreviewRunning){
             isPreviewRunning=false;
-            mCamera.stopPreview();
+            if(mCamera!=null)
+                mCamera.stopPreview();
         }
 
         Camera.Parameters parameters = mCamera.getParameters();
@@ -122,7 +123,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         // TODO Auto-generated method stub
-        // mCamera.release();
+        // mCameraelease();
 
     }
 

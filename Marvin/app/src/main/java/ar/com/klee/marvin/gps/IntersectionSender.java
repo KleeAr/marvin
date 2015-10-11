@@ -111,6 +111,11 @@ public class IntersectionSender {
 
                 i++;
 
+                if(nextRight == null )
+                    nextRight = actualStreet;
+                if(nextLeft == null)
+                    nextLeft = actualStreet;
+
             }
 
             if(nextLeft.equals(""))

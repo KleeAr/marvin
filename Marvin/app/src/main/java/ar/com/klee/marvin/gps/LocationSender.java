@@ -69,6 +69,7 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
     private double startLatitude = 0.0;
     private double startLongitude = 0.0;
     private String startAddress;
+    private Date lastProccessTime = null;
 
     private double velocity = 0.0;
     private double previousVelocity = 0.0;
@@ -130,45 +131,49 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
             public void run() {
                 try {
 
-                    Thread.sleep(2000);
+                    Thread.sleep(4000);
 
                     while (!isInterrupted()) {
 
-                        if(!town.equals("Buscando ciudad...")) {
-                            final boolean tabletSize = CommandHandlerManager.getInstance().getMainActivity().getResources().getBoolean(R.bool.isTablet);
+                        if(lastProccessTime == null || !lastProccessTime.equals(actualTime)) {
 
-                            CommandHandlerManager.getInstance().getMainActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if(!tabletSize)
-                                        MainMenuActivity.cityText.setText(getTown());
-                                    else
-                                        MainMenuActivity.cityText.setText(getTown()+", "+getAddressState());
-                                    MainMenuFragment.mainStreet.setText(getAddress());
+                            lastProccessTime = actualTime;
 
-                                    int speed1 = (int) previousVelocity;
-                                    int speed2 = (int) velocity;
+                            if (!town.equals("Buscando ciudad...")) {
+                                final boolean tabletSize = CommandHandlerManager.getInstance().getMainActivity().getResources().getBoolean(R.bool.isTablet);
 
-                                    Integer i;
+                                CommandHandlerManager.getInstance().getMainActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (!tabletSize)
+                                            MainMenuActivity.cityText.setText(getTown());
+                                        else
+                                            MainMenuActivity.cityText.setText(getTown() + ", " + getAddressState());
+                                        MainMenuFragment.mainStreet.setText(getAddress());
 
-                                    if(speed1 <= speed2){
-                                        for(i=speed1;i<=speed2;i++)
-                                            MainMenuFragment.speed.setText(i.toString());
-                                    }else{
-                                        for(i=speed1;i>=speed2;i--)
-                                            MainMenuFragment.speed.setText(i.toString());
+                                        Integer speed1 = (int) previousVelocity;
+                                        Integer speed2 = (int) velocity;
+
+                                        try {
+                                            MainMenuFragment.speed.setText(speed2.toString());
+                                        }catch(Exception e){
+                                            Log.d("GPS","Speed not found");
+                                        }
+
                                     }
-                                }
-                            });
+                                });
 
-                        }else{
-                            if(readyToUpdate && !connectionProblemsToast) {
-                                Toast.makeText(context, "No hay conexión a internet. No se puede identificar el nombre de la calle.", Toast.LENGTH_LONG).show();
-                                connectionProblemsToast = true;
+                                lastProccessTime = actualTime;
+
+                            } else {
+                                if (readyToUpdate && !connectionProblemsToast) {
+                                    Toast.makeText(context, "No hay conexión a internet. No se puede identificar el nombre de la calle.", Toast.LENGTH_LONG).show();
+                                    connectionProblemsToast = true;
+                                }
                             }
                         }
 
-                        Thread.sleep(100);
+                        Thread.sleep(999);
                     }
 
                 } catch (InterruptedException e) {
