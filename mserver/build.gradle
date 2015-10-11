@@ -30,6 +30,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-security")
     compile 'org.springframework.security.oauth:spring-security-oauth2:2.0.7.RELEASE'
     runtime "org.hsqldb:hsqldb"
+    compile 'org.apache.commons:commons-email:1.4'
     testCompile("junit:junit")
 }
 

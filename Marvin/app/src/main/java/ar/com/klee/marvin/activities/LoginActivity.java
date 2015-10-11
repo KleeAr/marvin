@@ -315,11 +315,6 @@ public class LoginActivity extends AppCompatActivity {
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
 
-        final EditText siteName = new EditText(this);
-        siteName.setHint("Usuario");
-        siteName.setFilters(new InputFilter[] { new InputFilter.LengthFilter(30) });
-        layout.addView(siteName);
-
         final EditText siteAddress = new EditText(this);
         siteAddress.setHint("Email");
         layout.addView(siteAddress);
@@ -329,7 +324,19 @@ public class LoginActivity extends AppCompatActivity {
         builder.setPositiveButton("Enviar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
 
-                Toast.makeText(getApplicationContext(),"Enviando...", Toast.LENGTH_SHORT).show();
+                Marvin.users().recoverPasswordEmail(siteAddress.getText().toString(), new retrofit.Callback<Void>() {
+                    @Override
+                    public void success(Void aVoid, Response response) {
+                        Toast.makeText(getApplicationContext(),getString(R.string.recover_pass_email_sent), Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        Toast.makeText(getApplicationContext(),getString(R.string.service_unavailable), Toast.LENGTH_LONG).show();
+                        Log.e(TAG, "Error from server: " +  error.getMessage(), error);
+                    }
+                });
+                Toast.makeText(getApplicationContext(), "Enviando...", Toast.LENGTH_SHORT).show();
 
             }
         });

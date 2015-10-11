@@ -20,21 +20,27 @@ import ar.com.klee.marvin.repository.UserRepository;
 import ar.com.klee.marvin.repository.UserSettingRepository;
 import ar.com.klee.marvin.representation.LoginRequest;
 import ar.com.klee.marvin.representation.LoginResponse;
+import ar.com.klee.marvin.representation.RecoverPasswordRequest;
+import ar.com.klee.marvin.representation.ResetPasswordRequest;
+import ar.com.klee.marvin.service.PasswordTokenService;
 
 @RestController
 @RequestMapping(value = "/users")
 public class UserController {
 
+	private static final String USER_SESSION_ATTR = "user";
 	private UserRepository userRepository;
 	private UserSettingRepository settingRepository;
 	private AuthenticationManager authManager;
+	private PasswordTokenService tokenService;
 	
 	@Autowired	
-	public UserController(UserRepository userRepository, AuthenticationManager authenticationManager, UserSettingRepository settingRepository) {
+	public UserController(UserRepository userRepository, AuthenticationManager authenticationManager, UserSettingRepository settingRepository, PasswordTokenService tokenService) {
 		super();
 		this.userRepository = userRepository;
 		this.authManager = authenticationManager;
 		this.settingRepository = settingRepository;
+		this.tokenService = tokenService;
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -49,7 +55,18 @@ public class UserController {
 	
 	@RequestMapping(value = "/me", method = RequestMethod.GET)
 	public User getMe(HttpSession session) {
-		return (User) session.getAttribute("user");
+		return (User) session.getAttribute(USER_SESSION_ATTR);
+	}
+	
+	@RequestMapping(value = "/password/recover", method = RequestMethod.POST)
+	public void recoverPassword(@RequestBody RecoverPasswordRequest recoverPasswordRequest) {
+		User user = userRepository.findByEmail(recoverPasswordRequest.getEmail());
+		tokenService.generatePasswordTokenAndSendRecoveryEmail(user);
+	}
+	
+	@RequestMapping(value = "/password", method = RequestMethod.PUT)
+	public void resetPassword(HttpSession session, @RequestBody ResetPasswordRequest resetPasswordRequest) {
+		tokenService.resetPassword(resetPasswordRequest);
 	}
 	
 	@RequestMapping(value ="/register", method = RequestMethod.POST)
@@ -67,8 +84,14 @@ public class UserController {
 		        SecurityContextHolder.getContext().setAuthentication(authentication);
 		    }
 		    User user = userRepository.findByEmail(loginRequest.getEmail());
-		    session.setAttribute("user", user);
+		    session.setAttribute(USER_SESSION_ATTR, user);
 			return new LoginResponse(user.getId(), session.getId(), settingRepository.findOne(user.getId()));
+	}
+	
+	@RequestMapping(value = "/auth", method = RequestMethod.DELETE)
+	public void logOut(HttpSession session) {
+		    session.removeAttribute(USER_SESSION_ATTR);
+		    SecurityContextHolder.getContext().setAuthentication(null);
 	}
 	
 	private boolean isAuthenticated(Authentication authentication) {

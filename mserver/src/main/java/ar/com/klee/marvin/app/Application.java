@@ -50,7 +50,7 @@ public class Application {
 
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
-			http.authorizeRequests().antMatchers("/users/register").permitAll().antMatchers("/users/auth").permitAll().anyRequest().authenticated();
+			http.authorizeRequests().antMatchers("/users/register").permitAll().antMatchers("/users/auth").permitAll().antMatchers("/users/password*").permitAll().antMatchers("/users/password/*").permitAll().anyRequest().authenticated();
 			http.csrf().disable();
 		}
 
