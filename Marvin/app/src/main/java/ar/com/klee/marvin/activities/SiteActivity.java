@@ -248,6 +248,35 @@ public class SiteActivity extends ActionBarActivity {
 
     }
 
+    public void showImageDialog(View v){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+        builder.setCancelable(true);
+        builder.setTitle(site.getSiteName() + " - " + site.getSiteAddress());
+
+        final LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(30, 10, 30, 10);
+
+        final ImageView image1 = new ImageView(this);
+
+        File imgFile = new  File("/sdcard/MARVIN/Sitios/" + site.getSiteName() + ".png");
+        if(imgFile.exists()){
+            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+            image1.setImageBitmap(myBitmap);
+        }else{
+            image1.setImageResource(R.drawable.city);
+        }
+
+        final LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.HORIZONTAL);
+
+        image1.setLayoutParams(lp);
+        layout.addView(image1);
+
+        builder.setView(layout);
+
+        builder.show();
+    }
+
     public void setMapBitmap(Bitmap bitmap){
         mapBitmap = bitmap;
     }

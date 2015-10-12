@@ -75,6 +75,19 @@ public class CardSiteAdapter extends RecyclerView.Adapter<CardSiteAdapter.ViewHo
             imgThumbnail = (ImageView)itemView.findViewById(R.id.img_thumbnail);
             tvSite = (TextView)itemView.findViewById(R.id.tv_site);
 
+            imgThumbnail.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    chosenSite = mItems.get(getPosition());
+                    CommandHandlerManager commandHandlerManager = CommandHandlerManager.getInstance();
+                    Intent intent = new Intent(commandHandlerManager.getContext(), SiteActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    commandHandlerManager.getContext().startActivity(intent);
+
+                }
+            });
+
             tvSite.setOnClickListener(new View.OnClickListener() {
 
                 @Override
