@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -26,6 +27,7 @@ import java.util.Random;
 import java.util.Stack;
 
 import ar.com.klee.marvin.activities.MainMenuActivity;
+import ar.com.klee.marvin.fragments.MainMenuFragment;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
 import wseemann.media.FFmpegMediaPlayer;
@@ -211,12 +213,12 @@ public class MusicService extends Service {
 
         SharedPreferences sharedPreferences = getSharedPreferences("musicService", Context.MODE_PRIVATE);
         song = sharedPreferences.getString("song","");
-        artist = sharedPreferences.getString("artist","");
+        artist = sharedPreferences.getString("artist", "");
         duration = sharedPreferences.getInt("duration", 0);
-        position = sharedPreferences.getInt("position",0);
-        random = sharedPreferences.getBoolean("isRandom",false);
-        currentRadio = sharedPreferences.getInt("radio",0);
-        isRadio = sharedPreferences.getBoolean("isRadio",false);
+        position = sharedPreferences.getInt("position", 0);
+        random = sharedPreferences.getBoolean("isRandom", false);
+        currentRadio = sharedPreferences.getInt("radio", 0);
+        isRadio = sharedPreferences.getBoolean("isRadio", false);
 
         isRandom = random;
 
@@ -267,6 +269,17 @@ public class MusicService extends Service {
             mpRadio.reset();
             mpRadio.setDataSource(url);
             mpRadio.prepareAsync();
+
+            ((MainMenuActivity)CommandHandlerManager.getInstance().getMainActivity()).setButtonsDisabled();
+            ((MainMenuActivity)CommandHandlerManager.getInstance().getMainActivity()).setProgressVisible();
+
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    ((MainMenuActivity)CommandHandlerManager.getInstance().getMainActivity()).setButtonsEnabled();
+                    ((MainMenuActivity)CommandHandlerManager.getInstance().getMainActivity()).setProgressInvisible();
+                }
+            }, 5000);
 
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
@@ -655,7 +668,7 @@ public class MusicService extends Service {
         if(isPlaying())
             play = true;
 
-        if(!isRadio)
+        if(isRadio)
             currentDuration = mpMusic.getCurrentPosition();
 
         mpRadio.pause();

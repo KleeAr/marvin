@@ -73,6 +73,8 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
     private double velocity = 0.0;
     private double previousVelocity = 0.0;
 
+    private int discardLocation = 0;
+
     private MapFragment mapFragment;
     private BiggerMapFragment biggerMapFragment;
     private boolean isFirstLocation = true;
@@ -146,17 +148,41 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
                                         MainMenuActivity.cityText.setText(getTown()+", "+getAddressState());
                                     MainMenuFragment.mainStreet.setText(getAddress());
 
-                                    int speed1 = (int) previousVelocity;
-                                    int speed2 = (int) velocity;
+                                    Integer speed1 = (int) previousVelocity;
+                                    Integer speed2 = (int) velocity;
 
-                                    Integer i;
+                                    Integer maxDifference = 15;
 
-                                    if(speed1 <= speed2){
-                                        for(i=speed1;i<=speed2;i++)
-                                            MainMenuFragment.speed.setText(i.toString());
-                                    }else{
-                                        for(i=speed1;i>=speed2;i--)
-                                            MainMenuFragment.speed.setText(i.toString());
+                                    if(actualTime != null && previousTime != null) {
+                                        long diffInMs = actualTime.getTime() - previousTime.getTime();
+                                        double seconds = TimeUnit.MILLISECONDS.toSeconds(diffInMs);
+
+                                        if(seconds <= 1.5)
+                                            maxDifference = 15;
+                                        else if(seconds <= 3.0)
+                                            maxDifference = 30;
+                                        else if(seconds <= 4.5)
+                                            maxDifference = 45;
+                                        else
+                                            maxDifference = 60;
+                                    }
+
+                                    if(speed2 != -1) {
+                                        if (speed1 <= speed2) {
+                                            if(speed1 + maxDifference <= speed2) {
+                                                speed2 = speed1 + maxDifference;
+                                                MainMenuFragment.speed.setText(speed2.toString());
+                                            }else {
+                                                MainMenuFragment.speed.setText(speed2.toString());
+                                            }
+                                        } else {
+                                            if(speed1 - maxDifference > speed2) {
+                                                speed2 = speed1 - maxDifference;
+                                                MainMenuFragment.speed.setText(speed2.toString());
+                                            }else {
+                                                MainMenuFragment.speed.setText(speed2.toString());
+                                            }
+                                        }
                                     }
                                 }
                             });
@@ -168,7 +194,7 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
                             }
                         }
 
-                        Thread.sleep(100);
+                        Thread.sleep(1000);
                     }
 
                 } catch (InterruptedException e) {
@@ -183,7 +209,11 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
 
     @Override
     public void onLocationChanged(Location location) {
-        handleNewLocation(location);
+
+        if(discardLocation == 2)
+            handleNewLocation(location);
+        else
+            discardLocation++;
     }
 
     @Override
@@ -227,8 +257,10 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
                     results);
             double polylineLength = results[0];
 
-            if(polylineLength > 100.0)
+            if(polylineLength > 100.0) {
+                velocity = -1;
                 return;
+            }
 
             polylineLength = polylineLength / 1000;
 

@@ -75,8 +75,11 @@ public class GuardarYCompartirFotoHandler extends CommandHandler {
             context.put(STEP, 5);
             return context;
         }else if(input.equals("instagram")) {
-            getTextToSpeech().speakText("Compartiendo foto en Instagram. ¿Querés agregar un mensaje?");
-            context.put(STEP, 6);
+            getTextToSpeech().speakText("Compartiendo foto en Instagram");
+            CameraActivity cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
+            cameraActivity.shareInInstagram("");
+            //context.put(STEP, 6);
+            context.put(STEP, 0);
             return context;
         }
 

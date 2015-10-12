@@ -104,14 +104,17 @@ public class Tab2 extends Fragment implements View.OnClickListener, View.OnLongC
                     getActivity().startActivity(cameraIntent);
                     break;
                 case "Marvin - Comandos de voz":
+                    MainMenuFragment.getInstance().getPager().setCurrentItem(0);
                     ((MainMenuActivity) getActivity()).previousMenus.push(1);
                     ((MainMenuActivity)getActivity()).setFragment(2);
                     break;
                 case "Marvin - Configuración":
+                    MainMenuFragment.getInstance().getPager().setCurrentItem(0);
                     ((MainMenuActivity) getActivity()).previousMenus.push(1);
                     ((MainMenuActivity)getActivity()).setFragment(8);
                     break;
                 case "Marvin - Dónde estacioné":
+                    MainMenuFragment.getInstance().getPager().setCurrentItem(0);
                     ((MainMenuActivity) getActivity()).previousMenus.push(1);
                     ((MainMenuActivity)getActivity()).setFragment(6);
                     break;
@@ -124,6 +127,7 @@ public class Tab2 extends Fragment implements View.OnClickListener, View.OnLongC
                     getActivity().startActivity(smsInbox);
                     break;
                 case "Marvin - Historial de viajes":
+                    MainMenuFragment.getInstance().getPager().setCurrentItem(0);
                     ((MainMenuActivity) getActivity()).previousMenus.push(1);
                     ((MainMenuActivity)getActivity()).setFragment(4);
                     break;
@@ -132,10 +136,12 @@ public class Tab2 extends Fragment implements View.OnClickListener, View.OnLongC
                     getActivity().startActivity(map);
                     break;
                 case "Marvin - Mis sitios":
+                    MainMenuFragment.getInstance().getPager().setCurrentItem(0);
                     ((MainMenuActivity) getActivity()).previousMenus.push(1);
                     ((MainMenuActivity)getActivity()).setFragment(5);
                     break;
                 case "Marvin - Perfil":
+                    MainMenuFragment.getInstance().getPager().setCurrentItem(0);
                     ((MainMenuActivity) getActivity()).previousMenus.push(1);
                     ((MainMenuActivity)getActivity()).setFragment(0);
                     break;

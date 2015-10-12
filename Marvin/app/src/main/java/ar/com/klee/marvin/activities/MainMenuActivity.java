@@ -38,9 +38,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -135,7 +137,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     private String lastSong;
     private String lastArtist;
 
-    private int radioStopPlayCounter = 0;
+    private Fragment lastFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -637,6 +639,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             fragmentTransaction.replace(R.id.frame_container, fragment, fragmentClass.getSimpleName());
             fragmentTransaction.commit();
 
+            lastFragment = fragment;
+
             mLvDrawerMenu.setItemChecked(position, true);
             mDrawerLayout.closeDrawer(mLvDrawerMenu);
             mLvDrawerMenu.invalidateViews();
@@ -860,6 +864,10 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
 
         if(musicService.getIsRadio()){
+            if(!musicService.isPlaying()){
+                MainMenuFragment.tv_artist.setText("");
+                MainMenuFragment.tv_song.setText("Reproducción Pausada");
+            }
             MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_audiotrack_white_48dp);
             MainMenuFragment.getInstance().setIsRadio(false);
             musicService.setIsRadio(false);
@@ -1258,8 +1266,10 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             STTService.getInstance().stopListening();
             callDriver.setUriContact(data.getData());
             callDriver.retrieveContactNumber();
-
+        }else{
+            lastFragment.onActivityResult(requestCode, resultCode, data);
         }
+
     }
 
     public void openCallDialog() {
@@ -1379,6 +1389,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         MainMenuFragment.bt_play.setEnabled(true);
         MainMenuFragment.bt_next.setEnabled(true);
         MainMenuFragment.bt_previous.setEnabled(true);
+        MainMenuFragment.bt_radioMusic.setEnabled(true);
 
     }
 
@@ -1387,6 +1398,21 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         MainMenuFragment.bt_play.setEnabled(false);
         MainMenuFragment.bt_next.setEnabled(false);
         MainMenuFragment.bt_previous.setEnabled(false);
+        MainMenuFragment.bt_radioMusic.setEnabled(false);
+
+    }
+
+    public void setProgressVisible(){
+
+        MainMenuFragment.loadingRadio.setVisibility(ProgressBar.VISIBLE);
+        MainMenuFragment.bt_play.setVisibility(ImageButton.INVISIBLE);
+
+    }
+
+    public  void setProgressInvisible(){
+
+        MainMenuFragment.loadingRadio.setVisibility(ProgressBar.INVISIBLE);
+        MainMenuFragment.bt_play.setVisibility(ImageButton.VISIBLE);
 
     }
 

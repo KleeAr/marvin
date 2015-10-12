@@ -122,8 +122,13 @@ public class PublicarEnFacebookHandler extends CommandHandler {
         }
 
         if(input.equals("no")){
-            getTextToSpeech().speakText("Publicando en el muro de Facebook");
-            publishOnFacebook(currentContext);
+            try {
+                publishOnFacebook(currentContext);
+                getTextToSpeech().speakText("Publicando en el muro de Facebook");
+            }catch(Exception e){
+                getTextToSpeech().speakText("No se pudo realizar la publicación. Recordá registrar tu cuenta en el menú perfil");
+                e.printStackTrace();
+            }
             currentContext.put(STEP, 0);
             return currentContext;
         }
@@ -164,9 +169,8 @@ public class PublicarEnFacebookHandler extends CommandHandler {
 
         if(input.equals("no")){
             getTextToSpeech().speakText("¿Qué hashtag querés agregar?");
-
             List<String> hashtags = currentContext.getList(FACEBOOK_HASHTAGS, String.class);
-            hashtags.remove(hashtags.size()-1);
+            hashtags.remove(hashtags.size() - 1);
             currentContext.put(STEP, 7);
             return currentContext;
         }
@@ -195,8 +199,13 @@ public class PublicarEnFacebookHandler extends CommandHandler {
         }
 
         if(input.equals("no")){
-            getTextToSpeech().speakText("Publicando en el muro de Facebook");
-            publishOnFacebook(currentContext);
+            try {
+                publishOnFacebook(currentContext);
+                getTextToSpeech().speakText("Publicando en el muro de Facebook");
+            }catch(Exception e){
+                getTextToSpeech().speakText("No se pudo realizar la publicación. Recordá registrar tu cuenta en el menú perfil");
+                e.printStackTrace();
+            }
             currentContext.put(STEP, 0);
             return currentContext;
         }

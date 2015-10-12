@@ -77,7 +77,7 @@ import ar.com.klee.marvin.voiceControl.handlers.mainMenu.EnviarWhatsAppHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.EstablecerVolumenHandler;
 import ar.com.klee.marvin.voiceControl.handlers.camera.GuardarFotoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.camera.GuardarYCompartirFotoHandler;
-import ar.com.klee.marvin.voiceControl.handlers.mainMenu.PausarMusicaHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.PausarReproducciónHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.PublicarEnFacebookHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.ReproducirArtistaHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.ReproducirCancionHandler;
@@ -209,7 +209,7 @@ public class CommandHandlerManager {
             new EstablecerVolumenHandler(textToSpeech, context, this),
             new LlamarAContactoHandler(textToSpeech, context, this),
             new LlamarANumeroHandler(textToSpeech, context, this),
-            new PausarMusicaHandler(textToSpeech, context, this),
+            new PausarReproducciónHandler(textToSpeech, context, this),
             new PublicarEnFacebookHandler(textToSpeech, context,this),
             new ReproducirArtistaHandler(textToSpeech, context, this),
             new ReproducirCancionHandler(textToSpeech, context, this),

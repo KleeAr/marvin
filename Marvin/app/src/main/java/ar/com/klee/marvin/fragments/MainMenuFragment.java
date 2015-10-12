@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import ar.com.klee.marvin.R;
@@ -40,6 +41,7 @@ public class MainMenuFragment extends Fragment {
     public static ImageButton bt_next;
     public static ImageButton bt_previous;
     public static ImageButton bt_radioMusic;
+    public static ProgressBar loadingRadio;
     public static TextView tv_song;
     public static TextView tv_artist;
     public static TextView spokenText;
@@ -83,6 +85,10 @@ public class MainMenuFragment extends Fragment {
         bt_next = (ImageButton) v.findViewById(R.id.bt_next);
         bt_previous = (ImageButton) v.findViewById(R.id.bt_previous);
         bt_radioMusic = (ImageButton) v.findViewById(R.id.bt_radioMusic);
+        loadingRadio = (ProgressBar) v.findViewById(R.id.loadingRadio);
+
+        loadingRadio.setVisibility(ProgressBar.INVISIBLE);
+        bt_play.setVisibility(ImageButton.VISIBLE);
 
         if(isRadio)
             bt_radioMusic.setImageResource(R.mipmap.ic_radio_white_48dp);
@@ -215,6 +221,8 @@ public class MainMenuFragment extends Fragment {
 
                     Thread.sleep(999);
 
+                    final boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
+
                     while (!isInterrupted()) {
                         if(!isInterrupted() && ((MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity()).getActualFragmentPosition() == 1) {
                             getActivity().runOnUiThread(new Runnable() {
@@ -224,8 +232,13 @@ public class MainMenuFragment extends Fragment {
                                     date = System.currentTimeMillis();
                                     digitalClock.setText(formatTime1.format(date));
                                     anteMeridiem.setText(formatTime2.format(date));
-                                    weekDay.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-                                    dateText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
+                                    if(tabletSize) {
+                                        weekDay.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
+                                        dateText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
+                                    }else{
+                                        weekDay.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
+                                        dateText.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
+                                    }
                                     if (dateComplete.format(date).equals("12:00 a.m.")) {
                                         weekDay.setText(sdf.format(date));
                                         dateText.setText(formatTime3.format(date));
@@ -319,5 +332,9 @@ public class MainMenuFragment extends Fragment {
 
     public void setIsRadio(boolean isRadio) {
         this.isRadio = isRadio;
+    }
+
+    public ViewPager getPager() {
+        return pager;
     }
 }
