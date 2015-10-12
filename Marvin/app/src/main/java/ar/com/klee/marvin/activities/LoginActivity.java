@@ -83,7 +83,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         //initializeTwitterSdk();
         ButterKnife.bind(this);
-        Marvin.setMarvinHost("192.168.0.103");
+        Marvin.setMarvinHost("186.23.170.58");
+        Marvin.setMarvinPort(":80");
 
         Typeface typeface = Typeface.createFromAsset(getAssets(), "Wisdom Script AJ.otf");
 
@@ -214,7 +215,7 @@ public class LoginActivity extends AppCompatActivity {
             emailText.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 4 || password.length() > 8) {
+        if (password.isEmpty() || password.length() < 4) {
             passwordText.setError("Debe tener entre 4 y 8 caracteres alfanumericos");
             valid = false;
         } else {
