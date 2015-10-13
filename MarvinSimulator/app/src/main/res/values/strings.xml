@@ -1,0 +1,105 @@
+<resources>
+    <string name="app_name">Marvin Simulator</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_menu_principal">MenuPrincipal</string>
+    <string name="title_activity_registracion">Registracion</string>
+    <string name="title_activity_camara">Camara</string>
+    <string name="facebook_app_id">1391887564472051</string>
+    <string name="title_activity_search_result">SearchResultActivity</string>
+    <string name="title_activity_you_tube_player">YouTubePlayerActivity</string>
+    <string name="title_activity_bluetooth">BluetoothActivity</string>
+    <string name="title_activity_smsinbox">SMSInboxActivity</string>
+    <string name="title_activity_call_history">CallHistoryActivity</string>
+
+    <string name="com_facebook_loginview_log_in_button">Iniciar Sesión de Facebook</string>
+    <string name="com_facebook_loginview_log_out_button">Cerrar Sesión de Facebook</string>
+
+
+    <string name="city_name_default">Buscando ciudad...</string>
+    <string name="day_default_text"></string>
+    <string name="date_default_text"></string>
+    <string name="default_temperature">°C</string>
+    <string name="defaultMainStreet">Buscando calle...</string>
+    <string name="defaultSpeed">0</string>
+    <string name="title_activity_application_list" />
+    <string name="title_activity_map">MapActivity</string>
+    <string name="title_activity_trip">TripActivity</string>
+    <string name="title_activity_site">SiteActivity</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Contraseña</string>
+    <string name="action_sign_in">Iniciar sesión</string>
+    <string name="invalid_email">Esta dirección de mail es invalida</string>
+    <string name="invalid_password">Contraseña corta</string>
+    <string name="incorrect_password">Contraseña incorrecta</string>
+    <string name="field_required">Campo requerido</string>
+
+    <string name="list_view">List View</string>
+    <string name="recycler_view">Recycler View</string>
+    <string name="deleted">Eliminar Elemento</string>
+    <string name="undo">Deshacer</string>
+
+    <!-- Drawer Menu items -->
+    <string-array name="nav_drawer_items">
+        <item>Principal</item>
+        <item>Comandos de voz</item>
+        <item>Historial de viajes</item>
+        <item>Mis sitios</item>
+        <item>¿Dónde estacione?</item>
+        <item>Ajustes</item>
+        <item>Ayuda</item>
+        <item>Salir</item>
+    </string-array>
+
+    <!-- Sliding Menu item icons -->
+    <array name="nav_drawer_icons">
+        <item>@mipmap/ic_home_black_48dp</item>
+        <item>@mipmap/ic_mic_black_48dp</item>
+        <item>@mipmap/ic_schedule_black_48dp</item>
+        <item>@mipmap/ic_location_on_black_48dp</item>
+        <item>@mipmap/ic_local_parking_black_48dp</item>
+        <item>@mipmap/ic_settings_black_48dp</item>
+        <item>@mipmap/ic_help_black_48dp</item>
+        <item>@mipmap/ic_cancel_black_48dp</item>
+
+    </array>
+
+    <string name="ayuda1"> Para que funcione necesitas conexión a Internet. El reconocedor de voz toma tu voz después del "bip", allí debes indicar la palabra MARVIN.  Luego de que el sistema active su modo escucha, deberas ingresar el comando que deseas ejecutar, como por ejemplo, "Abrir Contactos". \nA modo complementario el sistema muestra por pantalla el comando elegido.</string>
+    <string name="ayuda2"> Para agregar íconos de atajos haz click en uno de los cuadrantes "Agregar" y después selecciona el atajo del menú que te aparece. Este menú mostrara todas las aplicaciones instaladas en tu dispositivo más las pantallas que dispone MARVIN.\nUna vez construido el atajo podra modificarse/eliminarse manteniendo apretado sobre el atajo y seleccionando la opción correspondiente.</string>
+    <string name="ayuda3"> Para escuchar música almacenada desde el dispositivo debe estar seleccionado el ícono "nota musical", si se desea cambiar al modo radio debes realizar un click sobre el ícono y este cambiara al de "radio". Puedes cambiar de estación radial con los botones de avanzar/retroceder y para que comience el sonido debes hacer click sobre el botón play.\nPara recibir un WhatsApp: </string>
+    <string name="ayuda4"> El sistema te informara cuando recibas una llamada o mensaje de texto, brindandote la opcíon de responder o ignorar por voz cada una de ellas correspondientemente.</string>
+    <string name="ayuda5"> Dicha fucnionalidad tiene algunos pasos que se deben realizar de forma touch, los mismos se indican a continuación.\nPara enviar un WhatsApp: \n1- Seleccionar la conversación\n2- Presionar botón "volver" para regresar a la aplicación</string>
+    <string name="ayuda6"> Las acciones que se detallan a continuación no se realizar por voz:\n1- Encuadrar foto\n2- Presionar siguiente\n3- Agregar efectos\n4- Presionar siguiente\n5- Confirmar publicación\n6- Presionar botón "volver" para regresar a la aplicación</string>
+    <string name="ayuda7"> Para poder enviar un e-mail a través de MARVIN, debes seleccionar la cuanta de correo electronico que deseas utilizar y confirmar el envío. </string>
+
+    <string name="termino0"> Última actualización: 05 de septiembre de 2015. Se recomienda probar la aplicación antes de usarla al conducir para lograr un entendimiento y familiarizarse con el funcionamiento de la misma.  Deberá contar con un dispositivo apto para utilizar el servicio con un plan de datos/internet que permita la utilización de la aplicación.</string>
+    <string name="termino1"> 1.1. Registro del Usuario. Como una condición esencial para usar el Servicio con todas las funcionalidades disponibles, Usted deberá crear una cuenta de usuario, declarando que posee capacidad legal para contratar y que no posee ningún impedimento para recibir servicios bajo las leyes de Argentina y otras jurisdicciones aplicables. Usted se obliga a: (a) Proveer información verdadera, correcta, actual y completa acerca de su persona del modo requerido en el formulario de registro del Servicio (información denominada en adelante Datos de Registro); y, (b) Mantener y actualizar en todo momento los Datos de Registro a fin de conservarlos veraces, correctos, actuales y completos. Si suministra información que es falsa, inexacta, desactualizada o incompleta Marvin tendrá el derecho de suspender o cerrar su cuenta. \n
+    1.2. Cuenta de Usuario y Seguridad. Luego de completar el proceso de inscripción al Servicio, Usted recibirá una contraseña y una designación de cuenta. Usted será responsable de mantener la confidencialidad de la contraseña y de la cuenta, siendo también único y absoluto responsable por todas las actividades que ocurran bajo su contraseña o cuenta; comprometiéndose a: (a) notificarnos inmediatamente de cualquier uso no autorizado de su cuenta o de cualquier otra violación de seguridad, y (b) asegurarse de que su cuenta de Usted sea cerrada al final de cada sesión. Marvin no se responsabiliza por la inviolabilidad de la transmisión de datos o Contenido cursado por las redes de telecomunicaciones o por cualquier otro medio telemático que estuviere fuera de su estricto control y/o de los reportes que el Usted curse.</string>
+    <string name="termino2"> Usted sólo podrá utilizar el Servicio y la Plataforma, en la medida que cumpla en todo momento con las cuestiones que se detallan a continuación. Además, el Usted declara en forma irrevocable que, y se obliga a:\n
+Ser exclusivo responsable del contenido de la información que transfiera, descargue, publique o almacene en la Plataforma;\n
+Cumplir en todo momento con estas Condiciones de Uso y/o del servicio;\n
+Utilizar el Servicio y la Plataforma únicamente con fines lícitos; encontrándose expresamente prohibido todo uso, fijación, reproducción, transmisión y distribución de cualquier material protegido por el derecho de autor, marcas registradas o no, secretos comerciales, patentes u otros derechos de propiedad intelectual de terceros, sin la debida autorización por escrito de los respectivos autores y propietarios de las obras, como asimismo la publicación y distribución de todo material obsceno, difamatorio o que constituya una amenaza o contraríe las buenas costumbres, el orden público y/o la legislación vigente;\n
+Abstenerse de colectar o guardar datos personales de otros Usuarios de la Plataforma y de cualquier persona;\n
+Abstenerse de copiar datos de la Plataforma, ni llevar a cabo con los datos o reportes o Contenido de la Plataforma, cualquier trabajo, recopilación ni estadísticas de ningún tipo, utilizarla como base de datos; estando expresamente prohibido citar al Servicio y/o a la Plataforma como base de estadísticas o censos de ningún tipo;\n
+Abstenerse de transferir, directa o indirectamente, cualquier Contenido de la Plataforma y/o del Servicio, a ninguna red publicitaria, intercambio de anuncios, agente de datos u otro conjunto de herramientas relacionado con la publicidad, aun cuando el Usuario que haya publicado tal Contenido consintiese dicha transferencia o uso ya que los Datos de los Usuarios y/o los Datos de Registro son de exclusiva propiedad de Marvin;\n
+Abstenerse de comercializar, vender y/o de cualquier otro modo transferir, el Contenido de la Plataforma;\n
+Abstenerse de mejoras, modificaciones o innovaciones al Servicio, ni a la Plataforma, bajo ninguna circunstancia, bajo apercibimiento de deber pagar los daños y perjuicios que pudiere causar con tales conductas.</string>
+    <string name="termino3"> El Usted será responsable por el buen uso del Servicio y de la Plataforma, siendo exclusivamente responsable de la conexión que utilice para poder utilizar el Servicio y conectarse a la Plataforma, el cual podrá incluir cargos de terceros (tales como cargos del proveedor de acceso a Internet o de comunicaciones, tecnología Wi-fi, 3G o 4G), siendo el Usuario el responsable de pagar tales cargos; comprometiéndose expresamente a evitar realizar cualquier tipo de acción que dañe o pueda dañar sistemas, equipos, servicios accesibles o sitios web, directa o indirectamente a través del Servicio o de la Plataforma.</string>
+    <string name="termino4"> Usted será el exclusivo responsable del Contenido que se genere y exponga a través de la Plataforma y/o mediante el uso del Servicio. No obstante, Usted conoce y acepta que Marvin podrá, pero no estará obligado a: (a) Retirar cualquier Contenido o información que se publique en la Plataforma si considera que infringe los preceptos establecidos en estos Términos y Condiciones de Uso; (b) Retirar reportes de Usuarios cuando considere que los mismos son inexistentes o fuere informado de su inexactitud; siendo que también se podrán desactivar las cuentas de tales Usuarios y no permitir que se registren nuevamente; y (c) cancelar temporal o permanentemente el uso a cualquier Usted, si Marvin considera que se ha incumplido de cualquier modo estos Términos y Condiciones de Uso.</string>
+    <string name="termino5"> Autorizo a Marvin a realizar el envío de mensajes y llamadas desde el presente dispositivo derivados de la confirmación de las operaciones habilitadas. \nLa suspensión o no prestación total o parcial del servicio SMS, en forma definitiva o temporal, puede ser decidida por la empresa de telefonía celular o bien ocurrir por circunstancias tecnológicas. Acepto y entiendo que las comunicaciones son esencialmente fiables, lo cual puede ocasionar suspensiones temporales del servicio, restando así cualquier tipo de responsabilidad a Marvin por daños y perjuicios que la suspensión pudiera generar, haciendo extensivo a este caso, las consecuencias del caso fortuito y/o fuerza mayor.</string>
+    <string name="termino6"> Usted comprende y acuerda expresamente que el Equipo Marvin no será responsable por ningún daño, interés o perjuicio directo o indirecto, previsto o imprevisto, intrínseco o extrínseco, incluyendo lucro cesante, uso, datos u otras pérdidas intangible, resultante de: (a) El uso o imposibilidad de usar el servicio; (b) accidentes que se puedan producir durante su uso; (c) alteración de los datos.</string>
+    <string name="termino7"> El Usuario acepta en forma incondicional e irrevocable que Marvin podrá incluir publicidad de cualquier anunciante en la Plataforma y que NO podrá optar por no recibirlas o borrarlas de la Plataforma.</string>
+    <string name="termino8"> 8.1. Marcas. Las marcas comerciales y/o de servicio y/o de la Plataforma, así como los logos y toda otra marca, signos distintivos y/o comerciales utilizados en la Plataforma son de exclusiva propiedad de Federico Sinopoli, Leonel Basile, Matías Salerno (Equipo Marvin). \nEl diseño y realización del logotipo de la aplicación corresponde a Santiago Barbeito.\n 8.2. Propiedad Intelectual. El software de la Plataforma (incluyendo, pero no limitado a, todos aquellos elementos que conforman la apariencia visual, imagen gráfica y otros estímulos sensoriales de la Plataforma y/o del Servicio look and feel, nombres comerciales, textos, imágenes, signos distintivos, gráficos, diseños, sonidos, bases de datos, diagramas de flujo, presentaciones, arquitectura de navegación y los códigos fuente de la Plataforma) es y seguirá siendo de exclusiva e irrestricta propiedad del Equipo Marvin bajo la protección de la legislación nacional e internacional sobre propiedad intelectual. El Software de la Plataforma son obras intelectuales protegidas en la Argentina por la Ley N°11.723 y en el resto del mundo por la Convención de Berna y la Convención Universal sobre Derechos de Autor. Se reservan todos los derechos del autor y se prohíbe toda reproducción. El Usuario tiene pleno conocimiento que no se le otorga ningún derecho de propiedad intelectual o industrial sobre el software y/o sobre la Plataforma, quedando absolutamente prohibida su reproducción, comunicación y/o distribución con fines comerciales o lucrativos, así como su modificación, alteración, descompilación y/o cualquier otro acto de explotación comercial de la Plataforma y/o del Servicio y/o del Contenido que se incorpore. El Usuario reconoce que tales derechos son de absoluta titularidad de Equipo MARVIN.</string>
+    <string name="termino9"> El equipo MARVIN podrá revocar y/o suspender el uso del Servicio y/o de la Plataforma, total o parcialmente, en cualquier momento y sin necesidad de invocación de causa alguna y a su exclusivo criterio, y tal cuestión no generará derecho a compensación o indemnización alguna a favor del Usuario.</string>
+    <string name="title_activity_password_recovery">Recuperar contraseña de Marvin</string>
+    <string name="token_expired">su código de actualización de contraseña ha expirado, por favor solicite un nuevo código</string>
+    <string name="service_unavailable">El servidor no esta disponible en este instante, por favor intente nuevamente</string>
+    <string name="pasword_updated">La contraseña se ha actualizado</string>
+    <string name="password_must_match">Las contraseñas deben coincidir. Ingresela nuevamente</string>
+    <string name="recover_pass_email_sent">Hemos enviado un email a tu casilla con un código para establecer tu nueva contraseña</string>
+
+
+</resources>
