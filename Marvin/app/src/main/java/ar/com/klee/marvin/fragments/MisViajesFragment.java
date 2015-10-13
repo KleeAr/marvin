@@ -32,6 +32,7 @@ import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.activities.TripActivity;
 import ar.com.klee.marvin.configuration.UserTrips;
 import ar.com.klee.marvin.gps.Trip;
+import ar.com.klee.marvin.gps.TripStep;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 
 
@@ -124,10 +125,6 @@ public class MisViajesFragment extends Fragment {
         MyBaseAdapter() {
 
             mainMenuActivity = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
-
-            SharedPreferences mPrefs = mainMenuActivity.getPreferences(mainMenuActivity.MODE_PRIVATE);
-
-            int numberOfTrips = mPrefs.getInt("NumberOfTrips",0);
 
             tripList = UserTrips.getInstance().getTrips();
 

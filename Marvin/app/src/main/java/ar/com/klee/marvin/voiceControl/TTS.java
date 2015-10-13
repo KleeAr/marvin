@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import ar.com.klee.marvin.activities.MainMenuActivity;
+import ar.com.klee.marvin.gps.LocationSender;
 import ar.com.klee.marvin.multimedia.music.MusicService;
 
 /* Clase TTS
@@ -57,7 +58,8 @@ public class TTS {
                                 }
 
                                 if(speedAlert){
-                                    ((MainMenuActivity)CommandHandlerManager.getInstance().getMainActivity()).speedAlertFinish();
+                                    speedAlert = false;
+                                    LocationSender.getInstance().setSpeedAlertActivated(1);
                                 }
 
                             }

@@ -64,7 +64,7 @@ public class DondeEstacioneFragment extends Fragment {
                 }
             }, 1000);
         }else{
-            Toast.makeText(getActivity(), "Es la primera vez que ingresás. No se detectó el lugar de estacionamiento.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "No se pudo detectar el lugar de estacionamiento.", Toast.LENGTH_LONG).show();
         }
 
         return v;

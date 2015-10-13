@@ -71,7 +71,8 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
     private String startAddress;
 
     private double velocity = 0.0;
-    private double previousVelocity = 0.0;
+    private Integer speed1 = 0;
+    private Integer speed2 = 0;
 
     private int discardLocation = 0;
 
@@ -91,6 +92,11 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
 
     private boolean connectionProblemsToast = false;
     private boolean readyToUpdate = false;
+
+    private int speedAlertActivated = 0;
+    private boolean enableAppToOpen = false;
+    private int zeroCounter = 0;
+    private boolean wrongCoordinates = false;
 
     public static LocationSender getInstance() {
         if (instance == null) {
@@ -137,52 +143,76 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
                     while (!isInterrupted()) {
 
                         if(!town.equals("Buscando ciudad...")) {
-                            final boolean tabletSize = CommandHandlerManager.getInstance().getMainActivity().getResources().getBoolean(R.bool.isTablet);
+                            final boolean tabletSize = CommandHandlerManager.getInstance().getMainActivity().getResources().getBoolean(ar.com.klee.marvin.R.bool.isTablet);
 
                             CommandHandlerManager.getInstance().getMainActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if(!tabletSize)
-                                        MainMenuActivity.cityText.setText(getTown());
-                                    else
-                                        MainMenuActivity.cityText.setText(getTown()+", "+getAddressState());
-                                    MainMenuFragment.mainStreet.setText(getAddress());
-
-                                    Integer speed1 = (int) previousVelocity;
-                                    Integer speed2 = (int) velocity;
-
-                                    Integer maxDifference = 15;
-
-                                    if(actualTime != null && previousTime != null) {
-                                        long diffInMs = actualTime.getTime() - previousTime.getTime();
-                                        double seconds = TimeUnit.MILLISECONDS.toSeconds(diffInMs);
-
-                                        if(seconds <= 1.5)
-                                            maxDifference = 15;
-                                        else if(seconds <= 3.0)
-                                            maxDifference = 30;
-                                        else if(seconds <= 4.5)
-                                            maxDifference = 45;
+                                    if(!wrongCoordinates) {
+                                        if (!tabletSize)
+                                            MainMenuActivity.cityText.setText(getTown());
                                         else
-                                            maxDifference = 60;
-                                    }
+                                            MainMenuActivity.cityText.setText(getTown() + ", " + getAddressState());
+                                        MainMenuFragment.mainStreet.setText(getAddress());
 
-                                    if(speed2 != -1) {
+                                        speed1 = speed2;
+                                        speed2 = (int) velocity;
+
+                                        Integer maxDifference = 15;
+
+                                        if (actualTime != null && previousTime != null) {
+                                            long diffInMs = actualTime.getTime() - previousTime.getTime();
+                                            Long seconds = TimeUnit.MILLISECONDS.toSeconds(diffInMs);
+
+                                            if (seconds <= 1)
+                                                maxDifference = 11;
+                                            else if (seconds <= 3)
+                                                maxDifference = 25;
+                                            else if (seconds <= 5)
+                                                maxDifference = 41;
+                                            else
+                                                maxDifference = 61;
+                                        }
+
+                                        if (speedAlertActivated == 1) {
+                                            ((MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity()).speedAlertFinish();
+                                            speedAlertActivated = 0;
+                                        }
+
+                                        if (speed2 >= 35) {
+                                            enableAppToOpen = true;
+                                        }
+
+                                        if (speed2 <= 5)
+                                            zeroCounter++;
+                                        else
+                                            zeroCounter = 0;
+
                                         if (speed1 <= speed2) {
-                                            if(speed1 + maxDifference <= speed2) {
+                                            if (speed1 + maxDifference <= speed2) {
                                                 speed2 = speed1 + maxDifference;
                                                 MainMenuFragment.speed.setText(speed2.toString());
-                                            }else {
+                                                favApp();
+                                                speedAlert();
+                                            } else {
                                                 MainMenuFragment.speed.setText(speed2.toString());
+                                                favApp();
+                                                speedAlert();
                                             }
                                         } else {
-                                            if(speed1 - maxDifference > speed2) {
+                                            if (speed1 - maxDifference > speed2) {
                                                 speed2 = speed1 - maxDifference;
                                                 MainMenuFragment.speed.setText(speed2.toString());
-                                            }else {
+                                                favApp();
+                                                speedAlert();
+                                            } else {
                                                 MainMenuFragment.speed.setText(speed2.toString());
+                                                favApp();
+                                                speedAlert();
                                             }
                                         }
+                                    }else{
+                                        wrongCoordinates = false;
                                     }
                                 }
                             });
@@ -209,7 +239,6 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
 
     @Override
     public void onLocationChanged(Location location) {
-
         if(discardLocation == 2)
             handleNewLocation(location);
         else
@@ -238,6 +267,10 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
 
         //Log.d("GPS","Recibo nuevas coordenadas. Latitud = " + ((Double)latitude).toString() + "; Longitud = " + ((Double)longitude).toString());
 
+        double latitudeBackUp = previousLatitude;
+        double longitudeBackUp = previousLongitude;
+        Date timeBackUp = previousTime;
+
         previousLatitude = actualLatitude;
         previousLongitude = actualLongitude;
         previousTime = actualTime;
@@ -258,13 +291,20 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
             double polylineLength = results[0];
 
             if(polylineLength > 100.0) {
-                velocity = -1;
+                wrongCoordinates = true;
+
+                actualLatitude = previousLatitude;
+                actualLongitude = previousLongitude;
+                actualTime = previousTime;
+
+                previousLatitude = latitudeBackUp;
+                previousLongitude = longitudeBackUp;
+                previousTime = timeBackUp;
+
                 return;
             }
 
             polylineLength = polylineLength / 1000;
-
-            previousVelocity = velocity;
 
             if(hours == 0.0)
                 velocity = 0.0;
@@ -280,27 +320,6 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-                if (UserConfig.getSettings().isOpenAppWhenStop() && velocity < 1) {
-
-                    String app = UserConfig.getSettings().getAppToOpenWhenStop();
-                    CommandHandlerManager commandHandlerManager = CommandHandlerManager.getInstance();
-
-                    if (STTService.isInstanceInitialized() && !STTService.getInstance().getIsListening() &&
-                            commandHandlerManager.getCurrentActivity() == CommandHandlerManager.ACTIVITY_MAIN &&
-                            commandHandlerManager.getCommandHandler() == null) {
-
-                        openApp(app);
-                    }
-                }
-
-                if (STTService.isInstanceInitialized() && UserConfig.getSettings().isSpeedAlertEnabled() && velocity > UserConfig.getSettings().getAlertSpeed()) {
-                    CommandHandlerManager commandHandlerManager = CommandHandlerManager.getInstance();
-                    STTService.getInstance().setIsListening(false);
-                    STTService.getInstance().stopListening();
-                    commandHandlerManager.setNullCommand();
-                    commandHandlerManager.getTextToSpeech().speakText("SPEED ALERT - Superaste los " + UserConfig.getSettings().getAlertSpeed() + " kilometros por hora");
-                    ((MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity()).speedAlert();
-                }
 
                 readyToUpdate = true;
 
@@ -560,39 +579,51 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
 
         Context context = CommandHandlerManager.getInstance().getContext();
 
-        if(app.equals("cámara")) {
+        if(app.equals("marvin - cámara")) {
+            enableAppToOpen = false;
+            zeroCounter = 0;
             Intent intent = new Intent(context, CameraActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
             return;
-        }else if(app.equals("historial de sms")) {
+        }else if(app.equals("marvin - historial de sms")) {
+            enableAppToOpen = false;
+            zeroCounter = 0;
             Intent intent = new Intent(context, SMSInboxActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
             return;
-        }else if(app.equals("historial de llamadas")) {
+        }else if(app.equals("marvin - historial de llamadas")) {
+            enableAppToOpen = false;
+            zeroCounter = 0;
             Intent intent = new Intent(context, CallHistoryActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
             return;
-        }else if(app.equals("mapa")) {
+        }else if(app.equals("marvin - mapa")) {
+            enableAppToOpen = false;
+            zeroCounter = 0;
             Intent intent = new Intent(context, MapActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
             return;
-        }else if(app.equals("mis sitios")) {
+        }else if(app.equals("marvin - mis sitios")) {
+            enableAppToOpen = false;
+            zeroCounter = 0;
             ((MainMenuActivity)commandHandlerManager.getMainActivity()).previousMenus.push(1);
             ((MainMenuActivity)commandHandlerManager.getMainActivity()).setFragment(5);
             return;
-        }else if(app.equals("historial de viajes")) {
+        }else if(app.equals("marvin - historial de viajes")) {
+            enableAppToOpen = false;
+            zeroCounter = 0;
             ((MainMenuActivity)commandHandlerManager.getMainActivity()).previousMenus.push(1);
             ((MainMenuActivity)commandHandlerManager.getMainActivity()).setFragment(4);
             return;
-        }else if(app.equals("dónde estacioné")) {
+        }else if(app.equals("marvin - dónde estacioné")) {
+            enableAppToOpen = false;
+            zeroCounter = 0;
             ((MainMenuActivity)commandHandlerManager.getMainActivity()).previousMenus.push(1);
             ((MainMenuActivity)commandHandlerManager.getMainActivity()).setFragment(6);
-            return;
-        }else if(app.equals("marvin")) {
             return;
         }else{
             final PackageManager pm = CommandHandlerManager.getInstance().getContext().getPackageManager();
@@ -605,12 +636,44 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
                 String appLabel = pm.getApplicationLabel(packages.get(i)).toString();
 
                 if(appLabel.toLowerCase().equals(app)){
+                    zeroCounter = 0;
+                    enableAppToOpen = false;
                     commandHandlerManager.getMainActivity().startActivity(pm.getLaunchIntentForPackage(packages.get(i).packageName));
                     return;
                 }
 
                 i++;
             }
+        }
+    }
+
+    public void favApp(){
+
+        if (enableAppToOpen && zeroCounter >= 3 && UserConfig.getSettings().isOpenAppWhenStop() && speed2 < 1) {
+
+            String app = UserConfig.getSettings().getAppToOpenWhenStop();
+            CommandHandlerManager commandHandlerManager = CommandHandlerManager.getInstance();
+
+            if (STTService.isInstanceInitialized() && !STTService.getInstance().getIsListening() &&
+                    commandHandlerManager.getCurrentActivity() == CommandHandlerManager.ACTIVITY_MAIN &&
+                    commandHandlerManager.getCommandHandler() == null) {
+
+                app = app.toLowerCase();
+
+                openApp(app);
+            }
+        }
+    }
+
+    public void speedAlert(){
+        if (speedAlertActivated == 0 && STTService.isInstanceInitialized() && UserConfig.getSettings().isSpeedAlertEnabled() && speed2 > UserConfig.getSettings().getAlertSpeed()) {
+            speedAlertActivated = 2;
+            CommandHandlerManager commandHandlerManager = CommandHandlerManager.getInstance();
+            STTService.getInstance().setIsListening(false);
+            STTService.getInstance().stopListening();
+            commandHandlerManager.setNullCommand();
+            ((MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity()).speedAlert();
+            commandHandlerManager.getTextToSpeech().speakText("SPEED ALERT - Superaste los " + UserConfig.getSettings().getAlertSpeed() + " kilometros por hora");
         }
     }
 
@@ -636,5 +699,13 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
 
     public String getActualAddress() {
         return actualAddress;
+    }
+
+    public void setSpeedAlertActivated(int speedAlertActivated) {
+        this.speedAlertActivated = speedAlertActivated;
+    }
+
+    public void setEnableAppToOpen(boolean enableAppToOpen) {
+        this.enableAppToOpen = enableAppToOpen;
     }
 }
