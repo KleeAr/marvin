@@ -158,6 +158,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     private Fragment lastFragment;
 
+    private int tabNumber = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -348,6 +350,12 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
             public void onDrawerOpened(View drawerView) {
 
+                try {
+                    if(MainMenuFragment.isInstanceInitialized())
+                        MainMenuFragment.getInstance().getPager().setCurrentItem(0);
+                }catch(Exception e){
+                }
+
                 // getSupportActionBar().setTitle(mTitle);
                 supportInvalidateOptionsMenu();
             }
@@ -397,6 +405,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             refreshSites();
         }else if(actualFragmentPosition == 4){
             refreshTrips();
+        }else if(actualFragmentPosition == 1){
+            tabNumber = MainMenuFragment.getInstance().getPager().getCurrentItem();
+            Log.d("TAB - Get",((Integer)tabNumber).toString());
         }
 
         previousMenus.push(actualFragmentPosition);
@@ -470,6 +481,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     @Override
     public void onBackPressed() {
 
+        if(wasBackPressed)
+            return;
+
         commandHandlerManager.setNullCommand();
         STTService.getInstance().setIsListening(false);
 
@@ -480,7 +494,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         }else if(actualFragmentPosition == 4){
             refreshTrips();
         }
-
 
         if(!previousMenus.empty()){
 
@@ -554,21 +567,20 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             return;
         }
 
-        if(wasBackPressed)
-            return;
-
         wasBackPressed = true;
-
-        MainMenuFragment.getInstance().setItem(2);
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-                mapFragment.finishTrip();
-                locationSender.stopLocationSender();
-                if (MainMenuFragment.isInstanceInitialized())
-                    MainMenuFragment.getInstance().stopThread();
-                stopServices();
+                try {
+                    mapFragment.finishTrip();
+                    locationSender.stopLocationSender();
+                    if (MainMenuFragment.isInstanceInitialized())
+                        MainMenuFragment.getInstance().stopThread();
+                    stopServices();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         }, 1000);
 
@@ -1619,6 +1631,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         }
     }
 
-
+    public int getTabNumber() {
+        return tabNumber;
+    }
 }
 

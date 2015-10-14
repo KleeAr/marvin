@@ -47,6 +47,7 @@ import java.util.concurrent.TimeUnit;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.client.Marvin;
+import ar.com.klee.marvin.fragments.MainMenuFragment;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
 
@@ -363,10 +364,12 @@ public class MapFragment extends Fragment {
                 String timeStamp = new SimpleDateFormat("yyMMdd_HHmmss").format(new Date());
 
                 try {
-                    FileOutputStream out = new FileOutputStream("/sdcard/MARVIN/Estacionamiento/" + finishAddress + "_" + timeStamp + ".png");
-                    snapshot.compress(Bitmap.CompressFormat.PNG, 90, out);
-                    out.flush();
-                    out.close();
+                    if(MainMenuFragment.isInstanceInitialized() && MainMenuFragment.getInstance().getPager().getCurrentItem() == 2) {
+                        FileOutputStream out = new FileOutputStream("/sdcard/MARVIN/Estacionamiento/" + finishAddress + "_" + timeStamp + ".png");
+                        snapshot.compress(Bitmap.CompressFormat.PNG, 90, out);
+                        out.flush();
+                        out.close();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

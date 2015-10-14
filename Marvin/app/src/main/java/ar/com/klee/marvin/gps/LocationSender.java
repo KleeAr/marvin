@@ -11,6 +11,7 @@ import android.location.LocationListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
@@ -97,6 +98,8 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
     private boolean enableAppToOpen = false;
     private int zeroCounter = 0;
     private boolean wrongCoordinates = false;
+
+    //private int counter = 0;
 
     public static LocationSender getInstance() {
         if (instance == null) {
@@ -219,8 +222,16 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
 
                         }else{
                             if(readyToUpdate && !connectionProblemsToast) {
-                                Toast.makeText(context, "No hay conexión a internet. No se puede identificar el nombre de la calle.", Toast.LENGTH_LONG).show();
-                                connectionProblemsToast = true;
+                                try {
+                                    CommandHandlerManager.getInstance().getMainActivity().runOnUiThread(new Runnable() {
+                                        public void run() {
+                                            Toast.makeText(context, "No hay conexión a internet. No se puede identificar el nombre de la calle.", Toast.LENGTH_LONG).show();
+                                        }
+                                    });
+                                    connectionProblemsToast = true;
+                                }catch (Exception e){
+                                    e.printStackTrace();
+                                }
                             }
                         }
 
@@ -264,6 +275,18 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
 
         double longitude = location.getLongitude();
         double latitude = location.getLatitude();
+
+        /*
+        Log.d("GPS",((Integer)counter).toString());
+        if(counter%10 == 8){
+            latitude = -34.683346;
+            longitude = -58.510951;
+        }else if(counter%10 == 9){
+            latitude = -34.683720;
+            longitude = -58.510363;
+        }
+        counter++;
+        */
 
         //Log.d("GPS","Recibo nuevas coordenadas. Latitud = " + ((Double)latitude).toString() + "; Longitud = " + ((Double)longitude).toString());
 
