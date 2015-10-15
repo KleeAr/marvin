@@ -146,6 +146,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     public static TextView weekDay;
     public static TextView dateText;
 
+    private ImageView splashLogin;
+    private ImageView splashLogout;
+
     public int actualFragmentPosition = 1;
     public Stack<Integer> previousMenus = new Stack();
 
@@ -230,6 +233,18 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             mainMenuFragment = MainMenuFragment.getInstance();
         else
             mainMenuFragment = new MainMenuFragment();
+
+        splashLogin = (ImageView)findViewById(R.id.splash_login);
+        splashLogout = (ImageView)findViewById(R.id.splash_logout);
+
+        splashLogin.setVisibility(ImageView.VISIBLE);
+        splashLogout.setVisibility(ImageView.INVISIBLE);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                splashLogin.setVisibility(ImageView.INVISIBLE);
+            }
+        }, 10000);
 
         weekDay = (TextView) findViewById(R.id.weekDayText);
         dateText = (TextView) findViewById(R.id.dateText);
@@ -407,7 +422,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             refreshTrips();
         }else if(actualFragmentPosition == 1){
             tabNumber = MainMenuFragment.getInstance().getPager().getCurrentItem();
-            Log.d("TAB - Get",((Integer)tabNumber).toString());
         }
 
         previousMenus.push(actualFragmentPosition);
@@ -463,6 +477,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 titleText.setText("Ayuda");
                 break;
             case 10:
+                splashLogout.setVisibility(ImageView.VISIBLE);
                 MainMenuActivity.mapFragment.finishTrip();
                 locationSender.stopLocationSender();
                 if(MainMenuFragment.isInstanceInitialized())
@@ -487,12 +502,20 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         commandHandlerManager.setNullCommand();
         STTService.getInstance().setIsListening(false);
 
+        int tab = 0;
+
         if(actualFragmentPosition == 8){
             refreshConfiguration();
         }else if(actualFragmentPosition == 5){
             refreshSites();
         }else if(actualFragmentPosition == 4){
             refreshTrips();
+        }else if(actualFragmentPosition == 1){
+            if(!previousMenus.empty()) {
+                Log.d("ITEM","setCurrent");
+                MainMenuFragment.getInstance().getPager().setCurrentItem(0);
+            }else
+                tab = MainMenuFragment.getInstance().getPager().getCurrentItem();
         }
 
         if(!previousMenus.empty()){
@@ -568,12 +591,15 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         }
 
         wasBackPressed = true;
+        splashLogout.setVisibility(ImageView.VISIBLE);
+
+        final int tabValue = tab;
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
                 try {
-                    mapFragment.finishTrip();
+                    mapFragment.finishTrip(tabValue);
                     locationSender.stopLocationSender();
                     if (MainMenuFragment.isInstanceInitialized())
                         MainMenuFragment.getInstance().stopThread();
@@ -582,7 +608,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     e.printStackTrace();
                 }
             }
-        }, 1000);
+        }, 2000);
 
     }
 
@@ -647,6 +673,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 titleText.setText("Ayuda");
                 break;
             case 10:
+                splashLogout.setVisibility(ImageView.VISIBLE);
                 MainMenuActivity.mapFragment.finishTrip();
                 locationSender.stopLocationSender();
                 if(MainMenuFragment.isInstanceInitialized())

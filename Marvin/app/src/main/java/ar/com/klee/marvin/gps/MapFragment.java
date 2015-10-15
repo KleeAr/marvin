@@ -210,6 +210,10 @@ public class MapFragment extends Fragment {
     }
 
     public void finishTrip(){
+        finishTrip(0);
+    }
+
+    public void finishTrip(int tab){
 
         if(lastMarker!=null){
             lastMarker.remove();
@@ -264,10 +268,7 @@ public class MapFragment extends Fragment {
         minutes = minutes - hours*60;
         trip.setTime(hours.toString() + " hs. " + minutes.toString() + " min.");
 
-        float hourDecimals = (100 * minutes)/60;
-        while(hourDecimals > 1){
-            hourDecimals = hourDecimals/10;
-        }
+        float hourDecimals = minutes/60;
 
         float hourWithDecimals = hours + hourDecimals;
 
@@ -302,7 +303,7 @@ public class MapFragment extends Fragment {
 
         trip.setAverageVelocity(String.format("%.2f", velocity));
 
-        captureScreen();
+        captureScreen(tab);
 
         if(hourWithDecimals >= MIN_TRIP_TIME && polylineLength >= MIN_TRIP_DISTANCE) {
 
@@ -333,7 +334,7 @@ public class MapFragment extends Fragment {
 
     }
 
-    public void captureScreen()
+    public void captureScreen(final int tab)
     {
         GoogleMap.SnapshotReadyCallback callback = new GoogleMap.SnapshotReadyCallback(){
 
@@ -364,7 +365,7 @@ public class MapFragment extends Fragment {
                 String timeStamp = new SimpleDateFormat("yyMMdd_HHmmss").format(new Date());
 
                 try {
-                    if(MainMenuFragment.isInstanceInitialized() && MainMenuFragment.getInstance().getPager().getCurrentItem() == 2) {
+                    if(tab == 2) {
                         FileOutputStream out = new FileOutputStream("/sdcard/MARVIN/Estacionamiento/" + finishAddress + "_" + timeStamp + ".png");
                         snapshot.compress(Bitmap.CompressFormat.PNG, 90, out);
                         out.flush();

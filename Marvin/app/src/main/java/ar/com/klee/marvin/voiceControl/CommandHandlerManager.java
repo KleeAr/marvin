@@ -19,6 +19,14 @@ import ar.com.klee.marvin.voiceControl.handlers.callHistory.ConsultarRegistroNum
 import ar.com.klee.marvin.voiceControl.handlers.callHistory.ConsultarUltimoRegistroDeContactoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.callHistory.ConsultarUltimoRegistroDeNumeroHandler;
 import ar.com.klee.marvin.voiceControl.handlers.callHistory.ConsultarUltimoRegistroHandler;
+import ar.com.klee.marvin.voiceControl.handlers.fun.CantaHandler;
+import ar.com.klee.marvin.voiceControl.handlers.fun.ChauHandler;
+import ar.com.klee.marvin.voiceControl.handlers.fun.ChisteHandler;
+import ar.com.klee.marvin.voiceControl.handlers.fun.EspejitoHandler;
+import ar.com.klee.marvin.voiceControl.handlers.fun.HolaHandler;
+import ar.com.klee.marvin.voiceControl.handlers.fun.QuieroHandler;
+import ar.com.klee.marvin.voiceControl.handlers.fun.RaizHandler;
+import ar.com.klee.marvin.voiceControl.handlers.fun.VeoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.AbrirAplicacionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.ActivarHotspotHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.ActivarReproduccionAleatoriaHandler;
@@ -222,7 +230,15 @@ public class CommandHandlerManager {
             new SiguienteInterseccion(textToSpeech, context, this),
             new SMSDeEmergenciaHandler(textToSpeech, context, this),
             new SubirVolumenHandler(textToSpeech, context, this),
-            new TwittearHandler(textToSpeech, context, this));
+            new TwittearHandler(textToSpeech, context, this),
+            new CantaHandler(textToSpeech, context, this),
+            new ChauHandler(textToSpeech, context, this),
+            new ChisteHandler(textToSpeech, context, this),
+            new EspejitoHandler(textToSpeech, context, this),
+            new HolaHandler(textToSpeech, context, this),
+            new QuieroHandler(textToSpeech, context, this),
+            new RaizHandler(textToSpeech, context, this),
+            new VeoHandler(textToSpeech, context, this));
 
         commandHandlersCamera = Arrays.asList(new CancelarFotoHandler(textToSpeech, context, this),
             new CerrarCamaraHandler(textToSpeech, context, this),
