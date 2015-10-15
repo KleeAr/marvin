@@ -7,6 +7,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -33,6 +36,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
+import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,9 +51,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 import com.google.gson.Gson;
+import com.twitter.sdk.android.Twitter;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
 
+import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
@@ -59,10 +73,12 @@ import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.call.CallDriver;
 import ar.com.klee.marvin.client.Marvin;
 import ar.com.klee.marvin.client.model.SiteRepresentation;
+import ar.com.klee.marvin.client.Marvin;
 import ar.com.klee.marvin.client.model.User;
 import ar.com.klee.marvin.client.model.UserSetting;
 import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.configuration.UserSites;
+import ar.com.klee.marvin.configuration.UserTrips;
 import ar.com.klee.marvin.data.Channel;
 import ar.com.klee.marvin.data.Item;
 import ar.com.klee.marvin.fragments.ConfigureFragment;
@@ -76,6 +92,7 @@ import ar.com.klee.marvin.fragments.VozFragment;
 import ar.com.klee.marvin.gps.LocationSender;
 import ar.com.klee.marvin.gps.MapFragment;
 import ar.com.klee.marvin.gps.Site;
+import ar.com.klee.marvin.gps.Trip;
 import ar.com.klee.marvin.multimedia.music.MusicService;
 import ar.com.klee.marvin.multimedia.video.YouTubeVideo;
 import ar.com.klee.marvin.service.WeatherServiceCallback;
@@ -86,10 +103,12 @@ import ar.com.klee.marvin.voiceControl.STTService;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import io.fabric.sdk.android.Fabric;
 
 
 public class MainMenuActivity extends ActionBarActivity implements DelegateTask<List<YouTubeVideo>>, WeatherServiceCallback,AdapterView.OnItemClickListener {
 
+    private CallbackManager callbackManager = CallbackManager.Factory.create();
 
     public final int UPDATE_WEATHER = 1000000; //cantidad de milisegundos para actualizar el clima
     public static final String TWITTER_KEY = "IsfPZw7I4i4NCZaFxM9BZX4Qi";
@@ -133,6 +152,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     public static TextView weekDay;
     public static TextView dateText;
 
+    private ImageView splashLogin;
+    private ImageView splashLogout;
+
     public int actualFragmentPosition = 1;
     public Stack<Integer> previousMenus = new Stack();
 
@@ -144,6 +166,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     private String lastArtist;
 
     private Fragment lastFragment;
+
+    private int tabNumber = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -162,12 +186,38 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
         loadUserSettings(mPrefs);
         loadSites(mPrefs);
+        UserTrips trips = new UserTrips();
+
+        int numberOfTrips = mPrefs.getInt("NumberOfTrips",0);
+
+        for(Integer i = numberOfTrips; i >= 1; i--) {
+            Gson gson = new Gson();
+            String json = mPrefs.getString("Trip"+i.toString(), "");
+            trips.add(gson.fromJson(json, Trip.class));
+        }
+        
+        initializeFacebookSdk();
+        TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
+        Fabric.with(this, new Twitter(authConfig));
+
 
         //Crea el mainMenu
         if (MainMenuFragment.isInstanceInitialized())
             mainMenuFragment = MainMenuFragment.getInstance();
         else
             mainMenuFragment = new MainMenuFragment();
+
+        splashLogin = (ImageView)findViewById(R.id.splash_login);
+        splashLogout = (ImageView)findViewById(R.id.splash_logout);
+
+        splashLogin.setVisibility(ImageView.VISIBLE);
+        splashLogout.setVisibility(ImageView.INVISIBLE);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                splashLogin.setVisibility(ImageView.INVISIBLE);
+            }
+        }, 10000);
 
         weekDay = (TextView) findViewById(R.id.weekDayText);
         dateText = (TextView) findViewById(R.id.dateText);
@@ -287,6 +337,12 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
 
             public void onDrawerOpened(View drawerView) {
+
+                try {
+                    if(MainMenuFragment.isInstanceInitialized())
+                        MainMenuFragment.getInstance().getPager().setCurrentItem(0);
+                }catch(Exception e){
+                }
 
                 // getSupportActionBar().setTitle(mTitle);
                 supportInvalidateOptionsMenu();
@@ -408,6 +464,10 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             refreshConfiguration();
         }else if(actualFragmentPosition == 5){
             refreshSites();
+        }else if(actualFragmentPosition == 4){
+            refreshTrips();
+        }else if(actualFragmentPosition == 1){
+            tabNumber = MainMenuFragment.getInstance().getPager().getCurrentItem();
         }
 
         previousMenus.push(actualFragmentPosition);
@@ -463,6 +523,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 titleText.setText("Ayuda");
                 break;
             case 10:
+                splashLogout.setVisibility(ImageView.VISIBLE);
                 MainMenuActivity.mapFragment.finishTrip();
                 locationSender.stopLocationSender();
                 if(MainMenuFragment.isInstanceInitialized())
@@ -481,13 +542,26 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     @Override
     public void onBackPressed() {
 
+        if(wasBackPressed)
+            return;
+
         commandHandlerManager.setNullCommand();
         STTService.getInstance().setIsListening(false);
+
+        int tab = 0;
 
         if(actualFragmentPosition == 8){
             refreshConfiguration();
         }else if(actualFragmentPosition == 5){
             refreshSites();
+        }else if(actualFragmentPosition == 4){
+            refreshTrips();
+        }else if(actualFragmentPosition == 1){
+            if(!previousMenus.empty()) {
+                Log.d("ITEM","setCurrent");
+                MainMenuFragment.getInstance().getPager().setCurrentItem(0);
+            }else
+                tab = MainMenuFragment.getInstance().getPager().getCurrentItem();
         }
 
         if(!previousMenus.empty()){
@@ -562,23 +636,25 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             return;
         }
 
-        if(wasBackPressed)
-            return;
-
         wasBackPressed = true;
+        splashLogout.setVisibility(ImageView.VISIBLE);
 
-        MainMenuFragment.getInstance().setItem(2);
+        final int tabValue = tab;
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-                mapFragment.finishTrip();
-                locationSender.stopLocationSender();
-                if (MainMenuFragment.isInstanceInitialized())
-                    MainMenuFragment.getInstance().stopThread();
-                stopServices();
+                try {
+                    mapFragment.finishTrip(tabValue);
+                    locationSender.stopLocationSender();
+                    if (MainMenuFragment.isInstanceInitialized())
+                        MainMenuFragment.getInstance().stopThread();
+                    stopServices();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
-        }, 1000);
+        }, 2000);
 
     }
 
@@ -588,6 +664,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             refreshConfiguration();
         }else if(actualFragmentPosition == 5){
             refreshSites();
+        }else if(actualFragmentPosition == 4){
+            refreshTrips();
         }
 
         actualFragmentPosition = position;
@@ -641,6 +719,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 titleText.setText("Ayuda");
                 break;
             case 10:
+                splashLogout.setVisibility(ImageView.VISIBLE);
                 MainMenuActivity.mapFragment.finishTrip();
                 locationSender.stopLocationSender();
                 if(MainMenuFragment.isInstanceInitialized())
@@ -1313,6 +1392,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             callDriver.setUriContact(data.getData());
             callDriver.retrieveContactNumber();
         }else{
+            callbackManager.onActivityResult(requestCode, resultCode, data);
             lastFragment.onActivityResult(requestCode, resultCode, data);
         }
 
@@ -1553,6 +1633,35 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 }
             });
         }
+
+    }
+
+    public void refreshTrips(){
+
+        if(Marvin.isAuthenticated()){
+
+            //TODO: Cargar viajes desde UserTrips hacia el server
+
+        }else{
+
+            SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
+            SharedPreferences.Editor prefsEditor = mPrefs.edit();
+
+            List<Trip> trips = UserTrips.getInstance().getTrips();
+
+            prefsEditor.putInt("NumberOfTrips", trips.size());
+
+            Integer j;
+            Gson gson = new Gson();
+
+            for(j=trips.size();j>=1;j--) {
+                String json = gson.toJson(trips.get(trips.size()-j));
+                prefsEditor.putString("Trip" + j.toString(), json);
+            }
+
+            prefsEditor.commit();
+
+        }
         SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor prefsEditor = mPrefs.edit();
         prefsEditor.putInt("NumberOfSites", sites.size());
@@ -1565,5 +1674,50 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         prefsEditor.commit();
     }
 
+    /**
+     * ***********************************
+     * ************SOCIAL SDKs**************
+     * ***********************************
+     */
+
+    private void initializeFacebookSdk() {
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        showHashKey(getApplicationContext());
+        LoginManager.getInstance().registerCallback(callbackManager,
+                new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        // App code
+                    }
+
+                    @Override
+                    public void onError(FacebookException exception) {
+                        // App code
+                    }
+                });
+        LoginManager.getInstance().logInWithPublishPermissions(this, Arrays.asList("publish_actions"));
+    }
+
+    public static void showHashKey(Context context) {
+        try {
+            PackageInfo info = context.getPackageManager().getPackageInfo(
+                    "ar.com.klee.marvin", PackageManager.GET_SIGNATURES); //Your package name here
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.v("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (Exception e) {
+            Log.v("Exception: ", e.getMessage(), e);
+        }
+    }
+
+    public int getTabNumber() {
+        return tabNumber;
+    }
 }
 
