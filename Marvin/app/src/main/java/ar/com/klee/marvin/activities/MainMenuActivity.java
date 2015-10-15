@@ -46,6 +46,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -56,6 +57,8 @@ import ar.com.klee.marvin.DrawerMenuAdapter;
 import ar.com.klee.marvin.DrawerMenuItem;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.call.CallDriver;
+import ar.com.klee.marvin.client.Marvin;
+import ar.com.klee.marvin.client.model.SiteRepresentation;
 import ar.com.klee.marvin.client.model.User;
 import ar.com.klee.marvin.client.model.UserSetting;
 import ar.com.klee.marvin.configuration.UserConfig;
@@ -80,6 +83,9 @@ import ar.com.klee.marvin.service.YahooWeatherService;
 import ar.com.klee.marvin.sms.SMSDriver;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class MainMenuActivity extends ActionBarActivity implements DelegateTask<List<YouTubeVideo>>, WeatherServiceCallback,AdapterView.OnItemClickListener {
@@ -152,43 +158,10 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         initializeMusicService();
         initializeSTTService();
 
-        UserConfig config = new UserConfig();
         UserSites sites = new UserSites();
-
-        boolean invitado = true;
-        if(invitado){
-
-            SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
-
-            UserSetting invitedUserSettings = new UserSetting();
-
-            invitedUserSettings.setMiniumTripTime(mPrefs.getLong("miniumTripTime", 5));
-            invitedUserSettings.setMiniumTripDistance(mPrefs.getLong("miniumTripDistance", 1));
-            invitedUserSettings.setEmergencyNumber(mPrefs.getString("emergencyNumber", ""));
-            invitedUserSettings.setEmergencySMS(mPrefs.getString("emergencySMS", ""));
-            invitedUserSettings.setOrientation(mPrefs.getInt("orientation", 0));
-            invitedUserSettings.setOpenAppWhenStop(mPrefs.getBoolean("openAppWhenStop", false));
-            invitedUserSettings.setAppToOpenWhenStop(mPrefs.getString("appToOpenWhenStop", "No seleccionada"));
-            invitedUserSettings.setHotspotName(mPrefs.getString("hotspotName", "MRVN"));
-            invitedUserSettings.setHotspotPassword(mPrefs.getString("hotspotPassword", "marvinHotSpot"));
-            invitedUserSettings.setAlertSpeed(mPrefs.getInt("alertSpeed", 80));
-            invitedUserSettings.setSpeedAlertEnabled(mPrefs.getBoolean("speedAlertEnabled", false));
-
-            config.setSettings(invitedUserSettings);
-
-            int numberOfSites = mPrefs.getInt("NumberOfSites",0);
-
-            Integer i;
-
-            for(i=1; i<=numberOfSites; i++) {
-                Gson gson = new Gson();
-                String json = mPrefs.getString("Site"+i.toString(), "");
-                UserSites.getInstance().add(gson.fromJson(json, Site.class));
-            }
-
-        }else{
-
-        }
+        SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
+        loadUserSettings(mPrefs);
+        loadSites(mPrefs);
 
         //Crea el mainMenu
         if (MainMenuFragment.isInstanceInitialized())
@@ -321,6 +294,79 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
+    }
+
+    private void loadSites(final SharedPreferences mPrefs) {
+
+        if(Marvin.isAuthenticated()) {
+            Marvin.users().trips().getSites(new Callback<List<SiteRepresentation>>() {
+                @Override
+                public void success(List<SiteRepresentation> siteRepresentations, Response response) {
+                    for(SiteRepresentation siteRep : siteRepresentations) {
+                        Site site = new Site(siteRep.getName(), siteRep.getAddress(), new LatLng(siteRep.getLat(), siteRep.getLng()), siteRep.getThumbnail());
+                        site.setSiteImage(siteRep.getSiteImage());
+                        UserSites.getInstance().add(site);
+                    }
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    Log.e("MainMenuActivity", "Error getting sites from server", error);
+                    loadFromSharedPref(mPrefs);
+                }
+            });
+        } else {
+            loadFromSharedPref(mPrefs);
+        }
+
+    }
+
+    private void loadFromSharedPref(SharedPreferences mPrefs) {
+        int numberOfSites = mPrefs.getInt("NumberOfSites",0);
+        Integer i;
+
+        for(i=1; i<=numberOfSites; i++) {
+            Gson gson = new Gson();
+            String json = mPrefs.getString("Site"+i.toString(), "");
+            UserSites.getInstance().add(gson.fromJson(json, Site.class));
+        }
+    }
+
+    private void loadUserSettings(final SharedPreferences mPrefs) {
+        if(Marvin.isAuthenticated()){
+            Marvin.users().settings().get(new Callback<UserSetting>() {
+                @Override
+                public void success(UserSetting userSetting, Response response) {
+                    UserConfig.setSettings(userSetting);
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    Log.e("MainMenuActivity", "Error refreshing configuration: "+ error.getMessage(), error);
+                    loadSettingsFromSharedPrefs(mPrefs);
+                }
+            });
+        }else{
+            loadSettingsFromSharedPrefs(mPrefs);
+        }
+    }
+
+    private void loadSettingsFromSharedPrefs(SharedPreferences mPrefs) {
+        UserSetting invitedUserSettings = new UserSetting();
+
+        invitedUserSettings.setMiniumTripTime(mPrefs.getLong("miniumTripTime", 5));
+        invitedUserSettings.setMiniumTripDistance(mPrefs.getLong("miniumTripDistance", 1));
+        invitedUserSettings.setEmergencyNumber(mPrefs.getString("emergencyNumber", ""));
+        invitedUserSettings.setEmergencySMS(mPrefs.getString("emergencySMS", ""));
+        invitedUserSettings.setOrientation(mPrefs.getInt("orientation", 0));
+        invitedUserSettings.setOpenAppWhenStop(mPrefs.getBoolean("openAppWhenStop", false));
+        invitedUserSettings.setAppToOpenWhenStop(mPrefs.getString("appToOpenWhenStop", "No seleccionada"));
+        invitedUserSettings.setHotspotName(mPrefs.getString("hotspotName", "MRVN"));
+        invitedUserSettings.setHotspotPassword(mPrefs.getString("hotspotPassword", "marvinHotSpot"));
+        invitedUserSettings.setAlertSpeed(mPrefs.getInt("alertSpeed", 80));
+        invitedUserSettings.setSpeedAlertEnabled(mPrefs.getBoolean("speedAlertEnabled", false));
+
+        UserConfig.setSettings(invitedUserSettings);
     }
 
     public int getActualFragmentPosition() {
@@ -1450,59 +1496,73 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
      */
 
     public void refreshConfiguration(){
+        if(Marvin.isAuthenticated()){
+            Marvin.users().settings().update(UserConfig.getSettings(), new Callback<UserSetting>() {
+                @Override
+                public void success(UserSetting userSetting, Response response) {
+                    Toast.makeText(getApplicationContext(), "Configuración actualizada", Toast.LENGTH_SHORT).show();
+                }
 
-        boolean invitado = true;
-        if(invitado){
-
-            SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
-            SharedPreferences.Editor prefsEditor = mPrefs.edit();
-
-            prefsEditor.putLong("miniumTripTime",UserConfig.getSettings().getMiniumTripTime());
-            prefsEditor.putLong("miniumTripDistance",UserConfig.getSettings().getMiniumTripDistance());
-            prefsEditor.putString("emergencyNumber",UserConfig.getSettings().getEmergencyNumber());
-            prefsEditor.putString("emergencySMS",UserConfig.getSettings().getEmergencySMS());
-            prefsEditor.putInt("orientation",UserConfig.getSettings().getOrientation());
-            prefsEditor.putBoolean("openAppWhenStop",UserConfig.getSettings().isOpenAppWhenStop());
-            prefsEditor.putString("appToOpenWhenStop",UserConfig.getSettings().getAppToOpenWhenStop());
-            prefsEditor.putString("hotspotName",UserConfig.getSettings().getHotspotName());
-            prefsEditor.putString("hotspotPassword",UserConfig.getSettings().getHotspotPassword());
-            prefsEditor.putInt("alertSpeed",UserConfig.getSettings().getAlertSpeed());
-            prefsEditor.putBoolean("speedAlertEnabled",UserConfig.getSettings().isSpeedAlertEnabled());
-
-            prefsEditor.commit();
-
-        }else{
-
+                @Override
+                public void failure(RetrofitError error) {
+                    Log.e("MainMenuActivity", "Error refreshing configuration: " + error.getMessage(), error);
+                }
+            });
         }
+        refreshSettingsInSharedPrefs();
+    }
 
+    private void refreshSettingsInSharedPrefs() {
+        SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = mPrefs.edit();
+
+        prefsEditor.putLong("miniumTripTime", UserConfig.getSettings().getMiniumTripTime());
+        prefsEditor.putLong("miniumTripDistance",UserConfig.getSettings().getMiniumTripDistance());
+        prefsEditor.putString("emergencyNumber",UserConfig.getSettings().getEmergencyNumber());
+        prefsEditor.putString("emergencySMS",UserConfig.getSettings().getEmergencySMS());
+        prefsEditor.putInt("orientation",UserConfig.getSettings().getOrientation());
+        prefsEditor.putBoolean("openAppWhenStop",UserConfig.getSettings().isOpenAppWhenStop());
+        prefsEditor.putString("appToOpenWhenStop",UserConfig.getSettings().getAppToOpenWhenStop());
+        prefsEditor.putString("hotspotName",UserConfig.getSettings().getHotspotName());
+        prefsEditor.putString("hotspotPassword",UserConfig.getSettings().getHotspotPassword());
+        prefsEditor.putInt("alertSpeed",UserConfig.getSettings().getAlertSpeed());
+        prefsEditor.putBoolean("speedAlertEnabled",UserConfig.getSettings().isSpeedAlertEnabled());
+
+        prefsEditor.commit();
     }
 
     public void refreshSites(){
-
-        boolean invitado = true;
-        if(invitado){
-
-            SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
-            SharedPreferences.Editor prefsEditor = mPrefs.edit();
-
-            List<Site> sites = UserSites.getInstance().getSites();
-
-            prefsEditor.putInt("NumberOfSites", sites.size());
-
-            Integer j;
-            Gson gson = new Gson();
-
-            for(j=1;j<=sites.size();j++) {
-                String json = gson.toJson(sites.get(j-1));
-                prefsEditor.putString("Site" + j.toString(), json);
+        List<Site> sites = UserSites.getInstance().getSites();
+        List<SiteRepresentation> reps = new ArrayList<>(sites.size());
+        if(Marvin.isAuthenticated()){
+            for (Site site : sites) {
+                SiteRepresentation siteRep = new SiteRepresentation(null, site.getSiteName(), site.getSiteAddress(), site.getCoordinates().latitude, site.getCoordinates().longitude, site.getSiteThumbnail());
+                siteRep.setImage(site.getSiteImage());
+                reps.add(siteRep);
             }
 
-            prefsEditor.commit();
+            Marvin.users().trips().updateSites(reps, new Callback<List<SiteRepresentation>>() {
+                @Override
+                public void success(List<SiteRepresentation> siteRepresentations, Response response) {
+                    Toast.makeText(getApplicationContext(), "Sitios actualizados", Toast.LENGTH_SHORT).show();
+                }
 
-        }else{
-
+                @Override
+                public void failure(RetrofitError error) {
+                    Log.e("MainMenuActivity", "Error refreshing sites: " + error.getMessage(), error);
+                }
+            });
         }
-
+        SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = mPrefs.edit();
+        prefsEditor.putInt("NumberOfSites", sites.size());
+        Integer j;
+        Gson gson = new Gson();
+        for(j=1;j<=sites.size();j++) {
+            String json = gson.toJson(sites.get(j-1));
+            prefsEditor.putString("Site" + j.toString(), json);
+        }
+        prefsEditor.commit();
     }
 
 }

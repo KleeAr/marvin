@@ -13,11 +13,6 @@ public class UserSites {
 
     List<Site> sites = new ArrayList<Site>();
 
-    public UserSites(){
-
-        instance = this;
-
-    }
 
     public void setSites(List<Site> sites) {
         this.sites = sites;
@@ -25,7 +20,7 @@ public class UserSites {
 
     public static UserSites getInstance() {
         if (instance == null) {
-            throw new IllegalStateException("Instance not initialized. Call initializeInstance before calling getInstance");
+            instance = new UserSites();
         }
         return instance;
 
@@ -33,10 +28,6 @@ public class UserSites {
 
     public void add(Site site){
         sites.add(site);
-    }
-
-    public static boolean isInstanceInitialized() {
-        return instance != null;
     }
 
     public static void destroyInstance() {
