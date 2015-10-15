@@ -1,0 +1,44 @@
+package ar.com.klee.marvinSimulator.voiceControl.handlers.mainMenu;
+
+import android.content.Context;
+
+import java.util.Arrays;
+
+import ar.com.klee.marvinSimulator.activities.MainMenuActivity;
+import ar.com.klee.marvinSimulator.voiceControl.CommandHandlerManager;
+import ar.com.klee.marvinSimulator.voiceControl.TTS;
+import ar.com.klee.marvinSimulator.voiceControl.handlers.CommandHandler;
+import ar.com.klee.marvinSimulator.voiceControl.handlers.CommandHandlerContext;
+
+public class ReproducirArtistaHandler extends CommandHandler {
+
+    public static final String ARTIST = "ARTIST";
+    public static final String ARTISTA = "artista";
+
+    public ReproducirArtistaHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
+        super(Arrays.asList("reproducir artista {artista}","reproducir cantante {artista}","reproducir banda {artista}","escuchar artista {artista}","escuchar cantante {artista}","escuchar banda {artista}"), textToSpeech, context, commandHandlerManager);
+    }
+
+    public CommandHandlerContext drive(CommandHandlerContext context){
+
+        String artist = context.getString(ARTIST);
+
+        if(context.getObject(ACTIVITY, MainMenuActivity.class).isListEmpty()) {
+            getTextToSpeech().speakText("No se han encontrado canciones en el dispositivo");
+        }else {
+            if (!context.getObject(ACTIVITY, MainMenuActivity.class).findArtist(artist))
+                getTextToSpeech().speakText("El artista " + artist + " no fue encontrado");
+            else
+                getTextToSpeech().speakText("Reproduciendo artista " + artist);
+        }
+
+        context.put(STEP, 0);
+        return context;
+    }
+
+    @Override
+    protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
+        String command = commandHandlerContext.getString(COMMAND);
+        commandHandlerContext.put(ARTIST, getExpressionMatcher(command).getValuesFromExpression(command).get(ARTISTA));
+    }
+}

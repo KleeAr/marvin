@@ -74,7 +74,8 @@
                 android:id="@+id/spinner1"
                 android:spinnerMode="dropdown"
                 android:layout_marginRight="10dp"
-                android:gravity="right" />
+                android:gravity="right"
+                android:textAlignment="viewEnd" />
 
         </LinearLayout>
         <LinearLayout

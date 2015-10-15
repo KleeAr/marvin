@@ -26,6 +26,7 @@ import ar.com.klee.marvin.ViewPagerAdpater;
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.activities.TabMap;
 import ar.com.klee.marvin.applications.Application;
+import ar.com.klee.marvin.gps.LocationSender;
 import ar.com.klee.marvin.service.YahooWeatherService;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 
@@ -294,6 +295,8 @@ public class MainMenuFragment extends Fragment {
             }, 1000);
 
         }else{
+
+            LocationSender.getInstance().setEnableAppToOpen(false);
 
             CommandHandlerManager commandHandlerManager = CommandHandlerManager.getInstance();
             commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_MAIN,commandHandlerManager.getMainActivity());

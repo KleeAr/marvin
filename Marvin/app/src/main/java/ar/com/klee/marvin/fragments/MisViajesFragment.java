@@ -30,7 +30,9 @@ import java.util.List;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.activities.TripActivity;
+import ar.com.klee.marvin.configuration.UserTrips;
 import ar.com.klee.marvin.gps.Trip;
+import ar.com.klee.marvin.gps.TripStep;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 
 
@@ -124,16 +126,7 @@ public class MisViajesFragment extends Fragment {
 
             mainMenuActivity = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
 
-            SharedPreferences mPrefs = mainMenuActivity.getPreferences(mainMenuActivity.MODE_PRIVATE);
-
-            int numberOfTrips = mPrefs.getInt("NumberOfTrips",0);
-
-            Integer i;
-            for(i=numberOfTrips;i>=1;i--) {
-                Gson gson = new Gson();
-                String json = mPrefs.getString("Trip"+i.toString(), "");
-                tripList.add(gson.fromJson(json, Trip.class));
-            }
+            tripList = UserTrips.getInstance().getTrips();
 
             if(tripList.size()==0)
                 Toast.makeText(mainMenuActivity, "Historial de Viajes Vacío", Toast.LENGTH_SHORT).show();
@@ -185,21 +178,7 @@ public class MisViajesFragment extends Fragment {
                 tripList.remove(position);
                 notifyItemRemoved(position);
 
-                MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
-
-                SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
-
-                Integer numberOfTrips = tripList.size();
-
-                SharedPreferences.Editor prefsEditor = mPrefs.edit();
-                Gson gson = new Gson();
-                prefsEditor.putInt("NumberOfTrips", numberOfTrips);
-                Integer i;
-                for (i = numberOfTrips; i >= 1; i--) {
-                    String json = gson.toJson(tripList.get(numberOfTrips - i));
-                    prefsEditor.putString("Trip" + i.toString(), json);
-                }
-                prefsEditor.commit();
+                UserTrips.getInstance().setTrips(tripList);
             }
         }
 

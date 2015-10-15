@@ -12,7 +12,10 @@
         android:textStyle="bold"
         android:layout_weight="1"
         android:textColor="#ffffff"
-        android:layout_margin="5dp">
+        android:layout_margin="5dp"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical"
+        android:textSize="15dp">
     </TextView>
 
     <ImageView

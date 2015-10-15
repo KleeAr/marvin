@@ -23,7 +23,8 @@
             android:id="@+id/img_thumbnail"
             android:layout_width="fill_parent"
             android:layout_height="150dp"
-            android:scaleType="fitXY"/>
+            android:scaleType="fitXY"
+            android:onClick="showImageDialog" />
 
         <TextView
             android:id="@+id/tv_site"
@@ -40,7 +41,8 @@
             android:layout_alignParentBottom="false"
             android:layout_alignParentEnd="false"
             android:layout_alignParentRight="false"
-            android:layout_alignBottom="@+id/img_thumbnail" />
+            android:layout_alignBottom="@+id/img_thumbnail"
+            android:onClick="showImageDialog" />
 
     </RelativeLayout>
 

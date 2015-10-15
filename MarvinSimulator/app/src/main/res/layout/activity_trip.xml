@@ -1,0 +1,167 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ar.com.klee.marvinSimulator.activities.TripActivity">
+
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/tripMap"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        class="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentEnd="true" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/ColorPrimary"
+        android:id="@+id/lyt_info">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:id="@+id/lyt_partida">
+
+                <TextView
+                    android:id="@+id/beginningAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Partida: "
+                    android:textSize="20dp"
+                    android:textStyle="bold"
+                    android:textColor="#2F1F1F"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="0.5">
+                </TextView>
+
+                <TextView
+                    android:id="@+id/beginningTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Tiempo de Partida"
+                    android:textSize="14dp"
+                    android:textColor="#2F1F1F"
+                    android:textAlignment="textEnd"
+                    android:gravity="end"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1">
+                </TextView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/lyt_llegada"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/endingAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Llegada: "
+                    android:textSize="20dp"
+                    android:textStyle="bold"
+                    android:textColor="#2F1F1F"
+                    android:layout_below="@+id/beginningAddress"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="0.5"
+                    android:layout_marginTop="5dp">
+                </TextView>
+
+                <TextView
+                    android:id="@+id/endingTime"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tiempo de Llegada"
+                    android:textSize="14dp"
+                    android:textColor="#2F1F1F"
+                    android:textAlignment="textEnd"
+                    android:gravity="end"
+                    android:layout_below="@+id/beginningTime"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1">
+                </TextView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:id="@+id/lyt_datos">
+
+                <TextView
+                    android:id="@+id/velocity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Velocidad"
+                    android:textSize="18dp"
+                    android:textColor="#2F1F1F"
+                    android:textAlignment="center"
+                    android:layout_below="@+id/endingAddress"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="1">
+                </TextView>
+
+                <TextView
+                    android:id="@+id/time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tiempo"
+                    android:textSize="18dp"
+                    android:textColor="#2F1F1F"
+                    android:textAlignment="textEnd"
+                    android:layout_marginTop="10dp"
+                    android:layout_toRightOf="@+id/velocity"
+                    android:layout_below="@+id/endingAddress"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="1">
+                </TextView>
+
+                <TextView
+                    android:id="@+id/distance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Distancia"
+                    android:textSize="18dp"
+                    android:textColor="#2F1F1F"
+                    android:textAlignment="textEnd"
+                    android:layout_below="@+id/endingAddress"
+                    android:layout_marginTop="10dp"
+                    android:layout_toRightOf="@+id/time"
+                    android:gravity="center_horizontal"
+                    android:layout_weight="1">
+                </TextView>
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/bt_share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="end|bottom"
+        android:src="@drawable/abc_ic_menu_share_mtrl_alpha"
+        android:onClick="share" />
+
+
+</RelativeLayout>

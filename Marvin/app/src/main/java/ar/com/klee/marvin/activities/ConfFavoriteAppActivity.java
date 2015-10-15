@@ -163,7 +163,7 @@ public class ConfFavoriteAppActivity extends ActionBarActivity {
         if (switchEnabled) {
             UserConfig.getSettings().setOpenAppWhenStop(true);
         } else {
-            UserConfig.getSettings().setOpenAppWhenStop(true);
+            UserConfig.getSettings().setOpenAppWhenStop(false);
         }
 
         finish();
