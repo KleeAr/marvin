@@ -10,4 +10,6 @@ import ar.com.klee.marvin.model.TripKey;
 public interface TripRepository extends CrudRepository<Trip, TripKey> {
 
 	Iterable<Trip> findByUserId(Long userId);
+
+	void deleteByUserId(Long userId);
 }

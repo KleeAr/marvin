@@ -74,6 +74,8 @@ import ar.com.klee.marvin.call.CallDriver;
 import ar.com.klee.marvin.client.Marvin;
 import ar.com.klee.marvin.client.model.SiteRepresentation;
 import ar.com.klee.marvin.client.Marvin;
+import ar.com.klee.marvin.client.model.TripRepresentation;
+import ar.com.klee.marvin.client.model.TripStepRepresentation;
 import ar.com.klee.marvin.client.model.User;
 import ar.com.klee.marvin.client.model.UserSetting;
 import ar.com.klee.marvin.configuration.UserConfig;
@@ -93,6 +95,7 @@ import ar.com.klee.marvin.gps.LocationSender;
 import ar.com.klee.marvin.gps.MapFragment;
 import ar.com.klee.marvin.gps.Site;
 import ar.com.klee.marvin.gps.Trip;
+import ar.com.klee.marvin.gps.TripStep;
 import ar.com.klee.marvin.multimedia.music.MusicService;
 import ar.com.klee.marvin.multimedia.video.YouTubeVideo;
 import ar.com.klee.marvin.service.WeatherServiceCallback;
@@ -182,19 +185,12 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         initializeMusicService();
         initializeSTTService();
 
-        UserSites sites = new UserSites();
         SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
         loadUserSettings(mPrefs);
         loadSites(mPrefs);
-        UserTrips trips = new UserTrips();
+        loadUserTrips(mPrefs);
 
-        int numberOfTrips = mPrefs.getInt("NumberOfTrips",0);
 
-        for(Integer i = numberOfTrips; i >= 1; i--) {
-            Gson gson = new Gson();
-            String json = mPrefs.getString("Trip"+i.toString(), "");
-            trips.add(gson.fromJson(json, Trip.class));
-        }
         
         initializeFacebookSdk();
         TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
@@ -350,6 +346,40 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
+    }
+
+    private void loadUserTrips(final SharedPreferences mPrefs) {
+
+        if(Marvin.isAuthenticated()) {
+            Marvin.users().trips().get(new Callback<List<TripRepresentation>>() {
+                @Override
+                public void success(List<TripRepresentation> reps, Response response) {
+                    for(TripRepresentation rep: reps) {
+                        UserTrips.getInstance().add(new Trip(rep));
+                    }
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    Log.e("MainMenuActivity", "Error refreshing sites: " + error.getMessage(), error);
+                    loadFromSharedPrefs(mPrefs);
+                }
+            });
+        } else {
+            loadFromSharedPrefs(mPrefs);
+        }
+
+
+    }
+
+    private void loadFromSharedPrefs(SharedPreferences mPrefs) {
+        int numberOfTrips = mPrefs.getInt("NumberOfTrips",0);
+
+        for(Integer i = numberOfTrips; i >= 1; i--) {
+            Gson gson = new Gson();
+            String json = mPrefs.getString("Trip"+i.toString(), "");
+            UserTrips.getInstance().add(gson.fromJson(json, Trip.class));
+        }
     }
 
     private void loadSites(final SharedPreferences mPrefs) {
@@ -1634,34 +1664,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             });
         }
 
-    }
-
-    public void refreshTrips(){
-
-        if(Marvin.isAuthenticated()){
-
-            //TODO: Cargar viajes desde UserTrips hacia el server
-
-        }else{
-
-            SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
-            SharedPreferences.Editor prefsEditor = mPrefs.edit();
-
-            List<Trip> trips = UserTrips.getInstance().getTrips();
-
-            prefsEditor.putInt("NumberOfTrips", trips.size());
-
-            Integer j;
-            Gson gson = new Gson();
-
-            for(j=trips.size();j>=1;j--) {
-                String json = gson.toJson(trips.get(trips.size()-j));
-                prefsEditor.putString("Trip" + j.toString(), json);
-            }
-
-            prefsEditor.commit();
-
-        }
         SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor prefsEditor = mPrefs.edit();
         prefsEditor.putInt("NumberOfSites", sites.size());
@@ -1672,6 +1674,42 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             prefsEditor.putString("Site" + j.toString(), json);
         }
         prefsEditor.commit();
+
+    }
+
+    public void refreshTrips(){
+
+        if(Marvin.isAuthenticated()){
+            Marvin.users().trips().update(UserTrips.getInstance().getTripRepresentations(), new Callback<TripRepresentation>() {
+                @Override
+                public void success(TripRepresentation representation, Response response) {
+                    Toast.makeText(getApplicationContext(), "viajes actualizados", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    Log.e("MainMenuActivity", "Error refreshing trips: " + error.getMessage(), error);
+                }
+            });
+        }
+
+        SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = mPrefs.edit();
+
+        List<Trip> trips = UserTrips.getInstance().getTrips();
+
+        prefsEditor.putInt("NumberOfTrips", trips.size());
+
+        Integer j;
+        Gson gson = new Gson();
+
+        for(j=trips.size();j>=1;j--) {
+            String json = gson.toJson(trips.get(trips.size()-j));
+            prefsEditor.putString("Trip" + j.toString(), json);
+        }
+
+        prefsEditor.commit();
+
     }
 
     /**

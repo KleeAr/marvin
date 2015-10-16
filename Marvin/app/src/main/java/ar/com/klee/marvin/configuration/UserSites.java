@@ -13,6 +13,9 @@ public class UserSites {
 
     List<Site> sites = new ArrayList<Site>();
 
+    private UserSites() {
+
+    }
 
     public void setSites(List<Site> sites) {
         this.sites = sites;
