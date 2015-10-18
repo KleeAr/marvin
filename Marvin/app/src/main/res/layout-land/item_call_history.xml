@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutL"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/abc_list_selector_background_transition_holo_dark"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/numberPhone"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:text="Telefono"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:textColor="#2F1F1F">
+    </TextView>
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/numberPhone"
+        android:layout_marginTop="10dp"
+        android:text="Date"
+        android:textSize="14sp"
+        android:textColor="#2F1F1F">
+    </TextView>
+
+    <TextView
+        android:id="@+id/type"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:text="Type"
+        android:textSize="14sp"
+        android:textColor="#2F1F1F"
+        android:layout_marginLeft="200dp"
+        android:layout_marginStart="113dp"
+        android:textAlignment="textEnd"
+        android:gravity="end">
+    </TextView>
+
+    <TextView
+        android:id="@+id/duration"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Duration"
+        android:textSize="14sp"
+        android:textColor="#2F1F1F"
+        android:layout_alignTop="@+id/date"
+        android:layout_alignLeft="@+id/type"
+        android:layout_alignStart="@+id/type"
+        android:textAlignment="textEnd"
+        android:gravity="end">
+    </TextView>
+
+
+</RelativeLayout>
