@@ -5,16 +5,6 @@
     android:background="#ffffff"
     android:orientation="vertical">
 
-
-    <com.google.android.youtube.player.YouTubePlayerView
-        android:id="@+id/youtube_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="false"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp" />
-
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -22,10 +12,7 @@
         android:background="#ef404a"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="false"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp">
+        android:layout_alignParentEnd="false">
 
         <TextView android:text="video" android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -34,6 +21,35 @@
             android:textSize="20dp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="10dp" />
+    </LinearLayout>
+
+
+
+    <com.google.android.youtube.player.YouTubePlayerView
+        android:id="@+id/youtube_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="false"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/lyt_description">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/video_title"
+            android:text="Video Title"
+            android:textStyle="bold"
+            android:layout_marginTop="11dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="13dp" />
 
         <TextView
             android:layout_width="wrap_content"
