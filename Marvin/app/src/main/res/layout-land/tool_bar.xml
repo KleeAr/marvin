@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:background="@color/ColorPrimary"
+    android:elevation="2dp"
+    android:theme="@style/Base.ThemeOverlay.AppCompat.Dark"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/activityTitle"
+            android:layout_gravity="left|center"
+            android:textColor="#FFFFFFFF"
+            android:gravity="center|start" />
+
+        <RelativeLayout android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:gravity="left|center">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.25">
+
+                    <ar.com.klee.marvin.AutoScaleTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:text="@string/day_default_text"
+                        android:id="@+id/weekDayText"
+                        android:textColor="#00ffff"
+                        android:textSize="20dp"
+                        android:textStyle="bold"
+                        android:layout_weight="0.35"
+                        android:gravity="bottom|start" />
+
+                    <ar.com.klee.marvin.AutoScaleTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:text="@string/date_default_text"
+                        android:id="@+id/dateText"
+                        android:textColor="#00ffff"
+                        android:textSize="20dp"
+                        android:textStyle="bold"
+                        android:layout_weight="0.35"
+                        android:gravity="top|center|start" />
+                </LinearLayout>
+
+                <ar.com.klee.marvin.AutoScaleTextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/cityText"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="#FFFFFF"
+                    android:textSize="0.35dp"
+                    android:text="@string/city_name_default"
+                    android:layout_weight="0.45"
+                    android:gravity="center" />
+
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:id="@+id/weatherImage"
+                    android:layout_alignWithParentIfMissing="false"
+                    android:layout_toLeftOf="@+id/temperatureText"
+                    android:layout_toRightOf="@+id/cityText"
+                    android:layout_toEndOf="@+id/cityText"
+                    android:layout_weight="0.2" />
+
+                <ar.com.klee.marvin.AutoScaleTextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:text="@string/default_temperature"
+                    android:id="@+id/temperatureText"
+                    android:textColor="#00ffff"
+                    android:textSize="20dp"
+                    android:textStyle="bold"
+                    android:editable="false"
+                    android:gravity="center"
+                    android:layout_weight="0.1"
+                    android:layout_marginRight="5dp" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </FrameLayout>
+
+</android.support.v7.widget.Toolbar>

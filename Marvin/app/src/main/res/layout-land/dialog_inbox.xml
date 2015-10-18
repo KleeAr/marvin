@@ -14,8 +14,7 @@
         android:id="@+id/responseHeader"
         android:layout_gravity="center_horizontal"
         android:textColor="@android:color/black"
-        android:textAlignment="gravity"
-        android:text="¿Dónde querés compartir el sitio?" />
+        android:textAlignment="gravity" />
 
     <ImageView
         android:layout_width="50dp"
@@ -34,32 +33,32 @@
         android:layout_weight="12">
 
         <Button
-            android:id="@+id/facebook"
+            android:id="@+id/cancelar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/dialog_button_selector"
-            android:text="Facebook"
+            android:text="Cancelar"
             android:textColor="@android:color/white" />
 
         <Button
-            android:id="@+id/twitter"
+            android:id="@+id/responder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
             android:background="@drawable/dialog_button_selector"
-            android:text="Twitter"
+            android:text="Enviar SMS"
             android:textColor="@android:color/white" />
 
         <Button
-            android:id="@+id/instagram"
+            android:id="@+id/llamar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
             android:background="@drawable/dialog_button_selector"
-            android:text="Instagram"
+            android:text="Llamar"
             android:textColor="@android:color/white" />
     </LinearLayout>
 
