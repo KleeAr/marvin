@@ -14,6 +14,7 @@ import java.util.Locale;
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.gps.LocationSender;
 import ar.com.klee.marvin.multimedia.music.MusicService;
+import ar.com.klee.marvin.sms.SMSDriver;
 
 /* Clase TTS
 ** -Gestión del pasaje de textos a audio
@@ -25,6 +26,7 @@ public class TTS {
     private Intent mSpeechRecognizerIntent;
     private boolean speedAlert = false;
     private boolean playMusic = false;
+    private boolean smsRead = false;
 
     /* Constructor de la clase TTS
     ** -Inicializa el objeto de la clase TextToSpeech que nos va a permitir reproducir texto
@@ -62,6 +64,11 @@ public class TTS {
                                     LocationSender.getInstance().setSpeedAlertActivated(1);
                                 }
 
+                                if(smsRead){
+                                    smsRead = false;
+                                    SMSDriver.getInstance().enableButtons();
+                                }
+
                             }
 
                         }
@@ -91,6 +98,13 @@ public class TTS {
             speedAlert = true;
         }else{
             speedAlert = false;
+        }
+
+        if(textToSpeak.startsWith("SMS - ")){
+            textToSpeak = textToSpeak.replace("SMS - ","");
+            smsRead = true;
+        }else{
+            smsRead = false;
         }
 
         // Reproduce el texto

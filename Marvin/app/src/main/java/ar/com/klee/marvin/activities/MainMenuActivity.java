@@ -527,6 +527,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 break;
             case 1:
                 setFragment(1, MainMenuFragment.class);
+                previousMenus.removeAllElements();
                 break;
             case 2:
                 setFragment(2, VozFragment.class);
@@ -579,6 +580,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         STTService.getInstance().setIsListening(false);
 
         int tab = 0;
+        boolean setCurrentItem = false;
 
         if(actualFragmentPosition == 8){
             refreshConfiguration();
@@ -587,11 +589,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         }else if(actualFragmentPosition == 4){
             refreshTrips();
         }else if(actualFragmentPosition == 1){
-            if(!previousMenus.empty()) {
-                Log.d("ITEM","setCurrent");
-                MainMenuFragment.getInstance().getPager().setCurrentItem(0);
-            }else
-                tab = MainMenuFragment.getInstance().getPager().getCurrentItem();
+            tab = MainMenuFragment.getInstance().getPager().getCurrentItem();
         }
 
         if(!previousMenus.empty()){

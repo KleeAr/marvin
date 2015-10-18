@@ -172,7 +172,8 @@ public class STTService extends Service {
 
                         if(error == SpeechRecognizer.ERROR_SPEECH_TIMEOUT) {
 
-                            MainMenuFragment.spokenText.setText("Hablá, yo escucho...");
+                            if(MainMenuFragment.isInstanceInitialized())
+                                MainMenuFragment.spokenText.setText("Hablá, yo escucho...");
 
                             if (!isListening &&
                                     commandHandlerManager.getCurrentActivity() == CommandHandlerManager.ACTIVITY_MAIN &&

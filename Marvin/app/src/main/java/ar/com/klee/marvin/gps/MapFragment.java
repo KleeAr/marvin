@@ -71,7 +71,7 @@ public class MapFragment extends Fragment {
     private double startLongitude = 0.0;
     private String startAddress = "";
 
-    private List<TripStep> tripPath = new ArrayList<TripStep>();
+    private List<TripStep> tripPath;
     private String lastAddress = "";
 
     private double finishLatitude = 0.0;
@@ -116,6 +116,8 @@ public class MapFragment extends Fragment {
         }
 
         googleMap = mMapView.getMap();
+
+        tripPath = new ArrayList<TripStep>();
 
         // Perform any camera updates here
         return v;
@@ -265,10 +267,12 @@ public class MapFragment extends Fragment {
 
         Long minutes = TimeUnit.MILLISECONDS.toMinutes(diffInMs);
         Long hours = minutes/60;
+
         minutes = minutes - hours*60;
         trip.setTime(hours.toString() + " hs. " + minutes.toString() + " min.");
 
-        float hourDecimals = minutes/60;
+        float hourDecimals;
+        hourDecimals = Float.valueOf(minutes)/60;
 
         float hourWithDecimals = hours + hourDecimals;
 
@@ -296,10 +300,17 @@ public class MapFragment extends Fragment {
 
         double velocity;
 
-        if(hourWithDecimals == 0.0)
+
+
+        polylineLength = 2.98;
+
+
+
+        if(hourWithDecimals == 0.0) {
             velocity = 0.0;
-        else
-            velocity = polylineLength/hourWithDecimals;
+        }else {
+            velocity = polylineLength / hourWithDecimals;
+        }
 
         trip.setAverageVelocity(String.format("%.2f", velocity));
 

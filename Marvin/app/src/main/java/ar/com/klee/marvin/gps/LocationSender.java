@@ -152,10 +152,23 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
                                 @Override
                                 public void run() {
                                     if(!wrongCoordinates) {
-                                        if (!tabletSize)
-                                            MainMenuActivity.cityText.setText(getTown());
-                                        else
-                                            MainMenuActivity.cityText.setText(getTown() + ", " + getAddressState());
+
+                                        String cityText;
+
+                                        if (!tabletSize) {
+                                            cityText = getTown() + ", " + getAddressState();
+                                            if(cityText.length() > 25){
+                                                cityText = cityText.substring(0,21) + "...";
+                                            }
+                                        }else {
+                                            cityText = getTown() + ", " + getAddressState();
+                                            if(cityText.length() > 35){
+                                                cityText = cityText.substring(0,31) + "...";
+                                            }
+                                        }
+
+                                        MainMenuActivity.cityText.setText(cityText);
+
                                         MainMenuFragment.mainStreet.setText(getAddress());
 
                                         speed1 = speed2;
@@ -477,7 +490,7 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
 
                     ParserJson parser_Json = new ParserJson();
                     JSONObject jsonObj = parser_Json.getJSONfromURL("http://maps.googleapis.com/maps/api/geocode/json?latlng=" + ((Double)actualLatitude).toString() + ","
-                            + ((Double)actualLongitude).toString() + "&sensor=true");
+                            + ((Double)actualLongitude).toString() + "&sensor=true&language=es");
                     String Status = jsonObj.getString("status");
 
                     if (Status.equalsIgnoreCase("OK")) {
