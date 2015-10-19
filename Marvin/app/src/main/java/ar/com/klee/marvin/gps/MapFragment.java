@@ -2,6 +2,7 @@ package ar.com.klee.marvin.gps;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Address;
@@ -59,8 +60,8 @@ public class MapFragment extends Fragment {
     private long MIN_TRIP_TIME = 0;
     private long MIN_TRIP_DISTANCE = 0;
 
-    MapView mMapView;
-    private GoogleMap googleMap;
+    private static MapView mMapView;
+    private static GoogleMap googleMap;
     private Trip trip;
 
     private static MapFragment instance;
@@ -71,7 +72,7 @@ public class MapFragment extends Fragment {
     private double startLongitude = 0.0;
     private String startAddress = "";
 
-    private List<TripStep> tripPath;
+    private static List<TripStep> tripPath;
     private String lastAddress = "";
 
     private double finishLatitude = 0.0;
@@ -299,12 +300,6 @@ public class MapFragment extends Fragment {
         trip.setDistance(String.format("%.2f", polylineLength));
 
         double velocity;
-
-
-
-        polylineLength = 2.98;
-
-
 
         if(hourWithDecimals == 0.0) {
             velocity = 0.0;

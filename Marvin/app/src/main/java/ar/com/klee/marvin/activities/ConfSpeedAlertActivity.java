@@ -2,6 +2,7 @@ package ar.com.klee.marvin.activities;
 
 
 
+import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -44,6 +45,12 @@ public class ConfSpeedAlertActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(UserConfig.getSettings().getOrientation() == UserConfig.ORIENTATION_PORTRAIT)
+            setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        else
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+
         setContentView(R.layout.activity_configure_speed_alert);
 
         toolbar = (Toolbar) findViewById(R.id.tool_bar);

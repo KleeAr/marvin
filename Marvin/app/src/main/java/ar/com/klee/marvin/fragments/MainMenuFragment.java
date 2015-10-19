@@ -2,6 +2,7 @@ package ar.com.klee.marvin.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -26,6 +27,9 @@ import ar.com.klee.marvin.ViewPagerAdpater;
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.activities.TabMap;
 import ar.com.klee.marvin.applications.Application;
+import ar.com.klee.marvin.client.Marvin;
+import ar.com.klee.marvin.client.model.UserSetting;
+import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.gps.LocationSender;
 import ar.com.klee.marvin.service.YahooWeatherService;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
@@ -126,9 +130,16 @@ public class MainMenuFragment extends Fragment {
 
         //Se recupera la información en los arrays
         for(int i=0; i<CANT_APPLICATION;i++){
-            shortcutList[i].setPackageName(settings.getString("ButtonPack" + i, ""));
-            shortcutList[i].setName(settings.getString("ButtonName" + i, ""));
-            shortcutList[i].setConfigured(settings.getBoolean("ButtonConfig" + i, false));
+            if(Marvin.isAuthenticated()) {
+                Long userId = UserConfig.getSettings().getUserId();
+                shortcutList[i].setPackageName(settings.getString("ButtonPack" + userId + i, ""));
+                shortcutList[i].setName(settings.getString("ButtonName" + userId + i, ""));
+                shortcutList[i].setConfigured(settings.getBoolean("ButtonConfig" + userId + i, false));
+            }else{
+                shortcutList[i].setPackageName(settings.getString("ButtonPack" + i, ""));
+                shortcutList[i].setName(settings.getString("ButtonName" + i, ""));
+                shortcutList[i].setConfigured(settings.getBoolean("ButtonConfig" + i, false));
+            }
             try {
                 switch (shortcutList[i].getName()) {
                     case "Marvin - Cámara":

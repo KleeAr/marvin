@@ -3,6 +3,7 @@ package ar.com.klee.marvin.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -20,6 +21,7 @@ import java.util.List;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.applications.Application;
 import ar.com.klee.marvin.applications.ApplicationAdapter;
+import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.fragments.MainMenuFragment;
 import ar.com.klee.marvin.gps.Site;
 
@@ -31,6 +33,12 @@ public class ApplicationList extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(UserConfig.getSettings().getOrientation() == UserConfig.ORIENTATION_PORTRAIT)
+            setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        else
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+
         setContentView(R.layout.activity_application_list);
 
         Bundle bundle = getIntent().getExtras();

@@ -1,5 +1,6 @@
 package ar.com.klee.marvin.activities;
 
+import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -9,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.configuration.UserConfig;
 
 
 public class ConfTermsActivity extends ActionBarActivity {
@@ -24,6 +26,12 @@ public class ConfTermsActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(UserConfig.getSettings().getOrientation() == UserConfig.ORIENTATION_PORTRAIT)
+            setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        else
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+
         setContentView(R.layout.activity_terms);
 
         toolbar = (Toolbar) findViewById(R.id.tool_bar);

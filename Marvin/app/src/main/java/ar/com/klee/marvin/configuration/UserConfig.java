@@ -6,6 +6,7 @@ import ar.com.klee.marvin.client.model.UserSetting;
 public class UserConfig {
 
     private static UserConfig instance;
+    private long userId;
 
     public static final int ORIENTATION_PORTRAIT = 0;
     public static final int ORIENTATION_LANDSCAPE = 1;
@@ -47,4 +48,11 @@ public class UserConfig {
         UserConfig.settings = settings;
     }
 
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
 }

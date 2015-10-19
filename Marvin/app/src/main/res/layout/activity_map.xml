@@ -3,6 +3,7 @@
     android:layout_height="match_parent"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
+    android:configChanges="orientation|screenSize"
     tools:context="ar.com.klee.marvin.activities.MapActivity">
 
     <com.google.android.gms.maps.MapView

@@ -18,6 +18,8 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.client.Marvin;
+import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.fragments.ConfigureFragment;
 import ar.com.klee.marvin.fragments.DondeEstacioneFragment;
 import ar.com.klee.marvin.fragments.MainMenuFragment;
@@ -234,9 +236,16 @@ public class Tab2 extends Fragment implements View.OnClickListener, View.OnLongC
                     // Y también la "SharedPreferences.Editor"
                     SharedPreferences settings = getActivity().getSharedPreferences("PREFERENCES", 0);
                     SharedPreferences.Editor editor = settings.edit();
-                    editor.putString("ButtonPack"+buttonNumber, "");
-                    editor.putString("ButtonName"+buttonNumber, "");
-                    editor.putBoolean("ButtonConfig"+buttonNumber, false);
+                    if(Marvin.isAuthenticated()) {
+                        Long userId = UserConfig.getSettings().getUserId();
+                        editor.putString("ButtonPack" + userId + buttonNumber, "");
+                        editor.putString("ButtonName" + userId + buttonNumber, "");
+                        editor.putBoolean("ButtonConfig" + userId + buttonNumber, false);
+                    }else {
+                        editor.putString("ButtonPack" + buttonNumber, "");
+                        editor.putString("ButtonName" + buttonNumber, "");
+                        editor.putBoolean("ButtonConfig" + buttonNumber, false);
+                    }
                     editor.commit();
 
                 }

@@ -1,42 +1,61 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:configChanges="orientation|screenSize"
     tools:context=".MainActivity">
 
-    <include
-        android:id="@+id/tool_bar"
-        layout="@layout/tool_bar"
-        android:layout_weight="0.9"
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent" />
-
-    <android.support.v4.widget.DrawerLayout
-        android:id="@+id/drawer_layout"
-        android:layout_width="match_parent"
+    <LinearLayout android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.1">
+        android:orientation="vertical">
 
-    <!-- The main content view -->
-    <FrameLayout
-        android:id="@+id/frame_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        <include
+            android:id="@+id/tool_bar"
+            layout="@layout/tool_bar"
+            android:layout_weight="0.9"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent" />
 
-    </FrameLayout>
-
-        <!-- The navigation drawer (sliding menu) -->
-        <ListView
-            android:id="@+id/lv_drawer_menu"
-            android:layout_width="360dp"
+        <android.support.v4.widget.DrawerLayout
+            android:id="@+id/drawer_layout"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:choiceMode="singleChoice"
-            android:background="#fff"
-            android:divider="@null"
-            android:dividerHeight="0dp" />
-    </android.support.v4.widget.DrawerLayout>
+            android:layout_weight="0.1">
 
+        <!-- The main content view -->
+        <FrameLayout
+            android:id="@+id/frame_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
 
-</LinearLayout>
+        </FrameLayout>
+
+            <!-- The navigation drawer (sliding menu) -->
+            <ListView
+                android:id="@+id/lv_drawer_menu"
+                android:layout_width="360dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                android:choiceMode="singleChoice"
+                android:background="#fff"
+                android:divider="@null"
+                android:dividerHeight="0dp" />
+        </android.support.v4.widget.DrawerLayout>
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/splash_login"
+        android:layout_gravity="center"
+        android:src="@drawable/splash_inic" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/splash_logout"
+        android:src="@drawable/splash_finish" />
+
+</FrameLayout>

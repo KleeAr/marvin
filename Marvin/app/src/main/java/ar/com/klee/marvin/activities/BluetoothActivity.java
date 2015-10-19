@@ -2,6 +2,7 @@ package ar.com.klee.marvin.activities;
 
 import android.app.ListActivity;
 import android.bluetooth.BluetoothDevice;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -9,6 +10,7 @@ import android.view.MenuItem;
 import java.util.ArrayList;
 
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.social.BluetoothService;
 import ar.com.klee.marvin.social.adapters.BluetoothDevicesListAdapter;
 
@@ -19,6 +21,12 @@ public class BluetoothActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(UserConfig.getSettings().getOrientation() == UserConfig.ORIENTATION_PORTRAIT)
+            setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        else
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+
         setContentView(R.layout.activity_bluetooth);
         setListAdapter(new BluetoothDevicesListAdapter(this, new ArrayList<BluetoothDevice>()));
         bluetoothService = new BluetoothService(this);

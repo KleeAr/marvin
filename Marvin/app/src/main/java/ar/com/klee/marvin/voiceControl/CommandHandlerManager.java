@@ -37,6 +37,7 @@ import ar.com.klee.marvin.voiceControl.handlers.mainMenu.BajarVolumenHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.BarrioHandler;
 import ar.com.klee.marvin.voiceControl.handlers.BuscarDispositivosHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.BuscarEnYoutubeHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.ConsultarEventosHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.ReproducirEstacionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.ReproducirFrecuenciaHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.ReproducirRadioHandler;
@@ -207,6 +208,7 @@ public class CommandHandlerManager {
             new BarrioHandler(textToSpeech, context, this),
             new BuscarEnYoutubeHandler(textToSpeech, context, this),
             new CerrarSesionHandler(textToSpeech, context, this),
+            new ConsultarEventosHandler(textToSpeech, context, this),
             new DesactivarHotspotHandler(textToSpeech, context, this),
             new DesactivarReproduccionAleatoriaHandler(textToSpeech, context, this),
             new DireccionHandler(textToSpeech, context, this),

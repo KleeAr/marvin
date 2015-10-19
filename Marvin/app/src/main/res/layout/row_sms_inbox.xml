@@ -5,6 +5,7 @@
     android:orientation="horizontal"
     android:weightSum="1"
     android:textAlignment="textStart"
+    android:configChanges="orientation|screenSize"
     android:id="@+id/layout_row">
 
     <TextView

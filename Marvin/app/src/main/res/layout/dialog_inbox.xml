@@ -3,6 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/dialog_container"
+    android:configChanges="orientation|screenSize"
     android:orientation="vertical"
     android:weightSum="1">
 

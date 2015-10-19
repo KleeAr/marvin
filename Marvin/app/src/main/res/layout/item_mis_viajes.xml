@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="160dp"
     android:id="@+id/lyt_container"
+    android:configChanges="orientation|screenSize"
     android:background="@color/gray_background">
 
     <LinearLayout

@@ -84,6 +84,7 @@
         </activity>
         <activity
             android:name=".activities.MainMenuActivity"
+            android:configChanges="orientation"
             android:label="@string/title_activity_menu_principal" >
         </activity>
         <activity

@@ -13,8 +13,8 @@ public class UserSites {
 
     List<Site> sites = new ArrayList<Site>();
 
-    private UserSites() {
-
+    public UserSites() {
+        instance = this;
     }
 
     public void setSites(List<Site> sites) {

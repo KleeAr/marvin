@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="ar.com.klee.marvin.activities.YouTubePlayerActivity"
+    android:configChanges="orientation|screenSize"
     android:background="#ffffff"
     android:orientation="vertical">
 

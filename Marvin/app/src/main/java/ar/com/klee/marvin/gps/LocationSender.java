@@ -99,7 +99,7 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
     private int zeroCounter = 0;
     private boolean wrongCoordinates = false;
 
-    //private int counter = 0;
+    private int counter = 0;
 
     public static LocationSender getInstance() {
         if (instance == null) {
@@ -292,11 +292,11 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
         /*
         Log.d("GPS",((Integer)counter).toString());
         if(counter%10 == 8){
-            latitude = -34.683346;
-            longitude = -58.510951;
+            latitude = -34.614397;
+            longitude = -58.373169;
         }else if(counter%10 == 9){
-            latitude = -34.683720;
-            longitude = -58.510363;
+            latitude = -34.614397;
+            longitude = -58.373169;
         }
         counter++;
         */

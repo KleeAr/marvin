@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -31,6 +32,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.sms.InboxAdaptor;
 import ar.com.klee.marvin.sms.Mensaje;
 import ar.com.klee.marvin.sms.SMSDriver;
@@ -50,6 +52,12 @@ public class SMSInboxActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(UserConfig.getSettings().getOrientation() == UserConfig.ORIENTATION_PORTRAIT)
+            setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        else
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+
         setContentView(R.layout.activity_sms_inbox);
 
         Typeface fontBold = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");

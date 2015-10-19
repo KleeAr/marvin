@@ -61,7 +61,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import ar.com.klee.marvin.activities.SiteActivity;
+import ar.com.klee.marvin.client.Marvin;
 import ar.com.klee.marvin.client.model.User;
+import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.configuration.UserSites;
 import ar.com.klee.marvin.gps.CardSiteAdapter;
 import ar.com.klee.marvin.R;
@@ -237,7 +239,12 @@ public class MisSitiosFragment extends Fragment {
                                         }
                                     }
 
-                                    mediaStorageDir = new File("/sdcard/MARVIN", "Sitios");
+                                    if(Marvin.isAuthenticated()){
+                                        Long userId = UserConfig.getSettings().getUserId();
+                                        mediaStorageDir = new File("/sdcard/MARVIN", "Sitios" + userId);
+                                    }else {
+                                        mediaStorageDir = new File("/sdcard/MARVIN", "Sitios");
+                                    }
 
                                     if (!mediaStorageDir.exists()) {
                                         if (!mediaStorageDir.mkdirs()) {
@@ -247,16 +254,29 @@ public class MisSitiosFragment extends Fragment {
 
                                     FileOutputStream out = null;
                                     try {
-                                        out = new FileOutputStream("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                                        if(Marvin.isAuthenticated()) {
+                                            Long userId = UserConfig.getSettings().getUserId();
+                                            out = new FileOutputStream("/sdcard/MARVIN/Sitios" + userId + "/" + newSite.getSiteName() + ".png");
+                                        }else{
+                                            out = new FileOutputStream("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                                        }
                                         task.getImg1().compress(Bitmap.CompressFormat.PNG, 90, out);
                                     } catch (FileNotFoundException e) {
                                         e.printStackTrace();
                                     }
 
-                                    newSite.setSiteThumbnail(1);
-                                    newSite.setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
-                                    lSites.get(lSites.size()-1).setSiteThumbnail(1);
-                                    lSites.get(lSites.size()-1).setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                                    if(Marvin.isAuthenticated()) {
+                                        Long userId = UserConfig.getSettings().getUserId();
+                                        newSite.setSiteThumbnail(1);
+                                        newSite.setSiteImage("/sdcard/MARVIN/Sitios" + userId + "/" + newSite.getSiteName() + ".png");
+                                        lSites.get(lSites.size() - 1).setSiteThumbnail(1);
+                                        lSites.get(lSites.size() - 1).setSiteImage("/sdcard/MARVIN/Sitios" + userId + "/" + newSite.getSiteName() + ".png");
+                                    }else{
+                                        newSite.setSiteThumbnail(1);
+                                        newSite.setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                                        lSites.get(lSites.size() - 1).setSiteThumbnail(1);
+                                        lSites.get(lSites.size() - 1).setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                                    }
 
                                     UserSites.getInstance().setSites(lSites);
 
@@ -278,7 +298,12 @@ public class MisSitiosFragment extends Fragment {
                                         }
                                     }
 
-                                    mediaStorageDir = new File("/sdcard/MARVIN", "Sitios");
+                                    if(Marvin.isAuthenticated()){
+                                        Long userId = UserConfig.getSettings().getUserId();
+                                        mediaStorageDir = new File("/sdcard/MARVIN", "Sitios" + userId);
+                                    }else {
+                                        mediaStorageDir = new File("/sdcard/MARVIN", "Sitios");
+                                    }
 
                                     if (!mediaStorageDir.exists()) {
                                         if (!mediaStorageDir.mkdirs()) {
@@ -288,16 +313,29 @@ public class MisSitiosFragment extends Fragment {
 
                                     FileOutputStream out = null;
                                     try {
-                                        out = new FileOutputStream("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                                        if(Marvin.isAuthenticated()) {
+                                            Long userId = UserConfig.getSettings().getUserId();
+                                            out = new FileOutputStream("/sdcard/MARVIN/Sitios" + userId + "/" + newSite.getSiteName() + ".png");
+                                        }else{
+                                            out = new FileOutputStream("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                                        }
                                         task.getImg2().compress(Bitmap.CompressFormat.PNG, 90, out);
                                     } catch (FileNotFoundException e) {
                                         e.printStackTrace();
                                     }
 
-                                    newSite.setSiteThumbnail(1);
-                                    newSite.setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
-                                    lSites.get(lSites.size()-1).setSiteThumbnail(1);
-                                    lSites.get(lSites.size()-1).setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                                    if(Marvin.isAuthenticated()) {
+                                        Long userId = UserConfig.getSettings().getUserId();
+                                        newSite.setSiteThumbnail(1);
+                                        newSite.setSiteImage("/sdcard/MARVIN/Sitios" + userId + "/" + newSite.getSiteName() + ".png");
+                                        lSites.get(lSites.size() - 1).setSiteThumbnail(1);
+                                        lSites.get(lSites.size() - 1).setSiteImage("/sdcard/MARVIN/Sitios" + userId + "/" + newSite.getSiteName() + ".png");
+                                    }else{
+                                        newSite.setSiteThumbnail(1);
+                                        newSite.setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                                        lSites.get(lSites.size() - 1).setSiteThumbnail(1);
+                                        lSites.get(lSites.size() - 1).setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                                    }
 
                                     UserSites.getInstance().setSites(lSites);
 
@@ -371,7 +409,15 @@ public class MisSitiosFragment extends Fragment {
                             @Override
                             public void onDismiss(RecyclerViewAdapter view, int position) {
 
-                                File file = new File("/sdcard/MARVIN/Sitios/"+lSites.get(position).getSiteName()+".png");
+                                File file;
+
+                                if(Marvin.isAuthenticated()) {
+                                    Long userId = UserConfig.getSettings().getUserId();
+                                    file = new File("/sdcard/MARVIN/Sitios" + userId + "/"+lSites.get(position).getSiteName()+".png");
+                                }else{
+                                    file = new File("/sdcard/MARVIN/Sitios/"+lSites.get(position).getSiteName()+".png");
+                                }
+
                                 file.delete();
 
                                 lSites.remove(position);
@@ -624,7 +670,12 @@ public class MisSitiosFragment extends Fragment {
                     }
                 }
 
-                mediaStorageDir = new File("/sdcard/MARVIN", "Sitios");
+                if(Marvin.isAuthenticated()){
+                    Long userId = UserConfig.getSettings().getUserId();
+                    mediaStorageDir = new File("/sdcard/MARVIN", "Sitios" + userId);
+                }else {
+                    mediaStorageDir = new File("/sdcard/MARVIN", "Sitios");
+                }
 
                 if (!mediaStorageDir.exists()) {
                     if (!mediaStorageDir.mkdirs()) {
@@ -634,16 +685,29 @@ public class MisSitiosFragment extends Fragment {
 
                 FileOutputStream out;
                 try {
-                    out = new FileOutputStream("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                    if(Marvin.isAuthenticated()) {
+                        Long userId = UserConfig.getSettings().getUserId();
+                        out = new FileOutputStream("/sdcard/MARVIN/Sitios" + userId + "/" + newSite.getSiteName() + ".png");
+                    }else{
+                        out = new FileOutputStream("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                    }
                     task.getImg1().compress(Bitmap.CompressFormat.PNG, 90, out);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
 
-                newSite.setSiteThumbnail(1);
-                newSite.setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
-                lSites.get(lSites.size() - 1).setSiteThumbnail(1);
-                lSites.get(lSites.size() - 1).setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                if(Marvin.isAuthenticated()) {
+                    Long userId = UserConfig.getSettings().getUserId();
+                    newSite.setSiteThumbnail(1);
+                    newSite.setSiteImage("/sdcard/MARVIN/Sitios" + userId + "/" + newSite.getSiteName() + ".png");
+                    lSites.get(lSites.size() - 1).setSiteThumbnail(1);
+                    lSites.get(lSites.size() - 1).setSiteImage("/sdcard/MARVIN/Sitios" + userId + "/" + newSite.getSiteName() + ".png");
+                }else{
+                    newSite.setSiteThumbnail(1);
+                    newSite.setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                    lSites.get(lSites.size() - 1).setSiteThumbnail(1);
+                    lSites.get(lSites.size() - 1).setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                }
 
                 UserSites.getInstance().setSites(lSites);
 
@@ -665,7 +729,12 @@ public class MisSitiosFragment extends Fragment {
                     }
                 }
 
-                mediaStorageDir = new File("/sdcard/MARVIN", "Sitios");
+                if(Marvin.isAuthenticated()){
+                    Long userId = UserConfig.getSettings().getUserId();
+                    mediaStorageDir = new File("/sdcard/MARVIN", "Sitios" + userId);
+                }else {
+                    mediaStorageDir = new File("/sdcard/MARVIN", "Sitios");
+                }
 
                 if (!mediaStorageDir.exists()) {
                     if (!mediaStorageDir.mkdirs()) {
@@ -675,16 +744,29 @@ public class MisSitiosFragment extends Fragment {
 
                 FileOutputStream out = null;
                 try {
-                    out = new FileOutputStream("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                    if(Marvin.isAuthenticated()) {
+                        Long userId = UserConfig.getSettings().getUserId();
+                        out = new FileOutputStream("/sdcard/MARVIN/Sitios" + userId + "/" + newSite.getSiteName() + ".png");
+                    }else{
+                        out = new FileOutputStream("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                    }
                     task.getImg2().compress(Bitmap.CompressFormat.PNG, 90, out);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
 
-                newSite.setSiteThumbnail(1);
-                newSite.setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
-                lSites.get(lSites.size() - 1).setSiteThumbnail(1);
-                lSites.get(lSites.size() - 1).setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                if(Marvin.isAuthenticated()) {
+                    Long userId = UserConfig.getSettings().getUserId();
+                    newSite.setSiteThumbnail(1);
+                    newSite.setSiteImage("/sdcard/MARVIN/Sitios" + userId + "/" + newSite.getSiteName() + ".png");
+                    lSites.get(lSites.size() - 1).setSiteThumbnail(1);
+                    lSites.get(lSites.size() - 1).setSiteImage("/sdcard/MARVIN/Sitios" + userId + "/" + newSite.getSiteName() + ".png");
+                }else{
+                    newSite.setSiteThumbnail(1);
+                    newSite.setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                    lSites.get(lSites.size() - 1).setSiteThumbnail(1);
+                    lSites.get(lSites.size() - 1).setSiteImage("/sdcard/MARVIN/Sitios/" + newSite.getSiteName() + ".png");
+                }
 
                 UserSites.getInstance().setSites(lSites);
 
@@ -786,7 +868,14 @@ public class MisSitiosFragment extends Fragment {
         if(i == lSites.size())
             return;
 
-        File file = new File("/sdcard/MARVIN/Sitios/"+lSites.get(i).getSiteName()+".png");
+        File file;
+
+        if(Marvin.isAuthenticated()) {
+            Long userId = UserConfig.getSettings().getUserId();
+            file = new File("/sdcard/MARVIN/Sitios" + userId + "/"+lSites.get(i).getSiteName()+".png");
+        }else{
+            file = new File("/sdcard/MARVIN/Sitios/"+lSites.get(i).getSiteName()+".png");
+        }
         file.delete();
 
         lSites.remove(i);

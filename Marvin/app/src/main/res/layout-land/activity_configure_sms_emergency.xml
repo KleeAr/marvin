@@ -5,6 +5,7 @@
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
     android:background="#4db6ac"
+    android:configChanges="orientation|screenSize"
     android:id="@+id/lyt">
 
     <include

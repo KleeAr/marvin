@@ -2,6 +2,7 @@ package ar.com.klee.marvin.activities;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -24,6 +25,7 @@ import android.widget.Toast;
 
 import java.io.File;
 
+import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.gps.CardSiteAdapter;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.gps.Site;
@@ -46,6 +48,12 @@ public class SiteActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(UserConfig.getSettings().getOrientation() == UserConfig.ORIENTATION_PORTRAIT)
+            setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        else
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+
         setContentView(R.layout.activity_site);
 
         addMap();

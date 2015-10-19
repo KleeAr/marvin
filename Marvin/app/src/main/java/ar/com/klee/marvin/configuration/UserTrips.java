@@ -15,10 +15,10 @@ public class UserTrips {
     List<Trip> trips = new ArrayList<Trip>();
 
     public UserTrips(){
-
+        instance = this;
     }
 
-    private void setTrips(List<Trip> trips) {
+    public void setTrips(List<Trip> trips) {
         this.trips = trips;
     }
 

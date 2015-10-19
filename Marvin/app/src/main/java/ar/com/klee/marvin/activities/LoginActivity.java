@@ -148,8 +148,10 @@ public class LoginActivity extends AppCompatActivity {
                 new android.os.Handler().postDelayed(
                         new Runnable() {
                             public void run() {
+                                UserConfig config = new UserConfig();
                                 Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class );
                                 UserConfig.setSettings(loginResponse.getSettings());
+                                config.setUserId(loginResponse.getUserId());
                                 startActivity(intent);
                                 progressDialog.dismiss();
                             }

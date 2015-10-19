@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:padding="8dp"
+    android:configChanges="orientation|screenSize"
     android:background="#004d4a">
 
 

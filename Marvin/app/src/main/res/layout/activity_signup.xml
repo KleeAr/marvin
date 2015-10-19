@@ -3,6 +3,7 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
+    android:configChanges="orientation|screenSize"
     android:layout_height="match_parent"
     android:background="#4db6ac">
     <ScrollView

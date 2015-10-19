@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -35,6 +36,7 @@ import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.call.Call;
 import ar.com.klee.marvin.call.CallDriver;
 import ar.com.klee.marvin.call.HistoryAdapter;
+import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
 import ar.com.klee.marvin.voiceControl.handlers.callHistory.ConsultarRegistroNumeroHandler;
@@ -55,6 +57,12 @@ public class CallHistoryActivity extends Activity implements AdapterView.OnItemC
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(UserConfig.getSettings().getOrientation() == UserConfig.ORIENTATION_PORTRAIT)
+            setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        else
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+
         setContentView(R.layout.activity_call_history);
 
         callListView = (ListView) findViewById(R.id.callListView);

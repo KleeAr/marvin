@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:configChanges="orientation|screenSize"
     tools:context=".MainActivity">
 
     <LinearLayout android:layout_width="match_parent"
@@ -46,17 +47,16 @@
     </LinearLayout>
 
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:id="@+id/splash_login"
         android:layout_gravity="center"
         android:src="@drawable/splash_inic" />
 
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:id="@+id/splash_logout"
-        android:layout_gravity="center"
-        android:src="@drawable/splash_inic" />
+        android:src="@drawable/splash_finish" />
 
 </FrameLayout>

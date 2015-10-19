@@ -3,6 +3,7 @@ package ar.com.klee.marvin.activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.media.AudioManager;
@@ -15,6 +16,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 
 /**
@@ -29,6 +31,11 @@ public class IncomingCallActivity extends Activity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(UserConfig.getSettings().getOrientation() == UserConfig.ORIENTATION_PORTRAIT)
+            setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        else
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
 
         setContentView(R.layout.activity_incoming_call);
 
