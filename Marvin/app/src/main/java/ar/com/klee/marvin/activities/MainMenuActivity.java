@@ -180,6 +180,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         super.onCreate(savedInstanceState);
         CommandHandlerManager.destroyInstance();
 
+        UserConfig userConfig = new UserConfig();
         UserSites userSites = new UserSites();
         UserTrips userTrips = new UserTrips();
 
@@ -188,7 +189,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         loadSites(mPrefs);
         loadUserTrips(mPrefs);
 
-        if(UserConfig.getSettings().getOrientation() == UserConfig.ORIENTATION_PORTRAIT)
+        UserConfig.getInstance().setOrientation(UserConfig.getSettings().getOrientation());
+
+        if(UserConfig.getInstance().getOrientation() == UserConfig.ORIENTATION_PORTRAIT)
             setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         else
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
@@ -344,8 +347,10 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             public void onDrawerOpened(View drawerView) {
 
                 try {
-                    if(MainMenuFragment.isInstanceInitialized())
+
+                    if(MainMenuFragment.isInstanceInitialized()) {
                         MainMenuFragment.getInstance().getPager().setCurrentItem(0);
+                    }
                 }catch(Exception e){
                 }
 

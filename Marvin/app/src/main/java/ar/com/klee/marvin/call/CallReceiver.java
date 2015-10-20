@@ -67,9 +67,11 @@ public class CallReceiver extends BroadcastReceiver {
         commandHandlerManager.setCurrentCommandHandler(new ResponderLlamadaHandler(commandHandlerManager.getTextToSpeech(), commandHandlerManager.getContext(), commandHandlerManager));
         commandHandlerManager.setCurrentContext(commandHandlerManager.getCommandHandler().drive(commandHandlerManager.getCommandHandler().createContext(commandHandlerManager.getCurrentContext(), commandHandlerManager.getActivity(), "responder llamada")));
 
+        Log.d("CALL", "Incoming started");
+
         //Hay que crear un nuevo hilo y esperar unos instantes para superponer el activity
         Thread thread = new Thread() {
-            private int sleepTime = 200;
+            private int sleepTime = 500;
 
             @Override
             public void run() {
@@ -107,6 +109,9 @@ public class CallReceiver extends BroadcastReceiver {
     }
 
     protected void onIncomingCallEnded(Context ctx, String number, Date start, Date end) {
+
+        Log.d("CALL","Incoming ended");
+
         long diffInMs = end.getTime() - timeCall;
         long diffInSec = TimeUnit.MILLISECONDS.toSeconds(diffInMs);
         //hay que agregar a la pregunta de si no es contacto la duracion de los segundos. Valor a definir
@@ -128,6 +133,8 @@ public class CallReceiver extends BroadcastReceiver {
         long diffInMs = end.getTime() - timeCall;
         long diffInSec = TimeUnit.MILLISECONDS.toSeconds(diffInMs);
 
+        Log.d("CALL","Outgoing ended");
+
         if(diffInSec > BUSY) {
             //hay que agregar a la pregunta de si no es contacto la duracion de los segundos. Valor a definir
             if (diffInSec > LONG_CALL && !Contact.isContact(ctx, savedNumber)) {
@@ -147,6 +154,14 @@ public class CallReceiver extends BroadcastReceiver {
     }
 
     protected void onMissedCall(Context ctx, String number, Date start) {
+
+        Log.d("CALL", "Missed Call");
+
+        commandHandlerManager.getTextToSpeech().speakText("Llamada perdida");
+
+        if(IncomingCallActivity.isInstanceInitialized())
+            IncomingCallActivity.getInstance().closeActivity();
+
     }
 
     public void onCallStateChanged(Context context, int state, String number) {
@@ -155,15 +170,20 @@ public class CallReceiver extends BroadcastReceiver {
             return;
         }
 
+        if(!STTService.isInstanceInitialized())
+            return;
+
         switch (state) {
 
             case TelephonyManager.CALL_STATE_RINGING:
+                Log.d("CALL","State - Ringing");
                 isIncoming = true;
                 callStartTime = new Date();
                 savedNumber = number;
                 onIncomingCallStarted(context, number, callStartTime);
                 break;
             case TelephonyManager.CALL_STATE_OFFHOOK:
+                Log.d("CALL","State - Offhook");
                 //Transicion de ringing->offhook
                 AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
                 am.setMode(AudioManager.MODE_IN_CALL);
@@ -181,6 +201,7 @@ public class CallReceiver extends BroadcastReceiver {
                 }
                 break;
             case TelephonyManager.CALL_STATE_IDLE:
+                Log.d("CALL","State - Idle");
                 AudioManager am2 = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
                 am2.setMode(AudioManager.MODE_NORMAL);
                 am2.setSpeakerphoneOn(false);

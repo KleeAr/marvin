@@ -100,6 +100,7 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
     private boolean wrongCoordinates = false;
 
     private int counter = 0;
+    private int errorCounter = 0;
 
     public static LocationSender getInstance() {
         if (instance == null) {
@@ -141,12 +142,21 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
             public void run() {
                 try {
 
-                    Thread.sleep(2000);
+                    Thread.sleep(5000);
 
                     while (!isInterrupted()) {
 
-                        if(!town.equals("Buscando ciudad...")) {
-                            final boolean tabletSize = CommandHandlerManager.getInstance().getMainActivity().getResources().getBoolean(ar.com.klee.marvin.R.bool.isTablet);
+                        if(!town.equals("Buscando ciudad...") && CommandHandlerManager.isInstanceInitialized()) {
+
+                            boolean size = true;
+
+                            try {
+                                size = CommandHandlerManager.getInstance().getMainActivity().getResources().getBoolean(ar.com.klee.marvin.R.bool.isTablet);
+                            }catch(Exception e){
+                                e.printStackTrace();
+                            }
+
+                            final boolean tabletSize = size;
 
                             CommandHandlerManager.getInstance().getMainActivity().runOnUiThread(new Runnable() {
                                 @Override
@@ -234,14 +244,17 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
                             });
 
                         }else{
-                            if(readyToUpdate && !connectionProblemsToast) {
+                            if(CommandHandlerManager.isInstanceInitialized() && readyToUpdate && !connectionProblemsToast) {
                                 try {
-                                    CommandHandlerManager.getInstance().getMainActivity().runOnUiThread(new Runnable() {
-                                        public void run() {
-                                            Toast.makeText(context, "No hay conexión a internet. No se puede identificar el nombre de la calle.", Toast.LENGTH_LONG).show();
-                                        }
-                                    });
-                                    connectionProblemsToast = true;
+                                    errorCounter++;
+                                    if(errorCounter == 5) {
+                                        CommandHandlerManager.getInstance().getMainActivity().runOnUiThread(new Runnable() {
+                                            public void run() {
+                                                Toast.makeText(context, "No hay conexión a internet. No se puede identificar el nombre de la calle.", Toast.LENGTH_LONG).show();
+                                            }
+                                        });
+                                        connectionProblemsToast = true;
+                                    }
                                 }catch (Exception e){
                                     e.printStackTrace();
                                 }

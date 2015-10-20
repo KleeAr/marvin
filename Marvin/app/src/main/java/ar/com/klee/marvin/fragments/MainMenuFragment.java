@@ -236,7 +236,7 @@ public class MainMenuFragment extends Fragment {
                     final boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
 
                     while (!isInterrupted()) {
-                        if(!isInterrupted() && ((MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity()).getActualFragmentPosition() == 1) {
+                        if(!isInterrupted() && CommandHandlerManager.isInstanceInitialized() && ((MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity()).getActualFragmentPosition() == 1) {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {

@@ -15,9 +15,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import ar.com.klee.marvin.Command;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
+import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
 
 /**
  * Clase para administrar las llamadas entrantes
@@ -28,18 +30,33 @@ public class IncomingCallActivity extends Activity {
     private Button btnRechazar;
     private TextView textView = null; //Texto para mostrar el número entrante
     private CommandHandlerManager commandHandlerManager;
+    private Activity previousActivity;
+
+    public static IncomingCallActivity instance;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(UserConfig.getSettings().getOrientation() == UserConfig.ORIENTATION_PORTRAIT)
+        instance = this;
+
+        if(CommandHandlerManager.isInstanceInitialized())
+            commandHandlerManager = CommandHandlerManager.getInstance();
+        else
+            finish();
+
+        try {
+            previousActivity = CommandHandlerManager.getInstance().getActivity();
+            commandHandlerManager.defineActivity(commandHandlerManager.getCurrentActivity(), this);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        if(UserConfig.getInstance().getOrientation() == UserConfig.ORIENTATION_PORTRAIT)
             setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         else
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
 
         setContentView(R.layout.activity_incoming_call);
-
-        commandHandlerManager = CommandHandlerManager.getInstance();
 
         //Declaracion de los botones
         btnAceptar = (Button)findViewById(R.id.btnAceptar); //se puede cambiar por imagenes
@@ -113,6 +130,8 @@ public class IncomingCallActivity extends Activity {
         AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         am.setMode(AudioManager.MODE_IN_CALL);
         am.setSpeakerphoneOn(true);
+
+        finish();
     }
 
     public void rejectCall(){
@@ -120,6 +139,8 @@ public class IncomingCallActivity extends Activity {
         Intent buttonDown = new Intent(Intent.ACTION_MEDIA_BUTTON); buttonDown.putExtra(Intent.EXTRA_KEY_EVENT,
                 new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_HEADSETHOOK));
         mContext.sendOrderedBroadcast(buttonDown, "android.permission.CALL_PRIVILEGED");
+        instance = null;
+        commandHandlerManager.defineActivity(CommandHandlerManager.getInstance().getCurrentActivity(),previousActivity);
         finish(); //Regresa a la activity anterior
     }
 
@@ -156,6 +177,22 @@ public class IncomingCallActivity extends Activity {
         cursor.close();
 
         return contactName;
+    }
+
+    public static IncomingCallActivity getInstance(){
+        return instance;
+    }
+
+    public static  boolean isInstanceInitialized(){
+        if(instance != null)
+            return true;
+        else
+            return false;
+    }
+
+    public void closeActivity(){
+        commandHandlerManager.defineActivity(CommandHandlerManager.getInstance().getCurrentActivity(),previousActivity);
+        finish();
     }
 
 }

@@ -150,7 +150,12 @@ public class MapFragment extends Fragment {
 
         trip = new Trip(lat, lon, address);
 
-        tripPath.add(new TripStep(lat,lon,address));
+        if(tripPath != null) {
+            tripPath.add(new TripStep(lat, lon, address));
+        }else{
+            tripPath = new ArrayList<TripStep>();
+            tripPath.add(new TripStep(lat, lon, address));
+        }
 
     }
 
