@@ -5,20 +5,32 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
+import android.graphics.PixelFormat;
 import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+
+import java.lang.reflect.Method;
 
 import ar.com.klee.marvin.Command;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.configuration.UserConfig;
+import ar.com.klee.marvin.fragments.MainMenuFragment;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
+import ar.com.klee.marvin.voiceControl.STTService;
 import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
 
 /**
@@ -31,8 +43,14 @@ public class IncomingCallActivity extends Activity {
     private TextView textView = null; //Texto para mostrar el número entrante
     private CommandHandlerManager commandHandlerManager;
     private Activity previousActivity;
+    private int previousActivityId;
 
     public static IncomingCallActivity instance;
+
+    private ViewGroup mTopView;
+    private WindowManager wm;
+
+    private boolean isRejected = false;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,8 +63,8 @@ public class IncomingCallActivity extends Activity {
             finish();
 
         try {
-            previousActivity = CommandHandlerManager.getInstance().getActivity();
-            commandHandlerManager.defineActivity(commandHandlerManager.getCurrentActivity(), this);
+            previousActivity = commandHandlerManager.getActivity();
+            previousActivityId = commandHandlerManager.getCurrentActivity();
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -68,10 +86,10 @@ public class IncomingCallActivity extends Activity {
 
 
         //Establecer el los datos en la interfaz
-        Typeface fontBold = Typeface.createFromAsset(getAssets(),"Bariol_Bold.otf");
+        Typeface fontBold = Typeface.createFromAsset(getAssets(), "Bariol_Bold.otf");
         textView = (TextView) findViewById(R.id.toCall);
         String contact = getContactName(getApplicationContext(), dato);
-        textView.setText("Llamada entrante:"+"\n"+ contact);
+        textView.setText("Llamada entrante:" + "\n" + contact);
         textView.setTypeface(fontBold);
 
         try{
@@ -115,6 +133,18 @@ public class IncomingCallActivity extends Activity {
 
                 }
             });
+
+            final WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
+                            WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+
+            wm = (WindowManager) getApplicationContext()
+                    .getSystemService(Context.WINDOW_SERVICE);
+
+            mTopView = (ViewGroup) this.getLayoutInflater().inflate(R.layout.activity_incoming_call, null);
+            getWindow().setAttributes(params);
+            wm.addView(mTopView, params);
         }
 
     }
@@ -130,18 +160,70 @@ public class IncomingCallActivity extends Activity {
         AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         am.setMode(AudioManager.MODE_IN_CALL);
         am.setSpeakerphoneOn(true);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                wm.removeView(mTopView);
+                instance = null;
+                commandHandlerManager.setNullCommand();
+                STTService.getInstance().setIsListening(false);
+                commandHandlerManager.defineActivity(previousActivityId,previousActivity);
+                Log.d("CALL", "accept");
+                finish();
+            }
+        }, 1000);
 
-        finish();
     }
 
     public void rejectCall(){
-        Context mContext = getApplicationContext();
-        Intent buttonDown = new Intent(Intent.ACTION_MEDIA_BUTTON); buttonDown.putExtra(Intent.EXTRA_KEY_EVENT,
-                new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_HEADSETHOOK));
-        mContext.sendOrderedBroadcast(buttonDown, "android.permission.CALL_PRIVILEGED");
-        instance = null;
-        commandHandlerManager.defineActivity(CommandHandlerManager.getInstance().getCurrentActivity(),previousActivity);
-        finish(); //Regresa a la activity anterior
+
+        isRejected = true;
+
+        try {
+            String serviceManagerName = "android.os.ServiceManager";
+            String serviceManagerNativeName = "android.os.ServiceManagerNative";
+            String telephonyName = "com.android.internal.telephony.ITelephony";
+            Class<?> telephonyClass;
+            Class<?> telephonyStubClass;
+            Class<?> serviceManagerClass;
+            Class<?> serviceManagerNativeClass;
+            Method telephonyEndCall;
+            Object telephonyObject;
+            Object serviceManagerObject;
+            telephonyClass = Class.forName(telephonyName);
+            telephonyStubClass = telephonyClass.getClasses()[0];
+            serviceManagerClass = Class.forName(serviceManagerName);
+            serviceManagerNativeClass = Class.forName(serviceManagerNativeName);
+            Method getService = // getDefaults[29];
+                    serviceManagerClass.getMethod("getService", String.class);
+            Method tempInterfaceMethod = serviceManagerNativeClass.getMethod("asInterface", IBinder.class);
+            Binder tmpBinder = new Binder();
+            tmpBinder.attachInterface(null, "fake");
+            serviceManagerObject = tempInterfaceMethod.invoke(null, tmpBinder);
+            IBinder retbinder = (IBinder) getService.invoke(serviceManagerObject, "phone");
+            Method serviceMethod = telephonyStubClass.getMethod("asInterface", IBinder.class);
+            telephonyObject = serviceMethod.invoke(null, retbinder);
+            telephonyEndCall = telephonyClass.getMethod("endCall");
+            telephonyEndCall.invoke(telephonyObject);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("IncomingCallActivity", "FATAL ERROR: could not connect to telephony subsystem");
+            Log.e("IncomingCallActivity", "Exception object: " + e);
+        }
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                instance = null;
+                commandHandlerManager.setNullCommand();
+                STTService.getInstance().setIsListening(false);
+                commandHandlerManager.defineActivity(previousActivityId, previousActivity);
+                wm.removeView(mTopView);
+                Log.d("CALL", "reject");
+                finish(); //Regresa a la activity anterior
+            }
+        }, 1000);
+
     }
 
     /*
@@ -191,8 +273,20 @@ public class IncomingCallActivity extends Activity {
     }
 
     public void closeActivity(){
-        commandHandlerManager.defineActivity(CommandHandlerManager.getInstance().getCurrentActivity(),previousActivity);
+        commandHandlerManager.defineActivity(previousActivityId,previousActivity);
+        commandHandlerManager.setNullCommand();
+        STTService.getInstance().setIsListening(false);
+        wm.removeView(mTopView);
+        isRejected = false;
+        Log.d("CALL", "close");
         finish();
     }
 
+    public boolean isRejected() {
+        return isRejected;
+    }
+
+    public void setIsRejected(boolean isRejected) {
+        this.isRejected = isRejected;
+    }
 }

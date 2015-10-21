@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 import ar.com.klee.marvin.activities.IncomingCallActivity;
 import ar.com.klee.marvin.activities.MainMenuActivity;
+import ar.com.klee.marvin.fragments.MainMenuFragment;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
 import ar.com.klee.marvin.voiceControl.handlers.AgendarContactoHandler;
@@ -125,7 +126,12 @@ public class CallReceiver extends BroadcastReceiver {
             commandHandlerManager.setCurrentContext(commandHandlerManager.getCommandHandler().drive(commandHandlerManager.getCommandHandler().createContext(commandHandlerManager.getCurrentContext(), commandHandlerManager.getActivity(), "agendar contacto " + savedNumber)));
 
         }else {
-            commandHandlerManager.getTextToSpeech().speakText("Llamada finalizada");
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    commandHandlerManager.getTextToSpeech().speakText("Llamada finalizada");
+                }
+            }, 1000);
         }
     }
 
@@ -133,12 +139,11 @@ public class CallReceiver extends BroadcastReceiver {
         long diffInMs = end.getTime() - timeCall;
         long diffInSec = TimeUnit.MILLISECONDS.toSeconds(diffInMs);
 
-        Log.d("CALL","Outgoing ended");
+        Log.d("CALL", "Outgoing ended");
 
         if(diffInSec > BUSY) {
             //hay que agregar a la pregunta de si no es contacto la duracion de los segundos. Valor a definir
             if (diffInSec > LONG_CALL && !Contact.isContact(ctx, savedNumber)) {
-
                 STTService.getInstance().setIsListening(true);
                 STTService.getInstance().stopListening();
                 if (commandHandlerManager.getCurrentActivity() == CommandHandlerManager.ACTIVITY_MAIN)
@@ -146,9 +151,15 @@ public class CallReceiver extends BroadcastReceiver {
                 commandHandlerManager.setCurrentCommandHandler(new AgendarContactoHandler(commandHandlerManager.getTextToSpeech(), commandHandlerManager.getContext(), commandHandlerManager));
                 commandHandlerManager.setCurrentContext(commandHandlerManager.getCommandHandler().drive(commandHandlerManager.getCommandHandler().createContext(commandHandlerManager.getCurrentContext(), commandHandlerManager.getActivity(), "agendar contacto " + savedNumber)));
             }
-            else
-                commandHandlerManager.getTextToSpeech().speakText("Llamada finalizada");
-        }else {
+            else {
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        commandHandlerManager.getTextToSpeech().speakText("Llamada finalizada");
+                    }
+                }, 1000);
+            }
+        } else {
             commandHandlerManager.getTextToSpeech().speakText("Número ocupado");
         }
     }
@@ -157,10 +168,17 @@ public class CallReceiver extends BroadcastReceiver {
 
         Log.d("CALL", "Missed Call");
 
-        commandHandlerManager.getTextToSpeech().speakText("Llamada perdida");
-
-        if(IncomingCallActivity.isInstanceInitialized())
-            IncomingCallActivity.getInstance().closeActivity();
+        if (IncomingCallActivity.isInstanceInitialized()) {
+            if (IncomingCallActivity.getInstance().isRejected()) {
+                commandHandlerManager.getTextToSpeech().speakText("Llamada rechazada");
+                IncomingCallActivity.getInstance().setIsRejected(false);
+            }else {
+                commandHandlerManager.getTextToSpeech().speakText("Llamada perdida");
+                IncomingCallActivity.getInstance().closeActivity();
+            }
+        }else{
+            commandHandlerManager.getTextToSpeech().speakText("Llamada perdida");
+        }
 
     }
 

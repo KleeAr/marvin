@@ -347,7 +347,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             public void onDrawerOpened(View drawerView) {
 
                 try {
-
                     if(MainMenuFragment.isInstanceInitialized()) {
                         MainMenuFragment.getInstance().getPager().setCurrentItem(0);
                     }
@@ -513,6 +512,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             refreshTrips();
         }else if(actualFragmentPosition == 1){
             tabNumber = MainMenuFragment.getInstance().getPager().getCurrentItem();
+            MainMenuFragment.getInstance().setAdapter(null);
+            MainMenuFragment.getInstance().setPager(null);
+            MainMenuFragment.getInstance().setTabs(null);
         }
 
         previousMenus.push(actualFragmentPosition);

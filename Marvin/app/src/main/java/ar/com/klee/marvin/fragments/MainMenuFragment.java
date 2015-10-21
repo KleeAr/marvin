@@ -351,4 +351,16 @@ public class MainMenuFragment extends Fragment {
     public ViewPager getPager() {
         return pager;
     }
+
+    public void setPager(ViewPager pager) {
+        this.pager = pager;
+    }
+
+    public void setAdapter(ViewPagerAdpater adapter) {
+        this.adapter = adapter;
+    }
+
+    public void setTabs(SlidingTabLayout tabs) {
+        this.tabs = tabs;
+    }
 }

@@ -50,12 +50,12 @@
         android:layout_height="wrap_content"
         android:id="@+id/splash_login"
         android:layout_gravity="center"
-        android:src="@drawable/splash_inic" />
+        android:src="@drawable/splash_inich" />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/splash_logout"
-        android:src="@drawable/splash_finish" />
+        android:src="@drawable/splash_finishh" />
 
 </FrameLayout>

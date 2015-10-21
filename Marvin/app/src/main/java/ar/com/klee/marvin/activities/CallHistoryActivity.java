@@ -91,6 +91,9 @@ public class CallHistoryActivity extends Activity implements AdapterView.OnItemC
                 case CallLog.Calls.MISSED_TYPE:
                     dir = "Perdida";
                     break;
+                default:
+                    dir = "Rechazada";
+                    break;
             }
 
 

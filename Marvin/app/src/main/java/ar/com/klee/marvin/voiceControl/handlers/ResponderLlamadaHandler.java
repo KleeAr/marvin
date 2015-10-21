@@ -53,13 +53,12 @@ public class ResponderLlamadaHandler extends CommandHandler{
         }
 
         if(input.equals("rechazar")) {
-            getTextToSpeech().speakText("Rechazando llamada");
             ((IncomingCallActivity)getCommandHandlerManager().getActivity()).rejectCall();
             context.put(STEP, 0);
             return context;
         }
 
-        getTextToSpeech().speakText("Debés indicar atender o rechazar");
+        getTextToSpeech().speakText("");
 
         context.put(STEP, 3);
         return context;

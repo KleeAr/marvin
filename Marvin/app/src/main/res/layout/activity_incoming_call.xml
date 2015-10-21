@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large Text"
+        android:text="Llamada entrante"
         android:id="@+id/toCall"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
@@ -39,7 +39,8 @@
         android:drawableLeft="@mipmap/ic_call_white_48dp"
         android:background="@drawable/button_incoming_accept"
         android:textSize="35sp"
-        android:textColor="#ffffff" />
+        android:textColor="#ffffff"
+        android:enabled="false" />
 
     <Button
         android:layout_width="fill_parent"
