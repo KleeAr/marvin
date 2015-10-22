@@ -273,6 +273,7 @@ public class MainMenuFragment extends Fragment {
         // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
         adapter =  new ViewPagerAdpater(getActivity().getSupportFragmentManager(),Titles,NumbOfTabs);
 
+
         // Assigning ViewPager View and setting the adapter
         pager = (ViewPager) v.findViewById(R.id.pager);
         pager.setAdapter(adapter);
@@ -313,6 +314,7 @@ public class MainMenuFragment extends Fragment {
             commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_MAIN,commandHandlerManager.getMainActivity());
 
             ((MainMenuActivity)CommandHandlerManager.getInstance().getMainActivity()).refreshMusicButtons();
+            ((MainMenuActivity)CommandHandlerManager.getInstance().getMainActivity()).pager = pager;
 
         }
         return v;
@@ -350,17 +352,5 @@ public class MainMenuFragment extends Fragment {
 
     public ViewPager getPager() {
         return pager;
-    }
-
-    public void setPager(ViewPager pager) {
-        this.pager = pager;
-    }
-
-    public void setAdapter(ViewPagerAdpater adapter) {
-        this.adapter = adapter;
-    }
-
-    public void setTabs(SlidingTabLayout tabs) {
-        this.tabs = tabs;
     }
 }

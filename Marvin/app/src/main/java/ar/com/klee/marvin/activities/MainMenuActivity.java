@@ -33,6 +33,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -174,6 +175,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     private Fragment lastFragment;
 
     private int tabNumber = 0;
+
+    public ViewPager pager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -348,7 +351,10 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
                 try {
                     if(MainMenuFragment.isInstanceInitialized()) {
-                        MainMenuFragment.getInstance().getPager().setCurrentItem(0);
+                        if(pager == null)
+                            MainMenuFragment.getInstance().getPager().setCurrentItem(0);
+                        else
+                            pager.setCurrentItem(0);
                     }
                 }catch(Exception e){
                 }
@@ -511,10 +517,12 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         }else if(actualFragmentPosition == 4){
             refreshTrips();
         }else if(actualFragmentPosition == 1){
-            tabNumber = MainMenuFragment.getInstance().getPager().getCurrentItem();
-            MainMenuFragment.getInstance().setAdapter(null);
-            MainMenuFragment.getInstance().setPager(null);
-            MainMenuFragment.getInstance().setTabs(null);
+            if(MainMenuFragment.isInstanceInitialized()) {
+                if(pager == null)
+                    tabNumber = MainMenuFragment.getInstance().getPager().getCurrentItem();
+                else
+                    tabNumber = pager.getCurrentItem();
+            }
         }
 
         previousMenus.push(actualFragmentPosition);

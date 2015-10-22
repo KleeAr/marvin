@@ -39,8 +39,7 @@
         android:drawableLeft="@mipmap/ic_call_white_48dp"
         android:background="@drawable/button_incoming_accept"
         android:textSize="35sp"
-        android:textColor="#ffffff"
-        android:enabled="false" />
+        android:textColor="#ffffff" />
 
     <Button
         android:layout_width="fill_parent"

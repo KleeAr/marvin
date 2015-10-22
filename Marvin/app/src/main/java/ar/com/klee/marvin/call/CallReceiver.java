@@ -144,12 +144,17 @@ public class CallReceiver extends BroadcastReceiver {
         if(diffInSec > BUSY) {
             //hay que agregar a la pregunta de si no es contacto la duracion de los segundos. Valor a definir
             if (diffInSec > LONG_CALL && !Contact.isContact(ctx, savedNumber)) {
-                STTService.getInstance().setIsListening(true);
-                STTService.getInstance().stopListening();
-                if (commandHandlerManager.getCurrentActivity() == CommandHandlerManager.ACTIVITY_MAIN)
-                    ((MainMenuActivity) commandHandlerManager.getMainActivity()).setButtonsDisabled();
-                commandHandlerManager.setCurrentCommandHandler(new AgendarContactoHandler(commandHandlerManager.getTextToSpeech(), commandHandlerManager.getContext(), commandHandlerManager));
-                commandHandlerManager.setCurrentContext(commandHandlerManager.getCommandHandler().drive(commandHandlerManager.getCommandHandler().createContext(commandHandlerManager.getCurrentContext(), commandHandlerManager.getActivity(), "agendar contacto " + savedNumber)));
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        STTService.getInstance().setIsListening(true);
+                        STTService.getInstance().stopListening();
+                        if (commandHandlerManager.getCurrentActivity() == CommandHandlerManager.ACTIVITY_MAIN)
+                            ((MainMenuActivity) commandHandlerManager.getMainActivity()).setButtonsDisabled();
+                        commandHandlerManager.setCurrentCommandHandler(new AgendarContactoHandler(commandHandlerManager.getTextToSpeech(), commandHandlerManager.getContext(), commandHandlerManager));
+                        commandHandlerManager.setCurrentContext(commandHandlerManager.getCommandHandler().drive(commandHandlerManager.getCommandHandler().createContext(commandHandlerManager.getCurrentContext(), commandHandlerManager.getActivity(), "agendar contacto " + savedNumber)));
+                    }
+                }, 1000);
             }
             else {
                 Handler handler = new Handler();
@@ -160,7 +165,12 @@ public class CallReceiver extends BroadcastReceiver {
                 }, 1000);
             }
         } else {
-            commandHandlerManager.getTextToSpeech().speakText("Número ocupado");
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    commandHandlerManager.getTextToSpeech().speakText("Número ocupado");
+                }
+            }, 1000);
         }
     }
 
