@@ -6,6 +6,7 @@ import ar.com.klee.marvin.client.model.UserSetting;
 public class UserConfig {
 
     private static UserConfig instance;
+    private long userId;
 
     public static final int ORIENTATION_PORTRAIT = 0;
     public static final int ORIENTATION_LANDSCAPE = 1;
@@ -23,6 +24,7 @@ public class UserConfig {
     //private static int alertSpeed; //Velocidad a la que se emite el alerta
     //private static boolean speedAlertEnabled = false; //Indica si está habilitado el alerta de velocidad
     private static UserSetting settings;
+    private int orientation;
 
     public static UserSetting getSettings() {
         if (settings == null) {
@@ -47,4 +49,23 @@ public class UserConfig {
         UserConfig.settings = settings;
     }
 
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    public int getOrientation() {
+        return orientation;
+    }
+
+    public void setOrientation(int orientation) {
+        this.orientation = orientation;
+    }
+
+    public static UserConfig getInstance(){
+        return instance;
+    }
 }

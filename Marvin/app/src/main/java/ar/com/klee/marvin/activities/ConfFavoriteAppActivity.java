@@ -1,6 +1,7 @@
 package ar.com.klee.marvin.activities;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.ResolveInfo;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -47,6 +48,12 @@ public class ConfFavoriteAppActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(UserConfig.getInstance().getOrientation() == UserConfig.ORIENTATION_PORTRAIT)
+            setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        else
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+
         setContentView(R.layout.activity_configure_favorite_app);
 
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
@@ -163,7 +170,7 @@ public class ConfFavoriteAppActivity extends ActionBarActivity {
         if (switchEnabled) {
             UserConfig.getSettings().setOpenAppWhenStop(true);
         } else {
-            UserConfig.getSettings().setOpenAppWhenStop(true);
+            UserConfig.getSettings().setOpenAppWhenStop(false);
         }
 
         finish();

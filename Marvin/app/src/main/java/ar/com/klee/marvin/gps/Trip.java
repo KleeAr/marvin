@@ -2,8 +2,12 @@ package ar.com.klee.marvin.gps;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import ar.com.klee.marvin.client.model.TripRepresentation;
+import ar.com.klee.marvin.client.model.TripStepRepresentation;
 
 public class Trip {
 
@@ -28,6 +32,34 @@ public class Trip {
         beginLon = lon;
         startTime = new Date();
         beginningAddress = address;
+    }
+
+    public Trip(TripRepresentation representation) {
+        beginLat = representation.getBeginLat();
+        beginLon = representation.getBeginLon();
+
+        beginning = new LatLng(beginLat, beginLon);
+
+        endLat = representation.getEndLat();
+        endLon = representation.getEndLon();
+
+        ending = new LatLng(endLat, endLon);
+
+        beginningAddress = representation.getBeginningAddress();
+        endingAddress = representation.getEndingAddress();
+
+        startTime = representation.getStartTime();
+        finishTime = representation.getFinishTime();
+
+        distance = representation.getDistance();
+        time = representation.getTime();
+        averageVelocity = representation.getAverageVelocity();
+
+        tripPath = new ArrayList<>(representation.getTripPath().size());
+        for(TripStepRepresentation tsr : representation.getTripPath()) {
+            tripPath.add(new TripStep(tsr.getLat(), tsr.getLon(), tsr.getAddress()));
+        }
+
     }
 
     public LatLng getBeginning() {
@@ -163,5 +195,15 @@ public class Trip {
                 averageVelocity + "\n" +
                 path
                 ;
+    }
+
+    public TripRepresentation toRepresentation() {
+
+        List<TripStepRepresentation> stepReps = new ArrayList<>(tripPath.size());
+        for(TripStep step : tripPath) {
+            stepReps.add(new TripStepRepresentation(null, step.getLat(), step.getLon(), step.getAddress()));
+        }
+        return new TripRepresentation(endingAddress, null, beginLat, beginLon, endLat, endLon, beginningAddress, endingAddress
+                                , startTime, finishTime, distance, time, averageVelocity, stepReps);
     }
 }

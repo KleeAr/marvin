@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#4db6ac">
+
+    <include
+        layout="@layout/tool_bar"
+        android:id="@+id/tool_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.2" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0.1"
+        android:id="@+id/lyt_body">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Ajustes para el almacenado de los viajes. Establecé la distancia y el tiempo mínimo para almacenar un viaje."
+            android:id="@+id/descripcion"
+            android:textSize="15dp"
+            android:textColor="#000000"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="#4db6ac"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:background="#004d4a"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_gravity="center_horizontal|bottom"></View>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="250dp"
+                android:layout_height="match_parent"
+                android:text="Establecer tiempo [min] mínimo"
+                android:id="@+id/textView"
+                android:layout_gravity="center_horizontal"
+                android:textSize="15dp"
+                android:textColor="#000000"
+                android:gravity="left|center"
+                android:layout_marginLeft="10dp" />
+
+            <Spinner
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:id="@+id/spinner1"
+                android:spinnerMode="dropdown"
+                android:layout_marginRight="10dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="250dp"
+                android:layout_height="match_parent"
+                android:text="Establecer recorrido [Kms] mínimo"
+                android:id="@+id/textView8"
+                android:textSize="15dp"
+                android:textColor="#000000"
+                android:gravity="left|center"
+                android:layout_marginLeft="10dp" />
+
+            <Spinner
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:id="@+id/spinner2"
+                android:layout_weight="1"
+                android:spinnerMode="dropdown"
+                android:layout_marginRight="10dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/lyt_registerSup"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="¿Querés guardar los cambios?"
+                android:id="@+id/tv_title"
+                android:textColor="#ffffff"
+                android:textSize="15dp"
+                android:layout_marginLeft="10dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#004d4a"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_gravity="center_horizontal|bottom"></View>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/lyt_buttons"
+                android:layout_marginTop="10dp">
+
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp"
+                    android:text="Cancelar"
+                    android:id="@+id/button_cancel"
+                    android:layout_weight="0.5"
+                    android:drawableTop="@mipmap/ic_cancel_white_48dp"
+                    android:layout_marginLeft="5dp"
+                    android:onClick="cancelHistoryTrip" />
+
+                <View
+                    android:layout_width="2dp"
+                    android:layout_height="90dp"
+                    android:background="#004d4a"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="0"></View>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp"
+                    android:text="Resetear"
+                    android:id="@+id/button_reset"
+                    android:layout_weight="0.5"
+                    android:drawableTop="@mipmap/ic_reply_white_48dp"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginRight="2dp"
+                    android:onClick="resetHistoryTrip" />
+
+                <View
+                    android:layout_width="2dp"
+                    android:layout_height="90dp"
+                    android:background="#004d4a"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="0"></View>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp"
+                    android:text="Guardar"
+                    android:id="@+id/button_save"
+                    android:layout_weight="0.5"
+                    android:drawableTop="@mipmap/ic_save_white_48dp"
+                    android:layout_marginRight="5dp"
+                    android:onClick="saveHistoryTrip" />
+
+            </LinearLayout>
+
+
+    </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

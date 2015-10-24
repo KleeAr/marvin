@@ -4,6 +4,7 @@
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
     android:layout_height="match_parent"
+    android:configChanges="orientation|screenSize"
     android:background="#4db6ac">
 
     <include
@@ -88,7 +89,8 @@
                         android:id="@+id/spinner1"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:layout_marginRight="10dp" />
+                        android:layout_marginRight="10dp"
+                        android:textAlignment="viewEnd" />
 
                 </LinearLayout>
 

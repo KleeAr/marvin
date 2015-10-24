@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:orientation="vertical" android:layout_width="fill_parent"
-android:layout_height="fill_parent" android:id="@+id/MainLayout"
+    android:orientation="vertical" android:layout_width="fill_parent"
+    android:configChanges="orientation|screenSize"
+    android:layout_height="fill_parent" android:id="@+id/MainLayout"
     >
 
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:textAppearance="?android:attr/textAppearanceMedium"
-    android:text="Mensajes Recibidos"
-    android:id="@+id/textView"
-    android:layout_gravity="center_horizontal" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Mensajes Recibidos"
+        android:id="@+id/textView"
+        android:layout_gravity="center"
+        android:background="@color/ColorPrimary"
+        android:gravity="center" />
 
-<ListView android:id="@+id/SMSList"
+
+    <ListView android:id="@+id/SMSList"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"
     android:layout_margin="5dp" />

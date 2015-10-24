@@ -4,6 +4,7 @@ import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Handler;
+import android.widget.ImageView;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,7 +33,7 @@ public class CerrarSesionHandler extends CommandHandler {
 
         getTextToSpeech().speakText("Cerrando sesión");
 
-        MainMenuFragment.getInstance().setItem(2);
+        ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).getSplashLogout().setVisibility(ImageView.VISIBLE);
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {

@@ -48,8 +48,6 @@ import butterknife.ButterKnife;
 import io.fabric.sdk.android.Fabric;
 
 public class PerfilFragment extends Fragment {
-
-    private CallbackManager callbackManager = CallbackManager.Factory.create();
     
     private MainMenuActivity activity;
     private View view;
@@ -72,10 +70,6 @@ public class PerfilFragment extends Fragment {
         commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_PROFILE,commandHandlerManager.getMainActivity());
 
         activity = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
-
-        initializeFacebookSdk();
-        TwitterAuthConfig authConfig = new TwitterAuthConfig(activity.TWITTER_KEY, activity.TWITTER_SECRET);
-        Fabric.with(activity, new Twitter(authConfig));
 
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_perfil, container, false);
@@ -138,50 +132,13 @@ public class PerfilFragment extends Fragment {
         });
     }
 
-    private void initializeFacebookSdk() {
-        FacebookSdk.sdkInitialize(activity.getApplicationContext());
-        showHashKey(activity.getApplicationContext());
-        LoginManager.getInstance().registerCallback(callbackManager,
-                new FacebookCallback<LoginResult>() {
-                    @Override
-                    public void onSuccess(LoginResult loginResult) {
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        // App code
-                    }
-
-                    @Override
-                    public void onError(FacebookException exception) {
-                        // App code
-                    }
-                });
-        LoginManager.getInstance().logInWithPublishPermissions(this, Arrays.asList("publish_actions"));
-    }
-
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // Facebook login result
-        callbackManager.onActivityResult(requestCode, resultCode, data);
         // Twitter login result
         TwitterLoginButton loginButton = (TwitterLoginButton) view.findViewById(R.id.twitter_login_button);
         loginButton.onActivityResult(requestCode, resultCode, data);
     }
 
-    public static void showHashKey(Context context) {
-        try {
-            PackageInfo info = context.getPackageManager().getPackageInfo(
-                    "ar.com.klee.marvin", PackageManager.GET_SIGNATURES); //Your package name here
-            for (Signature signature : info.signatures) {
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                Log.v("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
-            }
-        } catch (Exception e) {
-            Log.v("Exception: ", e.getMessage(), e);
-        }
-    }
 
     public void changePassword() {
         if (!validate()) {

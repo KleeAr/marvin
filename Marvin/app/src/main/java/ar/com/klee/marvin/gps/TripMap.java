@@ -75,7 +75,7 @@ public class TripMap extends Fragment {
 
         PolylineOptions options = new PolylineOptions().width(5).color(Color.BLUE).geodesic(true);
         for (int z = 0; z < trip.getTripPath().size(); z++) {
-            Log.d("Step", trip.getTripPath().get(z).getCoordinates().toString());
+            //Log.d("Step", trip.getTripPath().get(z).getCoordinates().toString());
             LatLng point = trip.getTripPath().get(z).getCoordinates();
             options.add(point);
         }
@@ -87,7 +87,7 @@ public class TripMap extends Fragment {
         }
         LatLngBounds bounds = builder.build();
 
-        int padding = 3; // offset from edges of the map in pixels
+        int padding = 20; // offset from edges of the map in pixels
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
         googleMap.animateCamera(cu);
 

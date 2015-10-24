@@ -19,6 +19,14 @@ import ar.com.klee.marvin.voiceControl.handlers.callHistory.ConsultarRegistroNum
 import ar.com.klee.marvin.voiceControl.handlers.callHistory.ConsultarUltimoRegistroDeContactoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.callHistory.ConsultarUltimoRegistroDeNumeroHandler;
 import ar.com.klee.marvin.voiceControl.handlers.callHistory.ConsultarUltimoRegistroHandler;
+import ar.com.klee.marvin.voiceControl.handlers.fun.CantaHandler;
+import ar.com.klee.marvin.voiceControl.handlers.fun.ChauHandler;
+import ar.com.klee.marvin.voiceControl.handlers.fun.ChisteHandler;
+import ar.com.klee.marvin.voiceControl.handlers.fun.EspejitoHandler;
+import ar.com.klee.marvin.voiceControl.handlers.fun.HolaHandler;
+import ar.com.klee.marvin.voiceControl.handlers.fun.QuieroHandler;
+import ar.com.klee.marvin.voiceControl.handlers.fun.RaizHandler;
+import ar.com.klee.marvin.voiceControl.handlers.fun.VeoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.AbrirAplicacionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.ActivarHotspotHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.ActivarReproduccionAleatoriaHandler;
@@ -29,6 +37,7 @@ import ar.com.klee.marvin.voiceControl.handlers.mainMenu.BajarVolumenHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.BarrioHandler;
 import ar.com.klee.marvin.voiceControl.handlers.BuscarDispositivosHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.BuscarEnYoutubeHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.ConsultarEventosHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.ReproducirEstacionHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.ReproducirFrecuenciaHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.ReproducirRadioHandler;
@@ -77,7 +86,7 @@ import ar.com.klee.marvin.voiceControl.handlers.mainMenu.EnviarWhatsAppHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.EstablecerVolumenHandler;
 import ar.com.klee.marvin.voiceControl.handlers.camera.GuardarFotoHandler;
 import ar.com.klee.marvin.voiceControl.handlers.camera.GuardarYCompartirFotoHandler;
-import ar.com.klee.marvin.voiceControl.handlers.mainMenu.PausarMusicaHandler;
+import ar.com.klee.marvin.voiceControl.handlers.mainMenu.PausarReproducciónHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.PublicarEnFacebookHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.ReproducirArtistaHandler;
 import ar.com.klee.marvin.voiceControl.handlers.mainMenu.ReproducirCancionHandler;
@@ -199,6 +208,7 @@ public class CommandHandlerManager {
             new BarrioHandler(textToSpeech, context, this),
             new BuscarEnYoutubeHandler(textToSpeech, context, this),
             new CerrarSesionHandler(textToSpeech, context, this),
+            new ConsultarEventosHandler(textToSpeech, context, this),
             new DesactivarHotspotHandler(textToSpeech, context, this),
             new DesactivarReproduccionAleatoriaHandler(textToSpeech, context, this),
             new DireccionHandler(textToSpeech, context, this),
@@ -209,7 +219,7 @@ public class CommandHandlerManager {
             new EstablecerVolumenHandler(textToSpeech, context, this),
             new LlamarAContactoHandler(textToSpeech, context, this),
             new LlamarANumeroHandler(textToSpeech, context, this),
-            new PausarMusicaHandler(textToSpeech, context, this),
+            new PausarReproducciónHandler(textToSpeech, context, this),
             new PublicarEnFacebookHandler(textToSpeech, context,this),
             new ReproducirArtistaHandler(textToSpeech, context, this),
             new ReproducirCancionHandler(textToSpeech, context, this),
@@ -222,7 +232,15 @@ public class CommandHandlerManager {
             new SiguienteInterseccion(textToSpeech, context, this),
             new SMSDeEmergenciaHandler(textToSpeech, context, this),
             new SubirVolumenHandler(textToSpeech, context, this),
-            new TwittearHandler(textToSpeech, context, this));
+            new TwittearHandler(textToSpeech, context, this),
+            new CantaHandler(textToSpeech, context, this),
+            new ChauHandler(textToSpeech, context, this),
+            new ChisteHandler(textToSpeech, context, this),
+            new EspejitoHandler(textToSpeech, context, this),
+            new HolaHandler(textToSpeech, context, this),
+            new QuieroHandler(textToSpeech, context, this),
+            new RaizHandler(textToSpeech, context, this),
+            new VeoHandler(textToSpeech, context, this));
 
         commandHandlersCamera = Arrays.asList(new CancelarFotoHandler(textToSpeech, context, this),
             new CerrarCamaraHandler(textToSpeech, context, this),

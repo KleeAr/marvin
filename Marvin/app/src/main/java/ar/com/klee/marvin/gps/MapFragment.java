@@ -2,6 +2,7 @@ package ar.com.klee.marvin.gps;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Address;
@@ -46,6 +47,8 @@ import java.util.concurrent.TimeUnit;
 
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.activities.MainMenuActivity;
+import ar.com.klee.marvin.client.Marvin;
+import ar.com.klee.marvin.fragments.MainMenuFragment;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
 
@@ -57,8 +60,8 @@ public class MapFragment extends Fragment {
     private long MIN_TRIP_TIME = 0;
     private long MIN_TRIP_DISTANCE = 0;
 
-    MapView mMapView;
-    private GoogleMap googleMap;
+    private static MapView mMapView;
+    private static GoogleMap googleMap;
     private Trip trip;
 
     private static MapFragment instance;
@@ -69,7 +72,7 @@ public class MapFragment extends Fragment {
     private double startLongitude = 0.0;
     private String startAddress = "";
 
-    private List<TripStep> tripPath = new ArrayList<TripStep>();
+    private static List<TripStep> tripPath;
     private String lastAddress = "";
 
     private double finishLatitude = 0.0;
@@ -115,6 +118,8 @@ public class MapFragment extends Fragment {
 
         googleMap = mMapView.getMap();
 
+        tripPath = new ArrayList<TripStep>();
+
         // Perform any camera updates here
         return v;
     }
@@ -145,7 +150,12 @@ public class MapFragment extends Fragment {
 
         trip = new Trip(lat, lon, address);
 
-        tripPath.add(new TripStep(lat,lon,address));
+        if(tripPath != null) {
+            tripPath.add(new TripStep(lat, lon, address));
+        }else{
+            tripPath = new ArrayList<TripStep>();
+            tripPath.add(new TripStep(lat, lon, address));
+        }
 
     }
 
@@ -159,7 +169,7 @@ public class MapFragment extends Fragment {
                     tripPath.get(tripPath.size()-1).getCoordinates().latitude, tripPath.get(tripPath.size()-1).getCoordinates().longitude,
                     lat, lon,
                     distance);
-            if(distance[0] > 150)
+            if(distance[0] > 100.0)
                 return;
         }
 
@@ -208,6 +218,10 @@ public class MapFragment extends Fragment {
     }
 
     public void finishTrip(){
+        finishTrip(0);
+    }
+
+    public void finishTrip(int tab){
 
         if(lastMarker!=null){
             lastMarker.remove();
@@ -259,13 +273,12 @@ public class MapFragment extends Fragment {
 
         Long minutes = TimeUnit.MILLISECONDS.toMinutes(diffInMs);
         Long hours = minutes/60;
+
         minutes = minutes - hours*60;
         trip.setTime(hours.toString() + " hs. " + minutes.toString() + " min.");
 
-        float hourDecimals = (100 * minutes)/60;
-        while(hourDecimals > 1){
-            hourDecimals = hourDecimals/10;
-        }
+        float hourDecimals;
+        hourDecimals = Float.valueOf(minutes)/60;
 
         float hourWithDecimals = hours + hourDecimals;
 
@@ -289,51 +302,50 @@ public class MapFragment extends Fragment {
 
         polylineLength = polylineLength/1000;
 
-        trip.setDistance(String.format("%.2f",polylineLength));
-
-        Log.d("Distance",((Double)polylineLength).toString());
-        Log.d("Hours",hours.toString());
-        Log.d("Minute",((Float)hourDecimals).toString());
-        Log.d("Time",((Float)hourWithDecimals).toString());
+        trip.setDistance(String.format("%.2f", polylineLength));
 
         double velocity;
 
-        if(hourWithDecimals == 0.0)
+        if(hourWithDecimals == 0.0) {
             velocity = 0.0;
-        else
-            velocity = polylineLength/hourWithDecimals;
+        }else {
+            velocity = polylineLength / hourWithDecimals;
+        }
 
-        trip.setAverageVelocity(String.format("%.2f",velocity));
+        trip.setAverageVelocity(String.format("%.2f", velocity));
 
-        Log.d("Velocity",String.format("%.2f",velocity));
-
-        captureScreen();
+        captureScreen(tab);
 
         if(hourWithDecimals >= MIN_TRIP_TIME && polylineLength >= MIN_TRIP_DISTANCE) {
 
-            MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
-            SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
-            SharedPreferences.Editor prefsEditor = mPrefs.edit();
-            Gson gson = new Gson();
-            String json = gson.toJson(trip.getEnding());
-            prefsEditor.putString("ParkingSite", json);
+            if(Marvin.isAuthenticated()){
+                
+                //TODO: Agregar nuevo viaje y setear el parking site
 
-            Integer numberOfTrips = mPrefs.getInt("NumberOfTrips",0);
+            }else {
+                MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
+                SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
+                SharedPreferences.Editor prefsEditor = mPrefs.edit();
+                Gson gson = new Gson();
+                String json = gson.toJson(trip.getEnding());
+                prefsEditor.putString("ParkingSite", json);
 
-            numberOfTrips++;
+                Integer numberOfTrips = mPrefs.getInt("NumberOfTrips", 0);
 
-            gson = new Gson();
-            json = gson.toJson(trip);
-            prefsEditor.putInt("NumberOfTrips",numberOfTrips);
-            prefsEditor.putString("Trip"+numberOfTrips.toString(), json);
+                numberOfTrips++;
 
-            prefsEditor.commit();
+                gson = new Gson();
+                json = gson.toJson(trip);
+                prefsEditor.putInt("NumberOfTrips", numberOfTrips);
+                prefsEditor.putString("Trip" + numberOfTrips.toString(), json);
 
+                prefsEditor.commit();
+            }
         }
 
     }
 
-    public void captureScreen()
+    public void captureScreen(final int tab)
     {
         GoogleMap.SnapshotReadyCallback callback = new GoogleMap.SnapshotReadyCallback(){
 
@@ -364,10 +376,12 @@ public class MapFragment extends Fragment {
                 String timeStamp = new SimpleDateFormat("yyMMdd_HHmmss").format(new Date());
 
                 try {
-                    FileOutputStream out = new FileOutputStream("/sdcard/MARVIN/Estacionamiento/" + finishAddress + "_" + timeStamp + ".png");
-                    snapshot.compress(Bitmap.CompressFormat.PNG, 90, out);
-                    out.flush();
-                    out.close();
+                    if(tab == 2) {
+                        FileOutputStream out = new FileOutputStream("/sdcard/MARVIN/Estacionamiento/" + finishAddress + "_" + timeStamp + ".png");
+                        snapshot.compress(Bitmap.CompressFormat.PNG, 90, out);
+                        out.flush();
+                        out.close();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

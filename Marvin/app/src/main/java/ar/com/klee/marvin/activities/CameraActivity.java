@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -49,6 +50,7 @@ import java.util.Date;
 
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.camera.CameraPreview;
+import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.social.FacebookService;
 import ar.com.klee.marvin.social.InstagramService;
 import ar.com.klee.marvin.social.TwitterService;
@@ -76,6 +78,12 @@ public class CameraActivity extends ActionBarActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(UserConfig.getInstance().getOrientation() == UserConfig.ORIENTATION_PORTRAIT)
+            setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        else
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+
         setContentView(R.layout.activity_camera);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         myContext = this;

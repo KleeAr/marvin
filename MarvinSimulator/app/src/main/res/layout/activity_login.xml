@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
+    android:layout_height="match_parent"
+    android:background="#4db6ac">
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:fitsSystemWindows="true"
+        android:layout_weight="1"
+        android:fillViewport="false"
+        android:id="@+id/scroll">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:paddingLeft="24dp"
+            android:paddingRight="24dp">
+
+            <!--  Email Label -->
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:id="@+id/lay_title"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:layout_marginTop="10dp">
+
+
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:id="@+id/imageView3"
+                    android:src="@drawable/marvin_logo"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:layout_marginTop="10dp" />
+
+                <ar.com.klee.marvinSimulator.AutoScaleTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="marvin"
+                    android:id="@+id/textView"
+                    android:layout_gravity="center_horizontal"
+                    android:textSize="90sp"
+                    android:textColor="#ffffff"
+                    android:gravity="center"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_weight="1">
+                <EditText android:id="@+id/input_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"
+                    android:hint="Email" />
+            </android.support.design.widget.TextInputLayout>
+
+            <!--  Password Label -->
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_weight="1">
+                <EditText android:id="@+id/input_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:hint="Contraseña"/>
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="24dp"
+                android:padding="12dp"
+                android:text="Iniciar Sesión"
+                android:layout_gravity="right"
+                android:layout_weight="1" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/lyt_registerSup"
+                android:layout_weight="1"
+                android:layout_marginTop="10dp">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#000000"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_gravity="center_horizontal|bottom"></View>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/lyt_register"
+                    android:layout_weight="1"
+                    android:layout_marginTop="10dp">
+
+
+                    <TextView android:id="@+id/link_rememberPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Recuperar Contraseña"
+                        android:gravity="center"
+                        android:textSize="16dip"
+                        android:layout_weight="0.5"
+                        android:textColor="#ffffff" />
+
+                    <View
+                        android:layout_width="2dp"
+                        android:layout_height="match_parent"
+                        android:background="#000000"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_weight="0"></View>
+
+                    <TextView android:id="@+id/link_signup"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="¿Sos nuevo? Registrate"
+                        android:gravity="center"
+                        android:textSize="16dip"
+                        android:layout_weight="0.5"
+                        android:textColor="#ffffff" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ingresar como invitado"
+        android:id="@+id/bt_guess"
+        android:textColor="#ffffff"
+        android:background="#000000"
+        android:onClick="logIn" />
+    <!--
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/login_button"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="5dp" />
+
+        <com.twitter.sdk.android.core.identity.TwitterLoginButton
+            android:id="@+id/twitter_login_button"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="5dp" />
+
+    -->
+    </LinearLayout>

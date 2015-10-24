@@ -2,6 +2,7 @@ package ar.com.klee.marvin.activities;
 
 import android.app.ListActivity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,6 +12,7 @@ import android.widget.AdapterView;
 import java.util.List;
 
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.multimedia.video.YouTubeVideo;
 import ar.com.klee.marvin.multimedia.video.adapter.YouTubeListAdapter;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
@@ -21,6 +23,12 @@ public class SearchResultActivity extends ListActivity implements AdapterView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(UserConfig.getInstance().getOrientation() == UserConfig.ORIENTATION_PORTRAIT)
+            setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        else
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+
         setContentView(R.layout.activity_search_result);
         List<YouTubeVideo> videos = getIntent().getExtras().getParcelableArrayList("videos");
         YouTubeListAdapter adapter = new YouTubeListAdapter(this,R.layout.you_tube_video_item,videos);

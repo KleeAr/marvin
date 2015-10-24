@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
@@ -52,15 +53,19 @@ public class DondeEstacioneFragment extends Fragment {
 
         Gson gson = new Gson();
         String json = mPrefs.getString("ParkingSite", "");
-        final LatLng coordinates = gson.fromJson(json, LatLng.class);
 
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                fragment.setParkSite(coordinates.latitude,coordinates.longitude);
-            }
-        }, 1000);
+        if(!json.equals("")) {
+            final LatLng coordinates = gson.fromJson(json, LatLng.class);
 
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    fragment.setParkSite(coordinates.latitude, coordinates.longitude);
+                }
+            }, 1000);
+        }else{
+            Toast.makeText(getActivity(), "No se pudo detectar el lugar de estacionamiento.", Toast.LENGTH_LONG).show();
+        }
 
         return v;
     }

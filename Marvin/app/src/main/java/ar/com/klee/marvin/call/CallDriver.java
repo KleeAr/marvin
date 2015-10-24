@@ -158,23 +158,25 @@ public class  CallDriver {
     }
 
     public  void outgoingCallDialog(){
+        final Dialog customDialog = new Dialog(commandHandlerManager.getMainActivity());
+        customDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        customDialog.setCancelable(false);
+        customDialog.setContentView(R.layout.dialog_call_outgoing);
+        customDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        AlertDialog.Builder builder =new AlertDialog.Builder(commandHandlerManager.getMainActivity(), R.style.AppCompatAlertDialogStyle);
-        builder.setCancelable(true);
-        builder.setTitle("Llamar a:");
-        builder.setIcon(R.drawable.marvin);
+        actualDialog = customDialog;
 
-        LinearLayout layout = new LinearLayout(commandHandlerManager.getMainActivity());
-        layout.setOrientation(LinearLayout.VERTICAL);
+        Typeface fontBold = Typeface.createFromAsset(context.getAssets(),"Bariol_Bold.otf");
+        TextView toCall = (TextView) customDialog.findViewById(R.id.toCall);
+        toCall.setTypeface(fontBold);
 
-        final Button buttonAgenda = new Button(commandHandlerManager.getMainActivity());
-        buttonAgenda.setBackgroundResource(R.mipmap.ic_contact_phone_black_48dp);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(50, 50);
-        params.gravity = Gravity.CENTER;
-        buttonAgenda.setLayoutParams(params);
-        buttonAgenda.setOnClickListener(new View.OnClickListener() {
+        editPhone = (EditText) customDialog.findViewById(R.id.editPhone);
+        editPhone.setTypeface(fontBold);
+
+
+        customDialog.findViewById(R.id.btnAgenda).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 // using native contacts selection
                 // Intent.ACTION_PICK = Pick an item from the data, returning what was selected.
                 STTService.getInstance().stopListening();
@@ -182,20 +184,19 @@ public class  CallDriver {
                 commandHandlerManager.getMainActivity().startActivityForResult(new Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI), REQUEST_CODE_PICK_CONTACTS);
             }
         });
-        layout.addView(buttonAgenda);
+        customDialog.findViewById(R.id.cancelar).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view){
+                STTService.getInstance().setIsListening(false);
+                commandHandlerManager.setNullCommand();
+                ((MainMenuActivity) commandHandlerManager.getMainActivity()).setButtonsEnabled();
+                customDialog.dismiss();
+            }
+        });
+        customDialog.findViewById(R.id.llamar).setOnClickListener(new View.OnClickListener() {
 
-
-
-        final EditText editPhone = new EditText(commandHandlerManager.getMainActivity());
-        editPhone.setHint("Ingresar telefono o contacto");
-        editPhone.setFilters(new InputFilter[] { new InputFilter.LengthFilter(30) });
-        layout.addView(editPhone);
-
-
-
-
-        builder.setPositiveButton("Llamar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
+            @Override
+            public void onClick(View view) {
                 String number = editPhone.getText().toString();
                 commandHandlerManager.setNullCommand();
                 STTService.getInstance().setIsListening(false);
@@ -203,20 +204,12 @@ public class  CallDriver {
                 lastOutgoingCallNumber = number;
                 Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + number));
                 commandHandlerManager.getMainActivity().startActivity(intent);
-                dialog.dismiss();
-            }
-        });
-        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                STTService.getInstance().setIsListening(false);
-                commandHandlerManager.setNullCommand();
-                ((MainMenuActivity)commandHandlerManager.getMainActivity()).setButtonsEnabled();
-                dialog.dismiss();
+                customDialog.dismiss();
+
             }
         });
 
-
-        builder.show();
+        customDialog.show();
 
     }
 

@@ -1,7 +1,19 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:configChanges="orientation|screenSize"
     tools:context="ar.com.klee.marvin.activities.TripActivity">
+
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/tripMap"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        class="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentBottom="false"
+        android:layout_alignParentEnd="true" />
 
     <LinearLayout
         android:orientation="vertical"
@@ -141,17 +153,6 @@
 
         </LinearLayout>
     </LinearLayout>
-
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/tripMap"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        class="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_alignParentTop="false"
-        android:layout_alignParentLeft="false"
-        android:layout_alignParentStart="false"
-        android:layout_alignParentBottom="false"
-        android:layout_alignParentEnd="true" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/bt_share"

@@ -6,10 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import java.util.Date;
 
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
+import ar.com.klee.marvin.voiceControl.STTService;
 
 /**
  * @author msalerno
@@ -59,15 +61,20 @@ public abstract class AbstractCallReceiver extends BroadcastReceiver {
             return;
         }
 
+        if(!STTService.isInstanceInitialized())
+            return;
+
         switch (state) {
 
             case TelephonyManager.CALL_STATE_RINGING:
+                Log.d("CALL", "State - Ringing");
                 isIncoming = true;
                 callStartTime = new Date();
                 savedNumber = number;
                 onIncomingCallStarted(context, number, callStartTime);
                 break;
             case TelephonyManager.CALL_STATE_OFFHOOK:
+                Log.d("CALL","State - Offhook");
                 //Transicion de ringing->offhook
                 AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
                 am.setMode(AudioManager.MODE_IN_CALL);
@@ -85,6 +92,7 @@ public abstract class AbstractCallReceiver extends BroadcastReceiver {
                 }
                 break;
             case TelephonyManager.CALL_STATE_IDLE:
+                Log.d("CALL","State - Idle");
                 AudioManager am2 = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
                 am2.setMode(AudioManager.MODE_NORMAL);
                 am2.setSpeakerphoneOn(false);

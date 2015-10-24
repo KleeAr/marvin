@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:configChanges="orientation|screenSize"
     android:background="#4db6ac">
 
     <include
@@ -57,11 +58,12 @@
                 android:layout_marginLeft="10dp" />
 
             <Spinner
-                android:layout_width="200dp"
+                android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:id="@+id/spinner1"
                 android:spinnerMode="dropdown"
-                android:layout_marginRight="10dp" />
+                android:layout_marginRight="10dp"
+                android:textAlignment="textEnd" />
 
         </LinearLayout>
 
@@ -73,7 +75,7 @@
             <TextView
                 android:layout_width="250dp"
                 android:layout_height="match_parent"
-                android:text="Establecer recorrido [Kms] mínimo"
+                android:text="Establecer recorrido [kms] mínimo"
                 android:id="@+id/textView8"
                 android:textSize="15dp"
                 android:textColor="#000000"
@@ -81,12 +83,13 @@
                 android:layout_marginLeft="10dp" />
 
             <Spinner
-                android:layout_width="200dp"
+                android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:id="@+id/spinner2"
                 android:layout_weight="1"
                 android:spinnerMode="dropdown"
-                android:layout_marginRight="10dp" />
+                android:layout_marginRight="10dp"
+                android:textAlignment="textEnd" />
 
         </LinearLayout>
 

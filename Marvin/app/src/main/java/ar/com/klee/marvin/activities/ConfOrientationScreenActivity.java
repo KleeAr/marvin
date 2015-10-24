@@ -1,7 +1,9 @@
 package ar.com.klee.marvin.activities;
 
+import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -31,6 +33,12 @@ public class ConfOrientationScreenActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(UserConfig.getInstance().getOrientation() == UserConfig.ORIENTATION_PORTRAIT)
+            setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        else
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+
         setContentView(R.layout.activity_configure_orientation);
 
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
@@ -88,7 +96,14 @@ public class ConfOrientationScreenActivity extends ActionBarActivity {
         else
             UserConfig.getSettings().setOrientation(UserConfig.ORIENTATION_LANDSCAPE);
 
-        finish();
+        Toast.makeText(this, "Reiniciá la sesión para que se aplique el cambio.", Toast.LENGTH_LONG).show();
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                finish();
+            }
+        }, 2000);
 
     }
 

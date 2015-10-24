@@ -42,7 +42,7 @@ public class FacebookService {
                 "me/feed", params, new GraphRequest.Callback() {
                     @Override
                     public void onCompleted(GraphResponse graphResponse) {
-                        Toast.makeText(context, "Tu texto se publicó en facebook", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Texto publicado en Facebook", Toast.LENGTH_SHORT).show();
                         if (graphResponse.getError() != null) {
                             Log.d("FacebookService", "Error publishing in facebook. " + graphResponse.getError().getErrorMessage() + ". Error code: " + graphResponse.getError().getErrorCode());
                         }
@@ -60,7 +60,7 @@ public class FacebookService {
         ShareApi.share(content, new FacebookCallback<Sharer.Result>() {
             @Override
             public void onSuccess(Sharer.Result result) {
-                Toast.makeText(context, "image posted on facebook", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Imagen publicada en Facebook", Toast.LENGTH_SHORT).show();
             }
 
             @Override

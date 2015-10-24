@@ -46,19 +46,18 @@ public class ResponderLlamadaHandler extends CommandHandler{
 
         String input = context.getString(COMMAND);
         if(input.equals("atender")) {
-            context.getObject(ACTIVITY,IncomingCallActivity.class).acceptCall();
+            ((IncomingCallActivity)getCommandHandlerManager().getActivity()).acceptCall();
             context.put(STEP, 0);
             return context;
         }
 
         if(input.equals("rechazar")) {
-            getTextToSpeech().speakText("Rechazando llamada");
-            context.getObject(ACTIVITY,IncomingCallActivity.class).rejectCall();
+            ((IncomingCallActivity)getCommandHandlerManager().getActivity()).rejectCall();
             context.put(STEP, 0);
             return context;
         }
 
-        getTextToSpeech().speakText("Debés indicar atender o rechazar");
+        getTextToSpeech().speakText("");
 
         context.put(STEP, 3);
         return context;

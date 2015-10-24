@@ -15,11 +15,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
 @ComponentScan({ "ar.com.klee.marvin.*" })
 @EnableJpaRepositories({ "ar.com.klee.marvin.repository" })
 @EntityScan({ "ar.com.klee.marvin.model" })
+@EnableTransactionManagement
 public class Application {
 
 	public static void main(String[] args) {
@@ -50,7 +52,7 @@ public class Application {
 
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
-			http.authorizeRequests().antMatchers("/users/register").permitAll().antMatchers("/users/auth").permitAll().anyRequest().authenticated();
+			http.authorizeRequests().antMatchers("/users/register").permitAll().antMatchers("/users/auth").permitAll().antMatchers("/users/password*").permitAll().antMatchers("/users/password/*").permitAll().anyRequest().authenticated();
 			http.csrf().disable();
 		}
 

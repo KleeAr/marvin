@@ -5,9 +5,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.activities.Tab1;
 import ar.com.klee.marvin.activities.Tab2;
 import ar.com.klee.marvin.activities.TabMap;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 
 
 public class ViewPagerAdpater extends FragmentStatePagerAdapter {

@@ -83,7 +83,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         //initializeTwitterSdk();
         ButterKnife.bind(this);
-        Marvin.setMarvinHost("192.168.0.103");
+        Marvin.setMarvinHost("186.23.170.58");
+        Marvin.setMarvinPort(":80");
 
         Typeface typeface = Typeface.createFromAsset(getAssets(), "Wisdom Script AJ.otf");
 
@@ -147,8 +148,10 @@ public class LoginActivity extends AppCompatActivity {
                 new android.os.Handler().postDelayed(
                         new Runnable() {
                             public void run() {
+                                UserConfig config = new UserConfig();
                                 Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class );
                                 UserConfig.setSettings(loginResponse.getSettings());
+                                config.setUserId(loginResponse.getUserId());
                                 startActivity(intent);
                                 progressDialog.dismiss();
                             }
@@ -214,7 +217,7 @@ public class LoginActivity extends AppCompatActivity {
             emailText.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 4 || password.length() > 8) {
+        if (password.isEmpty() || password.length() < 4) {
             passwordText.setError("Debe tener entre 4 y 8 caracteres alfanumericos");
             valid = false;
         } else {
@@ -315,11 +318,6 @@ public class LoginActivity extends AppCompatActivity {
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
 
-        final EditText siteName = new EditText(this);
-        siteName.setHint("Usuario");
-        siteName.setFilters(new InputFilter[] { new InputFilter.LengthFilter(30) });
-        layout.addView(siteName);
-
         final EditText siteAddress = new EditText(this);
         siteAddress.setHint("Email");
         layout.addView(siteAddress);
@@ -329,7 +327,19 @@ public class LoginActivity extends AppCompatActivity {
         builder.setPositiveButton("Enviar", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
 
-                Toast.makeText(getApplicationContext(),"Enviando...", Toast.LENGTH_SHORT).show();
+                Marvin.users().recoverPasswordEmail(siteAddress.getText().toString(), new retrofit.Callback<Void>() {
+                    @Override
+                    public void success(Void aVoid, Response response) {
+                        Toast.makeText(getApplicationContext(),getString(R.string.recover_pass_email_sent), Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        Toast.makeText(getApplicationContext(),getString(R.string.service_unavailable), Toast.LENGTH_LONG).show();
+                        Log.e(TAG, "Error from server: " +  error.getMessage(), error);
+                    }
+                });
+                Toast.makeText(getApplicationContext(), "Enviando...", Toast.LENGTH_SHORT).show();
 
             }
         });

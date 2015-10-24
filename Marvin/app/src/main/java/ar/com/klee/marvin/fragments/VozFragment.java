@@ -67,7 +67,7 @@ public class VozFragment extends Fragment {
         commandList.add(new Command("Establecer volumen","Establecer volumen [volumen] (Ejemplo: Establecer volumen 15)","Define un valor determinado para el volumen multimedia"));
         commandList.add(new Command("Llamar a contacto","Llamar a [contacto] (Ejemplo: Llamar a Juan Pérez)","Llama a un contacto determinado"));
         commandList.add(new Command("Llamar a número","Llamar al número [número] (Ejemplo: Llamar al número 1544443333)","Llama a un número determinado"));
-        commandList.add(new Command("Pausar música","Pausar música","Detiene la reproducción de la canción que está sonando"));
+        commandList.add(new Command("Pausar reproducción","Pausar reproducción","Detiene la reproducción de la música o de la radio que está sonando"));
         commandList.add(new Command("Publicar en facebook","Publicar en facebook [mensaje] (Ejemplo: Publicar en facebook Estoy usando Marvin)","Publica un mensaje en el muro de tu facebook, siempre que hayas asociado tu cuenta"));
         commandList.add(new Command("Reproducir artista","Reproducir artista [artista] (Ejemplo: Reproducir artista Coldplay)","Reproduce una canción del artista indicado"));
         commandList.add(new Command("Reproducir canción","Reproducir canción [canción] (Ejemplo: Reproducir canción Speed of sound)","Reproduce la canción indicada"));

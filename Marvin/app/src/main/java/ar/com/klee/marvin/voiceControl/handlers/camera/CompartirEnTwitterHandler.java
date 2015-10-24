@@ -55,6 +55,7 @@ public class CompartirEnTwitterHandler extends CommandHandler {
         List<String> hashtags = new ArrayList<>();
         commandHandlerContext.put(TWITTER_HASHTAG, hashtags);
         commandHandlerContext.put(SET_MESSAGE, false);
+        commandHandlerContext.put(MESSAGE,"");
     }
 
     //PRONUNCIA MENSAJE
@@ -110,7 +111,6 @@ public class CompartirEnTwitterHandler extends CommandHandler {
         }
 
         if(input.equals("no")){
-            getTextToSpeech().speakText("Publicando la foto en Twitter");
 
             CameraActivity cameraActivity = null;
             SiteActivity siteActivity = null;
@@ -126,12 +126,19 @@ public class CompartirEnTwitterHandler extends CommandHandler {
 
             String textToPublish = context.getString(MESSAGE);
 
-            if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
-                cameraActivity.shareInTwitter(textToPublish);
-            }if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
-                siteActivity.shareInTwitter(textToPublish);
-            }else{
-                tripActivity.shareInTwitter(textToPublish);
+            try {
+                if (getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
+                    cameraActivity.share();
+                    cameraActivity.shareInTwitter(textToPublish);
+                } else if (getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
+                    siteActivity.shareInTwitter(textToPublish);
+                } else {
+                    tripActivity.shareInTwitter(textToPublish);
+                }
+                getTextToSpeech().speakText("Publicando la foto en Twitter");
+            }catch(Exception e){
+                getTextToSpeech().speakText("La foto no pudo ser publicada. Recordá asociar tu cuenta en el menú perfil");
+                e.printStackTrace();
             }
 
             context.put(STEP, 0);
@@ -202,13 +209,10 @@ public class CompartirEnTwitterHandler extends CommandHandler {
         }
 
         if(input.equals("no")){
-            getTextToSpeech().speakText("Publicando la foto en Twitter");
 
             CameraActivity cameraActivity = null;
             SiteActivity siteActivity = null;
             TripActivity tripActivity = null;
-
-            Log.d("CAM",((Integer)getCommandHandlerManager().getCurrentActivity()).toString());
 
             if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
                 cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
@@ -251,12 +255,21 @@ public class CompartirEnTwitterHandler extends CommandHandler {
 
             }
 
-            if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
-                cameraActivity.shareInTwitter(textToPublish);
-            }if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
-                siteActivity.shareInTwitter(textToPublish);
-            }else{
-                tripActivity.shareInTwitter(textToPublish);
+            try {
+                if (getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
+                    cameraActivity.share();
+                    cameraActivity.shareInTwitter(textToPublish);
+                } else if (getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
+                    siteActivity.shareInTwitter(textToPublish);
+                } else {
+                    tripActivity.shareInTwitter(textToPublish);
+                }
+
+                getTextToSpeech().speakText("Publicando la foto en Twitter");
+
+            }catch(Exception e){
+                getTextToSpeech().speakText("La foto no pudo ser publicada. Recordá asociar tu cuenta en el menú perfil");
+                e.printStackTrace();
             }
 
             context.put(STEP, 0);

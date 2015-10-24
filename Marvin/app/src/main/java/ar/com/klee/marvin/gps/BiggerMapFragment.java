@@ -97,21 +97,25 @@ public class BiggerMapFragment extends Fragment {
 
         googleMap = mMapView.getMap();
 
-        MarkerOptions marker = new MarkerOptions().position(new LatLng(LocationSender.getInstance().getStartLatitude(), LocationSender.getInstance().getStartLongitude()));
+        if(LocationSender.getInstance().getStartLatitude() != 0.0 && LocationSender.getInstance().getStartLongitude() != 0.0) {
+
+            MarkerOptions marker = new MarkerOptions().position(new LatLng(LocationSender.getInstance().getStartLatitude(), LocationSender.getInstance().getStartLongitude()));
+
+            // Changing marker icon
+            marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)).title("Partida").snippet(LocationSender.getInstance().getStartAddress());
+
+            // adding marker
+            googleMap.addMarker(marker);
+
+        }
+
+        MarkerOptions marker2 = new MarkerOptions().position(new LatLng(LocationSender.getInstance().getActualLatitude(), LocationSender.getInstance().getActualLongitude()));
 
         // Changing marker icon
-        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)).title("Partida").snippet(LocationSender.getInstance().getStartAddress());
+        marker2.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).title("Posición Actual").snippet(LocationSender.getInstance().getActualAddress());
 
         // adding marker
-        googleMap.addMarker(marker);
-
-        marker = new MarkerOptions().position(new LatLng(LocationSender.getInstance().getActualLatitude(), LocationSender.getInstance().getActualLongitude()));
-
-        // Changing marker icon
-        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)).title("Posición Actual").snippet(LocationSender.getInstance().getActualAddress());
-
-        // adding marker
-        lastMarker = googleMap.addMarker(marker);
+        lastMarker = googleMap.addMarker(marker2);
 
         CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(LocationSender.getInstance().getActualLatitude(),LocationSender.getInstance().getActualLongitude())).zoom(zoom).build();
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));

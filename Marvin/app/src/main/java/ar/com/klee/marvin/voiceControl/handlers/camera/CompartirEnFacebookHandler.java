@@ -18,7 +18,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 
 public class CompartirEnFacebookHandler extends CommandHandler {
 
-    protected static final String FACEBOOK_HASHTAG = "FACEBOOK_HASHTAG";
+    protected static final String FACEBOOK_HASHTAGS = "FACEBOOK_HASHTAGS";
 
     public CompartirEnFacebookHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
         super(Arrays.asList("compartir en facebook"), textToSpeech, context, commandHandlerManager);
@@ -53,8 +53,9 @@ public class CompartirEnFacebookHandler extends CommandHandler {
 
     @Override
     protected void addSpecificCommandContext(CommandHandlerContext commandHandlerContext) {
-        commandHandlerContext.put(FACEBOOK_HASHTAG, new ArrayList<String>());
+        commandHandlerContext.put(FACEBOOK_HASHTAGS, new ArrayList<String>());
         commandHandlerContext.put(SET_MESSAGE, false);
+        commandHandlerContext.put(MESSAGE,"");
     }
 
     //PRONUNCIA MENSAJE
@@ -113,6 +114,7 @@ public class CompartirEnFacebookHandler extends CommandHandler {
 
             if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
                 cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
+                cameraActivity.share();
                 cameraActivity.shareInFacebook(textToPublish);
             }else if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
                 siteActivity = context.getObject(ACTIVITY, SiteActivity.class);
@@ -136,7 +138,8 @@ public class CompartirEnFacebookHandler extends CommandHandler {
         String hashtag = context.getString(COMMAND);
         getTextToSpeech().speakText("¿Querés agregar el hashtag " + hashtag + "?");
 
-        context.put(FACEBOOK_HASHTAG, context.getList(FACEBOOK_HASHTAG, String.class).add(hashtag));
+        List<String> hashtags = context.getList(FACEBOOK_HASHTAGS, String.class);
+        hashtags.add(hashtag);
 
         return context.put(STEP, 9);
 
@@ -157,9 +160,9 @@ public class CompartirEnFacebookHandler extends CommandHandler {
 
         if(input.equals("no")){
             getTextToSpeech().speakText("¿Qué hashtag querés agregar?");
-            List<String> hashtags = context.getList(FACEBOOK_HASHTAG, String.class);
+            List<String> hashtags = context.getList(FACEBOOK_HASHTAGS, String.class);
             hashtags.remove(hashtags.size()-1);
-            context.put(FACEBOOK_HASHTAG, hashtags);
+            context.put(FACEBOOK_HASHTAGS, hashtags);
             return context.put(STEP, 7);
         }
 
@@ -184,7 +187,7 @@ public class CompartirEnFacebookHandler extends CommandHandler {
             getTextToSpeech().speakText("Publicando en el muro de Facebook");
 
             String textToPublish = context.getString(MESSAGE);
-            List<String> hashtags = context.getList(FACEBOOK_HASHTAG, String.class);
+            List<String> hashtags = context.getList(FACEBOOK_HASHTAGS, String.class);
 
             Character firstCharacter, newFirstCharacter;
 
@@ -222,6 +225,7 @@ public class CompartirEnFacebookHandler extends CommandHandler {
 
             if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
                 cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
+                cameraActivity.share();
                 cameraActivity.shareInFacebook(textToPublish);
             }else if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
                 siteActivity = context.getObject(ACTIVITY, SiteActivity.class);

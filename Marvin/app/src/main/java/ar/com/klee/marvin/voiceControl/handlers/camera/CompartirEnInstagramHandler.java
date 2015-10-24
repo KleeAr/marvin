@@ -56,6 +56,7 @@ public class CompartirEnInstagramHandler extends CommandHandler {
         List<String> hashtags = new ArrayList<>();
         commandHandlerContext.put(INSTAGRAM_HASHTAG, hashtags);
         commandHandlerContext.put(SET_MESSAGE, false);
+        commandHandlerContext.put(MESSAGE,"");
     }
 
     //PRONUNCIA MENSAJE
@@ -131,6 +132,7 @@ public class CompartirEnInstagramHandler extends CommandHandler {
             String textToPublish = context.getString(MESSAGE);
 
             if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
+                cameraActivity.share();
                 cameraActivity.shareInInstagram(textToPublish);
             }else if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
                 siteActivity.shareInInstagram(textToPublish);
@@ -254,8 +256,9 @@ public class CompartirEnInstagramHandler extends CommandHandler {
             }
 
             if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
+                cameraActivity.share();
                 cameraActivity.shareInInstagram(textToPublish);
-            }if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
+            }else if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
                 siteActivity.shareInInstagram(textToPublish);
             }else{
                 tripActivity.shareInInstagram(textToPublish);

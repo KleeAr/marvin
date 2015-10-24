@@ -2,6 +2,7 @@ package ar.com.klee.marvin.activities;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -24,6 +25,7 @@ import android.widget.Toast;
 
 import java.io.File;
 
+import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.gps.CardSiteAdapter;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.gps.Site;
@@ -46,6 +48,12 @@ public class SiteActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(UserConfig.getInstance().getOrientation() == UserConfig.ORIENTATION_PORTRAIT)
+            setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        else
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+
         setContentView(R.layout.activity_site);
 
         addMap();
@@ -246,6 +254,35 @@ public class SiteActivity extends ActionBarActivity {
             }
         }, 3000);
 
+    }
+
+    public void showImageDialog(View v){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+        builder.setCancelable(true);
+        builder.setTitle(site.getSiteName() + " - " + site.getSiteAddress());
+
+        final LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(30, 10, 30, 10);
+
+        final ImageView image1 = new ImageView(this);
+
+        File imgFile = new  File("/sdcard/MARVIN/Sitios/" + site.getSiteName() + ".png");
+        if(imgFile.exists()){
+            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+            image1.setImageBitmap(myBitmap);
+        }else{
+            image1.setImageResource(R.drawable.city);
+        }
+
+        final LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.HORIZONTAL);
+
+        image1.setLayoutParams(lp);
+        layout.addView(image1);
+
+        builder.setView(layout);
+
+        builder.show();
     }
 
     public void setMapBitmap(Bitmap bitmap){

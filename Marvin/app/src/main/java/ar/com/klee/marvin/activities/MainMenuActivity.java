@@ -3,10 +3,15 @@ package ar.com.klee.marvin.activities;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -28,26 +33,41 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
-import android.telephony.TelephonyManager;
+import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 import com.google.gson.Gson;
+import com.twitter.sdk.android.Twitter;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
 
+import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
@@ -58,12 +78,18 @@ import ar.com.klee.marvin.bluetooth.BluetoothConstants;
 import ar.com.klee.marvin.bluetooth.BluetoothHandler;
 import ar.com.klee.marvin.bluetooth.BluetoothService;
 import ar.com.klee.marvin.call.CallDriver;
+import ar.com.klee.marvin.client.Marvin;
+import ar.com.klee.marvin.client.model.SiteRepresentation;
+import ar.com.klee.marvin.client.Marvin;
+import ar.com.klee.marvin.client.model.TripRepresentation;
+import ar.com.klee.marvin.client.model.TripStepRepresentation;
 import ar.com.klee.marvin.call.CallReceiver;
 import ar.com.klee.marvin.call.PhoneCall;
 import ar.com.klee.marvin.client.model.User;
 import ar.com.klee.marvin.client.model.UserSetting;
 import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.configuration.UserSites;
+import ar.com.klee.marvin.configuration.UserTrips;
 import ar.com.klee.marvin.data.Channel;
 import ar.com.klee.marvin.data.Item;
 import ar.com.klee.marvin.fragments.ConfigureFragment;
@@ -77,6 +103,8 @@ import ar.com.klee.marvin.fragments.VozFragment;
 import ar.com.klee.marvin.gps.LocationSender;
 import ar.com.klee.marvin.gps.MapFragment;
 import ar.com.klee.marvin.gps.Site;
+import ar.com.klee.marvin.gps.Trip;
+import ar.com.klee.marvin.gps.TripStep;
 import ar.com.klee.marvin.multimedia.music.MusicService;
 import ar.com.klee.marvin.multimedia.video.YouTubeVideo;
 import ar.com.klee.marvin.service.WeatherServiceCallback;
@@ -84,10 +112,15 @@ import ar.com.klee.marvin.service.YahooWeatherService;
 import ar.com.klee.marvin.sms.SMSDriver;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+import io.fabric.sdk.android.Fabric;
 
 
 public class MainMenuActivity extends ActionBarActivity implements DelegateTask<List<YouTubeVideo>>, WeatherServiceCallback,AdapterView.OnItemClickListener {
 
+    private CallbackManager callbackManager = CallbackManager.Factory.create();
 
     public final int UPDATE_WEATHER = 1000000; //cantidad de milisegundos para actualizar el clima
     public static final String TWITTER_KEY = "IsfPZw7I4i4NCZaFxM9BZX4Qi";
@@ -132,6 +165,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     public static TextView dateText;
 
     private Gson gson = new Gson();
+    private ImageView splashLogin;
+    private ImageView splashLogout;
 
     public int actualFragmentPosition = 1;
     public Stack<Integer> previousMenus = new Stack();
@@ -140,6 +175,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     private boolean wasBackPressed = false;
 
+    private String lastSong;
+    private String lastArtist;
     /**
      * The Handler that gets information back from the BluetoothService
      */
@@ -152,12 +189,15 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             startActivity(incomingIntent);
         }
 
+
         @Override
         protected void onMessageWrote(String writeMessage) {
             // TODO handle wrote
         }
     };
+    private Fragment lastFragment;
 
+    private int tabNumber = 0;
 
     private BluetoothService bluetoothService;
     private Intent bluetoothServiceIntent;
@@ -167,13 +207,31 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     private String lastArtist;
 
     private int radioStopPlayCounter = 0;
-    private CallReceiver receiver;
+    public ViewPager pager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         CommandHandlerManager.destroyInstance();
+
+        UserConfig userConfig = new UserConfig();
+        UserSites userSites = new UserSites();
+        UserTrips userTrips = new UserTrips();
+
+        SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
+        loadUserSettings(mPrefs);
+        loadSites(mPrefs);
+        loadUserTrips(mPrefs);
+
+        UserConfig.getInstance().setOrientation(UserConfig.getSettings().getOrientation());
+
+        if(UserConfig.getInstance().getOrientation() == UserConfig.ORIENTATION_PORTRAIT)
+            setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        else
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+
         setContentView(R.layout.activity_main_menu);
+
         PowerManager powerManager = (PowerManager)this.getSystemService(Context.POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "My Lock");
         wakeLock.acquire();
@@ -181,49 +239,27 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         initializeMusicService();
         initializeSTTService();
 
-        UserConfig config = new UserConfig();
-        UserSites sites = new UserSites();
-
-        boolean invitado = true;
-        if(invitado){
-
-            SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
-
-            UserSetting invitedUserSettings = new UserSetting();
-
-            invitedUserSettings.setMiniumTripTime(mPrefs.getLong("miniumTripTime", 5));
-            invitedUserSettings.setMiniumTripDistance(mPrefs.getLong("miniumTripDistance", 1));
-            invitedUserSettings.setEmergencyNumber(mPrefs.getString("emergencyNumber", ""));
-            invitedUserSettings.setEmergencySMS(mPrefs.getString("emergencySMS", ""));
-            invitedUserSettings.setOrientation(mPrefs.getInt("orientation", 0));
-            invitedUserSettings.setOpenAppWhenStop(mPrefs.getBoolean("openAppWhenStop", false));
-            invitedUserSettings.setAppToOpenWhenStop(mPrefs.getString("appToOpenWhenStop", "No seleccionada"));
-            invitedUserSettings.setHotspotName(mPrefs.getString("hotspotName", "MRVN"));
-            invitedUserSettings.setHotspotPassword(mPrefs.getString("hotspotPassword", "marvinHotSpot"));
-            invitedUserSettings.setAlertSpeed(mPrefs.getInt("alertSpeed", 80));
-            invitedUserSettings.setSpeedAlertEnabled(mPrefs.getBoolean("speedAlertEnabled", false));
-
-            config.setSettings(invitedUserSettings);
-
-            int numberOfSites = mPrefs.getInt("NumberOfSites",0);
-
-            Integer i;
-
-            for(i=1; i<=numberOfSites; i++) {
-                Gson gson = new Gson();
-                String json = mPrefs.getString("Site"+i.toString(), "");
-                UserSites.getInstance().add(gson.fromJson(json, Site.class));
-            }
-
-        }else{
-
-        }
+        initializeFacebookSdk();
+        TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
+        Fabric.with(this, new Twitter(authConfig));
 
         //Crea el mainMenu
         if (MainMenuFragment.isInstanceInitialized())
             mainMenuFragment = MainMenuFragment.getInstance();
         else
             mainMenuFragment = new MainMenuFragment();
+
+        splashLogin = (ImageView)findViewById(R.id.splash_login);
+        splashLogout = (ImageView)findViewById(R.id.splash_logout);
+
+        splashLogin.setVisibility(ImageView.VISIBLE);
+        splashLogout.setVisibility(ImageView.INVISIBLE);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                splashLogin.setVisibility(ImageView.INVISIBLE);
+            }
+        }, 10000);
 
         weekDay = (TextView) findViewById(R.id.weekDayText);
         dateText = (TextView) findViewById(R.id.dateText);
@@ -344,6 +380,16 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
             public void onDrawerOpened(View drawerView) {
 
+                try {
+                    if(MainMenuFragment.isInstanceInitialized()) {
+                        if(pager == null)
+                            MainMenuFragment.getInstance().getPager().setCurrentItem(0);
+                        else
+                            pager.setCurrentItem(0);
+                    }
+                }catch(Exception e){
+                }
+
                 // getSupportActionBar().setTitle(mTitle);
                 supportInvalidateOptionsMenu();
             }
@@ -363,6 +409,83 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             }
         };
         bluetoothService = BluetoothService.getInstance();
+    }
+
+    private void loadUserTrips(final SharedPreferences mPrefs) {
+
+        if(Marvin.isAuthenticated()) {
+            Marvin.users().trips().get(new Callback<List<TripRepresentation>>() {
+                @Override
+                public void success(List<TripRepresentation> reps, Response response) {
+                    for(TripRepresentation rep: reps) {
+                        UserTrips.getInstance().add(new Trip(rep));
+                    }
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    Log.e("MainMenuActivity", "Error refreshing sites: " + error.getMessage(), error);
+                    loadFromSharedPrefs(mPrefs);
+                }
+            });
+        } else {
+            loadFromSharedPrefs(mPrefs);
+        }
+
+
+    }
+
+    private void loadFromSharedPrefs(SharedPreferences mPrefs) {
+        int numberOfTrips = mPrefs.getInt("NumberOfTrips",0);
+
+        for(Integer i = numberOfTrips; i >= 1; i--) {
+            Gson gson = new Gson();
+            String json = mPrefs.getString("Trip"+i.toString(), "");
+            UserTrips.getInstance().add(gson.fromJson(json, Trip.class));
+        }
+    }
+
+    private void loadSites(final SharedPreferences mPrefs) {
+
+        if(Marvin.isAuthenticated()) {
+            Marvin.users().trips().getSites(new Callback<List<SiteRepresentation>>() {
+                @Override
+                public void success(List<SiteRepresentation> siteRepresentations, Response response) {
+                    for(SiteRepresentation siteRep : siteRepresentations) {
+                        Site site = new Site(siteRep.getName(), siteRep.getAddress(), new LatLng(siteRep.getLat(), siteRep.getLng()), siteRep.getThumbnail());
+                        site.setSiteImage(siteRep.getSiteImage());
+                        UserSites.getInstance().add(site);
+                    }
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    Log.e("MainMenuActivity", "Error getting sites from server", error);
+                    loadFromSharedPref(mPrefs);
+                }
+            });
+        } else {
+            loadFromSharedPref(mPrefs);
+        }
+
+    }
+
+    private void loadSettingsFromSharedPrefs(SharedPreferences mPrefs) {
+        UserSetting invitedUserSettings = new UserSetting();
+
+        invitedUserSettings.setMiniumTripTime(mPrefs.getLong("miniumTripTime", 5));
+        invitedUserSettings.setMiniumTripDistance(mPrefs.getLong("miniumTripDistance", 1));
+        invitedUserSettings.setEmergencyNumber(mPrefs.getString("emergencyNumber", ""));
+        invitedUserSettings.setEmergencySMS(mPrefs.getString("emergencySMS", ""));
+        invitedUserSettings.setOrientation(mPrefs.getInt("orientation", 0));
+        invitedUserSettings.setOpenAppWhenStop(mPrefs.getBoolean("openAppWhenStop", false));
+        invitedUserSettings.setAppToOpenWhenStop(mPrefs.getString("appToOpenWhenStop", "No seleccionada"));
+        invitedUserSettings.setHotspotName(mPrefs.getString("hotspotName", "MRVN"));
+        invitedUserSettings.setHotspotPassword(mPrefs.getString("hotspotPassword", "marvinHotSpot"));
+        invitedUserSettings.setAlertSpeed(mPrefs.getInt("alertSpeed", 80));
+        invitedUserSettings.setSpeedAlertEnabled(mPrefs.getBoolean("speedAlertEnabled", false));
+
+        UserConfig.setSettings(invitedUserSettings);
     }
 
     public int getActualFragmentPosition() {
@@ -390,6 +513,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         }
     }
 
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
@@ -403,6 +527,15 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             refreshConfiguration();
         }else if(actualFragmentPosition == 5){
             refreshSites();
+        }else if(actualFragmentPosition == 4){
+            refreshTrips();
+        }else if(actualFragmentPosition == 1){
+            if(MainMenuFragment.isInstanceInitialized()) {
+                if(pager == null)
+                    tabNumber = MainMenuFragment.getInstance().getPager().getCurrentItem();
+                else
+                    tabNumber = pager.getCurrentItem();
+            }
         }
 
         previousMenus.push(actualFragmentPosition);
@@ -432,6 +565,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 break;
             case 1:
                 setFragment(1, MainMenuFragment.class);
+                previousMenus.removeAllElements();
                 break;
             case 2:
                 setFragment(2, VozFragment.class);
@@ -458,11 +592,56 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 titleText.setText("Ayuda");
                 break;
             case 10:
-                MainMenuActivity.mapFragment.finishTrip();
-                locationSender.stopLocationSender();
-                if(MainMenuFragment.isInstanceInitialized())
-                    MainMenuFragment.getInstance().stopThread();
-                stopServices();
+                final AlertDialog.Builder builder =new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+                builder.setCancelable(true);
+                builder.setTitle("Cerrar Sesión");
+
+                LinearLayout layout = new LinearLayout(this);
+                layout.setOrientation(LinearLayout.VERTICAL);
+
+                final LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                lp.setMargins(8, 10, 8, 10);
+
+                final TextView text = new TextView(this);
+                text.setText("¿Estás seguro de que querés cerrar la sesión? Esto dará por finalizado tu viaje actual.");
+                text.setLayoutParams(lp);
+                layout.addView(text);
+                builder.setView(layout);
+
+                builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        dialog.dismiss();
+
+                        splashLogout.setVisibility(ImageView.VISIBLE);
+
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            public void run() {
+                                try {
+                                    mapFragment.finishTrip(0);
+                                    locationSender.stopLocationSender();
+                                    if (MainMenuFragment.isInstanceInitialized())
+                                        MainMenuFragment.getInstance().stopThread();
+                                    stopServices();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }, 2000);
+
+                    }
+                });
+
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        dialog.dismiss();
+
+                    }
+                });
+
+                builder.show();
                 break;
             case 11:
                 mDrawerLayout.closeDrawer(mLvDrawerMenu);
@@ -470,12 +649,14 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 break;
         }
 
-        // Setting it as the Toolbar for the activity
         setSupportActionBar(toolbar);
     }
 
     @Override
     public void onBackPressed() {
+
+        if(wasBackPressed)
+            return;
 
         commandHandlerManager.setNullCommand();
         STTService.getInstance().setIsListening(false);
@@ -484,6 +665,66 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             refreshConfiguration();
         }else if(actualFragmentPosition == 5){
             refreshSites();
+        }else if(actualFragmentPosition == 4){
+            refreshTrips();
+        }else if(actualFragmentPosition == 1){
+            final int tab = MainMenuFragment.getInstance().getPager().getCurrentItem();
+
+            final AlertDialog.Builder builder =new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+            builder.setCancelable(true);
+            builder.setTitle("Cerrar Sesión");
+
+            LinearLayout layout = new LinearLayout(this);
+            layout.setOrientation(LinearLayout.VERTICAL);
+
+            final LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            lp.setMargins(8, 10, 8, 10);
+
+            final TextView text = new TextView(this);
+            text.setText("¿Estás seguro de que querés cerrar la sesión? Esto dará por finalizado tu viaje actual.");
+            text.setLayoutParams(lp);
+
+            layout.addView(text);
+            builder.setView(layout);
+
+            builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+
+                    dialog.dismiss();
+
+                    wasBackPressed = true;
+                    splashLogout.setVisibility(ImageView.VISIBLE);
+
+                    final int tabValue = tab;
+
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            try {
+                                mapFragment.finishTrip(tabValue);
+                                locationSender.stopLocationSender();
+                                if (MainMenuFragment.isInstanceInitialized())
+                                    MainMenuFragment.getInstance().stopThread();
+                                stopServices();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, 2000);
+
+                }
+            });
+
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+
+                    dialog.dismiss();
+
+                }
+            });
+
+            builder.show();
+
         }
 
         if(!previousMenus.empty()){
@@ -541,11 +782,52 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     titleText.setText("Ayuda");
                     break;
                 case 10:
-                    MainMenuActivity.mapFragment.finishTrip();
-                    locationSender.stopLocationSender();
-                    if(MainMenuFragment.isInstanceInitialized())
-                        MainMenuFragment.getInstance().stopThread();
-                    stopServices();
+                    final AlertDialog.Builder builder =new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+                    builder.setCancelable(true);
+                    builder.setTitle("Cerrar Sesión");
+
+                    LinearLayout layout = new LinearLayout(this);
+                    layout.setOrientation(LinearLayout.VERTICAL);
+
+                    final TextView text = new TextView(this);
+                    text.setText("¿Estás seguro de que querés cerrar la sesión? Esto dará por finalizado tu viaje actual");
+                    layout.addView(text);
+                    builder.setView(layout);
+
+                    builder.setPositiveButton("Sí", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            dialog.dismiss();
+
+                            splashLogout.setVisibility(ImageView.VISIBLE);
+
+                            Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                public void run() {
+                                    try {
+                                        mapFragment.finishTrip(0);
+                                        locationSender.stopLocationSender();
+                                        if (MainMenuFragment.isInstanceInitialized())
+                                            MainMenuFragment.getInstance().stopThread();
+                                        stopServices();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }, 2000);
+
+                        }
+                    });
+
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+
+                            dialog.dismiss();
+
+                        }
+                    });
+
+                    builder.show();
                     break;
                 case 11:
                     mDrawerLayout.closeDrawer(mLvDrawerMenu);
@@ -558,24 +840,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             return;
         }
 
-        if(wasBackPressed)
-            return;
-
-        wasBackPressed = true;
-
-        MainMenuFragment.getInstance().setItem(2);
-
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                mapFragment.finishTrip();
-                locationSender.stopLocationSender();
-                if (MainMenuFragment.isInstanceInitialized())
-                    MainMenuFragment.getInstance().stopThread();
-                stopServices();
-            }
-        }, 1000);
-
     }
 
     public void setFragment(int position){
@@ -584,6 +848,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             refreshConfiguration();
         }else if(actualFragmentPosition == 5){
             refreshSites();
+        }else if(actualFragmentPosition == 4){
+            refreshTrips();
         }
 
         actualFragmentPosition = position;
@@ -637,6 +903,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 titleText.setText("Ayuda");
                 break;
             case 10:
+                splashLogout.setVisibility(ImageView.VISIBLE);
                 MainMenuActivity.mapFragment.finishTrip();
                 locationSender.stopLocationSender();
                 if(MainMenuFragment.isInstanceInitialized())
@@ -680,6 +947,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.frame_container, fragment, fragmentClass.getSimpleName());
             fragmentTransaction.commit();
+
+            lastFragment = fragment;
 
             mLvDrawerMenu.setItemChecked(position, true);
             mDrawerLayout.closeDrawer(mLvDrawerMenu);
@@ -887,12 +1156,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         }
     }
 
-    @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (bluetoothService != null) {
-           // bluetoothService.stop();
-        }
         doUnbindService();
     }
 
@@ -908,6 +1173,10 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
 
         if(musicService.getIsRadio()){
+            if(!musicService.isPlaying()){
+                MainMenuFragment.tv_artist.setText("");
+                MainMenuFragment.tv_song.setText("Reproducción Pausada");
+            }
             MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_audiotrack_white_48dp);
             MainMenuFragment.getInstance().setIsRadio(false);
             musicService.setIsRadio(false);
@@ -1306,8 +1575,15 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             STTService.getInstance().stopListening();
             callDriver.setUriContact(data.getData());
             callDriver.retrieveContactNumber();
-
+        }else{
+            try {
+                callbackManager.onActivityResult(requestCode, resultCode, data);
+                lastFragment.onActivityResult(requestCode, resultCode, data);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
+
     }
 
     public void openCallDialog() {
@@ -1427,6 +1703,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         MainMenuFragment.bt_play.setEnabled(true);
         MainMenuFragment.bt_next.setEnabled(true);
         MainMenuFragment.bt_previous.setEnabled(true);
+        MainMenuFragment.bt_radioMusic.setEnabled(true);
 
     }
 
@@ -1435,6 +1712,21 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         MainMenuFragment.bt_play.setEnabled(false);
         MainMenuFragment.bt_next.setEnabled(false);
         MainMenuFragment.bt_previous.setEnabled(false);
+        MainMenuFragment.bt_radioMusic.setEnabled(false);
+
+    }
+
+    public void setProgressVisible(){
+
+        MainMenuFragment.loadingRadio.setVisibility(ProgressBar.VISIBLE);
+        MainMenuFragment.bt_play.setVisibility(ImageButton.INVISIBLE);
+
+    }
+
+    public  void setProgressInvisible(){
+
+        MainMenuFragment.loadingRadio.setVisibility(ProgressBar.INVISIBLE);
+        MainMenuFragment.bt_play.setVisibility(ImageButton.VISIBLE);
 
     }
 
@@ -1443,33 +1735,6 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
             MainMenuFragment.tv_song.setText(lastSong);
             MainMenuFragment.tv_artist.setText(lastArtist);
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        unregisterReceiver(receiver);
-        CallReceiver.setWasRegistered(false);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        receiver = new CallReceiver();
-        IntentFilter filter = new IntentFilter(TelephonyManager.ACTION_PHONE_STATE_CHANGED);
-        filter.setPriority(Integer.MAX_VALUE);
-        registerReceiver(receiver, filter);
-        CallReceiver.setWasRegistered(true);
-        // Performing this check in onResume() covers the case in which BT was
-        // not enabled during onStart(), so we were paused to enable it...
-        // onResume() will be called when ACTION_REQUEST_ENABLE activity returns.
-        if (bluetoothService != null) {
-            // Only if the state is STATE_NONE, do we know that we haven't started already
-            if (bluetoothService.getState() == BluetoothService.STATE_NONE) {
-                // Start the Bluetooth chat services
-                bluetoothService.start();
-            }
         }
     }
 
@@ -1499,60 +1764,168 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
      */
 
     public void refreshConfiguration(){
+        if(Marvin.isAuthenticated()){
+            Marvin.users().settings().update(UserConfig.getSettings(), new Callback<UserSetting>() {
+                @Override
+                public void success(UserSetting userSetting, Response response) {
+                    Toast.makeText(getApplicationContext(), "Configuración actualizada", Toast.LENGTH_SHORT).show();
+                }
 
-        boolean invitado = true;
-        if(invitado){
-
-            SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
-            SharedPreferences.Editor prefsEditor = mPrefs.edit();
-
-            prefsEditor.putLong("miniumTripTime",UserConfig.getSettings().getMiniumTripTime());
-            prefsEditor.putLong("miniumTripDistance",UserConfig.getSettings().getMiniumTripDistance());
-            prefsEditor.putString("emergencyNumber",UserConfig.getSettings().getEmergencyNumber());
-            prefsEditor.putString("emergencySMS",UserConfig.getSettings().getEmergencySMS());
-            prefsEditor.putInt("orientation",UserConfig.getSettings().getOrientation());
-            prefsEditor.putBoolean("openAppWhenStop",UserConfig.getSettings().isOpenAppWhenStop());
-            prefsEditor.putString("appToOpenWhenStop",UserConfig.getSettings().getAppToOpenWhenStop());
-            prefsEditor.putString("hotspotName",UserConfig.getSettings().getHotspotName());
-            prefsEditor.putString("hotspotPassword",UserConfig.getSettings().getHotspotPassword());
-            prefsEditor.putInt("alertSpeed",UserConfig.getSettings().getAlertSpeed());
-            prefsEditor.putBoolean("speedAlertEnabled",UserConfig.getSettings().isSpeedAlertEnabled());
-
-            prefsEditor.commit();
-
-        }else{
-
+                @Override
+                public void failure(RetrofitError error) {
+                    Log.e("MainMenuActivity", "Error refreshing configuration: " + error.getMessage(), error);
+                }
+            });
         }
+        refreshSettingsInSharedPrefs();
+    }
 
+    private void refreshSettingsInSharedPrefs() {
+        SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = mPrefs.edit();
+
+        prefsEditor.putLong("miniumTripTime", UserConfig.getSettings().getMiniumTripTime());
+        prefsEditor.putLong("miniumTripDistance",UserConfig.getSettings().getMiniumTripDistance());
+        prefsEditor.putString("emergencyNumber",UserConfig.getSettings().getEmergencyNumber());
+        prefsEditor.putString("emergencySMS",UserConfig.getSettings().getEmergencySMS());
+        prefsEditor.putInt("orientation",UserConfig.getSettings().getOrientation());
+        prefsEditor.putBoolean("openAppWhenStop",UserConfig.getSettings().isOpenAppWhenStop());
+        prefsEditor.putString("appToOpenWhenStop",UserConfig.getSettings().getAppToOpenWhenStop());
+        prefsEditor.putString("hotspotName",UserConfig.getSettings().getHotspotName());
+        prefsEditor.putString("hotspotPassword", UserConfig.getSettings().getHotspotPassword());
+        prefsEditor.putInt("alertSpeed",UserConfig.getSettings().getAlertSpeed());
+        prefsEditor.putBoolean("speedAlertEnabled",UserConfig.getSettings().isSpeedAlertEnabled());
+
+        prefsEditor.commit();
     }
 
     public void refreshSites(){
-
-        boolean invitado = true;
-        if(invitado){
-
-            SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
-            SharedPreferences.Editor prefsEditor = mPrefs.edit();
-
-            List<Site> sites = UserSites.getInstance().getSites();
-
-            prefsEditor.putInt("NumberOfSites", sites.size());
-
-            Integer j;
-            Gson gson = new Gson();
-
-            for(j=1;j<=sites.size();j++) {
-                String json = gson.toJson(sites.get(j-1));
-                prefsEditor.putString("Site" + j.toString(), json);
+        List<Site> sites = UserSites.getInstance().getSites();
+        List<SiteRepresentation> reps = new ArrayList<>(sites.size());
+        if(Marvin.isAuthenticated()){
+            for (Site site : sites) {
+                SiteRepresentation siteRep = new SiteRepresentation(null, site.getSiteName(), site.getSiteAddress(), site.getCoordinates().latitude, site.getCoordinates().longitude, site.getSiteThumbnail());
+                siteRep.setImage(site.getSiteImage());
+                reps.add(siteRep);
             }
 
-            prefsEditor.commit();
+            Marvin.users().trips().updateSites(reps, new Callback<List<SiteRepresentation>>() {
+                @Override
+                public void success(List<SiteRepresentation> siteRepresentations, Response response) {
+                    Toast.makeText(getApplicationContext(), "Sitios actualizados", Toast.LENGTH_SHORT).show();
+                }
 
-        }else{
-
+                @Override
+                public void failure(RetrofitError error) {
+                    Log.e("MainMenuActivity", "Error refreshing sites: " + error.getMessage(), error);
+                }
+            });
         }
+
+        SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = mPrefs.edit();
+        prefsEditor.putInt("NumberOfSites", sites.size());
+        Integer j;
+        Gson gson = new Gson();
+        for(j=1;j<=sites.size();j++) {
+            String json = gson.toJson(sites.get(j-1));
+            prefsEditor.putString("Site" + j.toString(), json);
+        }
+        prefsEditor.commit();
 
     }
 
+    public void refreshTrips(){
+
+        if(Marvin.isAuthenticated()){
+            Marvin.users().trips().update(UserTrips.getInstance().getTripRepresentations(), new Callback<TripRepresentation>() {
+                @Override
+                public void success(TripRepresentation representation, Response response) {
+                    Toast.makeText(getApplicationContext(), "Viajes actualizados", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    Log.e("MainMenuActivity", "Error refreshing trips: " + error.getMessage(), error);
+                }
+            });
+        }
+
+        SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = mPrefs.edit();
+
+        List<Trip> trips = UserTrips.getInstance().getTrips();
+
+        prefsEditor.putInt("NumberOfTrips", trips.size());
+
+        Integer j;
+        Gson gson = new Gson();
+
+        for(j=trips.size();j>=1;j--) {
+            String json = gson.toJson(trips.get(trips.size()-j));
+            prefsEditor.putString("Trip" + j.toString(), json);
+        }
+
+        prefsEditor.commit();
+
+    }
+
+    /**
+     * ***********************************
+     * ************SOCIAL SDKs**************
+     * ***********************************
+     */
+
+    private void initializeFacebookSdk() {
+        try {
+            FacebookSdk.sdkInitialize(getApplicationContext());
+            showHashKey(getApplicationContext());
+            LoginManager.getInstance().registerCallback(callbackManager,
+                    new FacebookCallback<LoginResult>() {
+                        @Override
+                        public void onSuccess(LoginResult loginResult) {
+                        }
+
+                        @Override
+                        public void onCancel() {
+                            // App code
+                        }
+
+                        @Override
+                        public void onError(FacebookException exception) {
+                            // App code
+                        }
+                    });
+            LoginManager.getInstance().logInWithPublishPermissions(this, Arrays.asList("publish_actions"));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public static void showHashKey(Context context) {
+        try {
+            PackageInfo info = context.getPackageManager().getPackageInfo(
+                    "ar.com.klee.marvin", PackageManager.GET_SIGNATURES); //Your package name here
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.v("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (Exception e) {
+            Log.v("Exception: ", e.getMessage(), e);
+        }
+    }
+
+    public int getTabNumber() {
+        return tabNumber;
+    }
+
+    public ImageView getSplashLogout() {
+        return splashLogout;
+    }
+
+    public void onSaveInstanceState(Bundle outState) {
+        //No call for super(). Bug on API Level > 11.
+    }
 }
 

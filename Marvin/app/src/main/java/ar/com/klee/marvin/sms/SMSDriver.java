@@ -147,8 +147,7 @@ public class SMSDriver {
             @Override
             public void onClick(View view)
             {
-                final boolean isListening = STTService.getInstance().getIsListening();
-                STTService.getInstance().setIsListening(false);
+                STTService.getInstance().stopListening();
 
                 String smsBody = messageBody.getText().toString();
 
@@ -159,23 +158,20 @@ public class SMSDriver {
                     customDialog.findViewById(R.id.leer).setEnabled(false);
                     customDialog.findViewById(R.id.enviar).setEnabled(false);
 
-                    int delay = commandHandlerManager.getTextToSpeech().speakTextWithoutStart(smsBody);
+                    commandHandlerManager.getTextToSpeech().speakText("SMS - " + smsBody);
 
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        public void run() {
-                            STTService.getInstance().setIsListening(isListening);
-                            customDialog.findViewById(R.id.cancelar).setEnabled(true);
-                            customDialog.findViewById(R.id.leer).setEnabled(true);
-                            customDialog.findViewById(R.id.enviar).setEnabled(true);
-                        }
-                    }, delay);
                 }
             }
         });
 
         customDialog.show();
 
+    }
+
+    public void enableButtons(){
+        actualDialog.findViewById(R.id.cancelar).setEnabled(true);
+        actualDialog.findViewById(R.id.leer).setEnabled(true);
+        actualDialog.findViewById(R.id.enviar).setEnabled(true);
     }
 
     public void setNumber(String number){

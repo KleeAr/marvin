@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
+    android:configChanges="orientation|screenSize"
     android:layout_height="match_parent">
 
         <RelativeLayout
@@ -202,14 +203,31 @@
                 android:onClick="previous"
                 android:background="@color/ColorPrimary" />
 
-            <ImageButton
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:id="@+id/bt_play"
-                android:layout_weight="0.1"
-                android:src="@drawable/ic_media_play"
-                android:onClick="startPauseMusic"
-                android:background="@color/ColorPrimary" />
+            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical" android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
+
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bt_play"
+                    android:layout_weight="0.1"
+                    android:src="@drawable/ic_media_play"
+                    android:onClick="startPauseMusic"
+                    android:background="@color/ColorPrimary"
+                    android:layout_gravity="center"
+                    android:foregroundGravity="center" />
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/loadingRadio"
+                    android:layout_gravity="center"
+                    android:foregroundGravity="center" />
+
+            </FrameLayout>
+
 
             <ImageButton
                 android:layout_width="0dp"
@@ -220,8 +238,6 @@
                 android:onClick="next"
                 android:background="@color/ColorPrimary" />
 
-
         </LinearLayout>
-
 
 </LinearLayout>

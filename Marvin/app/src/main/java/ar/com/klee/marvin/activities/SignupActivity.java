@@ -16,13 +16,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.client.Marvin;
+import ar.com.klee.marvin.client.model.User;
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class SignupActivity extends AppCompatActivity {
     private static final String TAG = "SignupActivity";
 
-    @Bind(R.id.input_name) EditText nameText;
+    @Bind(R.id.input_first_name) EditText nameText;
+    @Bind(R.id.input_last_name) EditText lastNameText;
     @Bind(R.id.input_email) EditText emailText;
     @Bind(R.id.input_password) EditText passwordText;
     @Bind(R.id.repeat_password) EditText repeatPasswordText;
@@ -95,21 +101,36 @@ public class SignupActivity extends AppCompatActivity {
         progressDialog.show();
 
         String name = nameText.getText().toString();
+        String lastName = lastNameText.getText().toString();
         String email = emailText.getText().toString();
         String password = passwordText.getText().toString();
 
-        // TODO: Implement your own signup logic here.
+        Marvin.users().register(new User(null, name, lastName, email, password), new Callback<User>() {
+            @Override
+            public void success(User user, Response response) {
+                new android.os.Handler().postDelayed(
+                        new Runnable() {
+                            public void run() {
+                                onSignupSuccess();
+                                progressDialog.dismiss();
+                            }
+                        }, 3000);
+            }
 
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // On complete call either onSignupSuccess or onSignupFailed
-                        // depending on success
-                        onSignupSuccess();
-                        // onSignupFailed();
-                        progressDialog.dismiss();
-                    }
-                }, 3000);
+            @Override
+            public void failure(RetrofitError error) {
+                Log.e("SignupActivity", "Error al crear cuenta en servidor", error);
+                new android.os.Handler().postDelayed(
+                        new Runnable() {
+                            public void run() {
+                                onSignupFailed();
+                                progressDialog.dismiss();
+                            }
+                        }, 3000);
+            }
+        });
+
+
     }
 
 
@@ -120,7 +141,7 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     public void onSignupFailed() {
-        Toast.makeText(getBaseContext(), "Ingreso fallido", Toast.LENGTH_LONG).show();
+        Toast.makeText(getBaseContext(), "Error al crear la cuenta", Toast.LENGTH_LONG).show();
 
         signupbutton.setEnabled(true);
     }
@@ -154,7 +175,7 @@ public class SignupActivity extends AppCompatActivity {
             passwordText.setError(null);
         }
 
-        if (repeatPassword.isEmpty() || password.equals(repeatPassword)) {
+        if (repeatPassword.isEmpty() || !password.equals(repeatPassword)) {
             repeatPasswordText.setError("Contraseña incorrecta");
             valid = false;
         } else {

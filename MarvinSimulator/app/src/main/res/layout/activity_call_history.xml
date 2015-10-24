@@ -1,0 +1,14 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context="ar.com.klee.marvinSimulator.activities.CallHistoryActivity"
+    android:id="@+id/layout_1">
+
+    <ListView
+        android:id="@+id/callListView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#C0C0C0" />
+</RelativeLayout>
+
