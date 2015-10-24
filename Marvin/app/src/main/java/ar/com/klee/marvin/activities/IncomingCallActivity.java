@@ -29,8 +29,6 @@ public abstract class IncomingCallActivity extends Activity {
     protected Activity previousActivity;
     protected int previousActivityId;
 
-    public static IncomingCallActivity instance;
-
     protected ViewGroup mTopView;
     protected WindowManager wm;
 
@@ -38,8 +36,6 @@ public abstract class IncomingCallActivity extends Activity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        instance = this;
 
         if(CommandHandlerManager.isInstanceInitialized())
             commandHandlerManager = CommandHandlerManager.getInstance();

@@ -3,11 +3,16 @@ package ar.com.klee.marvin.call;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.os.Handler;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import ar.com.klee.marvin.activities.DefaultIncomingCallActivity;
+import ar.com.klee.marvin.activities.IncomingCallActivity;
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
@@ -19,28 +24,6 @@ Servicio que se activa cuando se produce un cambio en el estado del telefono
 Puede ser por una llamada entrante, o una realizada por la aplicacion
  */
 public class CallReceiver extends AbstractCallReceiver {
-
-    private static boolean wasRegistered = false;
-
-    public static void setWasRegistered(boolean wasRegistered) {
-        CallReceiver.wasRegistered = wasRegistered;
-    }
-
-    public static boolean wasRegistered() {
-        return wasRegistered;
-    }
-
-    protected void onIncomingCallStarted(final Context ctx, final String number, Date start) {
-
-        if(!CommandHandlerManager.isInstanceInitialized()){
-            return;
-        }
-
-        commandHandlerManager = CommandHandlerManager.getInstance();
-
-        onCallStateChanged(context, state, number);
-    }
-
 
     protected void onIncomingCallStarted(final Context ctx, final String number, Date start) {
 
@@ -55,7 +38,7 @@ public class CallReceiver extends AbstractCallReceiver {
             return;
         }
 
-        Log.d("CALL","Incoming ended");
+        Log.d("CALL", "Incoming ended");
 
         commandHandlerManager = CommandHandlerManager.getInstance();
         long diffInMs = end.getTime() - timeCall;
@@ -128,13 +111,13 @@ public class CallReceiver extends AbstractCallReceiver {
 
         Log.d("CALL", "Missed Call");
 
-        if (IncomingCallActivity.isInstanceInitialized()) {
-            if (IncomingCallActivity.getInstance().isRejected()) {
+        if (DefaultIncomingCallActivity.isInstanceInitialized()) {
+            if (DefaultIncomingCallActivity.getInstance().isRejected()) {
                 commandHandlerManager.getTextToSpeech().speakText("Llamada rechazada");
-                IncomingCallActivity.getInstance().setIsRejected(false);
+                DefaultIncomingCallActivity.getInstance().setIsRejected(false);
             }else {
                 commandHandlerManager.getTextToSpeech().speakText("Llamada perdida");
-                IncomingCallActivity.getInstance().closeActivity();
+                DefaultIncomingCallActivity.getInstance().closeActivity();
             }
         }else{
             commandHandlerManager.getTextToSpeech().speakText("Llamada perdida");

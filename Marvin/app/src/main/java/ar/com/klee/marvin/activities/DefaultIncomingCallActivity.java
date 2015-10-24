@@ -7,7 +7,9 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
+import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.KeyEvent;
 
@@ -20,6 +22,13 @@ import ar.com.klee.marvin.voiceControl.STTService;
  * @author msalerno
  */
 public class DefaultIncomingCallActivity extends IncomingCallActivity {
+
+    public static DefaultIncomingCallActivity instance;
+    @Override
+    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
+        super.onCreate(savedInstanceState, persistentState);
+        instance = this;
+    }
 
     public void acceptCall(){
         Context mContext = getApplicationContext();
@@ -133,7 +142,7 @@ public class DefaultIncomingCallActivity extends IncomingCallActivity {
         return contactName;
     }
 
-    public static IncomingCallActivity getInstance(){
+    public static DefaultIncomingCallActivity getInstance(){
         return instance;
     }
 
