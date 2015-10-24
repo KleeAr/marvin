@@ -168,7 +168,7 @@ public class CallReceiver extends BroadcastReceiver {
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 public void run() {
-                    commandHandlerManager.getTextToSpeech().speakText("Número ocupado");
+                    commandHandlerManager.getTextToSpeech().speakText("Llamada finalizada");
                 }
             }, 1000);
         }

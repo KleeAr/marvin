@@ -3,12 +3,14 @@ package ar.com.klee.marvin.activities;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -387,6 +389,9 @@ public class CallHistoryActivity extends Activity implements AdapterView.OnItemC
                 STTService.getInstance().setIsListening(false);
                 STTService.getInstance().stopListening();
                 commandHandlerManager.setNullCommand();
+                AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                am.setMode(AudioManager.MODE_IN_CALL);
+                am.setSpeakerphoneOn(true);
                 //lanza un intent con el numero del contacto
                 Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + call.getNumberPhone()));
                 startActivity(intent);
@@ -471,30 +476,20 @@ public class CallHistoryActivity extends Activity implements AdapterView.OnItemC
             @Override
             public void onClick(View view)
             {
-                final boolean isListening = STTService.getInstance().getIsListening();
-                STTService.getInstance().setIsListening(false);
-
                 String smsBody = answer.getText().toString();
 
                 if(smsBody.equals(""))
                     Toast.makeText(getApplicationContext(), "Ingresá un mensaje", Toast.LENGTH_LONG).show();
                 else {
 
+                    STTService.getInstance().stopListening();
+
                     customDialog.findViewById(R.id.cancelar).setEnabled(false);
                     customDialog.findViewById(R.id.leer).setEnabled(false);
                     customDialog.findViewById(R.id.enviar).setEnabled(false);
 
-                    int delay = commandHandlerManager.getTextToSpeech().speakTextWithoutStart(smsBody);
+                    commandHandlerManager.getTextToSpeech().speakText("CALLR - " + smsBody);
 
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        public void run() {
-                            STTService.getInstance().setIsListening(isListening);
-                            customDialog.findViewById(R.id.cancelar).setEnabled(true);
-                            customDialog.findViewById(R.id.leer).setEnabled(true);
-                            customDialog.findViewById(R.id.enviar).setEnabled(true);
-                        }
-                    }, delay);
                 }
             }
         });
@@ -507,6 +502,46 @@ public class CallHistoryActivity extends Activity implements AdapterView.OnItemC
         actualDialog.dismiss();
     }
 
+    public void enableButtons(){
+        commandHandlerManager.getMainActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                actualDialog.findViewById(R.id.cancelar).setEnabled(true);
+                actualDialog.findViewById(R.id.responder).setEnabled(true);
+                actualDialog.findViewById(R.id.llamar).setEnabled(true);
+            }
+        });
+    }
+
+    public void disableButtons(){
+        commandHandlerManager.getMainActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                actualDialog.findViewById(R.id.cancelar).setEnabled(false);
+                actualDialog.findViewById(R.id.responder).setEnabled(false);
+                actualDialog.findViewById(R.id.llamar).setEnabled(false);
+            }
+        });
+    }
+
+    public void enableButtonsRespond(){
+        commandHandlerManager.getMainActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                actualDialog.findViewById(R.id.cancelar).setEnabled(true);
+                actualDialog.findViewById(R.id.enviar).setEnabled(true);
+                actualDialog.findViewById(R.id.leer).setEnabled(true);
+            }
+        });
+    }
+
+    public void disableButtonsRespond(){
+        commandHandlerManager.getMainActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                actualDialog.findViewById(R.id.cancelar).setEnabled(false);
+                actualDialog.findViewById(R.id.enviar).setEnabled(false);
+                actualDialog.findViewById(R.id.leer).setEnabled(false);
+            }
+        });
+    }
+
     public void respond(){
         actualDialog.dismiss();
         displayRespuesta();
@@ -514,6 +549,9 @@ public class CallHistoryActivity extends Activity implements AdapterView.OnItemC
 
     public void call(){
         actualDialog.dismiss();
+        AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        am.setMode(AudioManager.MODE_IN_CALL);
+        am.setSpeakerphoneOn(true);
         //lanza un intent con el numero del contacto
         Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + call.getNumberPhone()));
         startActivity(intent);
@@ -560,4 +598,7 @@ public class CallHistoryActivity extends Activity implements AdapterView.OnItemC
 
     }
 
+    public Dialog getActualDialog() {
+        return actualDialog;
+    }
 }

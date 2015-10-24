@@ -11,7 +11,9 @@ import android.util.Log;
 import java.util.HashMap;
 import java.util.Locale;
 
+import ar.com.klee.marvin.activities.CallHistoryActivity;
 import ar.com.klee.marvin.activities.MainMenuActivity;
+import ar.com.klee.marvin.activities.SMSInboxActivity;
 import ar.com.klee.marvin.gps.LocationSender;
 import ar.com.klee.marvin.multimedia.music.MusicService;
 import ar.com.klee.marvin.sms.SMSDriver;
@@ -28,6 +30,10 @@ public class TTS {
     private boolean playMusic = false;
     private boolean smsRead = false;
     private boolean smsRespond = false;
+    private boolean inbox = false;
+    private boolean inboxRespond = false;
+    private boolean call = false;
+    private boolean callRespond = false;
 
     /* Constructor de la clase TTS
     ** -Inicializa el objeto de la clase TextToSpeech que nos va a permitir reproducir texto
@@ -71,6 +77,18 @@ public class TTS {
                                 }else if(smsRespond){
                                     smsRespond = false;
                                     SMSDriver.getInstance().enableButtonsRespond();
+                                }else if(inbox){
+                                    inbox = false;
+                                    ((SMSInboxActivity)CommandHandlerManager.getInstance().getActivity()).enableButtons();
+                                }else if(inboxRespond){
+                                    inboxRespond = false;
+                                    ((SMSInboxActivity) CommandHandlerManager.getInstance().getActivity()).enableButtonsRespond();
+                                }else if(call){
+                                    call = false;
+                                    ((CallHistoryActivity)CommandHandlerManager.getInstance().getActivity()).enableButtons();
+                                }else if(callRespond){
+                                    callRespond = false;
+                                    ((CallHistoryActivity) CommandHandlerManager.getInstance().getActivity()).enableButtonsRespond();
                                 }
 
                             }
@@ -116,6 +134,33 @@ public class TTS {
                 smsRespond = false;
             }
         }
+
+        if(textToSpeak.startsWith("INBOX - ")){
+            textToSpeak = textToSpeak.replace("INBOX - ","");
+            inbox = true;
+        }else{
+            inbox = false;
+            if(textToSpeak.startsWith("INBOXR - ")){
+                textToSpeak = textToSpeak.replace("INBOXR - ","");
+                inboxRespond = true;
+            }else{
+                inboxRespond = false;
+            }
+        }
+
+        if(textToSpeak.startsWith("CALL - ")){
+            textToSpeak = textToSpeak.replace("CALL - ","");
+            call = true;
+        }else{
+            call = false;
+            if(textToSpeak.startsWith("CALLR - ")){
+                textToSpeak = textToSpeak.replace("CALLR - ","");
+                callRespond = true;
+            }else{
+                callRespond = false;
+            }
+        }
+
 
         // Reproduce el texto
         ttsObject.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH, myHashAlarm);

@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.speech.SpeechRecognizer;
+import android.util.Log;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.Predicate;
@@ -14,7 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ar.com.klee.marvin.activities.CallHistoryActivity;
 import ar.com.klee.marvin.activities.MainMenuActivity;
+import ar.com.klee.marvin.activities.SMSInboxActivity;
 import ar.com.klee.marvin.call.CallDriver;
 import ar.com.klee.marvin.sms.SMSDriver;
 import ar.com.klee.marvin.voiceControl.handlers.callHistory.CerrarHistorialDeLlamadasHandler;
@@ -349,18 +352,32 @@ public class CommandHandlerManager {
 
         if(command.equals("cancelar")){
             textToSpeech.speakText("Cancelando...");
-
+            Log.d("CANCEL", "Paso1");
             if(SMSDriver.isInstanceInitialized()){
                 Dialog smsDialog = SMSDriver.getInstance().getActualDialog();
                 if(smsDialog != null && smsDialog.isShowing()){
                     smsDialog.dismiss();
                 }
-            }else{
-                if(CallDriver.isInstanceInitialized()){
-                    Dialog callDialog = CallDriver.getInstance().getActualDialog();
-                    if(callDialog != null && callDialog.isShowing()){
-                        callDialog.dismiss();
-                    }
+            }
+
+            if(CallDriver.isInstanceInitialized()){
+                Dialog callDialog = CallDriver.getInstance().getActualDialog();
+                if(callDialog != null && callDialog.isShowing()){
+                    callDialog.dismiss();
+                }
+            }
+
+            if(currentActivity == ACTIVITY_SMS_INBOX){
+                Dialog inboxDialog = ((SMSInboxActivity)getActivity()).getActualDialog();
+                if(inboxDialog != null && inboxDialog.isShowing()){
+                    inboxDialog.dismiss();
+                }
+            }
+
+            if(currentActivity == ACTIVITY_CALL_HISTORY){
+                Dialog callDialog = ((CallHistoryActivity)getActivity()).getActualDialog();
+                if(callDialog != null && callDialog.isShowing()){
+                    callDialog.dismiss();
                 }
             }
 
