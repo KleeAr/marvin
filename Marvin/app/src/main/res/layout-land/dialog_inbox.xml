@@ -5,6 +5,8 @@
     android:background="@drawable/dialog_container"
     android:configChanges="orientation|screenSize"
     android:orientation="vertical"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
     android:weightSum="1">
 
 

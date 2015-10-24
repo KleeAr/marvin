@@ -256,7 +256,7 @@ public class SMSInboxActivity extends Activity {
 
         Typeface fontBold = Typeface.createFromAsset(getAssets(),"Bariol_Regular.otf");
 
-        TextView notifiacion = (TextView) customDialog.findViewById(R.id.textView);
+        TextView notifiacion = (TextView) customDialog.findViewById(R.id.responseHeader);
         notifiacion.setText("¿Querés realizar alguna acción con el contacto " + mensaje.getContactName() +"?");
 
         customDialog.findViewById(R.id.cancelar).setOnClickListener(new View.OnClickListener() {

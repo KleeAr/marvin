@@ -4,6 +4,8 @@
     android:layout_height="wrap_content"
     android:background="@drawable/dialog_container"
     android:orientation="vertical"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
     android:weightSum="1"
     android:id="@+id/layout_prim">
 

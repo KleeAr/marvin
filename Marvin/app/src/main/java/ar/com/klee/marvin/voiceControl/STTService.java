@@ -18,6 +18,7 @@ import android.view.View;
 
 import java.util.ArrayList;
 
+import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.fragments.MainMenuFragment;
 import ar.com.klee.marvin.multimedia.music.MusicService;
@@ -172,8 +173,10 @@ public class STTService extends Service {
 
                         if(error == SpeechRecognizer.ERROR_SPEECH_TIMEOUT) {
 
-                            if(MainMenuFragment.isInstanceInitialized())
+                            if(MainMenuFragment.isInstanceInitialized()) {
                                 MainMenuFragment.spokenText.setText("Hablá, yo escucho...");
+                                MainMenuFragment.marvinImage.setImageResource(R.drawable.marvin_off);
+                            }
 
                             if (!isListening &&
                                     commandHandlerManager.getCurrentActivity() == CommandHandlerManager.ACTIVITY_MAIN &&

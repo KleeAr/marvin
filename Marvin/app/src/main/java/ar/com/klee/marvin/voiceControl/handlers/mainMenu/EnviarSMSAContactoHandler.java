@@ -203,7 +203,7 @@ public class EnviarSMSAContactoHandler extends CommandHandler {
         input = input.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
 
         context.getObject(ACTIVITY, MainMenuActivity.class).setMessageBody(input);
-        getTextToSpeech().speakText("¿Querés enviar por sms el mensaje " + input + "?");
+        getTextToSpeech().speakText("SMS - ¿Querés enviar por sms el mensaje " + input + "?");
         context.put(STEP, 7);
         return context;
     }

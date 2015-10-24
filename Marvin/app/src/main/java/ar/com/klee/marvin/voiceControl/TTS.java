@@ -27,6 +27,7 @@ public class TTS {
     private boolean speedAlert = false;
     private boolean playMusic = false;
     private boolean smsRead = false;
+    private boolean smsRespond = false;
 
     /* Constructor de la clase TTS
     ** -Inicializa el objeto de la clase TextToSpeech que nos va a permitir reproducir texto
@@ -67,6 +68,9 @@ public class TTS {
                                 if(smsRead){
                                     smsRead = false;
                                     SMSDriver.getInstance().enableButtons();
+                                }else if(smsRespond){
+                                    smsRespond = false;
+                                    SMSDriver.getInstance().enableButtonsRespond();
                                 }
 
                             }
@@ -105,6 +109,12 @@ public class TTS {
             smsRead = true;
         }else{
             smsRead = false;
+            if(textToSpeak.startsWith("SMSR - ")){
+                textToSpeak = textToSpeak.replace("SMSR - ","");
+                smsRespond = true;
+            }else{
+                smsRespond = false;
+            }
         }
 
         // Reproduce el texto

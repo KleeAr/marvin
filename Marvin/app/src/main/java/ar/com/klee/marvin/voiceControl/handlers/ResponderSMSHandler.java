@@ -95,7 +95,7 @@ public class ResponderSMSHandler extends CommandHandler {
         input = input.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
 
         context.getObject(ACTIVITY, MainMenuActivity.class).setAnswer(input);
-        getTextToSpeech().speakText("¿Querés responder el mensaje " + input + "?");
+        getTextToSpeech().speakText("SMS - ¿Querés responder el mensaje " + input + "?");
         context.put(STEP, 7);
         return context;
     }

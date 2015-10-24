@@ -1,6 +1,7 @@
 package ar.com.klee.marvin.voiceControl;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.speech.SpeechRecognizer;
@@ -14,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 import ar.com.klee.marvin.activities.MainMenuActivity;
+import ar.com.klee.marvin.call.CallDriver;
+import ar.com.klee.marvin.sms.SMSDriver;
 import ar.com.klee.marvin.voiceControl.handlers.callHistory.CerrarHistorialDeLlamadasHandler;
 import ar.com.klee.marvin.voiceControl.handlers.callHistory.ConsultarRegistroNumeroHandler;
 import ar.com.klee.marvin.voiceControl.handlers.callHistory.ConsultarUltimoRegistroDeContactoHandler;
@@ -346,6 +349,21 @@ public class CommandHandlerManager {
 
         if(command.equals("cancelar")){
             textToSpeech.speakText("Cancelando...");
+
+            if(SMSDriver.isInstanceInitialized()){
+                Dialog smsDialog = SMSDriver.getInstance().getActualDialog();
+                if(smsDialog != null && smsDialog.isShowing()){
+                    smsDialog.dismiss();
+                }
+            }else{
+                if(CallDriver.isInstanceInitialized()){
+                    Dialog callDialog = CallDriver.getInstance().getActualDialog();
+                    if(callDialog != null && callDialog.isShowing()){
+                        callDialog.dismiss();
+                    }
+                }
+            }
+
             setNullCommand();
             return false;
         }

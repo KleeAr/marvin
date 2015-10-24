@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
@@ -29,6 +30,7 @@ import java.util.Date;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.configuration.UserConfig;
+import ar.com.klee.marvin.fragments.MainMenuFragment;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
 import ar.com.klee.marvin.voiceControl.handlers.ResponderSMSHandler;
@@ -110,6 +112,7 @@ public class SMSDriver {
                 STTService.getInstance().setIsListening(false);
                 commandHandlerManager.setNullCommand();
                 ((MainMenuActivity)commandHandlerManager.getMainActivity()).setButtonsEnabled();
+                MainMenuFragment.marvinImage.setImageResource(R.drawable.marvin_off);
                 customDialog.dismiss();
             }
         });
@@ -147,13 +150,13 @@ public class SMSDriver {
             @Override
             public void onClick(View view)
             {
-                STTService.getInstance().stopListening();
 
                 String smsBody = messageBody.getText().toString();
 
-                if(smsBody.equals(""))
+                if(smsBody.equals("")) {
                     Toast.makeText(context, "Ingresá un mensaje", Toast.LENGTH_LONG).show();
-                else {
+                }else {
+                    STTService.getInstance().stopListening();
                     customDialog.findViewById(R.id.cancelar).setEnabled(false);
                     customDialog.findViewById(R.id.leer).setEnabled(false);
                     customDialog.findViewById(R.id.enviar).setEnabled(false);
@@ -169,10 +172,45 @@ public class SMSDriver {
     }
 
     public void enableButtons(){
-        actualDialog.findViewById(R.id.cancelar).setEnabled(true);
-        actualDialog.findViewById(R.id.leer).setEnabled(true);
-        actualDialog.findViewById(R.id.enviar).setEnabled(true);
+        commandHandlerManager.getMainActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                actualDialog.findViewById(R.id.leer).setEnabled(true);
+                actualDialog.findViewById(R.id.enviar).setEnabled(true);
+                actualDialog.findViewById(R.id.cancelar).setEnabled(true);
+            }
+        });
     }
+
+    public void disableButtons(){
+        commandHandlerManager.getMainActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                actualDialog.findViewById(R.id.leer).setEnabled(false);
+                actualDialog.findViewById(R.id.enviar).setEnabled(false);
+                actualDialog.findViewById(R.id.cancelar).setEnabled(false);
+            }
+        });
+    }
+
+    public void enableButtonsRespond(){
+        commandHandlerManager.getMainActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                actualDialog.findViewById(R.id.leer).setEnabled(true);
+                actualDialog.findViewById(R.id.responder).setEnabled(true);
+                actualDialog.findViewById(R.id.cancelar).setEnabled(true);
+            }
+        });
+    }
+
+    public void disableButtonsRespond(){
+        commandHandlerManager.getMainActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                actualDialog.findViewById(R.id.leer).setEnabled(false);
+                actualDialog.findViewById(R.id.responder).setEnabled(false);
+                actualDialog.findViewById(R.id.cancelar).setEnabled(false);
+            }
+        });
+    }
+
 
     public void setNumber(String number){
 
@@ -182,6 +220,7 @@ public class SMSDriver {
 
     public void setMessageBody(String message){
 
+        disableButtons();
         messageBody.setText(message);
 
     }
@@ -222,7 +261,8 @@ public class SMSDriver {
 
         String smsNumber = UserConfig.getSettings().getEmergencyNumber();
         String smsBody = UserConfig.getSettings().getEmergencySMS();
-        if(smsBody.equals("") || smsNumber.equals("")){
+
+        if(!smsBody.equals(" ") && !smsNumber.equals(" ")){
             smsBody += location;
             try {
                 SmsManager smsManager = SmsManager.getDefault();
@@ -262,7 +302,7 @@ public class SMSDriver {
 
                 numberOfMessages++;
 
-                incomingMensaje.setBodyMessage(incomingMensaje.getBodyMessage() + ". Mensaje " + ((Integer) numberOfMessages).toString() + ": " + inbox.remove(i));
+                incomingMensaje.setBodyMessage(incomingMensaje.getBodyMessage() + "\nMensaje " + ((Integer) numberOfMessages).toString() + ": " + inbox.remove(i).getBodyMessage());
             }
             i++;
         }
@@ -302,10 +342,10 @@ public class SMSDriver {
         customDialog.findViewById(R.id.cancelar).setOnClickListener(new View.OnClickListener() {
 
             @Override
-            public void onClick(View view){
+            public void onClick(View view) {
                 STTService.getInstance().setIsListening(false);
                 commandHandlerManager.setNullCommand();
-                ((MainMenuActivity)commandHandlerManager.getMainActivity()).setButtonsEnabled();
+                ((MainMenuActivity) commandHandlerManager.getMainActivity()).setButtonsEnabled();
                 customDialog.dismiss();
             }
         });
@@ -320,58 +360,35 @@ public class SMSDriver {
         customDialog.findViewById(R.id.leer).setOnClickListener(new View.OnClickListener() {
 
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 STTService.getInstance().stopListening();
 
                 customDialog.findViewById(R.id.cancelar).setEnabled(false);
                 customDialog.findViewById(R.id.leer).setEnabled(false);
                 customDialog.findViewById(R.id.responder).setEnabled(false);
 
-                int delay = incomingMensaje.getBodyMessage().length()/5 + 1;
-                delay = delay * 550;
-
-                commandHandlerManager.getTextToSpeech().speakText(bodySMS.getText().toString());
-
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        customDialog.findViewById(R.id.cancelar).setEnabled(true);
-                        customDialog.findViewById(R.id.leer).setEnabled(true);
-                        customDialog.findViewById(R.id.responder).setEnabled(true);
-                    }
-                }, delay);
+                commandHandlerManager.getTextToSpeech().speakText("SMSR - " + bodySMS.getText().toString());
 
             }
         });
 
         customDialog.show();
+
         customDialog.findViewById(R.id.cancelar).setEnabled(false);
         customDialog.findViewById(R.id.leer).setEnabled(false);
         customDialog.findViewById(R.id.responder).setEnabled(false);
 
-        int delay;
-
         if(numberOfMessages == 1){
 
-            delay = CommandHandlerManager.getInstance().getTextToSpeech().speakTextWithoutStart(
-                    incomingMensaje.getContactName() + " te envió el mensaje: " + incomingMensaje.getBodyMessage() + " ¿Querés responderle?");
+            CommandHandlerManager.getInstance().getTextToSpeech().speakText(
+                    "SMSR - " + incomingMensaje.getContactName() + " te envió el mensaje: " + incomingMensaje.getBodyMessage() + ".      ¿Querés responderle?");
 
         }else{
 
-            delay = CommandHandlerManager.getInstance().getTextToSpeech().speakTextWithoutStart(
-                    incomingMensaje.getContactName() + " te envió " + numberOfMessages + " mensajes. " + incomingMensaje.getBodyMessage() + " ¿Querés responderle?");
+            CommandHandlerManager.getInstance().getTextToSpeech().speakText(
+                    "SMSR - " + incomingMensaje.getContactName() + " te envió " + numberOfMessages + " mensajes. " + incomingMensaje.getBodyMessage() + ".      ¿Querés responderle?");
 
         }
-
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                customDialog.findViewById(R.id.cancelar).setEnabled(true);
-                customDialog.findViewById(R.id.leer).setEnabled(true);
-                customDialog.findViewById(R.id.responder).setEnabled(true);
-            }
-        }, delay);
 
         STTService.getInstance().setIsListening(true);
         ((MainMenuActivity)commandHandlerManager.getMainActivity()).setButtonsDisabled();
@@ -456,31 +473,21 @@ public class SMSDriver {
             @Override
             public void onClick(View view)
             {
-                STTService.getInstance().stopListening();
 
                 String smsBody = answer.getText().toString();
 
-                if(smsBody.equals(""))
+                if(smsBody.equals("")) {
                     Toast.makeText(context, "Ingresá un mensaje", Toast.LENGTH_LONG).show();
-                else {
+                }else {
+
+                    STTService.getInstance().stopListening();
 
                     customDialog.findViewById(R.id.cancelar).setEnabled(false);
                     customDialog.findViewById(R.id.leer).setEnabled(false);
                     customDialog.findViewById(R.id.enviar).setEnabled(false);
 
-                    int delay = answer.length()/5 + 1;
-                    delay = delay * 550;
+                    commandHandlerManager.getTextToSpeech().speakText("SMS - " + smsBody);
 
-                    commandHandlerManager.getTextToSpeech().speakText(smsBody);
-
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        public void run() {
-                            customDialog.findViewById(R.id.cancelar).setEnabled(true);
-                            customDialog.findViewById(R.id.leer).setEnabled(true);
-                            customDialog.findViewById(R.id.enviar).setEnabled(true);
-                        }
-                    }, delay);
                 }
             }
         });
@@ -491,6 +498,7 @@ public class SMSDriver {
 
     public void setAnswer(String message){
 
+        disableButtons();
         answer.setText(message);
 
     }
@@ -543,7 +551,6 @@ public class SMSDriver {
                         if(!STTService.getInstance().getIsListening() &&
                                 commandHandlerManager.getCurrentActivity() == CommandHandlerManager.ACTIVITY_MAIN &&
                                 commandHandlerManager.getCommandHandler() == null) {
-
                             displayIncomingSMS();
                         }
                     }
@@ -619,4 +626,7 @@ Retorna un string con el nombre
         instance = null;
     }
 
+    public Dialog getActualDialog() {
+        return actualDialog;
+    }
 }
