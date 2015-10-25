@@ -6,6 +6,7 @@ import android.os.Handler;
 import java.util.Arrays;
 
 import ar.com.klee.marvin.activities.CallHistoryActivity;
+import ar.com.klee.marvin.activities.SMSInboxActivity;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.TTS;
 import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
@@ -18,7 +19,7 @@ public class ConsultarRegistroNumeroHandler extends CommandHandler {
     public static final String SET_NUMBER = "SET_NUMBER";
 
     public ConsultarRegistroNumeroHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("consultar registro número {numero}"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("consultar registro número {numero}","consultar llamada número {numero}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){
@@ -93,26 +94,19 @@ public class ConsultarRegistroNumeroHandler extends CommandHandler {
 
         }
 
-        int delayTime = (message.length()+58)/5 + 1;
-        delayTime = delayTime * 550;
-
-        getTextToSpeech().speakText(message + ". ¿Te gustaría llamar a ese número o enviarle un sms?");
+        getTextToSpeech().speakText("CALL - " + message + ". ¿Te gustaría llamar a ese número o enviarle un sms?");
 
         final CommandHandlerContext c = context;
 
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                c.getObject(ACTIVITY, CallHistoryActivity.class).showCallDialog();
-            }
-        }, delayTime);
+        c.getObject(ACTIVITY, CallHistoryActivity.class).showCallDialog();
+        c.getObject(ACTIVITY, CallHistoryActivity.class).disableButtons();
 
         context.put(SET_NUMBER, false);
         context.put(STEP, 3);
         return context;
     }
 
-    public CommandHandlerContext stepThree(CommandHandlerContext context){
+    public CommandHandlerContext stepThree(final CommandHandlerContext context){
 
         String input = context.getString(COMMAND);
         if(input.equals("si")) {
@@ -123,7 +117,12 @@ public class ConsultarRegistroNumeroHandler extends CommandHandler {
 
         if(input.equals("llamar")) {
             getTextToSpeech().speakText("Realizando llamada");
-            context.getObject(ACTIVITY, CallHistoryActivity.class).call();
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    context.getObject(ACTIVITY, CallHistoryActivity.class).call();
+                }
+            }, 1000);
             context.put(STEP, 0);
             return context;
         }
@@ -163,10 +162,11 @@ public class ConsultarRegistroNumeroHandler extends CommandHandler {
         Character firstCharacter, newFirstCharacter;
         firstCharacter = input.charAt(0);
         newFirstCharacter = Character.toUpperCase(firstCharacter);
-        input = input.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
+        input = input.replaceFirst(firstCharacter.toString(), newFirstCharacter.toString());
 
         context.getObject(ACTIVITY, CallHistoryActivity.class).setAnswer(input);
-        getTextToSpeech().speakText("¿Querés responder el mensaje " + input + "?");
+        context.getObject(ACTIVITY, CallHistoryActivity.class).disableButtonsRespond();
+        getTextToSpeech().speakText("CALLR - ¿Querés responder el mensaje " + input + "?");
         context.put(STEP, 7);
         return context;
     }

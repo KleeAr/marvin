@@ -26,7 +26,7 @@ public class LeerUltimoSMSDeNumeroHandler extends CommandHandler {
     private static final String NUMBER = "NUMBER";
 
     public LeerUltimoSMSDeNumeroHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("leer último sms del número {numero}","leer sms del {número}","leer último sms del {número}"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("leer último sms del número {numero}","leer sms del {número}","leer último sms del {número}","leer último mensaje del número {numero}","leer mensaje del {número}","leer último mensaje del {número}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){
@@ -100,19 +100,12 @@ public class LeerUltimoSMSDeNumeroHandler extends CommandHandler {
             return context;
         }
 
-        int delayTime = (message.length()+58)/5 + 1;
-        delayTime = delayTime * 550;
-
-        getTextToSpeech().speakText( message + ". ¿Te gustaría llamar a ese número o enviarle un sms?");
+        getTextToSpeech().speakText("INBOX - " + message + " ¿Te gustaría llamar a ese número o enviarle un sms?");
 
         final CommandHandlerContext c = context;
 
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                c.getObject(ACTIVITY, SMSInboxActivity.class).showCallDialog();
-            }
-        }, delayTime);
+        c.getObject(ACTIVITY, SMSInboxActivity.class).showCallDialog();
+        c.getObject(ACTIVITY, SMSInboxActivity.class).disableButtons();
 
         context.put(SET_NUMBER, false);
         context.put(STEP, 3);
@@ -121,10 +114,10 @@ public class LeerUltimoSMSDeNumeroHandler extends CommandHandler {
     }
 
     //INDICA SI QUIERE HACER ALGO
-    public CommandHandlerContext stepThree(CommandHandlerContext context){
+    public CommandHandlerContext stepThree(final CommandHandlerContext context){
 
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getTextToSpeech().speakText("¿Querés llamar o enviar sms?");
             context.put(STEP, 3);
             return context;
@@ -132,7 +125,12 @@ public class LeerUltimoSMSDeNumeroHandler extends CommandHandler {
 
         if(input.equals("llamar")) {
             getTextToSpeech().speakText("Realizando llamada");
-            context.getObject(ACTIVITY, SMSInboxActivity.class).call();
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    context.getObject(ACTIVITY, SMSInboxActivity.class).call();
+                }
+            }, 1000);
             context.put(STEP, 0);
             return context;
         }
@@ -172,10 +170,11 @@ public class LeerUltimoSMSDeNumeroHandler extends CommandHandler {
         Character firstCharacter, newFirstCharacter;
         firstCharacter = input.charAt(0);
         newFirstCharacter = Character.toUpperCase(firstCharacter);
-        input = input.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
+        input = input.replaceFirst(firstCharacter.toString(), newFirstCharacter.toString());
 
         context.getObject(ACTIVITY, SMSInboxActivity.class).setAnswer(input);
-        getTextToSpeech().speakText("¿Querés responder el mensaje " + input + "?");
+        getTextToSpeech().speakText("INBOXR - ¿Querés responder el mensaje " + input + "?");
+        context.getObject(ACTIVITY, SMSInboxActivity.class).disableButtonsRespond();
         context.put(STEP, 7);
         return context;
     }
@@ -183,7 +182,7 @@ public class LeerUltimoSMSDeNumeroHandler extends CommandHandler {
     //CONFIRMACION DE MENSAJE
     public CommandHandlerContext stepSeven(CommandHandlerContext context){
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getTextToSpeech().speakText(context.getObject(ACTIVITY,SMSInboxActivity.class).respondMessage());
             context.put(STEP, 0);
             return context;

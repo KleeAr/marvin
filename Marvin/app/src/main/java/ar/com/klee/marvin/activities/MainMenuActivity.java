@@ -462,8 +462,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         invitedUserSettings.setMiniumTripTime(mPrefs.getLong("miniumTripTime", 5));
         invitedUserSettings.setMiniumTripDistance(mPrefs.getLong("miniumTripDistance", 1));
-        invitedUserSettings.setEmergencyNumber(mPrefs.getString("emergencyNumber", ""));
-        invitedUserSettings.setEmergencySMS(mPrefs.getString("emergencySMS", ""));
+        invitedUserSettings.setEmergencyNumber(mPrefs.getString("emergencyNumber", " "));
+        invitedUserSettings.setEmergencySMS(mPrefs.getString("emergencySMS", " "));
         invitedUserSettings.setOrientation(mPrefs.getInt("orientation", 0));
         invitedUserSettings.setOpenAppWhenStop(mPrefs.getBoolean("openAppWhenStop", false));
         invitedUserSettings.setAppToOpenWhenStop(mPrefs.getString("appToOpenWhenStop", "No seleccionada"));

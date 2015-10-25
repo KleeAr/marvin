@@ -5,12 +5,14 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -115,7 +117,7 @@ public class SMSInboxActivity extends Activity {
                 STTService.getInstance().setIsListening(true);
                 STTService.getInstance().stopListening();
                 commandHandlerManager.setCurrentCommandHandler(new LeerSMSNumeroHandler(commandHandlerManager.getTextToSpeech(), commandHandlerManager.getContext(), commandHandlerManager));
-                commandHandlerManager.setCurrentContext(commandHandlerManager.getCommandHandler().drive(commandHandlerManager.getCommandHandler().createContext(commandHandlerManager.getCurrentContext(), commandHandlerManager.getActivity(), "leer sms número " + ((Integer)position).toString())));
+                commandHandlerManager.setCurrentContext(commandHandlerManager.getCommandHandler().drive(commandHandlerManager.getCommandHandler().createContext(commandHandlerManager.getCurrentContext(), commandHandlerManager.getActivity(), "leer sms número " + ((Integer) position).toString())));
 
             }
         });
@@ -256,7 +258,7 @@ public class SMSInboxActivity extends Activity {
 
         Typeface fontBold = Typeface.createFromAsset(getAssets(),"Bariol_Regular.otf");
 
-        TextView notifiacion = (TextView) customDialog.findViewById(R.id.textView);
+        TextView notifiacion = (TextView) customDialog.findViewById(R.id.responseHeader);
         notifiacion.setText("¿Querés realizar alguna acción con el contacto " + mensaje.getContactName() +"?");
 
         customDialog.findViewById(R.id.cancelar).setOnClickListener(new View.OnClickListener() {
@@ -285,13 +287,58 @@ public class SMSInboxActivity extends Activity {
                 STTService.getInstance().setIsListening(false);
                 STTService.getInstance().stopListening();
                 commandHandlerManager.setNullCommand();
+                AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                am.setMode(AudioManager.MODE_IN_CALL);
+                am.setSpeakerphoneOn(true);
                 //lanza un intent con el numero del contacto
                 Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + mensaje.getPhoneNumber()));
                 startActivity(intent);
             }
         });
 
+        disableButtons();
+
         customDialog.show();
+    }
+
+    public void enableButtons(){
+        commandHandlerManager.getMainActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                actualDialog.findViewById(R.id.cancelar).setEnabled(true);
+                actualDialog.findViewById(R.id.responder).setEnabled(true);
+                actualDialog.findViewById(R.id.llamar).setEnabled(true);
+            }
+        });
+    }
+
+    public void disableButtons(){
+        commandHandlerManager.getMainActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                actualDialog.findViewById(R.id.cancelar).setEnabled(false);
+                actualDialog.findViewById(R.id.responder).setEnabled(false);
+                actualDialog.findViewById(R.id.llamar).setEnabled(false);
+            }
+        });
+    }
+
+    public void enableButtonsRespond(){
+        commandHandlerManager.getMainActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                actualDialog.findViewById(R.id.cancelar).setEnabled(true);
+                actualDialog.findViewById(R.id.enviar).setEnabled(true);
+                actualDialog.findViewById(R.id.leer).setEnabled(true);
+            }
+        });
+    }
+
+    public void disableButtonsRespond(){
+        commandHandlerManager.getMainActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                actualDialog.findViewById(R.id.cancelar).setEnabled(false);
+                actualDialog.findViewById(R.id.enviar).setEnabled(false);
+                actualDialog.findViewById(R.id.leer).setEnabled(false);
+            }
+        });
     }
 
     public void cancelDialog(){
@@ -306,6 +353,9 @@ public class SMSInboxActivity extends Activity {
     public void call(){
         actualDialog.dismiss();
         //lanza un intent con el numero del contacto
+        AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        am.setMode(AudioManager.MODE_IN_CALL);
+        am.setSpeakerphoneOn(true);
         Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + mensaje.getPhoneNumber()));
         startActivity(intent);
     }
@@ -385,8 +435,6 @@ public class SMSInboxActivity extends Activity {
             @Override
             public void onClick(View view)
             {
-                final boolean isListening = STTService.getInstance().getIsListening();
-                STTService.getInstance().setIsListening(false);
 
                 String smsBody = answer.getText().toString();
 
@@ -394,21 +442,14 @@ public class SMSInboxActivity extends Activity {
                     Toast.makeText(getApplicationContext(), "Ingresá un mensaje", Toast.LENGTH_LONG).show();
                 else {
 
+                    STTService.getInstance().stopListening();
+
                     customDialog.findViewById(R.id.cancelar).setEnabled(false);
                     customDialog.findViewById(R.id.leer).setEnabled(false);
                     customDialog.findViewById(R.id.enviar).setEnabled(false);
 
-                    int delay = commandHandlerManager.getTextToSpeech().speakTextWithoutStart(smsBody);
+                    commandHandlerManager.getTextToSpeech().speakText("INBOXR - " + smsBody);
 
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        public void run() {
-                            STTService.getInstance().setIsListening(isListening);
-                            customDialog.findViewById(R.id.cancelar).setEnabled(true);
-                            customDialog.findViewById(R.id.leer).setEnabled(true);
-                            customDialog.findViewById(R.id.enviar).setEnabled(true);
-                        }
-                    }, delay);
                 }
             }
         });
@@ -458,5 +499,7 @@ public class SMSInboxActivity extends Activity {
 
     }
 
-
+    public Dialog getActualDialog() {
+        return actualDialog;
+    }
 }

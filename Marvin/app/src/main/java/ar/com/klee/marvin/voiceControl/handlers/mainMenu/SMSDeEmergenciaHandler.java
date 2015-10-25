@@ -14,7 +14,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class SMSDeEmergenciaHandler extends CommandHandler {
 
     public SMSDeEmergenciaHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("sms de emergencia","enviar sms de emergencia","emergencia","mandar sms de emergencia"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("sms de emergencia","enviar sms de emergencia","emergencia","sms emergencia","enviar sms emergencia","mandar sms de emergencia"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

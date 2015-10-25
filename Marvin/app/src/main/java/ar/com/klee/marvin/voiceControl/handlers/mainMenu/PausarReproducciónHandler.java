@@ -14,7 +14,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class PausarReproducciónHandler extends CommandHandler {
 
     public PausarReproducciónHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("pausar música","pausar canción","pausar reproducción","pausar reproductor","detener música","detener canción","detener reproducción","detener reproductor"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("pausar música","pausar canción","pausar reproducción","pausar reproductor","detener música","detener canción","detener reproducción","detener reproductor","pausa música","pausa canción","pausa reproducción","pausa reproductor"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

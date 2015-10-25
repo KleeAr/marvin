@@ -129,7 +129,7 @@ public class EnviarSMSANumeroHandler extends CommandHandler {
         newFirstCharacter = Character.toUpperCase(firstCharacter);
         input = input.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
 
-        getTextToSpeech().speakText("¿Querés enviar por sms el mensaje " + input + "?");
+        getTextToSpeech().speakText("SMS - ¿Querés enviar por sms el mensaje " + input + "?");
         context.getObject(ACTIVITY, MainMenuActivity.class).setMessageBody(input);
         context.put(STEP, 7);
         return context;

@@ -109,7 +109,8 @@
                             android:layout_height="60dp"
                             android:id="@+id/marvinImage"
                             android:src="@drawable/marvin_off"
-                            android:layout_gravity="center" />
+                            android:layout_gravity="center"
+                            android:layout_marginTop="3dp" />
 
                         <TextView
                             android:layout_width="match_parent"

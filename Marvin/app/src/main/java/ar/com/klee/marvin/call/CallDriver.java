@@ -275,4 +275,8 @@ Retorna un string con el nombre
     public static void destroyInstance() {
         instance = null;
     }
+
+    public Dialog getActualDialog() {
+        return actualDialog;
+    }
 }

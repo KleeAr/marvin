@@ -22,10 +22,7 @@ public class BluetoothActivity extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(UserConfig.getInstance().getOrientation() == UserConfig.ORIENTATION_PORTRAIT)
-            setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        else
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         setContentView(R.layout.activity_bluetooth);
         setListAdapter(new BluetoothDevicesListAdapter(this, new ArrayList<BluetoothDevice>()));
