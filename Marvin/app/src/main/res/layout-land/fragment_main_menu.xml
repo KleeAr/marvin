@@ -36,40 +36,6 @@
                     android:layout_weight="1">
 
                     <LinearLayout
-                        android:orientation="vertical"
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:background="#ef404a"
-                        android:id="@+id/linearLayout"
-                        android:layout_weight="1" >
-
-                        <ImageView
-                            android:layout_width="100dp"
-                            android:layout_height="match_parent"
-                            android:id="@+id/marvinImage"
-                            android:src="@drawable/marvin_off"
-                            android:layout_marginTop="20dp"
-                            android:layout_marginBottom="20dp" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:textAppearance="?android:attr/textAppearanceLarge"
-                            android:text="Hablá, yo escucho..."
-                            android:id="@+id/spokenText"
-                            android:textColor="#ffffff"
-                            android:singleLine="true"
-                            android:scrollHorizontally="true"
-                            android:paddingLeft="15dip"
-                            android:paddingRight="15dip"
-                            android:focusable="true"
-                            android:focusableInTouchMode="true"
-                            android:freezesText="true"
-                            android:layout_weight="1"
-                            android:gravity="center|start" />
-                    </LinearLayout>
-
-                    <LinearLayout
                         android:orientation="horizontal"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
@@ -101,6 +67,7 @@
                             android:layout_weight="0.1" />
                     </LinearLayout>
 
+
                     <LinearLayout
                         android:orientation="horizontal"
                         android:layout_width="fill_parent"
@@ -129,6 +96,39 @@
                             android:textSize="20sp" />
                     </LinearLayout>
 
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:background="#ef404a"
+                        android:id="@+id/layout_voz"
+                        android:layout_weight="1" >
+
+                        <ImageView
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:id="@+id/marvinImage"
+                            android:src="@drawable/marvin_off"
+                            android:layout_gravity="center" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:text="Hablá, yo escucho..."
+                            android:id="@+id/spokenText"
+                            android:textColor="#ffffff"
+                            android:singleLine="true"
+                            android:scrollHorizontally="true"
+                            android:paddingLeft="15dip"
+                            android:paddingRight="15dip"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:freezesText="true"
+                            android:layout_weight="1"
+                            android:gravity="center|start"
+                            android:layout_gravity="center" />
+                    </LinearLayout>
                 </LinearLayout>
 
             </LinearLayout>
@@ -151,7 +151,7 @@
 
                         <ImageView
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_height="90dp"
                             android:id="@+id/streetsView"
                             android:src="@drawable/street_arrows"
                             android:layout_alignParentTop="true"
@@ -188,11 +188,12 @@
                         android:layout_height="0dp"
                         android:elevation="2dp"
                         android:background="@color/ColorPrimary"
-                    android:layout_weight="0.05" />
+                    android:layout_weight="0.02" />
 
             </LinearLayout>
 
         </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout
@@ -202,7 +203,7 @@
         android:id="@+id/layout_music"
         android:background="@color/ColorPrimary"
         android:layout_gravity="bottom"
-        android:layout_weight="1">
+        android:layout_weight="0.2">
 
         <ImageButton
             android:layout_width="0dp"
@@ -210,7 +211,8 @@
             android:id="@+id/bt_radioMusic"
             android:layout_weight="0.4"
             android:src="@mipmap/ic_audiotrack_white_48dp"
-            android:onClick="radioMusic" />
+            android:onClick="radioMusic"
+            android:background="@color/ColorPrimary" />
 
         <LinearLayout
             android:orientation="vertical"
@@ -256,7 +258,8 @@
             android:id="@+id/bt_previous"
             android:layout_weight="0.3"
             android:src="@drawable/ic_media_previous"
-            android:onClick="previous" />
+            android:onClick="previous"
+            android:background="@color/ColorPrimary" />
 
         <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:orientation="vertical" android:layout_width="wrap_content"
@@ -289,7 +292,8 @@
             android:id="@+id/bt_next"
             android:layout_weight="0.3"
             android:src="@drawable/ic_media_next"
-            android:onClick="next" />
+            android:onClick="next"
+            android:background="@color/ColorPrimary" />
 
 
     </LinearLayout>

@@ -2,9 +2,11 @@ package ar.com.klee.marvin.activities;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.youtube.player.YouTubeBaseActivity;
@@ -40,6 +42,18 @@ public class YouTubePlayerActivity extends YouTubeBaseActivity implements
         this.video = getIntent().getExtras().getParcelable("video");
         YouTubePlayerView youTubeView = (YouTubePlayerView) findViewById(R.id.youtube_view);
         youTubeView.initialize(YouTubeService.API_KEY, this);
+
+        //definimos los tipos de letra
+        Typeface fBariolBold = Typeface.createFromAsset(this.getAssets(), "Bariol_Bold.otf");
+        Typeface fBariolRegular = Typeface.createFromAsset(this.getAssets(), "Bariol_Regular.otf");
+
+        TextView titleVideo = (TextView)findViewById(R.id.title);
+        TextView titleDesc = (TextView)findViewById(R.id.video_desc);
+
+        titleVideo.setText(video.getTitle());
+        titleVideo.setTypeface(fBariolBold);
+        titleDesc.setText(video.getDescription());
+        titleVideo.setTypeface(fBariolRegular);
 
     }
 
