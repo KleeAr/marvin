@@ -48,9 +48,13 @@ import java.util.concurrent.TimeUnit;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.client.Marvin;
+import ar.com.klee.marvin.client.model.TripRepresentation;
 import ar.com.klee.marvin.fragments.MainMenuFragment;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * A fragment that launches other parts of the demo application.
@@ -319,28 +323,38 @@ public class MapFragment extends Fragment {
         if(hourWithDecimals >= MIN_TRIP_TIME && polylineLength >= MIN_TRIP_DISTANCE) {
 
             if(Marvin.isAuthenticated()){
-                
-                //TODO: Agregar nuevo viaje y setear el parking site
+                TripRepresentation representation = trip.toRepresentation();
+                representation.setName(trip.getEndingAddress());
+                Marvin.users().trips().create(representation, new Callback<TripRepresentation>() {
+                    @Override
+                    public void success(TripRepresentation representation, Response response) {
 
-            }else {
-                MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
-                SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
-                SharedPreferences.Editor prefsEditor = mPrefs.edit();
-                Gson gson = new Gson();
-                String json = gson.toJson(trip.getEnding());
-                prefsEditor.putString("ParkingSite", json);
+                    }
 
-                Integer numberOfTrips = mPrefs.getInt("NumberOfTrips", 0);
+                    @Override
+                    public void failure(RetrofitError error) {
+                        Log.e("MapFragment","Error saving trip", error);
+                    }
+                });
 
-                numberOfTrips++;
-
-                gson = new Gson();
-                json = gson.toJson(trip);
-                prefsEditor.putInt("NumberOfTrips", numberOfTrips);
-                prefsEditor.putString("Trip" + numberOfTrips.toString(), json);
-
-                prefsEditor.commit();
             }
+            MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
+            SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
+            SharedPreferences.Editor prefsEditor = mPrefs.edit();
+            Gson gson = new Gson();
+            String json = gson.toJson(trip.getEnding());
+            prefsEditor.putString("ParkingSite", json);
+
+            Integer numberOfTrips = mPrefs.getInt("NumberOfTrips", 0);
+
+            numberOfTrips++;
+
+            gson = new Gson();
+            json = gson.toJson(trip);
+            prefsEditor.putInt("NumberOfTrips", numberOfTrips);
+            prefsEditor.putString("Trip" + numberOfTrips.toString(), json);
+
+            prefsEditor.commit();
         }
 
     }

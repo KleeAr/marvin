@@ -8,8 +8,8 @@ public class UserSetting {
 
 	@Id
 	private Long userId;
-    private Long miniumTripTime; //In hours
-    private Long miniumTripDistance; //in kilometers
+    private Long miniumTripTime = 0L; //In hours
+    private Long miniumTripDistance = 0L; //in kilometers
     private String emergencyNumber;
     private String emergencySMS;
     private int orientation;

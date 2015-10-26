@@ -73,6 +73,13 @@ public class TripController {
 		tripRepository.deleteByUserId(user.getId());
 		return tripRepository.save(trips);
 	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/users/me/trips/one")
+	public Trip saveSingle(@RequestBody Trip trip, HttpSession session) {
+		User user = (User) session.getAttribute("user");
+		trip.setUserId(user.getId());
+		return tripRepository.save(trip);
+	}
 	
 	@RequestMapping(method = RequestMethod.PUT, value = "/users/me/trips")
 	public Iterable<Trip> update(@RequestBody List<Trip> trips, HttpSession session) {

@@ -76,6 +76,7 @@ import ar.com.klee.marvin.DrawerMenuAdapter;
 import ar.com.klee.marvin.DrawerMenuItem;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.call.CallDriver;
+import ar.com.klee.marvin.client.LogoutCallback;
 import ar.com.klee.marvin.client.Marvin;
 import ar.com.klee.marvin.client.model.SiteRepresentation;
 import ar.com.klee.marvin.client.Marvin;
@@ -993,6 +994,16 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         musicService.onStop();
         stopService(voiceControlServiceIntent);
         stopService(musicServiceIntent);
+        Marvin.users().logout(new LogoutCallback() {
+            @Override
+            protected void onSuccess(Response response) {
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.e("MainMenuActivity", "Error during logout", error);
+            }
+        });
         finish();
     }
 
