@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -68,20 +69,22 @@ public class ParkingMap extends Fragment {
         List<Address> list = null;
         try {
             list = geocoder.getFromLocation(latitude, longitude, 1);
+
+            Address address = list.get(0);
+
+            String a = address.getAddressLine(0);
+
+            MarkerOptions marker = new MarkerOptions().position(new LatLng(latitude,longitude));
+            marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)).title("Lugar de Estacionamiento").snippet(a);
+            googleMap.addMarker(marker);
+
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(latitude, longitude)).zoom(17).build();
+            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
         } catch (IOException e) {
             e.printStackTrace();
+            Toast.makeText(getActivity(), "No se pudo detectar el lugar de estacionamiento.", Toast.LENGTH_LONG).show();
         }
-
-        Address address = list.get(0);
-
-        String a = address.getAddressLine(0);
-
-        MarkerOptions marker = new MarkerOptions().position(new LatLng(latitude,longitude));
-        marker.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)).title("Lugar de Estacionamiento").snippet(a);
-        googleMap.addMarker(marker);
-
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(latitude, longitude)).zoom(17).build();
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
     @Override

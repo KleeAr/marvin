@@ -158,6 +158,7 @@ public class LoginActivity extends AppCompatActivity {
                                 config.setUserId(loginResponse.getUserId());
                                 startActivity(intent);
                                 progressDialog.dismiss();
+                                loginButton.setEnabled(true);
                             }
                         }, 3000);
             }
@@ -169,6 +170,7 @@ public class LoginActivity extends AppCompatActivity {
                             public void run() {
                                 onLoginFailed();
                                 progressDialog.dismiss();
+                                loginButton.setEnabled(true);
                             }
                         }, 3000);
             }

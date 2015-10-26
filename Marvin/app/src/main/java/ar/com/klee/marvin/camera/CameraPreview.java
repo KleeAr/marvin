@@ -12,6 +12,9 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 
+import ar.com.klee.marvin.activities.CameraActivity;
+import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
+
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
     private SurfaceHolder mHolder;
     private Camera mCamera;
@@ -73,8 +76,13 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     {
         if (isPreviewRunning){
             isPreviewRunning=false;
-            if(mCamera != null)
-                mCamera.stopPreview();
+            if(mCamera != null) {
+                try {
+                    mCamera.stopPreview();
+                }catch (Exception e){
+                    ((CameraActivity)CommandHandlerManager.getInstance().getActivity()).reloadCamera();
+                }
+            }
         }
 
         Camera.Parameters parameters = mCamera.getParameters();

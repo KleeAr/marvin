@@ -5,12 +5,12 @@
     android:configChanges="orientation|screenSize"
     android:orientation="vertical" >
 
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/camera_preview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="vertical">
-    </LinearLayout>
+    </FrameLayout>
 
     <ImageButton
         android:id="@+id/button_capture"

@@ -5,12 +5,12 @@
     android:configChanges="orientation|screenSize"
     android:orientation="vertical" >
 
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/camera_preview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="vertical">
-    </LinearLayout>
+    </FrameLayout>
 
     <ImageButton
         android:id="@+id/button_capture"
@@ -33,9 +33,11 @@
         android:contentDescription="Guardar Foto"
         android:background="@drawable/roundcorner"
         android:onClick="save"
-        android:layout_above="@+id/button_capture"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentRight="false"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/button_share"
+        android:layout_marginRight="5dp" />
 
     <ImageButton
         android:id="@+id/button_share"
@@ -46,9 +48,9 @@
         android:contentDescription="Compartir Foto"
         android:background="@drawable/roundcorner"
         android:onClick="openShareDialog"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/button_save"
-        android:layout_marginTop="5dp" />
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentBottom="true" />
 
     <ImageButton
         android:id="@+id/button_cancel"
@@ -59,8 +61,9 @@
         android:contentDescription="Cancelar Foto"
         android:background="@drawable/roundcorner"
         android:onClick="cancel"
-        android:layout_below="@+id/button_share"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="5dp" />
+        android:layout_alignParentEnd="false"
+        android:layout_marginLeft="5dp"
+        android:layout_toRightOf="@+id/button_share"
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

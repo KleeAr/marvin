@@ -15,7 +15,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class BuscarEnMapaHandler extends CommandHandler {
 
     public BuscarEnMapaHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("buscar en mapa {direccion}"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("buscar en mapa {direccion}","buscar dirección {direccion}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

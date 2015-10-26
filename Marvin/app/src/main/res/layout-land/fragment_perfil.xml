@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,7 +12,8 @@
         android:clickable="false"
         android:orientation="vertical"
         android:id="@+id/layout2"
-        android:layout_alignParentTop="true">
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/login_button">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -59,7 +60,7 @@
                 android:layout_height="20dp"
                 android:gravity="center_vertical"
                 android:textSize="16sp"
-                android:text="Anonimo"
+                android:text="Anónimo"
                 android:layout_gravity="center" />
 
         </LinearLayout>
@@ -104,7 +105,7 @@
                         style="@style/Base.TextAppearance.AppCompat.Body1"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:text="Content here"
+                        android:text="Usuario no registrado"
                         android:id="@+id/tv_email" />
                 </LinearLayout>
 
@@ -186,38 +187,28 @@
                 </android.support.v7.widget.CardView>
             </ScrollView>
 
-            <com.facebook.login.widget.LoginButton
-                android:id="@+id/login_button"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:paddingTop="17dp"
-                android:paddingBottom="17dp"
-                android:textSize="15dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="5dp" />
-
-            <com.twitter.sdk.android.core.identity.TwitterLoginButton
-                android:id="@+id/twitter_login_button"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:textSize="15dp"
-                android:layout_marginTop="5dp" />
-
         </LinearLayout>
 
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btn_close"
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/login_button"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginTop="10dp"
-        android:background="#ababab"
-        android:text="Cerrar sesión"
-        android:textColor="#fff"
-        android:textStyle="bold"
-        android:layout_gravity="bottom|center" />
+        android:layout_height="50dp"
+        android:paddingTop="17dp"
+        android:paddingBottom="17dp"
+        android:textSize="15dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="55dp"
+        android:layout_alignParentBottom="true" />
 
+    <com.twitter.sdk.android.core.identity.TwitterLoginButton
+        android:id="@+id/twitter_login_button"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:textSize="15dp"
+        android:layout_gravity="bottom"
+        android:layout_alignParentBottom="true" />
 
-</FrameLayout>
+</RelativeLayout>

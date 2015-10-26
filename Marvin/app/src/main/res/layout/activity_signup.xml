@@ -63,7 +63,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textCapWords"
-                    android:hint="Nombre" />
+                    android:hint="Nombre"
+                    android:maxLength="20" />
             </android.support.design.widget.TextInputLayout>
 
             <!-- Name Label -->
@@ -76,7 +77,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textCapWords"
-                    android:hint="Apellido" />
+                    android:hint="Apellido"
+                    android:maxLength="20" />
             </android.support.design.widget.TextInputLayout>
 
             <!--  Email Label -->
@@ -89,7 +91,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textEmailAddress"
-                    android:hint="Email" />
+                    android:hint="Email"
+                    android:maxLength="64" />
             </android.support.design.widget.TextInputLayout>
 
             <!-- Password Label -->
@@ -102,7 +105,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPassword"
-                    android:hint="Contraseña"/>
+                    android:hint="Contraseña"
+                    android:maxLength="8" />
             </android.support.design.widget.TextInputLayout>
 
             <!-- Repeat Password Label -->
@@ -150,7 +154,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Aceptña los Terminos y Condiciones"
+            android:text="Aceptá los Terminos y Condiciones"
             android:id="@+id/tv_terms"
             android:textColor="#000000" />
 

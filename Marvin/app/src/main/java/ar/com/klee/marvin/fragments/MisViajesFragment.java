@@ -174,11 +174,15 @@ public class MisViajesFragment extends Fragment {
         }
 
         public void remove(int position) {
-            if(tripList.size()!=0) {
-                tripList.remove(position);
-                notifyItemRemoved(position);
+            try {
+                if (tripList.size() != 0) {
+                    tripList.remove(position);
+                    notifyItemRemoved(position);
 
-                UserTrips.getInstance().setTrips(tripList);
+                    UserTrips.getInstance().setTrips(tripList);
+                }
+            }catch(Exception e){
+                e.printStackTrace();
             }
         }
 
@@ -273,6 +277,10 @@ public class MisViajesFragment extends Fragment {
             int i = 0;
 
             while(i < tripList.size()){
+
+                Log.d("TRIP",trip);
+                Log.d("TRIPD" + i,tripList.get(i).getBeginningAddress().toLowerCase());
+                Log.d("TRIPH" + i,tripList.get(i).getEndingAddress().toLowerCase());
 
                 if(isBeginnig){
 

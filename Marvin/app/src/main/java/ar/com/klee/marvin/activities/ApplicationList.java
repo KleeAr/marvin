@@ -21,6 +21,7 @@ import java.util.List;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.applications.Application;
 import ar.com.klee.marvin.applications.ApplicationAdapter;
+import ar.com.klee.marvin.client.Marvin;
 import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.fragments.MainMenuFragment;
 import ar.com.klee.marvin.gps.Site;
@@ -132,9 +133,16 @@ public class ApplicationList extends Activity {
                 // Y también la "SharedPreferences.Editor"
                 SharedPreferences settings = getSharedPreferences("PREFERENCES", 0);
                 SharedPreferences.Editor editor = settings.edit();
-                editor.putString("ButtonPack"+buttonClick, app.getPackageName());
-                editor.putString("ButtonName"+buttonClick, app.getName());
-                editor.putBoolean("ButtonConfig"+buttonClick, true);
+                if(Marvin.isAuthenticated()) {
+                    Long userId = UserConfig.getSettings().getUserId();
+                    editor.putString("ButtonPack" + userId + buttonClick, app.getPackageName());
+                    editor.putString("ButtonName" + userId + buttonClick, app.getName());
+                    editor.putBoolean("ButtonConfig" + userId + buttonClick, true);
+                }else {
+                    editor.putString("ButtonPack" + buttonClick, app.getPackageName());
+                    editor.putString("ButtonName" + buttonClick, app.getName());
+                    editor.putBoolean("ButtonConfig" + buttonClick, true);
+                }
                 editor.commit();
 
                 finish();

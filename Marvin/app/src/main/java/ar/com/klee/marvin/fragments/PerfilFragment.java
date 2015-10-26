@@ -24,6 +24,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -42,6 +44,8 @@ import java.security.MessageDigest;
 import java.util.Arrays;
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.activities.MainMenuActivity;
+import ar.com.klee.marvin.client.Marvin;
+import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -73,7 +77,20 @@ public class PerfilFragment extends Fragment {
 
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_perfil, container, false);
-        ButterKnife.bind(this,view);
+        ButterKnife.bind(this, view);
+
+        if(Marvin.isAuthenticated()) {
+            TextView userName = (TextView) view.findViewById(R.id.tv_header);
+            //TODO: Setear nombre usuario
+
+            TextView userMail = (TextView) view.findViewById(R.id.tv_email);
+            //TODO: Setear mail usuario
+        }
+
+        if(!Marvin.isAuthenticated()) {
+            ScrollView scrollView = (ScrollView) view.findViewById(R.id.scrollView2);
+            scrollView.setVisibility(ScrollView.INVISIBLE);
+        }
 
         changeButton.setEnabled(true);
 

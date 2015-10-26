@@ -24,7 +24,7 @@ public class GuardarSitioHandler extends CommandHandler {
     public static final String SET_SITE = "SET_SITE";
 
     public GuardarSitioHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("guardar sitio {sitio}","guardar lugar {sitio}","guardar {sitio}"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("guardar sitio {sitio}","guardar lugar {sitio}","guardar {sitio}","agregar sitio {sitio}","agregar lugar {sitio}","agregar {sitio}"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

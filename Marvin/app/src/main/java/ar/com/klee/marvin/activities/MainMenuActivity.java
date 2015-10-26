@@ -46,6 +46,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -221,6 +222,12 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         splashLogin = (ImageView)findViewById(R.id.splash_login);
         splashLogout = (ImageView)findViewById(R.id.splash_logout);
 
+        splashLogin.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        splashLogin.setScaleType(ImageView.ScaleType.FIT_XY);
+
+        splashLogout.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        splashLogout.setScaleType(ImageView.ScaleType.FIT_XY);
+
         splashLogin.setVisibility(ImageView.VISIBLE);
         splashLogout.setVisibility(ImageView.INVISIBLE);
         Handler handler = new Handler();
@@ -321,6 +328,12 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         //Añadimos cabecera general
 
         View header = getLayoutInflater().inflate(R.layout.drawer_header_menu_item, null);
+
+        if(Marvin.isAuthenticated()) {
+            TextView userName = (TextView) header.findViewById(R.id.header);
+            //TODO: Agregar nombre
+        }
+
         mLvDrawerMenu.addHeaderView(header);
 
         ImageView imageView = (ImageView) findViewById(R.id.im_perfil);
@@ -1568,6 +1581,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 lastFragment.onActivityResult(requestCode, resultCode, data);
             }catch (Exception e){
                 e.printStackTrace();
+                Toast.makeText(this, "Por un problema de conectividad, la aplicación no pudo iniciarse correctamente. Volvé a intentar.", Toast.LENGTH_LONG).show();
+                finish();
             }
         }
 
@@ -1763,8 +1778,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     Log.e("MainMenuActivity", "Error refreshing configuration: " + error.getMessage(), error);
                 }
             });
+        }else {
+            refreshSettingsInSharedPrefs();
         }
-        refreshSettingsInSharedPrefs();
     }
 
     private void refreshSettingsInSharedPrefs() {
@@ -1807,19 +1823,18 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     Log.e("MainMenuActivity", "Error refreshing sites: " + error.getMessage(), error);
                 }
             });
+        }else {
+            SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
+            SharedPreferences.Editor prefsEditor = mPrefs.edit();
+            prefsEditor.putInt("NumberOfSites", sites.size());
+            Integer j;
+            Gson gson = new Gson();
+            for (j = 1; j <= sites.size(); j++) {
+                String json = gson.toJson(sites.get(j - 1));
+                prefsEditor.putString("Site" + j.toString(), json);
+            }
+            prefsEditor.commit();
         }
-
-        SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
-        SharedPreferences.Editor prefsEditor = mPrefs.edit();
-        prefsEditor.putInt("NumberOfSites", sites.size());
-        Integer j;
-        Gson gson = new Gson();
-        for(j=1;j<=sites.size();j++) {
-            String json = gson.toJson(sites.get(j-1));
-            prefsEditor.putString("Site" + j.toString(), json);
-        }
-        prefsEditor.commit();
-
     }
 
     public void refreshTrips(){
@@ -1836,24 +1851,24 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                     Log.e("MainMenuActivity", "Error refreshing trips: " + error.getMessage(), error);
                 }
             });
+        }else {
+            SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
+            SharedPreferences.Editor prefsEditor = mPrefs.edit();
+
+            List<Trip> trips = UserTrips.getInstance().getTrips();
+
+            prefsEditor.putInt("NumberOfTrips", trips.size());
+
+            Integer j;
+            Gson gson = new Gson();
+
+            for (j = trips.size(); j >= 1; j--) {
+                String json = gson.toJson(trips.get(trips.size() - j));
+                prefsEditor.putString("Trip" + j.toString(), json);
+            }
+
+            prefsEditor.commit();
         }
-
-        SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
-        SharedPreferences.Editor prefsEditor = mPrefs.edit();
-
-        List<Trip> trips = UserTrips.getInstance().getTrips();
-
-        prefsEditor.putInt("NumberOfTrips", trips.size());
-
-        Integer j;
-        Gson gson = new Gson();
-
-        for(j=trips.size();j>=1;j--) {
-            String json = gson.toJson(trips.get(trips.size()-j));
-            prefsEditor.putString("Trip" + j.toString(), json);
-        }
-
-        prefsEditor.commit();
 
     }
 

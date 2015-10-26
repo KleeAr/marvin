@@ -16,6 +16,8 @@ import java.util.List;
 
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.activities.SiteActivity;
+import ar.com.klee.marvin.client.Marvin;
+import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 
 public class CardSiteAdapter extends RecyclerView.Adapter<CardSiteAdapter.ViewHolder>  {
@@ -52,10 +54,18 @@ public class CardSiteAdapter extends RecyclerView.Adapter<CardSiteAdapter.ViewHo
         if(site.getSiteThumbnail() == 0 || site.getSiteThumbnail() == R.drawable.city)
             viewHolder.imgThumbnail.setImageResource(site.getSiteThumbnail());
         else {
-            File imgFile = new  File("/sdcard/MARVIN/Sitios/" + site.getSiteName() + ".png");
+            File imgFile;
+            if(Marvin.isAuthenticated()) {
+                Long userId = UserConfig.getSettings().getUserId();
+                imgFile = new File("/sdcard/MARVIN/Sitios" + userId + "/" + site.getSiteName() + ".png");
+            }else {
+                imgFile = new File("/sdcard/MARVIN/Sitios/" + site.getSiteName() + ".png");
+            }
             if(imgFile.exists()){
                 Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
                 viewHolder.imgThumbnail.setImageBitmap(myBitmap);
+            }else{
+                viewHolder.imgThumbnail.setImageResource(R.drawable.city);
             }
         }
     }

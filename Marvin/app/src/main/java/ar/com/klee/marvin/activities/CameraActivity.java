@@ -34,6 +34,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -50,6 +51,7 @@ import java.util.Date;
 
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.camera.CameraPreview;
+import ar.com.klee.marvin.client.model.User;
 import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.social.FacebookService;
 import ar.com.klee.marvin.social.InstagramService;
@@ -64,7 +66,7 @@ public class CameraActivity extends ActionBarActivity {
     private PictureCallback mPicture;
     private ImageButton capture, save, share, cancel;
     private Context myContext;
-    private LinearLayout cameraPreview;
+    private FrameLayout cameraPreview;
     private boolean cameraFront = false;
     private byte[] datos;
     private File pictureFile;
@@ -187,7 +189,7 @@ public class CameraActivity extends ActionBarActivity {
     }
 
     public void initialize() {
-        cameraPreview = (LinearLayout) findViewById(R.id.camera_preview);
+        cameraPreview = (FrameLayout) findViewById(R.id.camera_preview);
         mPreview = new CameraPreview(myContext, mCamera, this);
         cameraPreview.addView(mPreview);
 
@@ -262,7 +264,7 @@ public class CameraActivity extends ActionBarActivity {
                     int screenHeight = getResources().getDisplayMetrics().heightPixels;
                     Bitmap bm = BitmapFactory.decodeByteArray(data, 0, (data != null) ? data.length : 0);
 
-                    if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    if (UserConfig.getSettings().getOrientation() == UserConfig.ORIENTATION_PORTRAIT) {
                         // Notice that width and height are reversed
                         Bitmap scaled = Bitmap.createScaledBitmap(bm, screenHeight, screenWidth, true);
                         int w = scaled.getWidth();
@@ -276,7 +278,14 @@ public class CameraActivity extends ActionBarActivity {
                     }else{// LANDSCAPE MODE
                         //No need to reverse width and height
                         Bitmap scaled = Bitmap.createScaledBitmap(bm, screenWidth,screenHeight , true);
-                        bm=scaled;
+                        int w = scaled.getWidth();
+                        int h = scaled.getHeight();
+                        // Setting post rotate to 90
+                        Matrix mtx = new Matrix();
+                        mtx.postRotate(180);
+                        mtx.preScale(1.0f, -1.0f);
+                        // Rotating Bitmap
+                        bm = Bitmap.createBitmap(scaled, 0, 0, w, h, mtx, true);
                     }
 
                     lastBitMap = bm;
@@ -564,5 +573,9 @@ public class CameraActivity extends ActionBarActivity {
             mCamera.release();
             mCamera = null;
         }
+    }
+
+    public void reloadCamera(){
+        mCamera = Camera.open(findFrontFacingCamera());
     }
 }
