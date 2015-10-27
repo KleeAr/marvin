@@ -45,7 +45,7 @@
             android:layout_height="20dp"
             android:gravity="center_vertical"
             android:textSize="16sp"
-            android:text="Anonimo"
+            android:text="Anónimo"
             android:layout_gravity="center" />
 
     </LinearLayout>

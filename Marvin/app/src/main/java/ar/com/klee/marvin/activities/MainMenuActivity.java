@@ -26,6 +26,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Parcelable;
 import android.os.PowerManager;
+import android.provider.Settings;
 import android.speech.SpeechRecognizer;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -184,6 +185,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         CommandHandlerManager.destroyInstance();
+
+        Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 1);
 
         UserConfig userConfig = new UserConfig();
         UserSites userSites = new UserSites();
@@ -1592,6 +1595,21 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
                 lastFragment.onActivityResult(requestCode, resultCode, data);
             }catch (Exception e){
                 e.printStackTrace();
+                locationSender.stopLocationSender();
+                STTService.getInstance().interruptThread();
+                musicService.onStop();
+                stopService(voiceControlServiceIntent);
+                stopService(musicServiceIntent);
+                Marvin.users().logout(new LogoutCallback() {
+                    @Override
+                    protected void onSuccess(Response response) {
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        Log.e("MainMenuActivity", "Error during logout", error);
+                    }
+                });
                 Toast.makeText(this, "Por un problema de conectividad, la aplicación no pudo iniciarse correctamente. Volvé a intentar.", Toast.LENGTH_LONG).show();
                 finish();
             }

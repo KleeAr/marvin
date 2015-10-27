@@ -116,30 +116,35 @@ public class MusicService extends Service {
 
         instance = null;
 
-        SharedPreferences sharedPreferences = getSharedPreferences("musicService",Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        if(!songs.isEmpty()) {
-            editor.putString("song", songs.get(currentSong).get("Title"));
-            editor.putString("artist", songs.get(currentSong).get("Artist"));
-            if(!isRadio)
-                currentDuration = mpMusic.getCurrentPosition();
-            editor.putInt("duration", currentDuration);
-            editor.putInt("position", currentSong);
-            editor.putBoolean("isRandom", isRandom);
-        }
-        editor.putInt("radio",currentRadio);
-        editor.putBoolean("isRadio",isRadio);
-        editor.commit();
+        try {
+            SharedPreferences sharedPreferences = getSharedPreferences("musicService", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            if (!songs.isEmpty()) {
+                editor.putString("song", songs.get(currentSong).get("Title"));
+                editor.putString("artist", songs.get(currentSong).get("Artist"));
+                if (!isRadio)
+                    currentDuration = mpMusic.getCurrentPosition();
+                editor.putInt("duration", currentDuration);
+                editor.putInt("position", currentSong);
+                editor.putBoolean("isRandom", isRandom);
+            }
+            editor.putInt("radio", currentRadio);
+            editor.putBoolean("isRadio", isRadio);
+            editor.commit();
 
-        if(mpMusic.isPlaying()) {
-            mpMusic.stop();
-        }
-        mpMusic.release();
+            if(mpMusic.isPlaying()) {
+                mpMusic.stop();
+            }
+            mpMusic.release();
 
-        if(mpRadio.isPlaying()) {
-            mpRadio.stop();
+            if(mpRadio.isPlaying()) {
+                mpRadio.stop();
+            }
+            mpRadio.release();
+
+        }catch(Exception e){
+            e.printStackTrace();
         }
-        mpRadio.release();
     }
 
     public void initializeRadioList(){

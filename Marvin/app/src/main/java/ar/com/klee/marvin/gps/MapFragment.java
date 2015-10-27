@@ -337,24 +337,25 @@ public class MapFragment extends Fragment {
                     }
                 });
 
+            }else {
+                MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
+                SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
+                SharedPreferences.Editor prefsEditor = mPrefs.edit();
+                Gson gson = new Gson();
+                String json = gson.toJson(trip.getEnding());
+                prefsEditor.putString("ParkingSite", json);
+
+                Integer numberOfTrips = mPrefs.getInt("NumberOfTrips", 0);
+
+                numberOfTrips++;
+
+                gson = new Gson();
+                json = gson.toJson(trip);
+                prefsEditor.putInt("NumberOfTrips", numberOfTrips);
+                prefsEditor.putString("Trip" + numberOfTrips.toString(), json);
+
+                prefsEditor.commit();
             }
-            MainMenuActivity mma = (MainMenuActivity) CommandHandlerManager.getInstance().getMainActivity();
-            SharedPreferences mPrefs = mma.getPreferences(mma.MODE_PRIVATE);
-            SharedPreferences.Editor prefsEditor = mPrefs.edit();
-            Gson gson = new Gson();
-            String json = gson.toJson(trip.getEnding());
-            prefsEditor.putString("ParkingSite", json);
-
-            Integer numberOfTrips = mPrefs.getInt("NumberOfTrips", 0);
-
-            numberOfTrips++;
-
-            gson = new Gson();
-            json = gson.toJson(trip);
-            prefsEditor.putInt("NumberOfTrips", numberOfTrips);
-            prefsEditor.putString("Trip" + numberOfTrips.toString(), json);
-
-            prefsEditor.commit();
         }
 
     }

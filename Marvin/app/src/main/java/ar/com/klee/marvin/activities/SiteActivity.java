@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import java.io.File;
 
+import ar.com.klee.marvin.client.Marvin;
 import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.gps.CardSiteAdapter;
 import ar.com.klee.marvin.R;
@@ -76,12 +77,23 @@ public class SiteActivity extends ActionBarActivity {
         tv_site.setText(site.getSiteName() + " - " + site.getSiteAddress());
 
         ImageView imageView = (ImageView)findViewById(R.id.img_thumbnail);
-        File imgFile = new  File("/sdcard/MARVIN/Sitios/" + site.getSiteName() + ".png");
-        if(imgFile.exists()){
-            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-            imageView.setImageBitmap(myBitmap);
+        if(Marvin.isAuthenticated()) {
+            Long userId = UserConfig.getSettings().getUserId();
+            File imgFile = new File("/sdcard/MARVIN/Sitios" + userId + "/" + site.getSiteName() + ".png");
+            if (imgFile.exists()) {
+                Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                imageView.setImageBitmap(myBitmap);
+            } else {
+                imageView.setImageResource(R.drawable.city);
+            }
         }else{
-            imageView.setImageResource(R.drawable.city);
+            File imgFile = new File("/sdcard/MARVIN/Sitios/" + site.getSiteName() + ".png");
+            if (imgFile.exists()) {
+                Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                imageView.setImageBitmap(myBitmap);
+            } else {
+                imageView.setImageResource(R.drawable.city);
+            }
         }
 
     }

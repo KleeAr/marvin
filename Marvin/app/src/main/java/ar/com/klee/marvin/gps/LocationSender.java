@@ -247,7 +247,7 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
                             if(CommandHandlerManager.isInstanceInitialized() && readyToUpdate && !connectionProblemsToast) {
                                 try {
                                     errorCounter++;
-                                    if(errorCounter == 5) {
+                                    if(errorCounter == 10) {
                                         CommandHandlerManager.getInstance().getMainActivity().runOnUiThread(new Runnable() {
                                             public void run() {
                                                 Toast.makeText(context, "No hay conexión a internet. No se puede identificar el nombre de la calle.", Toast.LENGTH_LONG).show();
