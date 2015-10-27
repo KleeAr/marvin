@@ -78,6 +78,7 @@ public class TripController {
 	public Trip saveSingle(@RequestBody Trip trip, HttpSession session) {
 		User user = (User) session.getAttribute("user");
 		trip.setUserId(user.getId());
+		stepRepository.save(trip.getTripPath());
 		return tripRepository.save(trip);
 	}
 	
