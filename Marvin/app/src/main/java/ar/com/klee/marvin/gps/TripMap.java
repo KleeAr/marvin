@@ -116,7 +116,7 @@ public class TripMap extends Fragment {
                 try {
                     FileOutputStream out = new FileOutputStream("/sdcard/MARVIN/trip.png");
                     bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
-                    ((TripActivity)CommandHandlerManager.getInstance().getActivity()).setMapBitmap(bitmap);
+                    ((TripActivity)CommandHandlerManager.getInstance().getActivity()).setMapBitmap(snapshot);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

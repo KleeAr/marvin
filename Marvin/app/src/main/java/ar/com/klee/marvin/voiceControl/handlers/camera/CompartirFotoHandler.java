@@ -15,7 +15,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class CompartirFotoHandler extends CommandHandler {
 
     public CompartirFotoHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("compartir foto","publicar foto","compartir"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("compartir foto", "publicar foto", "compartir"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){
@@ -80,9 +80,14 @@ public class CompartirFotoHandler extends CommandHandler {
         }
 
         if(input.equals("instagram")) {
-            getTextToSpeech().speakText("Compartiendo foto en Instagram");
             CameraActivity cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
-            cameraActivity.shareInInstagram("");
+            try {
+                cameraActivity.shareInInstagram("");
+                getTextToSpeech().speakText("Compartiendo foto en Instagram");
+            }catch (Exception e){
+                getTextToSpeech().speakText("No se pudo compartir la foto en Instagram. Reintentá luego.");
+                e.printStackTrace();
+            }
             //context.put(STEP, 6);
             context.put(STEP, 0);
             return context;

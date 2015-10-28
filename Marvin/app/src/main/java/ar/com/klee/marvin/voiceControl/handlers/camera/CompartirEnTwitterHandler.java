@@ -137,7 +137,7 @@ public class CompartirEnTwitterHandler extends CommandHandler {
                 }
                 getTextToSpeech().speakText("Publicando la foto en Twitter");
             }catch(Exception e){
-                getTextToSpeech().speakText("La foto no pudo ser publicada. Recordá asociar tu cuenta en el menú perfil");
+                getTextToSpeech().speakText("La foto no pudo ser publicada en Twitter. Recordá asociar tu cuenta en el menú perfil");
                 e.printStackTrace();
             }
 

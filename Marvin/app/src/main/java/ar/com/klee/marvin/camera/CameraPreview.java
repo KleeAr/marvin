@@ -85,31 +85,38 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             }
         }
 
-        Camera.Parameters parameters = mCamera.getParameters();
-        Display display = ((WindowManager)context.getSystemService(context.WINDOW_SERVICE)).getDefaultDisplay();
+        Camera.Parameters parameters;
 
-        if(display.getRotation() == Surface.ROTATION_0){
-            parameters.setPreviewSize(height, width);
-            mCamera.setDisplayOrientation(90);
+        try {
+            parameters = mCamera.getParameters();
+
+            Display display = ((WindowManager)context.getSystemService(context.WINDOW_SERVICE)).getDefaultDisplay();
+
+            if(display.getRotation() == Surface.ROTATION_0){
+                parameters.setPreviewSize(height, width);
+                mCamera.setDisplayOrientation(90);
+            }
+
+            if(display.getRotation() == Surface.ROTATION_90){
+                parameters.setPreviewSize(width, height);
+            }
+
+            if(display.getRotation() == Surface.ROTATION_180){
+                parameters.setPreviewSize(height, width);
+            }
+
+            if(display.getRotation() == Surface.ROTATION_270){
+                parameters.setPreviewSize(width, height);
+                mCamera.setDisplayOrientation(180);
+            }
+
+            if(android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN)
+                mCamera.setParameters(parameters);
+
+            previewCamera();
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
-        if(display.getRotation() == Surface.ROTATION_90){
-            parameters.setPreviewSize(width, height);
-        }
-
-        if(display.getRotation() == Surface.ROTATION_180){
-            parameters.setPreviewSize(height, width);
-        }
-
-        if(display.getRotation() == Surface.ROTATION_270){
-            parameters.setPreviewSize(width, height);
-            mCamera.setDisplayOrientation(180);
-        }
-
-        if(android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN)
-            mCamera.setParameters(parameters);
-
-        previewCamera();
     }
 
     public void previewCamera(){

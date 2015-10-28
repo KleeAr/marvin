@@ -206,6 +206,8 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         setContentView(R.layout.activity_main_menu);
 
+        Log.d("MRVN","UserId: " + UserConfig.getSettings().getUserId());
+
         PowerManager powerManager = (PowerManager)this.getSystemService(Context.POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "My Lock");
         wakeLock.acquire();

@@ -16,6 +16,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.PictureCallback;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -65,6 +66,7 @@ public class CameraActivity extends ActionBarActivity {
     private CameraPreview mPreview;
     private PictureCallback mPicture;
     private ImageButton capture, save, share, cancel;
+    private ImageView photo;
     private Context myContext;
     private FrameLayout cameraPreview;
     private boolean cameraFront = false;
@@ -95,9 +97,13 @@ public class CameraActivity extends ActionBarActivity {
         share = (ImageButton)findViewById(R.id.button_share);
         cancel = (ImageButton)findViewById(R.id.button_cancel);
 
+        photo = (ImageView)findViewById(R.id.photo);
+
         save.setVisibility(View.INVISIBLE);
         share.setVisibility(View.INVISIBLE);
         cancel.setVisibility(View.INVISIBLE);
+
+        photo.setVisibility(View.INVISIBLE);
 
         commandHandlerManager = CommandHandlerManager.getInstance();
 
@@ -128,6 +134,11 @@ public class CameraActivity extends ActionBarActivity {
     }
 
     public void onBackPressed(){
+        if(commandHandlerManager.getIsPhotoTaken() && !isSaved) {
+            File photo = new File(lastImagePath);
+            photo.delete();
+        }
+        releaseCamera();
         commandHandlerManager.setNullCommand();
         STTService.getInstance().setIsListening(false);
         commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_MAIN, commandHandlerManager.getMainActivity());
@@ -182,9 +193,41 @@ public class CameraActivity extends ActionBarActivity {
                 Toast.makeText(this, "No front facing camera found.", Toast.LENGTH_LONG).show();
             }
 
-            mCamera = Camera.open(findFrontFacingCamera());
-            mPicture = getPictureCallback();
-            mPreview.refreshCamera(mCamera);
+            if(commandHandlerManager.getIsPhotoTaken()) {
+
+                capture.setVisibility(View.INVISIBLE);
+                save.setVisibility(View.VISIBLE);
+                share.setVisibility(View.VISIBLE);
+                cancel.setVisibility(View.VISIBLE);
+
+                mCamera = Camera.open(findFrontFacingCamera());
+                mPicture = getPictureCallback();
+
+            }else{
+
+                capture.setVisibility(View.VISIBLE);
+                save.setVisibility(View.INVISIBLE);
+                share.setVisibility(View.INVISIBLE);
+                cancel.setVisibility(View.INVISIBLE);
+
+                mCamera = Camera.open(findFrontFacingCamera());
+                mPicture = getPictureCallback();
+                mPreview.refreshCamera(mCamera);
+
+            }
+
+        }else{
+
+            if(commandHandlerManager.getIsPhotoTaken()){
+                cameraPreview.removeView(mPreview);
+                photo.setImageBitmap(lastBitMap);
+                photo.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+                photo.setScaleType(ImageView.ScaleType.FIT_XY);
+                photo.setVisibility(View.VISIBLE);
+                releaseCamera();
+            }else{
+                mPreview.refreshCamera(mCamera);
+            }
         }
     }
 
@@ -231,7 +274,7 @@ public class CameraActivity extends ActionBarActivity {
     protected void onPause() {
         super.onPause();
         //when on Pause, release camera in order to be used from other applications
-        releaseCamera();
+        //releaseCamera();
     }
 
     private boolean hasCamera(Context context) {
@@ -282,7 +325,6 @@ public class CameraActivity extends ActionBarActivity {
                         int h = scaled.getHeight();
                         // Setting post rotate to 90
                         Matrix mtx = new Matrix();
-                        mtx.postRotate(180);
                         mtx.preScale(1.0f, -1.0f);
                         // Rotating Bitmap
                         bm = Bitmap.createBitmap(scaled, 0, 0, w, h, mtx, true);
@@ -356,21 +398,15 @@ public class CameraActivity extends ActionBarActivity {
 
         }
 
-        FacebookService facebookService = new FacebookService(this);
-
-        facebookService.postImage(lastBitMap, text);
+        final FacebookService facebookService = new FacebookService(this);
 
         Handler handler = new Handler();
+        final String finalText = text;
         handler.postDelayed(new Runnable() {
             public void run() {
-
-                if(!isSaved) {
-                    File photo = new File(lastImagePath);
-                    photo.delete();
-                }
-
+                facebookService.postImage(lastBitMap, finalText);
             }
-        }, 3000);
+        }, 1000);
 
     }
 
@@ -385,21 +421,15 @@ public class CameraActivity extends ActionBarActivity {
 
         }
 
-        TwitterService twitterService = TwitterService.getInstance();
-
-        twitterService.postTweet(text, new File(lastImagePath));
+        final TwitterService twitterService = TwitterService.getInstance();
 
         Handler handler = new Handler();
+        final String finalText = text;
         handler.postDelayed(new Runnable() {
             public void run() {
-
-                if(!isSaved) {
-                    File photo = new File(lastImagePath);
-                    photo.delete();
-                }
-
+                twitterService.postTweet(finalText, new File(lastImagePath));
             }
-        }, 3000);
+        }, 1000);
 
     }
 
@@ -414,21 +444,15 @@ public class CameraActivity extends ActionBarActivity {
 
         }
 
-        InstagramService instagramService = new InstagramService(this);
-
-        instagramService.postImageOnInstagram("image/png", text, lastImagePath);
+        final InstagramService instagramService = new InstagramService(this);
 
         Handler handler = new Handler();
+        final String finalText = text;
         handler.postDelayed(new Runnable() {
             public void run() {
-
-                if(!isSaved) {
-                    File photo = new File(lastImagePath);
-                    photo.delete();
-                }
-
+                instagramService.postImageOnInstagram("image/png", finalText, lastImagePath);
             }
-        }, 3000);
+        }, 1000);
 
     }
 
@@ -440,14 +464,27 @@ public class CameraActivity extends ActionBarActivity {
 
     public void cancel(){
 
-        mPreview.refreshCamera(mCamera);
-
         commandHandlerManager.setIsPhotoTaken(false);
 
         save.setVisibility(View.INVISIBLE);
         share.setVisibility(View.INVISIBLE);
         cancel.setVisibility(View.INVISIBLE);
         capture.setVisibility(View.VISIBLE);
+
+        if(photo.isShown()) {
+            photo.setVisibility(View.INVISIBLE);
+            mPreview = new CameraPreview(myContext, mCamera, this);
+            cameraPreview.addView(mPreview);
+            mCamera = Camera.open(findFrontFacingCamera());
+            mPicture = getPictureCallback();
+        }
+
+        mPreview.refreshCamera(mCamera);
+
+        if(!isSaved) {
+            File photo = new File(lastImagePath);
+            photo.delete();
+        }
 
     }
 
@@ -471,7 +508,15 @@ public class CameraActivity extends ActionBarActivity {
         builder.setPositiveButton("facebook", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
 
-                shareInFacebook("");
+                share();
+
+                try {
+                    shareInFacebook("");
+                    Toast.makeText(getApplicationContext(), "Foto publicada en Facebook.", Toast.LENGTH_LONG).show();
+                }catch (Exception e){
+                    Toast.makeText(getApplicationContext(), "No se pudo publicar en Facebook. Recordá asociar la cuenta en tu perfil.", Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
 
                 STTService.getInstance().setIsListening(false);
                 commandHandlerManager.setNullCommand();
@@ -482,7 +527,15 @@ public class CameraActivity extends ActionBarActivity {
         builder.setNegativeButton("twitter", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
 
-                shareInTwitter("");
+                share();
+
+                try {
+                    shareInTwitter("");
+                    Toast.makeText(getApplicationContext(), "Foto publicada en Twitter.", Toast.LENGTH_LONG).show();
+                }catch (Exception e){
+                    Toast.makeText(getApplicationContext(), "No se pudo publicar en Twitter. Recordá asociar la cuenta en tu perfil.", Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
 
                 STTService.getInstance().setIsListening(false);
                 commandHandlerManager.setNullCommand();
@@ -494,7 +547,14 @@ public class CameraActivity extends ActionBarActivity {
         builder.setNeutralButton("instagram", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
 
-                shareInInstagram("");
+                share();
+
+                try {
+                    shareInInstagram("");
+                }catch (Exception e){
+                    Toast.makeText(getApplicationContext(), "No se pudo publicar en Instagram. Reintentá.", Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
 
                 STTService.getInstance().setIsListening(false);
                 commandHandlerManager.setNullCommand();
@@ -525,8 +585,6 @@ public class CameraActivity extends ActionBarActivity {
 
 
         builder.show();
-
-
 
     }
 

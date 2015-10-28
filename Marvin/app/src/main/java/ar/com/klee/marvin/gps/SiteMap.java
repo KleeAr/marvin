@@ -96,7 +96,7 @@ public class SiteMap extends Fragment {
                 try {
                     FileOutputStream out = new FileOutputStream("/sdcard/MARVIN/site.png");
                     bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
-                    ((SiteActivity)CommandHandlerManager.getInstance().getActivity()).setMapBitmap(bitmap);
+                    ((SiteActivity)CommandHandlerManager.getInstance().getActivity()).setMapBitmap(snapshot);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

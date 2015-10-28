@@ -28,9 +28,14 @@ public class CompartirEnFacebookHandler extends CommandHandler {
     @Override
     public CommandHandlerContext drive(CommandHandlerContext context){
         Integer step = context.getInteger(STEP);
-        if(context.getBoolean(SET_MESSAGE)) {
-            context.put(MESSAGE, context.getString(COMMAND));
+
+        try {
+            if (context.getBoolean(SET_MESSAGE)) {
+                context.put(MESSAGE, context.getString(COMMAND));
+            }
+        }catch (Exception e){
         }
+
         switch(step){
 
             case 1:
@@ -104,7 +109,6 @@ public class CompartirEnFacebookHandler extends CommandHandler {
         }
 
         if(input.equals("no")){
-            getTextToSpeech().speakText("Publicando en el muro de Facebook");
 
             String textToPublish = context.getString(MESSAGE);
 
@@ -115,13 +119,31 @@ public class CompartirEnFacebookHandler extends CommandHandler {
             if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
                 cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
                 cameraActivity.share();
-                cameraActivity.shareInFacebook(textToPublish);
+                try {
+                    cameraActivity.shareInFacebook(textToPublish);
+                    getTextToSpeech().speakText("Publicando en el muro de Facebook");
+                }catch (Exception e){
+                    getTextToSpeech().speakText("No se pudo publicar en Facebook. Recordá asociar la cuenta en tu perfil");
+                    e.printStackTrace();
+                }
             }else if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
                 siteActivity = context.getObject(ACTIVITY, SiteActivity.class);
-                siteActivity.shareInFacebook(textToPublish);
+                try {
+                    siteActivity.shareInFacebook(textToPublish);
+                    getTextToSpeech().speakText("Publicando en el muro de Facebook");
+                }catch (Exception e){
+                    getTextToSpeech().speakText("No se pudo publicar en Facebook. Recordá asociar la cuenta en tu perfil");
+                    e.printStackTrace();
+                }
             }else{
                 tripActivity = context.getObject(ACTIVITY, TripActivity.class);
-                tripActivity.shareInFacebook(textToPublish);
+                try {
+                    tripActivity.shareInFacebook(textToPublish);
+                    getTextToSpeech().speakText("Publicando en el muro de Facebook");
+                }catch (Exception e){
+                    getTextToSpeech().speakText("No se pudo publicar en Facebook. Recordá asociar la cuenta en tu perfil");
+                    e.printStackTrace();
+                }
             }
 
             return context.put(STEP, 0);
@@ -226,13 +248,31 @@ public class CompartirEnFacebookHandler extends CommandHandler {
             if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
                 cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
                 cameraActivity.share();
-                cameraActivity.shareInFacebook(textToPublish);
+                try {
+                    cameraActivity.shareInFacebook(textToPublish);
+                    getTextToSpeech().speakText("Publicando en el muro de Facebook");
+                }catch (Exception e){
+                    getTextToSpeech().speakText("No se pudo publicar en Facebook. Recordá asociar la cuenta en tu perfil");
+                    e.printStackTrace();
+                }
             }else if(getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_SITE) {
                 siteActivity = context.getObject(ACTIVITY, SiteActivity.class);
-                siteActivity.shareInFacebook(textToPublish);
+                try {
+                    siteActivity.shareInFacebook(textToPublish);
+                    getTextToSpeech().speakText("Publicando en el muro de Facebook");
+                }catch (Exception e){
+                    getTextToSpeech().speakText("No se pudo publicar en Facebook. Recordá asociar la cuenta en tu perfil");
+                    e.printStackTrace();
+                }
             }else{
                 tripActivity = context.getObject(ACTIVITY, TripActivity.class);
-                tripActivity.shareInFacebook(textToPublish);
+                try {
+                    tripActivity.shareInFacebook(textToPublish);
+                    getTextToSpeech().speakText("Publicando en el muro de Facebook");
+                }catch (Exception e){
+                    getTextToSpeech().speakText("No se pudo publicar en Facebook. Recordá asociar la cuenta en tu perfil");
+                    e.printStackTrace();
+                }
             }
 
             return context.put(STEP, 0);
