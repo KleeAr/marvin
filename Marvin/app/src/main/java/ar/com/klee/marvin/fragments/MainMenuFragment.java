@@ -262,8 +262,7 @@ public class MainMenuFragment extends Fragment {
 
                         Thread.sleep(999);
                     }
-                } catch (InterruptedException e) {
-                } catch (NullPointerException e) {
+                } catch (Exception e) {
                 }
             }
         };

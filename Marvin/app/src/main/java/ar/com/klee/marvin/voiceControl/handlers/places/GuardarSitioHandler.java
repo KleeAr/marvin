@@ -29,8 +29,8 @@ public class GuardarSitioHandler extends CommandHandler {
 
     public CommandHandlerContext drive(CommandHandlerContext context){
 
-        Boolean setContact = context.getBoolean(SET_SITE);
-        if(setContact) {
+        Boolean setSite = context.getBoolean(SET_SITE);
+        if(setSite) {
             context.put(SITE, context.getString(COMMAND));
         }
 
@@ -59,7 +59,7 @@ public class GuardarSitioHandler extends CommandHandler {
         commandHandlerContext.put(SET_SITE, false);
     }
 
-    //PRONUNCIA CONTACTO
+    //PRONUNCIA SITIO
     public CommandHandlerContext stepOne(CommandHandlerContext context){
         String site = context.getString(SITE);
 
@@ -72,13 +72,14 @@ public class GuardarSitioHandler extends CommandHandler {
         site = site.replaceFirst(firstCharacter.toString(), newFirstCharacter.toString());
 
         context.put(SITE,site);
+        context.put(SET_SITE, false);
 
         context.put(STEP, 3);
         return context;
 
     }
 
-    //CONFIRMA CONTACTO
+    //CONFIRMA SITIO
     public CommandHandlerContext stepThree(CommandHandlerContext context){
 
         String input = context.getString(COMMAND);

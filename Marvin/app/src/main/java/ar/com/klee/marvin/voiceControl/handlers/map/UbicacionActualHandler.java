@@ -13,7 +13,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class UbicacionActualHandler extends CommandHandler {
 
     public UbicacionActualHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("ubicación actual","localización actual"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("ubicación actual","localización actual","posición actual"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

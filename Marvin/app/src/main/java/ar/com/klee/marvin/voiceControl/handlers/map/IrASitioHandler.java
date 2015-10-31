@@ -35,13 +35,15 @@ public class IrASitioHandler extends CommandHandler {
 
         List<Site> sites = UserSites.getInstance().getSites();
 
-        for(i=0; i<sites.size() ; i++) {
-            searchedSite = sites.get(i);
-            if(searchedSite.getSiteName().toLowerCase().equals(site))
-                break;
+        for(i=0; i<=sites.size() ; i++) {
+            if(i!=sites.size()) {
+                searchedSite = sites.get(i);
+                if (searchedSite.getSiteName().toLowerCase().equals(site))
+                    break;
+            }
         }
 
-        if(i==sites.size()+1)
+        if(i==sites.size())
             getCommandHandlerManager().getTextToSpeech().speakText("El sitio no fue encontrado");
         else {
             getCommandHandlerManager().getTextToSpeech().speakText("Activando navegación hacia el sitio");

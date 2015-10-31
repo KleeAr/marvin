@@ -351,7 +351,6 @@ public class CommandHandlerManager {
 
         if(command.equals("cancelar")){
             textToSpeech.speakText("Cancelando...");
-            Log.d("CANCEL", "Paso1");
             if(SMSDriver.isInstanceInitialized()){
                 Dialog smsDialog = SMSDriver.getInstance().getActualDialog();
                 if(smsDialog != null && smsDialog.isShowing()){
