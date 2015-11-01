@@ -362,4 +362,7 @@ public class STTService extends Service {
         return instance != null;
     }
 
+    public boolean isSttState() {
+        return sttState;
+    }
 }

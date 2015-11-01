@@ -161,10 +161,8 @@ public class TTS {
             }
         }
 
-
         // Reproduce el texto
         ttsObject.speak(textToSpeak, TextToSpeech.QUEUE_FLUSH, myHashAlarm);
-
     }
 
     public int speakTextWithoutStart(String textToSpeak){

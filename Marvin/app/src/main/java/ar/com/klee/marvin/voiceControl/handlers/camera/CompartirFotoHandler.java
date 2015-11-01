@@ -82,6 +82,7 @@ public class CompartirFotoHandler extends CommandHandler {
         if(input.equals("instagram")) {
             CameraActivity cameraActivity = context.getObject(ACTIVITY, CameraActivity.class);
             try {
+                cameraActivity.share();
                 cameraActivity.shareInInstagram("");
                 getTextToSpeech().speakText("Compartiendo foto en Instagram");
             }catch (Exception e){

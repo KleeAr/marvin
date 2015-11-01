@@ -180,6 +180,7 @@ public class CameraActivity extends ActionBarActivity {
     }
 
     public void onResume() {
+
         super.onResume();
         if (!hasCamera(myContext)) {
             Toast toast = Toast.makeText(myContext, "Sorry, your phone does not have a camera!", Toast.LENGTH_LONG);
@@ -236,7 +237,13 @@ public class CameraActivity extends ActionBarActivity {
         mPreview = new CameraPreview(myContext, mCamera, this);
         cameraPreview.addView(mPreview);
 
-        switchCamera();
+        try {
+            switchCamera();
+        }catch (Exception e){
+            e.printStackTrace();
+            Toast.makeText(this, "No se pudo establecer la conexión con la cámara", Toast.LENGTH_LONG).show();
+            finish();
+        }
 
         capture = (ImageButton) findViewById(R.id.button_capture);
         capture.setOnClickListener(captrureListener);
@@ -625,7 +632,7 @@ public class CameraActivity extends ActionBarActivity {
         return mediaFile;
     }
 
-    private void releaseCamera() {
+    public void releaseCamera() {
         // stop and release camera
         if (mCamera != null) {
             mCamera.release();

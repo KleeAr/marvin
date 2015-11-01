@@ -28,6 +28,7 @@ public class CerrarCamaraHandler extends CommandHandler {
 
         getCommandHandlerManager().defineActivity(CommandHandlerManager.ACTIVITY_MAIN, getCommandHandlerManager().getMainActivity());
 
+        cameraActivity.releaseCamera();
         cameraActivity.finish();
         context.put(STEP, 0);
         return context;
