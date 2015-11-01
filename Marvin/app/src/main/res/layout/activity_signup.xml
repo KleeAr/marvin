@@ -6,8 +6,7 @@
     android:configChanges="orientation|screenSize"
     android:layout_height="match_parent"
     android:background="#4db6ac">
-    <ScrollView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:fitsSystemWindows="true"
@@ -22,38 +21,18 @@
             android:paddingRight="24dp">
 
 
-            <LinearLayout
-                android:orientation="vertical"
-                android:id="@+id/lay_title"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_weight="1"
-                android:layout_marginTop="10dp">
-
-
-                <ImageView
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:id="@+id/imageView3"
-                    android:src="@drawable/marvin_logo"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:layout_marginTop="10dp" />
-
-                <ar.com.klee.marvin.AutoScaleTextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="marvin"
-                    android:id="@+id/textView"
-                    android:layout_gravity="center_horizontal"
-                    android:textSize="90sp"
-                    android:textColor="#ffffff"
-                    android:gravity="center"
-                    android:layout_weight="1" />
-
-            </LinearLayout>
-
             <!-- Name Label -->
+            <ar.com.klee.marvin.AutoScaleTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Nuevo usuario marvin"
+                android:id="@+id/textView"
+                android:layout_gravity="center_horizontal"
+                android:textSize="90sp"
+                android:textColor="#ffffff"
+                android:gravity="center"
+                android:layout_weight="1" />
+
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -135,7 +114,7 @@
                 android:layout_marginRight="20dp" />
 
         </LinearLayout>
-    </ScrollView>
+    </FrameLayout>
 
     <LinearLayout
         android:orientation="horizontal"

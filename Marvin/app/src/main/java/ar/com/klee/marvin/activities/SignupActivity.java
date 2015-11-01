@@ -47,9 +47,11 @@ public class SignupActivity extends AppCompatActivity {
         signupbutton.setEnabled(false);
 
         Typeface typeface = Typeface.createFromAsset(getAssets(), "Wisdom Script AJ.otf");
+        Typeface fBariolRegular = Typeface.createFromAsset(getAssets(), "Bariol_Regular.otf");
 
         CheckBox checkBox = (CheckBox)findViewById(R.id.checkBox);
         TextView tv_terms = (TextView)findViewById(R.id.tv_terms);
+        tv_terms.setTypeface(fBariolRegular);
 
 
         TextView text_app = (TextView) findViewById(R.id.textView);

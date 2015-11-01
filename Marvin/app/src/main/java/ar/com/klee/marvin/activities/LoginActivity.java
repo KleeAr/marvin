@@ -92,8 +92,12 @@ public class LoginActivity extends AppCompatActivity {
 
         Typeface typeface = Typeface.createFromAsset(getAssets(), "Wisdom Script AJ.otf");
 
+        Typeface fBariolRegular = Typeface.createFromAsset(getAssets(), "Bariol_Regular.otf");
+
         TextView text_app = (TextView) findViewById(R.id.textView);
         text_app.setTypeface(typeface);
+
+        rememberPassword.setTypeface(fBariolRegular);
 
         rememberPassword.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,6 +105,8 @@ public class LoginActivity extends AppCompatActivity {
                 rememberPassword();
             }
         });
+
+        signupLink.setTypeface(fBariolRegular);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override

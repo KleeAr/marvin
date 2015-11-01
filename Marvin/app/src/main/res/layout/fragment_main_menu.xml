@@ -98,12 +98,13 @@
             android:layout_weight="0.11">
 
             <ImageView
-                android:layout_width="100dp"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/marvinImage"
                 android:src="@drawable/marvin_off"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp" />
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="4.1" />
 
             <TextView
                 android:layout_width="match_parent"

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="70dp"
     android:orientation="horizontal"
     android:padding="8dp"
     android:configChanges="orientation|screenSize"
@@ -11,9 +11,10 @@
     <TextView
         android:id="@+id/lblListHeader"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:paddingLeft="50dp"
         android:textSize="17dp"
-        android:textColor="#ffffff" />
+        android:textColor="#ffffff"
+        android:gravity="center|start" />
 
 </LinearLayout>

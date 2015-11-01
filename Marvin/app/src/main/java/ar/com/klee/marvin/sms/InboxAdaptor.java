@@ -1,6 +1,7 @@
 package ar.com.klee.marvin.sms;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,14 +49,20 @@ public class InboxAdaptor extends BaseAdapter {
             view = vi.inflate(R.layout.row_sms_inbox, null);
         }
 
+        Typeface fBariolBold = Typeface.createFromAsset(context.getAssets(), "Bariol_Bold.otf");
+        Typeface fBariolRegular = Typeface.createFromAsset(context.getAssets(), "Bariol_Regular.otf");
+
         TextView contact = (TextView) view.findViewById(R.id.textContact);
         TextView date = (TextView) view.findViewById(R.id.textDate);
         TextView mensaje = (TextView) view.findViewById(R.id.textSMS);
 
         final Mensaje item = data.get(position);
         contact.setText(item.getContactName());
+        contact.setTypeface(fBariolBold);
         mensaje.setText(item.getBodyMessage());
+        mensaje.setTypeface(fBariolRegular);
         date.setText(item.getDate());
+        date.setTypeface(fBariolRegular);
 
         return view;
     }

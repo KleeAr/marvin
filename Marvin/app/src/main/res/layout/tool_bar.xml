@@ -41,24 +41,24 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.25">
 
-                    <ar.com.klee.marvin.AutoScaleTextView
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="0dp"
                         android:text="@string/day_default_text"
                         android:id="@+id/weekDayText"
                         android:textColor="#00ffff"
-                        android:textSize="20dp"
+                        android:textSize="20sp"
                         android:textStyle="bold"
                         android:layout_weight="0.35"
                         android:gravity="bottom|start" />
 
-                    <ar.com.klee.marvin.AutoScaleTextView
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="0dp"
                         android:text="@string/date_default_text"
                         android:id="@+id/dateText"
                         android:textColor="#00ffff"
-                        android:textSize="20dp"
+                        android:textSize="20sp"
                         android:textStyle="bold"
                         android:layout_weight="0.35"
                         android:gravity="top|center|start" />
