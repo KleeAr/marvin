@@ -67,7 +67,6 @@ public class TwitterService {
         try {
             twitter.setOAuthConsumer(activity.TWITTER_KEY, activity.TWITTER_SECRET);
         }catch (Exception e){
-            e.printStackTrace();
         }
         TwitterAuthToken authToken = Twitter.getSessionManager().getActiveSession().getAuthToken();
         twitter.setOAuthAccessToken(new AccessToken(authToken.token, authToken.secret));

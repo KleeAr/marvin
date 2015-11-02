@@ -84,6 +84,7 @@ public class CompartirEnTwitterHandler extends CommandHandler {
 
         if(input.equals("no")){
             getTextToSpeech().speakText("¿Qué mensaje deseás publicar?");
+            context.put(SET_MESSAGE, true);
             context.put(STEP, 1);
             return context;
         }
@@ -124,7 +125,12 @@ public class CompartirEnTwitterHandler extends CommandHandler {
                 tripActivity = context.getObject(ACTIVITY, TripActivity.class);
             }
 
-            String textToPublish = context.getString(MESSAGE);
+            String textToPublish;
+            try {
+                textToPublish = context.getString(MESSAGE);
+            }catch (Exception e){
+                textToPublish = "";
+            }
 
             try {
                 if (getCommandHandlerManager().getCurrentActivity() == CommandHandlerManager.ACTIVITY_CAMERA) {
@@ -156,7 +162,13 @@ public class CompartirEnTwitterHandler extends CommandHandler {
     public CommandHandlerContext stepSeven(CommandHandlerContext context){
         String input = context.getString(COMMAND);
         getTextToSpeech().speakText("¿Querés agregar el hashtag "+input+"?");
-        List<String> hashtags = context.getList(TWITTER_HASHTAG, String.class);
+        List<String> hashtags;
+        try {
+            hashtags = context.getList(TWITTER_HASHTAG, String.class);
+        }catch (Exception e){
+            context.put(TWITTER_HASHTAG, new ArrayList<String>());
+            hashtags = context.getList(TWITTER_HASHTAG, String.class);
+        }
         hashtags.add(input);
         context.put(TWITTER_HASHTAG, hashtags);
         context.put(STEP, 9);
@@ -222,7 +234,13 @@ public class CompartirEnTwitterHandler extends CommandHandler {
                 tripActivity = context.getObject(ACTIVITY, TripActivity.class);
             }
 
-            String textToPublish = context.getString(MESSAGE);
+
+            String textToPublish;
+            try {
+                textToPublish = context.getString(MESSAGE);
+            }catch (Exception e){
+                textToPublish = "";
+            }
             List<String> hashtags = context.getList(TWITTER_HASHTAG, String.class);
 
             Character firstCharacter, newFirstCharacter;

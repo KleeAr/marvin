@@ -71,6 +71,7 @@ public class FacebookService {
             @Override
             public void onError(FacebookException e) {
                 Log.e("Facebook Service", "Error while sharing your photo", e);
+                Toast.makeText(context, "Debés vincular tu cuenta en el menú perfil.", Toast.LENGTH_SHORT).show();
             }
         });
     }

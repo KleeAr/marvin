@@ -250,10 +250,6 @@ public class CommandHandlerManager {
         commandHandlersCamera = Arrays.asList(new CancelarFotoHandler(textToSpeech, context, this),
             new CerrarCamaraHandler(textToSpeech, context, this),
             new CompartirFotoHandler(textToSpeech, context, this ),
-            this.compartirEnFacebookHandler,
-            this.compartirEnTwitterHandler,
-            this.compartirEnInstagramHandler,
-            new CompartirFotoHandler(textToSpeech, context, this),
             new GuardarFotoHandler(textToSpeech, context, this),
             new GuardarYCompartirFotoHandler(textToSpeech, context, this),
             new SacarFotoHandler(textToSpeech, context, this));
@@ -300,15 +296,9 @@ public class CommandHandlerManager {
         commandHandlersSettings = Arrays.asList();
 
         commandHandlersTrip = Arrays.asList(new CerrarViajeHandler(textToSpeech, context, this),
-                this.compartirEnFacebookHandler,
-                this.compartirEnTwitterHandler,
-                this.compartirEnInstagramHandler,
                 new CompartirViajeHandler(textToSpeech, context, this));
 
         commandHandlersSite = Arrays.asList(new CerrarSitioHandler(textToSpeech, context, this),
-                this.compartirEnFacebookHandler,
-                this.compartirEnTwitterHandler,
-                this.compartirEnInstagramHandler,
                 new CompartirSitioHandler(textToSpeech, context, this));
 
         commandHandlers = new HashMap<>();

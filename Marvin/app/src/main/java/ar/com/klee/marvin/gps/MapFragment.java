@@ -49,6 +49,7 @@ import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.client.Marvin;
 import ar.com.klee.marvin.client.model.TripRepresentation;
+import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.fragments.MainMenuFragment;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
@@ -320,7 +321,7 @@ public class MapFragment extends Fragment {
 
         captureScreen(tab);
 
-        if(hourWithDecimals >= MIN_TRIP_TIME && polylineLength >= MIN_TRIP_DISTANCE) {
+        if(hourWithDecimals >= UserConfig.getSettings().getMiniumTripTime() || polylineLength >= UserConfig.getSettings().getMiniumTripDistance()) {
 
             if(Marvin.isAuthenticated()){
                 TripRepresentation representation = trip.toRepresentation();

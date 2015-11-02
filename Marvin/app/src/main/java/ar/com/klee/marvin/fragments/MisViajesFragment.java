@@ -234,12 +234,14 @@ public class MisViajesFragment extends Fragment {
 
                 if(isBeginnig){
 
-                    if(trip.startsWith(tripList.get(i).getBeginningAddress().toLowerCase()))
+                    String toCompare = tripList.get(i).getBeginningAddress().toLowerCase();
+                    if(toCompare.startsWith(trip))
                         break;
 
                 }else{
 
-                    if(trip.startsWith(tripList.get(i).getEndingAddress().toLowerCase()))
+                    String toCompare = tripList.get(i).getEndingAddress().toLowerCase();
+                    if(toCompare.startsWith(trip))
                         break;
 
                 }
@@ -278,18 +280,16 @@ public class MisViajesFragment extends Fragment {
 
             while(i < tripList.size()){
 
-                Log.d("TRIP",trip);
-                Log.d("TRIPD" + i,tripList.get(i).getBeginningAddress().toLowerCase());
-                Log.d("TRIPH" + i,tripList.get(i).getEndingAddress().toLowerCase());
-
                 if(isBeginnig){
 
-                    if(trip.startsWith(tripList.get(i).getBeginningAddress().toLowerCase()))
+                    String toCompare = tripList.get(i).getBeginningAddress().toLowerCase();
+                    if(toCompare.startsWith(trip))
                         break;
 
                 }else{
 
-                    if(trip.startsWith(tripList.get(i).getEndingAddress().toLowerCase()))
+                    String toCompare = tripList.get(i).getEndingAddress().toLowerCase();
+                    if(toCompare.startsWith(trip))
                         break;
 
                 }

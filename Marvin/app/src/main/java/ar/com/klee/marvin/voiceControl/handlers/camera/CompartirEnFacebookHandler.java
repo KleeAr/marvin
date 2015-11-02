@@ -86,6 +86,7 @@ public class CompartirEnFacebookHandler extends CommandHandler {
 
         if(input.equals("no")){
             getTextToSpeech().speakText("¿Qué mensaje deseás publicar?");
+            context.put(SET_MESSAGE, true);
             return context.put(STEP, 1);
         }
 
@@ -110,7 +111,12 @@ public class CompartirEnFacebookHandler extends CommandHandler {
 
         if(input.equals("no")){
 
-            String textToPublish = context.getString(MESSAGE);
+            String textToPublish;
+            try {
+                textToPublish = context.getString(MESSAGE);
+            }catch (Exception e){
+                textToPublish = "";
+            }
 
             CameraActivity cameraActivity = null;
             SiteActivity siteActivity = null;
@@ -160,7 +166,16 @@ public class CompartirEnFacebookHandler extends CommandHandler {
         String hashtag = context.getString(COMMAND);
         getTextToSpeech().speakText("¿Querés agregar el hashtag " + hashtag + "?");
 
-        List<String> hashtags = context.getList(FACEBOOK_HASHTAGS, String.class);
+        List<String> hashtags;
+
+        try {
+            hashtags = context.getList(FACEBOOK_HASHTAGS, String.class);
+        }catch (Exception e){
+            e.printStackTrace();
+            context.put(FACEBOOK_HASHTAGS, new ArrayList<String>());
+            hashtags = context.getList(FACEBOOK_HASHTAGS, String.class);
+        }
+
         hashtags.add(hashtag);
 
         return context.put(STEP, 9);
@@ -206,9 +221,14 @@ public class CompartirEnFacebookHandler extends CommandHandler {
             return context.put(STEP, 0);
         }
         if(input.equals("no")){
-            getTextToSpeech().speakText("Publicando en el muro de Facebook");
 
-            String textToPublish = context.getString(MESSAGE);
+            String textToPublish;
+            try {
+                textToPublish = context.getString(MESSAGE);
+            }catch (Exception e){
+                textToPublish = "";
+            }
+
             List<String> hashtags = context.getList(FACEBOOK_HASHTAGS, String.class);
 
             Character firstCharacter, newFirstCharacter;

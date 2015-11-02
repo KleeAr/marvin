@@ -27,7 +27,7 @@ public class AbrirViajeHastaHandler extends CommandHandler {
         boolean result = ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).checkTripExistence("finish - " + address);
 
         if(result) {
-            getTextToSpeech().speakText("Abriendo viaje haste " + address);
+            getTextToSpeech().speakText("Abriendo viaje hasta " + address);
             ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).openTrip("finish - " + address);
         }else
             getTextToSpeech().speakText("No se encontraron viajes haste la dirección " + address);

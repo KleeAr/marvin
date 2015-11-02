@@ -57,6 +57,7 @@ import ar.com.klee.marvin.configuration.UserConfig;
 import ar.com.klee.marvin.social.FacebookService;
 import ar.com.klee.marvin.social.InstagramService;
 import ar.com.klee.marvin.social.TwitterService;
+import ar.com.klee.marvin.social.exceptions.InstagramException;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
 
@@ -457,7 +458,12 @@ public class CameraActivity extends ActionBarActivity {
         final String finalText = text;
         handler.postDelayed(new Runnable() {
             public void run() {
-                instagramService.postImageOnInstagram("image/png", finalText, lastImagePath);
+                try {
+                    instagramService.postImageOnInstagram("image/png", finalText, lastImagePath);
+                }catch (InstagramException e){
+                    e.printStackTrace();
+                    Toast.makeText(commandHandlerManager.getActivity(), "La aplicación Instagram no se encuentra instalada.", Toast.LENGTH_LONG).show();
+                }
             }
         }, 1000);
 
@@ -519,7 +525,6 @@ public class CameraActivity extends ActionBarActivity {
 
                 try {
                     shareInFacebook("");
-                    Toast.makeText(getApplicationContext(), "Foto publicada en Facebook.", Toast.LENGTH_LONG).show();
                 }catch (Exception e){
                     Toast.makeText(getApplicationContext(), "No se pudo publicar en Facebook. Recordá asociar la cuenta en tu perfil.", Toast.LENGTH_LONG).show();
                     e.printStackTrace();

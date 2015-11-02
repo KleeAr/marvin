@@ -22,6 +22,7 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -34,6 +35,7 @@ import ar.com.klee.marvin.gps.TripMap;
 import ar.com.klee.marvin.social.FacebookService;
 import ar.com.klee.marvin.social.InstagramService;
 import ar.com.klee.marvin.social.TwitterService;
+import ar.com.klee.marvin.social.exceptions.InstagramException;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
 import ar.com.klee.marvin.voiceControl.handlers.CommandHandler;
@@ -98,6 +100,16 @@ public class TripActivity extends ActionBarActivity {
     }
 
     public void onBackPressed(){
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                try {
+                    File photo = new File(mapPath);
+                    photo.delete();
+                } catch (Exception e) {
+                }
+            }
+        }, 2000);
         commandHandlerManager.setNullCommand();
         STTService.getInstance().setIsListening(false);
         commandHandlerManager.defineActivity(CommandHandlerManager.ACTIVITY_TRIP_HISTORY, commandHandlerManager.getMainActivity());
@@ -196,17 +208,15 @@ public class TripActivity extends ActionBarActivity {
 
         fragment.captureScreen();
 
-        FacebookService facebookService = new FacebookService(this);
+        final FacebookService facebookService = new FacebookService(this);
 
-        facebookService.postImage(mapBitmap, text);
-
-        Handler handler2 = new Handler();
-        handler2.postDelayed(new Runnable() {
+        Handler handler = new Handler();
+        final String finalText = text;
+        handler.postDelayed(new Runnable() {
             public void run() {
-                File photo = new File(mapPath);
-                photo.delete();
+                facebookService.postImage(mapBitmap, finalText);
             }
-        }, 3000);
+        }, 1000);
 
     }
 
@@ -230,17 +240,13 @@ public class TripActivity extends ActionBarActivity {
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-                twitterService.postTweet(textToPublish, new File(mapPath));
+                try {
+                    twitterService.postTweet(textToPublish, new File(mapPath));
+                }catch (Exception e){
+                    Toast.makeText(commandHandlerManager.getActivity(), "Tu foto no pudo ser publicada.", Toast.LENGTH_LONG).show();
+                }
             }
         }, 1000);
-
-        Handler handler2 = new Handler();
-        handler2.postDelayed(new Runnable() {
-            public void run() {
-                File photo = new File(mapPath);
-                photo.delete();
-            }
-        }, 3000);
 
     }
 
@@ -264,17 +270,14 @@ public class TripActivity extends ActionBarActivity {
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-                instagramService.postImageOnInstagram("image/png", textToPublish, mapPath);
+                try {
+                    instagramService.postImageOnInstagram("image/png", textToPublish, mapPath);
+                }catch (InstagramException e){
+                    e.printStackTrace();
+                    Toast.makeText(commandHandlerManager.getActivity(), "La aplicación Instagram no se encuentra instalada.", Toast.LENGTH_LONG).show();
+                }
             }
         }, 1000);
-
-        Handler handler2 = new Handler();
-        handler2.postDelayed(new Runnable() {
-            public void run() {
-                File photo = new File(mapPath);
-                photo.delete();
-            }
-        }, 3000);
 
     }
 
