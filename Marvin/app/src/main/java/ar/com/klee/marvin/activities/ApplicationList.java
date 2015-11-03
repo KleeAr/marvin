@@ -16,7 +16,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.applications.Application;
@@ -60,6 +62,7 @@ public class ApplicationList extends Activity {
         boolean setContacts = false;
         boolean setGoogle = false;
         boolean setGoogleApp = false;
+        boolean setGoogleSearch = false;
 
         for (Object object : pkgAppsList) {
             //Recorrido de la lista de las app instaladas
@@ -70,7 +73,7 @@ public class ApplicationList extends Activity {
             //String appDir  	= info.activityInfo.applicationInfo.publicSourceDir.toString(); Por ahora no me parece necesario
 
             if(!appName.equals("Marvin")) {
-                if((!appName.equals("Aplicación Google")||!setGoogleApp)&&(!appName.equals("Google+")||!setGoogle)&&(!appName.equals("Contactos")||!setContacts)) {
+                if((!appName.equals("Aplicación Google")||!setGoogleApp)&&(!appName.equals("Google+")||!setGoogle)&&(!appName.equals("Contactos")||!setContacts)&&(!appName.equals("Aplicación de Búsqueda de Google")||!setGoogleSearch)) {
                     Application tmp = new Application(appName, packageName, icon);
                     appsList.add(tmp);
                 }
@@ -81,6 +84,8 @@ public class ApplicationList extends Activity {
                     setGoogle = true;
                 else if(appName.equals("Contactos"))
                     setContacts = true;
+                else if(appName.equals("Aplicación de Búsqueda de Google"))
+                    setGoogleSearch = true;
             }
         }
 

@@ -44,7 +44,7 @@ public class CerrarSesionHandler extends CommandHandler {
                 MainMenuActivity.locationSender.stopLocationSender();
                 ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).stopServices();
             }
-        }, 1000);
+        }, 2000);
 
         currentContext.put(STEP, 0);
         return currentContext;

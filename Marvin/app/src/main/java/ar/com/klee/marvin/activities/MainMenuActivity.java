@@ -1647,19 +1647,23 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
             public void run() {
 
-                mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
-                STTService.getInstance().setState(true);
+                try {
+                    mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
+                    STTService.getInstance().setState(true);
 
-                if (restoreMusicButton) {
-                    if (wasPlaying) {
-                        MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
-                        musicService.startPlaying();
-                    } else {
-                        MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_play);
+                    if (restoreMusicButton) {
+                        if (wasPlaying) {
+                            MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_pause);
+                            musicService.startPlaying();
+                        } else {
+                            MainMenuFragment.bt_play.setImageResource(R.drawable.ic_media_play);
+                        }
                     }
-                }
 
-                restoreMusicButton = false;
+                    restoreMusicButton = false;
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
 
             }
         });

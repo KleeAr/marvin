@@ -141,7 +141,7 @@ public class VozFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_voz, container, false);
-
+        v.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
 
         // Set title bar

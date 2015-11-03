@@ -77,6 +77,7 @@ public class PerfilFragment extends Fragment {
 
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_perfil, container, false);
+        view.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         ButterKnife.bind(this, view);
 
         if(Marvin.isAuthenticated()) {

@@ -233,17 +233,24 @@ Retorna un string con el nombre
         }
 
         uri = Uri.withAppendedPath(uri, Uri.encode(phoneNumber));
-        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
 
-        String contactName = phoneNumber;
+        String contactName;
 
-        if (cursor.moveToFirst())
-        {
-            contactName = cursor.getString(0);
+        try {
+            Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
 
+            contactName = phoneNumber;
+
+            if (cursor.moveToFirst()) {
+                contactName = cursor.getString(0);
+
+            }
+
+            cursor.close();
+        }catch (Exception e){
+            e.printStackTrace();
+            contactName = "";
         }
-
-        cursor.close();
 
         return contactName;
     }

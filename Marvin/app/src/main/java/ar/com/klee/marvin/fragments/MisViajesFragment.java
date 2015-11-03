@@ -52,7 +52,8 @@ public class MisViajesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-         View v = inflater.inflate(R.layout.fragment_mis_viajes, container, false);
+        View v = inflater.inflate(R.layout.fragment_mis_viajes, container, false);
+        v.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         init((RecyclerView) v.findViewById(R.id.recycler_view));
 
         instance = this;

@@ -33,6 +33,7 @@ public class ConfigureFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_configure, container, false);
+        v.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
         // Set title bar
        // ((MainMenuActivity) getActivity()).setActionBarTitle("CONFIGURACIÓN");

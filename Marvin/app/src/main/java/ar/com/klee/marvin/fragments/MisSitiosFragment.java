@@ -94,6 +94,7 @@ public class MisSitiosFragment extends Fragment {
         // Inflate the layout for this fragment
 
         View v = inflater.inflate(R.layout.site_recycler_view,container, false);
+        v.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
         instance = this;
 

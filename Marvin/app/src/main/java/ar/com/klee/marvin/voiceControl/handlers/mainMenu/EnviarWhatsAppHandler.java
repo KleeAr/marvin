@@ -92,11 +92,14 @@ public class EnviarWhatsAppHandler extends CommandHandler {
 
         firstCharacter = textToPublish.charAt(0);
         newFirstCharacter = Character.toUpperCase(firstCharacter);
-        textToPublish = textToPublish.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
+        textToPublish = textToPublish.replaceFirst(firstCharacter.toString(), newFirstCharacter.toString());
 
-        getTextToSpeech().speakText("Seleccioná el contacto y presioná dos veces atrás para volver a la aplicación");
-
-        whatsAppService.sendWhatsApp(textToPublish);
+        try{
+            whatsAppService.sendWhatsApp(textToPublish);
+            getTextToSpeech().speakText("Seleccioná el contacto y presioná dos veces atrás para volver a la aplicación");
+        }catch (Exception e){
+            getTextToSpeech().speakText("El mensaje no pudo ser enviado por un problema en la aplicación Whatsapp");
+        }
 
     }
 
