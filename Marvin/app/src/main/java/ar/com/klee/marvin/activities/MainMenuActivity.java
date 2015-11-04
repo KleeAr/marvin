@@ -1017,7 +1017,101 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         Item item = channel.getItem();
 
-        int resourceId = getResources().getIdentifier("drawable/icon_" + item.getCondition().getCode(), null, getPackageName());
+        int codNumber;
+        switch (item.getCondition().getCode()){
+            case 0:
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 17:
+            case 35:
+                codNumber=0;
+                break;
+            case 15:
+            case 43:
+                codNumber=15;
+                break;
+            case 5:
+            case 6:
+            case 7:
+                codNumber=5;
+                break;
+            case 8:
+            case 9:
+            case 10:
+            case 11:
+            case 12:
+            case 40:
+                codNumber=9;
+                break;
+            case 41:
+                codNumber=41;
+                break;
+            case 46:
+                codNumber=46;
+                break;
+            case 45:
+            case 47:
+                codNumber=47;
+                break;
+            case 13:
+            case 14:
+            case 16:
+            case 18:
+            case 42:
+                codNumber =13;
+                break;
+            case 37:
+            case 38:
+            case 39:
+                codNumber = 37;
+                break;
+            case 30:
+            case 34:
+            case 44:
+                codNumber=34;
+                break;
+            case 23:
+            case 24:
+                codNumber=23;
+                break;
+            case 25:
+                codNumber=25;
+                break;
+            case 26:
+                codNumber=26;
+                break;
+            case 27:
+                codNumber=27;
+                break;
+            case 32:
+            case 36:
+                codNumber=32;
+                break;
+            case 29:
+            case 33:
+                codNumber=29;
+                break;
+            case 19:
+            case 21:
+            case 22:
+                codNumber=19;
+                break;
+            case 20:
+                codNumber=20;
+                break;
+            case 28:
+                codNumber=28;
+                break;
+            case 31:
+                codNumber=31;
+                break;
+                default:
+                    codNumber=3200;
+        }
+
+        int resourceId = getResources().getIdentifier("drawable/icon_" + codNumber, null, getPackageName());
 
         try{
             Drawable weatherIconDrawble = getResources().getDrawable(resourceId);
