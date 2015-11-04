@@ -77,7 +77,7 @@ public class AbrirAplicacionHandler extends CommandHandler {
             ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).setFragment(4);
             currentContext.put(STEP, 0);
             return currentContext;
-        }else if(app.equals("dónde estacioné")) {
+        }else if(app.equals("dónde estacioné") || app.equals("donde estacioné")) {
             getTextToSpeech().speakText("Abriendo dónde estacioné");
             ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).previousMenus.push(1);
             ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).setFragment(6);

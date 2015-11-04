@@ -91,7 +91,7 @@ public class GuardarYCompartirFotoHandler extends CommandHandler {
 
     public CommandHandlerContext facebook(CommandHandlerContext context){
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getCommandHandlerManager().setCurrentCommandHandler(getCommandHandlerManager().getCompartirEnFacebookHandler());
             getTextToSpeech().speakText("¿Qué mensaje querés agregar?");
             context.put(STEP, 1);
@@ -120,7 +120,7 @@ public class GuardarYCompartirFotoHandler extends CommandHandler {
 
     public CommandHandlerContext twitter(CommandHandlerContext context){
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getCommandHandlerManager().setCurrentCommandHandler(getCommandHandlerManager().getCompartirEnTwitterHandler());
             getTextToSpeech().speakText("¿Qué mensaje querés agregar?");
             context.put(STEP, 1);
@@ -149,7 +149,7 @@ public class GuardarYCompartirFotoHandler extends CommandHandler {
 
     public CommandHandlerContext instagram(CommandHandlerContext context){
         String input = context.getString(COMMAND);
-        if(input.equals("si")) {
+        if(input.equals("si") || input.equals("sí")) {
             getCommandHandlerManager().setCurrentCommandHandler(getCommandHandlerManager().getCompartirInstagramHandler());
             getTextToSpeech().speakText("¿Qué mensaje querés agregar?");
             context.put(STEP, 1);

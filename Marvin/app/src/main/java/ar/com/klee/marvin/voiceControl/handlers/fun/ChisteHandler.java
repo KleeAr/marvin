@@ -14,7 +14,7 @@ import ar.com.klee.marvin.voiceControl.handlers.CommandHandlerContext;
 public class ChisteHandler extends CommandHandler {
 
     public ChisteHandler(TTS textToSpeech, Context context, CommandHandlerManager commandHandlerManager) {
-        super(Arrays.asList("contá un chiste","contate un chiste","contar un chiste","contame un chiste"), textToSpeech, context, commandHandlerManager);
+        super(Arrays.asList("contá un chiste","contar chiste","contate un chiste","contar un chiste","contame un chiste"), textToSpeech, context, commandHandlerManager);
     }
 
     public CommandHandlerContext drive(CommandHandlerContext context){

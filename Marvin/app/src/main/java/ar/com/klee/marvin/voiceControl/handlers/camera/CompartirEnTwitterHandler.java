@@ -26,8 +26,12 @@ public class CompartirEnTwitterHandler extends CommandHandler {
 
     public CommandHandlerContext drive(CommandHandlerContext context){
 
-        if(context.getBoolean(SET_MESSAGE)) {
-            context.put(MESSAGE, context.getString(COMMAND));
+        try {
+            if (context.getBoolean(SET_MESSAGE)) {
+                context.put(MESSAGE, context.getString(COMMAND));
+            }
+        }catch (Exception e){
+            context.put(SET_MESSAGE, false);
         }
         Integer step = context.getInteger(STEP);
         switch(step){

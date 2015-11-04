@@ -34,6 +34,7 @@ public class CompartirEnFacebookHandler extends CommandHandler {
                 context.put(MESSAGE, context.getString(COMMAND));
             }
         }catch (Exception e){
+            context.put(SET_MESSAGE, false);
         }
 
         switch(step){
