@@ -175,7 +175,8 @@ public class STTService extends Service {
 
                             if(MainMenuFragment.isInstanceInitialized()) {
                                 MainMenuFragment.spokenText.setText("Hablá, yo escucho...");
-                                MainMenuFragment.marvinImage.setImageResource(R.drawable.marvin_off);
+                                if(!isListening)
+                                    MainMenuFragment.marvinImage.setImageResource(R.drawable.marvin_off);
                             }
 
                             if (!isListening &&

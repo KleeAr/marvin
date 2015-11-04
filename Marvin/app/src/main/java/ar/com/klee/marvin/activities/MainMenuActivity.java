@@ -1458,11 +1458,11 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     public boolean findArtist(String artist) {
 
         wasPlaying = true;
-        MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_audiotrack_white_48dp);
 
         if(musicService.findArtist(artist)){
             musicService.setIsRadio(false);
             MainMenuFragment.getInstance().setIsRadio(false);
+            MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_audiotrack_white_48dp);
             return true;
         }
 
@@ -1474,11 +1474,11 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     public boolean findSong(String song) {
 
         wasPlaying = true;
-        MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_audiotrack_white_48dp);
 
         if(musicService.findTitle(song)){
             musicService.setIsRadio(false);
             MainMenuFragment.getInstance().setIsRadio(false);
+            MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_audiotrack_white_48dp);
             return true;
         }
 
@@ -1501,11 +1501,11 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     public boolean findRadioName(String name){
 
         wasPlaying = true;
-        MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_radio_white_48dp);
 
         if(musicService.findRadioName(name)){
             musicService.setIsRadio(true);
             MainMenuFragment.getInstance().setIsRadio(true);
+            MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_radio_white_48dp);
             return true;
         }
 
@@ -1516,11 +1516,11 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     public boolean findRadioFrequence(String frequence){
 
         wasPlaying = true;
-        MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_radio_white_48dp);
 
         if(musicService.findRadioFrequence(frequence)){
             musicService.setIsRadio(true);
             MainMenuFragment.getInstance().setIsRadio(true);
+            MainMenuFragment.bt_radioMusic.setImageResource(R.mipmap.ic_radio_white_48dp);
             return true;
         }
 

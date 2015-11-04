@@ -225,7 +225,7 @@ public class EnviarSMSAContactoHandler extends CommandHandler {
         }
 
         if(input.equals("no")){
-            getTextToSpeech().speakText("¿Qué mensaje querés mandar?");
+            getTextToSpeech().speakText("SMS - ¿Qué mensaje querés mandar?");
             context.getObject(ACTIVITY, MainMenuActivity.class).setMessageBody("");
             context.put(STEP, 5);
             return context;

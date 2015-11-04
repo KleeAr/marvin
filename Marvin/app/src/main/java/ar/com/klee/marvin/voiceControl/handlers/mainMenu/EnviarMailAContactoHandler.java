@@ -295,9 +295,11 @@ public class EnviarMailAContactoHandler extends CommandHandler {
         message = message.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
 
         String subject = context.getString(SUBJECT);
-        firstCharacter = subject.charAt(0);
-        newFirstCharacter = Character.toUpperCase(firstCharacter);
-        subject = subject.replaceFirst(firstCharacter.toString(),newFirstCharacter.toString());
+        if(subject != "") {
+            firstCharacter = subject.charAt(0);
+            newFirstCharacter = Character.toUpperCase(firstCharacter);
+            subject = subject.replaceFirst(firstCharacter.toString(), newFirstCharacter.toString());
+        }
 
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", context.getString(MAIL), null));
         //emailIntent.setType("message/rfc822");
