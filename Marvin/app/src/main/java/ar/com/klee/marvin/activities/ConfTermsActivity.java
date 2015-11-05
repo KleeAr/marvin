@@ -27,10 +27,13 @@ public class ConfTermsActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(UserConfig.getInstance().getOrientation() == UserConfig.ORIENTATION_PORTRAIT)
-            setRequestedOrientation (ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        else
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+        try {
+            if (UserConfig.getInstance().getOrientation() == UserConfig.ORIENTATION_PORTRAIT)
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            else
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+        }catch (Exception e){
+        }
 
         setContentView(R.layout.activity_terms);
 
