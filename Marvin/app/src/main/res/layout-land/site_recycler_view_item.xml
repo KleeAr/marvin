@@ -11,13 +11,13 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        card_view:contentPadding="@dimen/activity_horizontal_margin"
+        card_view:contentPadding="16dp"
         card_view:cardCornerRadius="3dp"
         android:id="@+id/customItem">
         <ImageView
             android:id="@+id/img_thumbnail"
             android:layout_width="fill_parent"
-            android:layout_height="200dp"
+            android:layout_height="fill_parent"
             android:scaleType="fitXY"/>
 
         <TextView

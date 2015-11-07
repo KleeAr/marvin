@@ -65,7 +65,7 @@ public class LeerWhatsappHandler extends CommandHandler {
             launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(launchIntent);
 
-            context.put(STEP, 5);
+            context.put(STEP, 0);
             return context;
         }
 

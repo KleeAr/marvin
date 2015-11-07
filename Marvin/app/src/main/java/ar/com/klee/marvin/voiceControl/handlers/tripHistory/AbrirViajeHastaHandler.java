@@ -30,7 +30,7 @@ public class AbrirViajeHastaHandler extends CommandHandler {
             getTextToSpeech().speakText("Abriendo viaje hasta " + address);
             ((MainMenuActivity)getCommandHandlerManager().getMainActivity()).openTrip("finish - " + address);
         }else
-            getTextToSpeech().speakText("No se encontraron viajes haste la dirección " + address);
+            getTextToSpeech().speakText("No se encontraron viajes hasta la dirección " + address);
 
         context.put(STEP, 0);
         return context;
