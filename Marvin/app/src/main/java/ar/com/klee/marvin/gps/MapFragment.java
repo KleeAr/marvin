@@ -321,7 +321,9 @@ public class MapFragment extends Fragment {
 
         captureScreen(tab);
 
-        if(hourWithDecimals >= UserConfig.getSettings().getMiniumTripTime() || polylineLength >= UserConfig.getSettings().getMiniumTripDistance()) {
+        Double hourConfig = UserConfig.getSettings().getMiniumTripTime() / 60.0;
+
+        if(hourWithDecimals >= hourConfig || polylineLength >= UserConfig.getSettings().getMiniumTripDistance()) {
 
             if(Marvin.isAuthenticated()){
                 TripRepresentation representation = trip.toRepresentation();

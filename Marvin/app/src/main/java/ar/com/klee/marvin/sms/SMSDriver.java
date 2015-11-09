@@ -303,6 +303,7 @@ public class SMSDriver {
                 numberOfMessages++;
 
                 incomingMensaje.setBodyMessage(incomingMensaje.getBodyMessage() + "\nMensaje " + ((Integer) numberOfMessages).toString() + ": " + inbox.remove(i).getBodyMessage());
+                i--;
             }
             i++;
         }

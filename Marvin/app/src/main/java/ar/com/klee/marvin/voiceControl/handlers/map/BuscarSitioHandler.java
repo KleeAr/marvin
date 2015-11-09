@@ -2,6 +2,7 @@ package ar.com.klee.marvin.voiceControl.handlers.map;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -35,12 +36,10 @@ public class BuscarSitioHandler extends CommandHandler {
 
         List<Site> sites = UserSites.getInstance().getSites();
 
-        for(i=0; i<=sites.size() ; i++) {
-            if(i!=sites.size()) {
-                searchedSite = sites.get(i);
-                if (searchedSite.getSiteName().toLowerCase().equals(site))
-                    break;
-            }
+        for(i=0; i<sites.size() ; i++) {
+            searchedSite = sites.get(i);
+            if (searchedSite.getSiteName().toLowerCase().equals(site))
+                break;
         }
 
         if(i==sites.size())
