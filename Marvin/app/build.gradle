@@ -76,7 +76,7 @@ dependencies {
     compile files('libs/YouTubeAndroidPlayerApi.jar')
     compile 'com.google.android.gms:play-services-maps:7.8.0'
     compile 'com.google.android.gms:play-services-location:7.8.0'
-    compile 'org.twitter4j:twitter4j-core:[4.0,)'
+    compile 'org.twitter4j:twitter4j-core:4.0.2'
     compile files('libs/butterknife-7.0.1.jar')
     compile files('libs/fmp.jar')
     compile files('libs/lib.jar')
