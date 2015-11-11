@@ -123,6 +123,15 @@
                 android:layout_weight="1"
                 android:gravity="center|start" />
 
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/bluetooth_state"
+                android:src="@drawable/no_bluetooth"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="4.1" />
+
         </LinearLayout>
 
         <android.support.v4.view.ViewPager

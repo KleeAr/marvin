@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ar.com.klee.marvin.activities.BluetoothActivity"
+    android:configChanges="orientation|screenSize"
+    android:background="#4db6ac"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_height="80dp"
+        android:layout_width="80dp"
+        android:src="@drawable/bluetooth_logo"
+        android:layout_gravity="bottom|center"
+        android:layout_weight="1"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        android:id="@+id/txt_conn_device"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:textSize="20sp"
+        android:text="@string/no_connection"/>
+
+    <Button
+        android:id="@+id/button_connect_device"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#ffffff"
+        android:background="#000000"
+        android:text="@string/open_device_list"
+        android:onClick="openDeviceList"/>
+
+</LinearLayout>

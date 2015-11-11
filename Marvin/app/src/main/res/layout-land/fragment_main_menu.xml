@@ -129,6 +129,15 @@
                             android:layout_weight="1"
                             android:gravity="center|start"
                             android:layout_gravity="center" />
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/bluetooth_state"
+                            android:src="@drawable/no_bluetooth"
+                            android:layout_marginTop="60dp"
+                            android:layout_marginBottom="60dp"
+                            android:layout_weight="4.1" />
                     </LinearLayout>
                 </LinearLayout>
 

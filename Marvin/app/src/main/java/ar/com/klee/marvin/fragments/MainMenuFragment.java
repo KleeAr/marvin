@@ -51,6 +51,7 @@ public class MainMenuFragment extends Fragment {
     public static TextView tv_artist;
     public static TextView spokenText;
     public static ImageView marvinImage;
+    public static ImageView bluetoothState;
 
     public static boolean isRadio;
 
@@ -106,7 +107,7 @@ public class MainMenuFragment extends Fragment {
         spokenText = (TextView) v.findViewById(R.id.spokenText);
 
         spokenText.setText("Hablá, yo escucho...");
-
+        bluetoothState = (ImageView) v.findViewById(R.id.bluetooth_state);
         marvinImage = (ImageView) v.findViewById(R.id.marvinImage);
 
         shortcutList = new Application[CANT_APPLICATION]; //creamos la lista para almacenar los accesos directos
