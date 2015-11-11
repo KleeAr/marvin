@@ -7,11 +7,23 @@
     android:configChanges="orientation|screenSize"
     tools:context="ar.com.klee.marvin.activities.BluetoothActivity">
 
-    <ListView
-        android:id="@+id/android:list"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+    <ViewAnimator
+        android:id="@+id/sample_output"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="1">
 
-    </ListView>
+    </ViewAnimator>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
+
+    <FrameLayout
+        android:id="@+id/bluetooth_content_fragment"
+        android:layout_weight="2"
+        android:layout_width="match_parent"
+        android:layout_height="0px" />
 
 </RelativeLayout>

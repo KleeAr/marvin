@@ -20,6 +20,8 @@ import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.activities.SMSInboxActivity;
 import ar.com.klee.marvin.call.CallDriver;
 import ar.com.klee.marvin.sms.SMSDriver;
+import ar.com.klee.marvin.voiceControl.handlers.bluetooth.ActivarBluetoothHandler;
+import ar.com.klee.marvin.voiceControl.handlers.bluetooth.DesactivarBluetoothHandler;
 import ar.com.klee.marvin.voiceControl.handlers.callHistory.CerrarHistorialDeLlamadasHandler;
 import ar.com.klee.marvin.voiceControl.handlers.callHistory.ConsultarRegistroNumeroHandler;
 import ar.com.klee.marvin.voiceControl.handlers.callHistory.ConsultarUltimoRegistroDeContactoHandler;
@@ -245,7 +247,9 @@ public class CommandHandlerManager {
             new HolaHandler(textToSpeech, context, this),
             new QuieroHandler(textToSpeech, context, this),
             new RaizHandler(textToSpeech, context, this),
-            new VeoHandler(textToSpeech, context, this));
+            new VeoHandler(textToSpeech, context, this),
+            new ActivarBluetoothHandler(textToSpeech, context, this),
+            new DesactivarBluetoothHandler(textToSpeech, context, this));
 
         commandHandlersCamera = Arrays.asList(new CancelarFotoHandler(textToSpeech, context, this),
             new CerrarCamaraHandler(textToSpeech, context, this),

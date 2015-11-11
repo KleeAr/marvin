@@ -85,6 +85,11 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".bluetooth.DeviceListActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="select device"
+            android:theme="@android:style/Theme.Holo.Dialog" />
+        <activity
             android:name=".activities.MainMenuActivity"
             android:configChanges="orientation"
             android:label="@string/title_activity_menu_principal" >
@@ -140,6 +145,15 @@
         <activity
             android:name=".activities.IncomingCallActivity"
             android:label="IncomingCallActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.ANSWER" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activities.BluetoothIncomingCallActivity"
+            android:label="BluetoothIncomingCallActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.ANSWER" />
 
@@ -219,11 +233,26 @@
             android:name=".activities.PasswordRecoveryActivity"
             android:label="@string/title_activity_password_recovery" >
             <intent-filter>
-                <data android:scheme="http" android:host="marvin.kleear.com.ar"/>
+                <data
+                    android:host="marvin.kleear.com.ar"
+                    android:scheme="http" />
+
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
+        </activity>
+
+        <service
+            android:name=".bluetooth.BluetoothService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+
+        <activity
+            android:name=".activities.NoVoiceIncomingCallActivity"
+            android:label="@string/title_activity_no_voice_incoming_call" >
         </activity>
     </application>
 

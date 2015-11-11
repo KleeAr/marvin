@@ -370,5 +370,8 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-
+    public void bluetoothClient(View view) {
+        Intent intent = new Intent(this, BluetoothActivity.class);
+        startActivity(intent);
+    }
 }

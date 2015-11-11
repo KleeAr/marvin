@@ -48,4 +48,9 @@ public class CommandHandlerContext {
     public <T> T getObject(String key, Class<T> objectClass) {
         return get(key, objectClass);
     }
+
+    @Override
+    public String toString() {
+        return contextMap.toString();
+    }
 }

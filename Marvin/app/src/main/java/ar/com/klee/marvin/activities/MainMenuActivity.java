@@ -1,5 +1,6 @@
 package ar.com.klee.marvin.activities;
 
+import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -64,6 +65,7 @@ import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 
@@ -76,7 +78,12 @@ import java.util.Stack;
 import ar.com.klee.marvin.DrawerMenuAdapter;
 import ar.com.klee.marvin.DrawerMenuItem;
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.bluetooth.BluetoothConstants;
+import ar.com.klee.marvin.bluetooth.BluetoothHandler;
+import ar.com.klee.marvin.bluetooth.BluetoothService;
 import ar.com.klee.marvin.call.CallDriver;
+import ar.com.klee.marvin.call.CallMode;
+import ar.com.klee.marvin.call.PhoneCall;
 import ar.com.klee.marvin.client.LogoutCallback;
 import ar.com.klee.marvin.client.Marvin;
 import ar.com.klee.marvin.client.model.SiteRepresentation;
@@ -110,6 +117,7 @@ import ar.com.klee.marvin.service.YahooWeatherService;
 import ar.com.klee.marvin.sms.SMSDriver;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import ar.com.klee.marvin.voiceControl.STTService;
+import ar.com.klee.marvin.voiceControl.handlers.ResponderLlamadaHandler;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -181,6 +189,27 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     public ViewPager pager;
 
+    private BluetoothHandler bluetoothHandler = new BluetoothHandler(this) {
+        @Override
+        protected void onMessageRead(String readMessage) {
+            Gson gson = new GsonBuilder().setDateFormat("EEE, dd MMM yyyy HH:mm").create();
+            PhoneCall phoneCall = gson.fromJson(readMessage, PhoneCall.class);
+            Intent intent = new Intent(this.context, BluetoothIncomingCallActivity.class);
+            final CommandHandlerManager commandHandlerManager = CommandHandlerManager.getInstance();
+            commandHandlerManager.setCurrentCommandHandler(new ResponderLlamadaHandler(commandHandlerManager.getTextToSpeech(), commandHandlerManager.getContext(), commandHandlerManager));
+            commandHandlerManager.setCurrentContext(commandHandlerManager.getCommandHandler().drive(commandHandlerManager.getCommandHandler().createContext(commandHandlerManager.getCurrentContext(), commandHandlerManager.getActivity(), "responder llamada")));
+            intent.putExtra("number",phoneCall.getNumber());
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            this.context.startActivity(intent);
+        }
+
+        @Override
+        protected void onMessageWrote(String writeMessage) {
+
+        }
+    };
+    private Intent bluetoothServiceIntent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -214,10 +243,11 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         initializeMusicService();
         initializeSTTService();
-
+        CallMode.setDefaultCallMode();
         initializeFacebookSdk();
         TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
         Fabric.with(this, new Twitter(authConfig));
+
 
         //Crea el mainMenu
         if (MainMenuFragment.isInstanceInitialized())
@@ -386,6 +416,29 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     }
 
+    public void initializeBluetoothService() {
+        // Initialize the BluetoothChatService to perform bluetooth connections
+        bluetoothServiceIntent = new Intent(this, BluetoothService.class);
+        bluetoothServiceIntent.putExtra(BluetoothConstants.HANDLER, BluetoothConstants.MAIN_MENU_HANDLER);
+
+        startService(bluetoothServiceIntent);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+
+                if( BluetoothService.getInstance() == null) {
+                    Log.d("BLU","CouldntGetInstance!");
+                }
+                else {
+                    Log.d("BLU","GotInstance!");
+                    BluetoothService.getInstance().setmHandler(bluetoothHandler);
+                }
+                Log.d("BLU","Initialized!");
+            }
+        }, 1000);
+        MainMenuFragment.bluetoothState.setImageDrawable(getResources().getDrawable(R.drawable.bluetooth));
+    }
+
     private void loadUserTrips(final SharedPreferences mPrefs) {
 
         if(Marvin.isAuthenticated()) {
@@ -414,7 +467,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         int numberOfTrips = mPrefs.getInt("NumberOfTrips",0);
 
         for(Integer i = numberOfTrips; i >= 1; i--) {
-            Gson gson = new Gson();
+            Gson gson = new GsonBuilder().setDateFormat("EEE, dd MMM yyyy HH:mm").create();
             String json = mPrefs.getString("Trip"+i.toString(), "");
             UserTrips.getInstance().add(gson.fromJson(json, Trip.class));
         }
@@ -999,6 +1052,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         musicService.onStop();
         stopService(voiceControlServiceIntent);
         stopService(musicServiceIntent);
+        stopBluetoothService();
         Marvin.users().logout(new LogoutCallback() {
             @Override
             protected void onSuccess(Response response) {
@@ -2057,6 +2111,21 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     public void onSaveInstanceState(Bundle outState) {
         //No call for super(). Bug on API Level > 11.
+    }
+
+    public void stopBluetoothService() {
+        if (BluetoothService.isStarted()) {
+            stopService(bluetoothServiceIntent);
+        }
+        MainMenuFragment.bluetoothState.setImageDrawable(getResources().getDrawable(R.drawable.no_bluetooth));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (BluetoothService.isStarted()) {
+            BluetoothService.getInstance().setmHandler(bluetoothHandler);
+        }
     }
 }
 

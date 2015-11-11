@@ -100,6 +100,13 @@ Abstenerse de mejoras, modificaciones o innovaciones al Servicio, ni a la Plataf
     <string name="pasword_updated">La contraseña se ha actualizado</string>
     <string name="password_must_match">Las contraseñas deben coincidir. Ingresela nuevamente</string>
     <string name="recover_pass_email_sent">Hemos enviado un email a tu casilla con un código para establecer tu nueva contraseña</string>
-
-
+    <string name="open_device_list">ver lista de dispositivos</string>
+    <string name="bt_not_enabled_leaving">\"Bluetooth desactivado, saliendo\"</string>
+    <string name="not_connected">No hay conexión con dispositivos</string>
+    <string name="discoverable">Visible</string>
+    <string name="secure_connect">conexión segura</string>
+    <string name="insecure_connect">Conexión insegura</string>
+    <string name="title_activity_no_voice_incoming_call">NoVoiceIncomingCallActivity</string>
+    <string name="no_connection">Sin conexión</string>
+    <string name="connected_to">"Conectado con "</string>
 </resources>
