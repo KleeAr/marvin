@@ -85,7 +85,7 @@ public class UserController {
 		    }
 		    User user = userRepository.findByEmail(loginRequest.getEmail());
 		    session.setAttribute(USER_SESSION_ATTR, user);
-			return new LoginResponse(user.getId(), session.getId(), settingRepository.findOne(user.getId()));
+			return new LoginResponse(user.getId(), session.getId(), settingRepository.findOne(user.getId()), user.getFirstName(), user.getLastName(), user.getEmail());
 	}
 	
 	@RequestMapping(value = "/auth", method = RequestMethod.DELETE)
