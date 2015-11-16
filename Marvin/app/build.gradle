@@ -27,8 +27,9 @@ android {
             storePassword 'android'
         }
     }
-    compileSdkVersion 22
+    compileSdkVersion 23
     buildToolsVersion "23.0.1"
+    useLibrary  'org.apache.http.legacy'
     defaultConfig {
         applicationId "ar.com.klee.marvin"
         minSdkVersion 16
