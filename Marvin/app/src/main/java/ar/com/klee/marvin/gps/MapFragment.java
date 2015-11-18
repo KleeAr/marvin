@@ -326,7 +326,7 @@ public class MapFragment extends Fragment {
         if(hourWithDecimals >= hourConfig || polylineLength >= UserConfig.getSettings().getMiniumTripDistance()) {
 
             if(Marvin.isAuthenticated()){
-                TripRepresentation representation = trip.toRepresentation();
+                final TripRepresentation representation = trip.toRepresentation();
                 representation.setName(trip.getEndingAddress());
                 Marvin.users().trips().create(representation, new Callback<TripRepresentation>() {
                     @Override
@@ -336,6 +336,8 @@ public class MapFragment extends Fragment {
 
                     @Override
                     public void failure(RetrofitError error) {
+                        Gson gson = new Gson();
+                        Log.d("MapFragment", "Representation: " + gson.toJson(representation));
                         Log.e("MapFragment","Error saving trip", error);
                     }
                 });
