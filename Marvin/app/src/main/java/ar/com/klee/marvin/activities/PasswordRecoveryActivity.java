@@ -52,7 +52,7 @@ public class PasswordRecoveryActivity extends FragmentActivity {
 
                 @Override
                 public void failure(RetrofitError error) {
-                    if (error.getResponse().getStatus() == 409) {
+                    if (error.getResponse() != null && error.getResponse().getStatus() == 409) {
                         Toast.makeText(getApplicationContext(), getString(R.string.token_expired), Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(getApplicationContext(), getString(R.string.service_unavailable), Toast.LENGTH_LONG).show();
