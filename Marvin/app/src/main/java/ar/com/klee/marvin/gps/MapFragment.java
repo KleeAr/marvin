@@ -327,7 +327,7 @@ public class MapFragment extends Fragment {
 
             if(Marvin.isAuthenticated()){
                 final TripRepresentation representation = trip.toRepresentation();
-                representation.setName(trip.getEndingAddress());
+                representation.setName(trip.getEndingAddress() + System.currentTimeMillis());
                 Marvin.users().trips().create(representation, new Callback<TripRepresentation>() {
                     @Override
                     public void success(TripRepresentation representation, Response response) {
