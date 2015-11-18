@@ -31,12 +31,12 @@ public class PasswordTokenService {
 			PasswordToken token = new PasswordToken(user.getId(), DURATION);
 			HtmlEmail email = new HtmlEmail();
 			email.setHostName("smtp.gmail.com");
-			email.setSmtpPort(465);
+			email.setSmtpPort(587);
 			email.setAuthenticator(new DefaultAuthenticator("equipomarvin@gmail.com", "unlam2015"));
-			email.setSSLOnConnect(true);
+			email.setStartTLSEnabled(true);
 			email.setFrom("equipomarvin@gmail.com");
-			email.setSubject("Recuperación de contraseña");
-			email.setHtmlMsg("<html><head></head><body><a href=\"http://marvin.kleear.com.ar/token/" + token.getCode() + "\">Click para recuperar contraseña</a></body></html>");
+			email.setSubject("RecuperaciÃ³n de contraseÃ±a");
+			email.setHtmlMsg("<html><head></head><body><a href=\"http://marvin.kleear.com.ar/token/" + token.getCode() + "\">Click para recuperar contraseï¿½a</a></body></html>");
 			email.addTo(user.getEmail());
 			email.send();
 			tokenRepository.save(token);
