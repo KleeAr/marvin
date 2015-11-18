@@ -162,6 +162,8 @@ public class LoginActivity extends AppCompatActivity {
                                 Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class );
                                 UserConfig.setSettings(loginResponse.getSettings());
                                 config.setUserId(loginResponse.getUserId());
+                                config.setUserName(loginResponse.getFirstName() + " " + loginResponse.getLastName());
+                                config.setMail(loginResponse.getEmail());
                                 startActivity(intent);
                                 progressDialog.dismiss();
                                 loginButton.setEnabled(true);

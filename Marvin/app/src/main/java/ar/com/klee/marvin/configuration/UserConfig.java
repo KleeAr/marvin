@@ -7,6 +7,8 @@ public class UserConfig {
 
     private static UserConfig instance;
     private long userId;
+    private String userName;
+    private String mail;
 
     public static final int ORIENTATION_PORTRAIT = 0;
     public static final int ORIENTATION_LANDSCAPE = 1;
@@ -67,5 +69,21 @@ public class UserConfig {
 
     public static UserConfig getInstance(){
         return instance;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getMail() {
+        return mail;
+    }
+
+    public void setMail(String mail) {
+        this.mail = mail;
     }
 }

@@ -337,7 +337,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         if(Marvin.isAuthenticated()) {
             TextView userName = (TextView) header.findViewById(R.id.header);
-            //TODO: Agregar nombre
+            userName.setText(UserConfig.getInstance().getUserName());
         }
 
         mLvDrawerMenu.addHeaderView(header);

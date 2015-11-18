@@ -82,10 +82,10 @@ public class PerfilFragment extends Fragment {
 
         if(Marvin.isAuthenticated()) {
             TextView userName = (TextView) view.findViewById(R.id.tv_header);
-            //TODO: Setear nombre usuario
+            userName.setText(UserConfig.getInstance().getUserName());
 
             TextView userMail = (TextView) view.findViewById(R.id.tv_email);
-            //TODO: Setear mail usuario
+            userMail.setText(UserConfig.getInstance().getMail());
         }
 
         if(!Marvin.isAuthenticated()) {
