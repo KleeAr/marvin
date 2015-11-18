@@ -2058,5 +2058,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     public void onSaveInstanceState(Bundle outState) {
         //No call for super(). Bug on API Level > 11.
     }
+
+    public ViewPager getPager() {
+        return pager;
+    }
 }
 
