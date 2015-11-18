@@ -305,11 +305,11 @@ public class LocationSender implements GoogleApiClient.ConnectionCallbacks,
         /*
         Log.d("GPS",((Integer)counter).toString());
         if(counter%10 == 8){
-            latitude = -34.614397;
-            longitude = -58.373169;
+            latitude = -34.683315;
+            longitude = -58.510958;
         }else if(counter%10 == 9){
-            latitude = -34.614397;
-            longitude = -58.373169;
+            latitude = -34.683701;
+            longitude = -58.510353;
         }
         counter++;
         */
