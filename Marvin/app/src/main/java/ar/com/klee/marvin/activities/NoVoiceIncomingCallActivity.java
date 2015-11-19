@@ -153,6 +153,9 @@ public class NoVoiceIncomingCallActivity extends FragmentActivity {
     }
 
     public void hangUp() {
+        if (!onCall) {
+            return;
+        }
         try {
             // Get the boring old TelephonyManager
             TelephonyManager telephonyManager =
@@ -177,7 +180,7 @@ public class NoVoiceIncomingCallActivity extends FragmentActivity {
             methodEndCall.invoke(telephonyInterface);
 
         } catch (Exception ex) { // Many things can go wrong with reflection calls
-            Log.d("NoVoiceIncomingCallActivity","PhoneStateReceiver **" + ex.toString());
+            Log.e("NoVoiceIncomingCallActivity","PhoneStateReceiver **" + ex.toString(), ex);
         }
         onCall = false;
     }
