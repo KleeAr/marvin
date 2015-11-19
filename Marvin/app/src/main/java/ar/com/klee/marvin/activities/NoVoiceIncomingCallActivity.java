@@ -8,8 +8,11 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
+import android.widget.Button;
 
 import java.lang.reflect.Method;
 
@@ -21,6 +24,7 @@ import ar.com.klee.marvin.bluetooth.BluetoothService;
 public class NoVoiceIncomingCallActivity extends FragmentActivity {
 
     static private NoVoiceIncomingCallActivity instance;
+    static private Boolean onCall = false;
 
     private BluetoothHandler handler = new BluetoothHandler(this) {
         @Override
@@ -32,24 +36,48 @@ public class NoVoiceIncomingCallActivity extends FragmentActivity {
             }
         }
 
-
-
         @Override
         protected void onMessageWrote(String writeMessage) {
 
         }
     };
 
+    public static Boolean getOnCall() {
+        return onCall;
+    }
+
+    public static void setOnCall(Boolean onCall) {
+        NoVoiceIncomingCallActivity.onCall = onCall;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_incoming_call);
         BluetoothService.getInstance().setmHandler(handler);
+        Button btnAceptar = (Button) findViewById(R.id.btnAceptar);
+        Button btnRechazar = (Button) findViewById(R.id.btnRechazar);
+
+        btnAceptar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                acceptCall();
+            }
+        });
+
+        btnRechazar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                rejectCall();
+            }
+        });
+
         instance = this;
     }
 
     public void acceptCall(){
         onAcceptCall();
+        onCall = true;
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
@@ -75,6 +103,7 @@ public class NoVoiceIncomingCallActivity extends FragmentActivity {
 
     public void rejectCall(){
         onRejectCall();
+        onCall = false;
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
@@ -121,5 +150,35 @@ public class NoVoiceIncomingCallActivity extends FragmentActivity {
 
     public static NoVoiceIncomingCallActivity getInstance() {
         return instance;
+    }
+
+    public void hangUp() {
+        try {
+            // Get the boring old TelephonyManager
+            TelephonyManager telephonyManager =
+                    (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+
+            // Get the getITelephony() method
+            Class classTelephony = Class.forName(telephonyManager.getClass().getName());
+            Method methodGetITelephony = classTelephony.getDeclaredMethod("getITelephony");
+
+            // Ignore that the method is supposed to be private
+            methodGetITelephony.setAccessible(true);
+
+            // Invoke getITelephony() to get the ITelephony interface
+            Object telephonyInterface = methodGetITelephony.invoke(telephonyManager);
+
+            // Get the endCall method from ITelephony
+            Class telephonyInterfaceClass =
+                    Class.forName(telephonyInterface.getClass().getName());
+            Method methodEndCall = telephonyInterfaceClass.getDeclaredMethod("endCall");
+
+            // Invoke endCall()
+            methodEndCall.invoke(telephonyInterface);
+
+        } catch (Exception ex) { // Many things can go wrong with reflection calls
+            Log.d("NoVoiceIncomingCallActivity","PhoneStateReceiver **" + ex.toString());
+        }
+        onCall = false;
     }
 }

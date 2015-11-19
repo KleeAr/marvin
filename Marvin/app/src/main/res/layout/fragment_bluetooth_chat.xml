@@ -15,6 +15,14 @@
         android:layout_weight="1"
         android:layout_marginTop="10dp" />
 
+    <Button
+        android:id="@+id/btn_hang_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/hang_up"
+        android:visibility="invisible"
+        android:onClick="hangUp"/>
+
     <TextView
         android:id="@+id/txt_conn_device"
         android:layout_width="wrap_content"

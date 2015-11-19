@@ -113,6 +113,12 @@ public class BluetoothActivity extends FragmentActivity {
     @Override
     public void onResume() {
         super.onResume();
+        View hangUpButton = findViewById(R.id.btn_hang_up);
+        if (NoVoiceIncomingCallActivity.getOnCall()) {
+            hangUpButton.setVisibility(View.VISIBLE);
+        }else {
+            hangUpButton.setVisibility(View.INVISIBLE);
+        }
         if (BluetoothService.getInstance() != null) {
             // Only if the state is STATE_NONE, do we know that we haven't started already
             if (BluetoothService.getInstance().getState() == BluetoothService.STATE_NONE) {
@@ -306,5 +312,9 @@ public class BluetoothActivity extends FragmentActivity {
     public void onBackPressed() {
         stopService(bluetoothServiceIntent);
         super.onBackPressed();
+    }
+
+    public void hangUp(View view) {
+        NoVoiceIncomingCallActivity.getInstance().hangUp();
     }
 }

@@ -109,4 +109,5 @@ Abstenerse de mejoras, modificaciones o innovaciones al Servicio, ni a la Plataf
     <string name="title_activity_no_voice_incoming_call">NoVoiceIncomingCallActivity</string>
     <string name="no_connection">Sin conexión</string>
     <string name="connected_to">"Conectado con "</string>
+    <string name="hang_up">Colgar</string>
 </resources>
