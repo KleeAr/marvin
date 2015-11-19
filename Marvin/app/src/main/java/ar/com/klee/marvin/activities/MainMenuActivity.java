@@ -367,7 +367,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         if(Marvin.isAuthenticated()) {
             TextView userName = (TextView) header.findViewById(R.id.header);
-            //TODO: Agregar nombre
+            userName.setText(UserConfig.getInstance().getUserName());
         }
 
         mLvDrawerMenu.addHeaderView(header);
@@ -2023,17 +2023,17 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
     public void refreshTrips(){
 
         if(Marvin.isAuthenticated()){
-            Marvin.users().trips().update(UserTrips.getInstance().getTripRepresentations(), new Callback<TripRepresentation>() {
-                @Override
-                public void success(TripRepresentation representation, Response response) {
-                    Toast.makeText(getApplicationContext(), "Viajes actualizados", Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void failure(RetrofitError error) {
-                    Log.e("MainMenuActivity", "Error refreshing trips: " + error.getMessage(), error);
-                }
-            });
+//            Marvin.users().trips().update(UserTrips.getInstance().getTripRepresentations(), new Callback<List<TripRepresentation>>() {
+//                @Override
+//                public void success(List<TripRepresentation> representations, Response response) {
+//                    Toast.makeText(getApplicationContext(), "Viajes actualizados", Toast.LENGTH_SHORT).show();
+//                }
+//
+//                @Override
+//                public void failure(RetrofitError error) {
+//                    Log.e("MainMenuActivity", "Error refreshing trips: " + error.getMessage(), error);
+//                }
+//            });
         }else {
             SharedPreferences mPrefs = this.getPreferences(MODE_PRIVATE);
             SharedPreferences.Editor prefsEditor = mPrefs.edit();
@@ -2111,6 +2111,10 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
     public void onSaveInstanceState(Bundle outState) {
         //No call for super(). Bug on API Level > 11.
+    }
+
+    public ViewPager getPager() {
+        return pager;
     }
 
     public void stopBluetoothService() {

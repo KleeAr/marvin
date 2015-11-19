@@ -23,8 +23,8 @@ public class Trip {
     private double endLon;
     private String beginningAddress;
     private String endingAddress;
-    private Date startTime;
-    private Date finishTime;
+    private String startTime;
+    private String finishTime;
     private String distance;
     private String time;
     private String averageVelocity;
@@ -38,7 +38,7 @@ public class Trip {
 
 	public Trip(String name, Long userId, double beginLat, double beginLon,
 			double endLat, double endLon, String beginningAddress,
-			String endingAddress, Date startTime, Date finishTime,
+			String endingAddress, String startTime, String finishTime,
 			String distance, String time, String averageVelocity,
 			List<TripStep> tripPath) {
 		super();
@@ -122,19 +122,19 @@ public class Trip {
 		this.endingAddress = endingAddress;
 	}
 
-	public Date getStartTime() {
+	public String getStartTime() {
 		return startTime;
 	}
 
-	public void setStartTime(Date startTime) {
+	public void setStartTime(String startTime) {
 		this.startTime = startTime;
 	}
 
-	public Date getFinishTime() {
+	public String getFinishTime() {
 		return finishTime;
 	}
 
-	public void setFinishTime(Date finishTime) {
+	public void setFinishTime(String finishTime) {
 		this.finishTime = finishTime;
 	}
 

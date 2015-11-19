@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import ar.com.klee.marvin.controller.exception.WrongPasswordException;
 import ar.com.klee.marvin.model.User;
 import ar.com.klee.marvin.model.UserSetting;
 import ar.com.klee.marvin.repository.UserRepository;
 import ar.com.klee.marvin.repository.UserSettingRepository;
+import ar.com.klee.marvin.representation.ChangePasswordRequest;
 import ar.com.klee.marvin.representation.LoginRequest;
 import ar.com.klee.marvin.representation.LoginResponse;
 import ar.com.klee.marvin.representation.RecoverPasswordRequest;
@@ -69,6 +71,16 @@ public class UserController {
 		tokenService.resetPassword(resetPasswordRequest);
 	}
 	
+	@RequestMapping(value = "/profile", method = RequestMethod.POST)
+	public void changePassword(HttpSession session, @RequestBody ChangePasswordRequest changePasswordRequest) {
+		User user = (User) session.getAttribute(USER_SESSION_ATTR);
+		if(!user.getPassword().equals(changePasswordRequest.getOldPassword())) {
+			throw new WrongPasswordException("The old password doesn't match with the saved password");
+		}
+		user.setPassword(changePasswordRequest.getPassword());
+		userRepository.save(user);
+	}
+	
 	@RequestMapping(value ="/register", method = RequestMethod.POST)
 	public User save(@RequestBody User user) {
 		user = userRepository.save(user);
@@ -85,7 +97,7 @@ public class UserController {
 		    }
 		    User user = userRepository.findByEmail(loginRequest.getEmail());
 		    session.setAttribute(USER_SESSION_ATTR, user);
-			return new LoginResponse(user.getId(), session.getId(), settingRepository.findOne(user.getId()));
+			return new LoginResponse(user.getId(), session.getId(), settingRepository.findOne(user.getId()), user.getFirstName(), user.getLastName(), user.getEmail());
 	}
 	
 	@RequestMapping(value = "/auth", method = RequestMethod.DELETE)
