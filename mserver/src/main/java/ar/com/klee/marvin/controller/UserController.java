@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import ar.com.klee.marvin.controller.exception.WrongPasswordException;
 import ar.com.klee.marvin.model.User;
 import ar.com.klee.marvin.model.UserSetting;
 import ar.com.klee.marvin.repository.UserRepository;
 import ar.com.klee.marvin.repository.UserSettingRepository;
+import ar.com.klee.marvin.representation.ChangePasswordRequest;
 import ar.com.klee.marvin.representation.LoginRequest;
 import ar.com.klee.marvin.representation.LoginResponse;
 import ar.com.klee.marvin.representation.RecoverPasswordRequest;
@@ -67,6 +69,16 @@ public class UserController {
 	@RequestMapping(value = "/password", method = RequestMethod.PUT)
 	public void resetPassword(HttpSession session, @RequestBody ResetPasswordRequest resetPasswordRequest) {
 		tokenService.resetPassword(resetPasswordRequest);
+	}
+	
+	@RequestMapping(value = "/profile", method = RequestMethod.POST)
+	public void changePassword(HttpSession session, @RequestBody ChangePasswordRequest changePasswordRequest) {
+		User user = (User) session.getAttribute(USER_SESSION_ATTR);
+		if(!user.getPassword().equals(changePasswordRequest.getOldPassword())) {
+			throw new WrongPasswordException("The old password doesn't match with the saved password");
+		}
+		user.setPassword(changePasswordRequest.getPassword());
+		userRepository.save(user);
 	}
 	
 	@RequestMapping(value ="/register", method = RequestMethod.POST)

@@ -50,6 +50,8 @@ import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import io.fabric.sdk.android.Fabric;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class PerfilFragment extends Fragment {
     
@@ -175,16 +177,32 @@ public class PerfilFragment extends Fragment {
         String passwordNew = passwordNewText.getText().toString();
         String passwordRepeat = repeatPasswordText.getText().toString();
 
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // On complete call either onSignupSuccess or onSignupFailed
-                        // depending on success
-                        onSignupSuccess();
-                        // onSignupFailed();
-                        progressDialog.dismiss();
-                    }
-                }, 3000);
+        Marvin.users().changePassword(passwordCurrent, passwordNew, new retrofit.Callback<Void>() {
+            @Override
+            public void success(Void aVoid, Response response) {
+                new android.os.Handler().postDelayed(
+                        new Runnable() {
+                            public void run() {
+                                onSignupSuccess();
+                                progressDialog.dismiss();
+                            }
+                        }, 1000);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.e("PerfilFragment", "Error changing password", error);
+                new android.os.Handler().postDelayed(
+                        new Runnable() {
+                            public void run() {
+                                onSignupFailed();
+                                progressDialog.dismiss();
+                            }
+                        }, 1000);
+            }
+        });
+
+
     }
     public void onSignupSuccess() {
         changeButton.setEnabled(true);
@@ -202,22 +220,22 @@ public class PerfilFragment extends Fragment {
         String passwordRepeat = repeatPasswordText.getText().toString();
 
 
-        if (passwordCurrent.isEmpty() || passwordCurrent.length() < 4 || passwordCurrent.length() > 10) {
-            passwordCurrentText.setError("Debe tener entre 4 y 8 caracteres alfanumericos");
+        if (passwordCurrent.isEmpty() || passwordCurrent.length() < 4) {
+            passwordCurrentText.setError("Debe tener más de 4 caracteres alfanumericos");
             valid = false;
         } else {
             passwordCurrentText.setError(null);
         }
 
-        if (passwordNew.isEmpty() || passwordNew.length() < 4 || passwordNew.length() > 10) {
-            passwordNewText.setError("Debe tener entre 4 y 8 caracteres alfanumericos");
+        if (passwordNew.isEmpty() || passwordNew.length() < 4) {
+            passwordNewText.setError("Debe tener más de 4 caracteres alfanumericos");
             valid = false;
         } else {
             passwordNewText.setError(null);
         }
 
 
-        if (passwordRepeat.isEmpty() || passwordRepeat.equals(passwordNew)) {
+        if (passwordRepeat.isEmpty() || !passwordRepeat.equals(passwordNew)) {
             repeatPasswordText.setError("Contraseña incorrecta");
             valid = false;
         } else {
