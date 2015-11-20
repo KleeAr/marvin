@@ -28,12 +28,17 @@ import java.util.Arrays;
 import java.util.List;
 
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.TripUtils;
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.activities.TripActivity;
+import ar.com.klee.marvin.client.Marvin;
 import ar.com.klee.marvin.configuration.UserTrips;
 import ar.com.klee.marvin.gps.Trip;
 import ar.com.klee.marvin.gps.TripStep;
 import ar.com.klee.marvin.voiceControl.CommandHandlerManager;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class MisViajesFragment extends Fragment {
@@ -177,10 +182,23 @@ public class MisViajesFragment extends Fragment {
         public void remove(int position) {
             try {
                 if (tripList.size() != 0) {
-                    tripList.remove(position);
+                    Trip removedTrip = tripList.remove(position);
                     notifyItemRemoved(position);
 
                     UserTrips.getInstance().setTrips(tripList);
+                    if(Marvin.isAuthenticated()) {
+                        Marvin.users().trips().delete(TripUtils.getTripName(removedTrip), new Callback<Response>() {
+                            @Override
+                            public void success(Response response, Response response2) {
+
+                            }
+
+                            @Override
+                            public void failure(RetrofitError error) {
+                                Log.e("MisViajesFragment", "Error deleting trips", error);
+                            }
+                        });
+                    }
                 }
             }catch(Exception e){
                 e.printStackTrace();

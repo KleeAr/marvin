@@ -46,6 +46,7 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import ar.com.klee.marvin.R;
+import ar.com.klee.marvin.TripUtils;
 import ar.com.klee.marvin.activities.MainMenuActivity;
 import ar.com.klee.marvin.client.Marvin;
 import ar.com.klee.marvin.client.model.TripRepresentation;
@@ -327,7 +328,7 @@ public class MapFragment extends Fragment {
 
             if(Marvin.isAuthenticated()){
                 final TripRepresentation representation = trip.toRepresentation();
-                representation.setName(trip.getEndingAddress() + System.currentTimeMillis());
+                representation.setName(TripUtils.getTripName(trip));
                 Marvin.users().trips().create(representation, new Callback<TripRepresentation>() {
                     @Override
                     public void success(TripRepresentation representation, Response response) {
