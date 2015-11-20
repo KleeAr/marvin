@@ -70,6 +70,7 @@ import com.twitter.sdk.android.core.TwitterAuthConfig;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 
@@ -394,8 +395,13 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             Marvin.users().trips().get(new Callback<List<TripRepresentation>>() {
                 @Override
                 public void success(List<TripRepresentation> reps, Response response) {
+                    List<Trip> trips = new ArrayList<Trip>();
                     for(TripRepresentation rep: reps) {
-                        UserTrips.getInstance().add(new Trip(rep));
+                        trips.add(new Trip(rep));
+                    }
+                    java.util.Collections.sort(trips,new TripComparator());
+                    for (Integer i=0;i<trips.size();i++) {
+                        UserTrips.getInstance().add(trips.get(i));
                     }
                 }
 
@@ -409,7 +415,13 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             loadFromSharedPrefs(mPrefs);
         }
 
+    }
 
+    class TripComparator implements Comparator<Trip> {
+        @Override
+        public int compare(Trip a, Trip b) {
+            return Integer.parseInt(((Long) (b.getFinishTime().getTime() - a.getFinishTime().getTime())).toString());
+        }
     }
 
     private void loadFromSharedPrefs(SharedPreferences mPrefs) {
@@ -464,6 +476,10 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
             Marvin.users().settings().get(new Callback<UserSetting>() {
                 @Override
                 public void success(UserSetting userSetting, Response response) {
+                    if(userSetting.getMiniumTripTime() == 0)
+                        userSetting.setMiniumTripTime(Long.parseLong("5"));
+                    if(userSetting.getMiniumTripDistance() == 0)
+                        userSetting.setMiniumTripDistance(Long.parseLong("1"));
                     UserConfig.setSettings(userSetting);
                 }
 
