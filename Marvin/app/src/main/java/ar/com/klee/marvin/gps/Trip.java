@@ -204,6 +204,6 @@ public class Trip {
             stepReps.add(new TripStepRepresentation(null, step.getLat(), step.getLon(), step.getAddress()));
         }
         return new TripRepresentation(endingAddress, null, beginLat, beginLon, endLat, endLon, beginningAddress, endingAddress
-                                , startTime, finishTime, distance, time, averageVelocity, stepReps);
+                , startTime, finishTime, distance, time, averageVelocity, stepReps);
     }
 }

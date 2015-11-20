@@ -467,7 +467,7 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
         int numberOfTrips = mPrefs.getInt("NumberOfTrips",0);
 
         for(Integer i = numberOfTrips; i >= 1; i--) {
-            Gson gson = new GsonBuilder().setDateFormat("EEE, dd MMM yyyy HH:mm").create();
+            Gson gson = new Gson();
             String json = mPrefs.getString("Trip"+i.toString(), "");
             UserTrips.getInstance().add(gson.fromJson(json, Trip.class));
         }
