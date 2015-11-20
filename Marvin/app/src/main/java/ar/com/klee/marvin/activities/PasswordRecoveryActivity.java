@@ -2,17 +2,12 @@ package ar.com.klee.marvin.activities;
 
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.api.client.http.HttpStatusCodes;
 
 import ar.com.klee.marvin.R;
 import ar.com.klee.marvin.client.Marvin;
@@ -22,6 +17,7 @@ import retrofit.client.Response;
 
 public class PasswordRecoveryActivity extends FragmentActivity {
 
+    public static final String TAG = "PasswordRecovery";
     private String token;
 
     @Override
@@ -35,6 +31,8 @@ public class PasswordRecoveryActivity extends FragmentActivity {
     }
 
     public void resetPassword(View view) {
+        Marvin.setMarvinHost("186.23.170.58");
+        Marvin.setMarvinPort(":80");
         EditText newPassword = (EditText)findViewById(R.id.new_password);
         EditText confirmNewPassword = (EditText)findViewById(R.id.confirm_new_password);
         if(!newPassword.getText().toString().equals(confirmNewPassword.getText().toString())) {
@@ -54,8 +52,10 @@ public class PasswordRecoveryActivity extends FragmentActivity {
                 public void failure(RetrofitError error) {
                     if (error.getResponse() != null && error.getResponse().getStatus() == 409) {
                         Toast.makeText(getApplicationContext(), getString(R.string.token_expired), Toast.LENGTH_LONG).show();
+                        Log.e(TAG, "Error, expired token", error);
                     } else {
                         Toast.makeText(getApplicationContext(), getString(R.string.service_unavailable), Toast.LENGTH_LONG).show();
+                        Log.e(TAG, "Error in server", error);
                     }
                 }
             });
