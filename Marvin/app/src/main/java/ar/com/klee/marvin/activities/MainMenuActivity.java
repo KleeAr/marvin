@@ -188,7 +188,9 @@ public class MainMenuActivity extends ActionBarActivity implements DelegateTask<
 
         Settings.System.putInt(getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, 1);
 
-        UserConfig userConfig = new UserConfig();
+        if(!Marvin.isAuthenticated()) {
+            UserConfig userConfig = new UserConfig();
+        }
         UserSites userSites = new UserSites();
         UserTrips userTrips = new UserTrips();
 

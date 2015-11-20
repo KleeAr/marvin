@@ -112,6 +112,8 @@ public class IncomingCallActivity extends Activity {
             while(i < contact.length()){
                 if(i%2 == 1)
                     contactWithSpaces += contact.charAt(i) + " ";
+                else
+                    contactWithSpaces += contact.charAt(i);
                 i++;
             }
 
